@@ -39,6 +39,7 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL) {
   ms.tck[[2]] <- log10(rep(1:9, ms.lims[4]+1) * rep(10^(0:ms.lims[4]), each = 9))
   invisible(lapply(1:2, function(x){axis(x, at = ms.tck[[x]], labels = NA, tck = -0.01)}))
   if (!is.na(rng)) {
+    rng <- do.call(rbind,unlist(rng, recursive = F))
     polyCurve(ms@mass,ms@intensity,rng[,1],rng[,2])
     lines(ms)
   }
