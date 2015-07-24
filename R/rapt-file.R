@@ -11,18 +11,19 @@ readPOS <- function(filepath) {
   pos.dat <- as.data.frame(pos.mat);
   names(pos.dat) <- c("x", "y", "z", "mass");
   pos.name <- sub(".pos", "", basename(filepath));
-  attr(pos.dat, "meta") <- list(
+  attr(pos.dat, "metaData") <- list(
     name = pos.name
   )
   return(pos.dat);
 }
-# Create a list of mass spec formulas from a table
+# Create a list of mass spec formulas from a table (class "cform")
 readForm <- function(filepath) {
   data("isotopes");
-  form.dat <- read.csv(filepath, row.names = 1, stringsAsFactors = F);
-  form.chk <- which(check_chemform(isotopes, form.dat[, 1])[, "warning"]);
+  form.dat <- read.csv(filepath, stringsAsFactors = F);
+  form.chk <- which(check_chemform(isotopes, form.dat[, "formula"])[, "warning"]);
   if(length(form.chk) == 0) {
     form.dat <- t(form.dat);
+    class(form.dat) <- c("matrix", "cform")
     return(form.dat);
   }else {
     print(paste("The formulae:", form.dat[form.chk], "are not valid."));
@@ -33,16 +34,18 @@ readForm <- function(filepath) {
 createSpat <- function(pos) {
   pp3.box <- sapply(pos[-4], range);
   pp3.dat <- pp3(pos$x, pos$y, pos$z, pp3.box);
+  attr(pp3.dat, "metaData") <- attr(pos, "metaData");
   return(pp3.dat);
 }
 # Create a MassSpectrum object (from package "MALDIquant") from a pos data frame
 createSpec <- function(pos, res = 0.001) {
   ms.range <- range(pos["mass"]);
+  ms.range <- ms.range + c(-res, res);
   ms.breaks <- seq(ms.range[1], ms.range[2], res)
-  ms.hist <- hist(pos, ms.breaks, plot = F);
+  ms.hist <- hist(pos[,"mass"], ms.breaks, plot = F);
   ms.dat <- createMassSpectrum(
     ms.hist$mids, ms.hist$counts,
-    metaData = attr(pos,"meta")
+    metaData = attr(pos, "metaData")
   );
   return(ms.dat);
 }
