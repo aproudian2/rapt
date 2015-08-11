@@ -43,14 +43,25 @@ rangeSpec <- function(form, charge = 1:4, resolution = 400) {
   }
   return(rng.dat);
 }
+# Merge RNG objects
+mergeRange <- function(rng1, rng2) {
+
+}
+# Remove ranges from an RNG
+removeRange <- function(rng, rem) {
+  rng.sub <- setdiff(rownames(rng), rem);
+  rng.new <- rng[rng.sub, ];
+  return(rng.new);
+}
 # Create a reference MassPeaks object for warping
 refSpec <- function(form, charge = 1:4, resolution = 400) {
-  if(is(form,"cform")) {
+  if(is(form, "cform")) {
+    cform <- as.data.frame(t(form));
     form <- form["formula", ];
   }
   ref.pat <- lapply(charge, function(x){
     enviPat::isopattern(
-      isotopes, chemforms = form["formula", ],
+      isotopes, chemforms = form,
       threshold = 0.01, charge = x,
       verbose = F
     )
