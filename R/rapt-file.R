@@ -1,3 +1,7 @@
+#
+# This file contains methods for importing and conditioning APT data
+#
+
 ### Load Data ###
 # Read a POS file (from IVAS reconstruction) into a data frame
 readPOS <- function(filepath) {
@@ -31,8 +35,11 @@ readForm <- function(filepath) {
 }
 ### Condition Data ###
 # Create a pp3 object (from package "spatstat") from a pos data frame
-createSpat <- function(pos) {
-  pp3.box <- sapply(pos[-4], range);
+createSpat <- function(pos, win = NULL) {
+  pp3.box <- win;
+  if(is.null(win)) {
+    pp3.box <- sapply(pos[-4], range);
+  }
   pp3.dat <- pp3(pos$x, pos$y, pos$z, pp3.box);
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
   return(pp3.dat);
