@@ -1,3 +1,7 @@
+#
+# This file contains methods for visualizing APT data
+#
+
 ### Mass Spectrum ###
 # Shade regions under a MassSpectrum
 # Based on Gavin Simpson:
