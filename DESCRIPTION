@@ -9,9 +9,9 @@ Description: Tools for analyzing atom probe tomography (APT) data in R.
 License: What license is it under?
 LazyData: TRUE
 Depends:
-  spatstat,
-  MALDIquant
+  spatstat >= 1.42,
+  MALDIquant >= 1.12
 Imports:
-  enviPat
+  enviPat >= 2.0
 Suggests:
-  rgl
+  rgl >= 0.95.1201
