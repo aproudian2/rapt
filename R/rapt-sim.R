@@ -168,3 +168,71 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
   names(resultlist) <- paste("Simulation", 1:nsim)
   return(as.anylist(resultlist))
 }
+# Transform a matrix of integer indices to spatial coordinates for a specified lattice type
+latticeVectors <- function(indices, a = 1, lattice = "sc") {
+  indices <- as.matrix(indices)
+  if (lattice == "sc") {
+    lat.dat <- apply(indices, 1, function(vec) {
+      x <- a * vec[1]
+      y <- a * vec[2]
+      z <- a * vec[3]
+      return(c(x, y, z))
+    })
+  } else if (lattice == "bcc") {
+    lat.dat <- apply(indices, 1, function(vec) {
+      x <- a/2 * (-vec[1] + vec[2] + vec[3])
+      y <- a/2 * (vec[1] - vec[2] + vec[3])
+      z <- a/2 * (vec[1] + vec[2] - vec[3])
+      return(c(x, y, z))
+    })
+  } else if (lattice == "fcc") {
+    lat.dat <- apply(indices, 1, function(vec) {
+      x <- a/2 * (vec[2] + vec[3])
+      y <- a/2 * (vec[1] + vec[3])
+      z <- a/2 * (vec[1] + vec[2])
+      return(c(x, y, z))
+    })
+  } else {
+    warning("Unrecognized lattice")
+  }
+  lat.dat <- t(lat.dat)
+  return(lat.dat)
+}
+# Extends the inside method to the pp3 class
+inside.pp3 <- function(points, domain = NULL) {
+  if(is.null(domain)) {
+    domain <- points$domain
+  }
+  if (length(points) == 0)
+    return(logical(0))
+  xr <- domain$xrange
+  yr <- domain$yrange
+  zr <- domain$zrange
+  x <- points$data$x
+  y <- points$data$y
+  z <- points$data$z
+  eps <- sqrt(.Machine$double.eps)
+  frameok <- (x >= xr[1] - eps) & (x <= xr[2] + eps) &
+             (y >= yr[1] - eps) & (y <= yr[2] + eps) &
+             (z >= zr[1] - eps) & (z <= zr[2] + eps)
+  return(frameok)
+}
+# Creates a spatial region filled with lattice points of the specified type
+lattice <- function(domain = box3(), a = 1, lattice = "sc") {
+  lat.xrange <- round(domain$xrange / a)
+  lat.yrange <- round(domain$yrange / a)
+  lat.zrange <- round(domain$zrange / a)
+  lat.xexpand <- diff(lat.xrange)
+  lat.yexpand <- diff(lat.yrange)
+  lat.zexpand <- diff(lat.zrange)
+  lat.x <- seq(lat.xrange[1] - lat.xexpand, lat.xrange[2] + lat.xexpand)
+  lat.y <- seq(lat.yrange[1] - lat.yexpand, lat.yrange[2] + lat.yexpand)
+  lat.z <- seq(lat.zrange[1] - lat.zexpand, lat.zrange[2] + lat.zexpand)
+  lat.index <- expand.grid(lat.x, lat.y, lat.z)
+  names(lat.index) <- NULL
+  lat.dat <- latticeVectors(lat.index, a = a, lattice = lattice)
+  lat.pp3 <- pp3(x = lat.dat[,1], y = lat.dat[,2], z = lat.dat[,3], domain)
+  ok <- inside.pp3(lat.pp3)
+  lat.pp3 <- lat.pp3[ok]
+  return(lat.pp3)
+}
