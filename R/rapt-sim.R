@@ -69,14 +69,14 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
       ngen <- nremaining/pbar + 10
       totngen <- totngen + ngen
       prop <- runifpoint3(ngen, domain = win)
-      if (dim(prop$data)[1] > 0) {
+      if (npoints(prop) > 0) {
         fvalues <- f(prop$data$x, prop$data$y, prop$data$z, ...)
         paccept <- fvalues/fmax
-        u <- runif(dim(prop$data)[1])
+        u <- runif(npoints(prop))
         Y <- prop[u < paccept]
-        if (dim(Y$data)[1] > 0) {
+        if (npoints(Y) > 0) {
           X <- superimpose(X, Y, W = win)
-          nX <- dim(X$data)[1]
+          nX <- npoints(X)
           pbar <- nX/totngen
           nremaining <- n - nX
           if (nremaining <= 0) {
@@ -91,7 +91,7 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
       }
       if (ntries > giveup)
         stop(paste("Gave up after", giveup * n, "trials with",
-                   dim(X$data)[1], "points accepted"))
+                   npoints(X), "points accepted"))
     }
   }
   if (nsim == 1 && drop)
@@ -122,14 +122,14 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
     parents <- parentlist[[isim]]
     result <- NULL
     res.full <- NULL
-    np <- dim(parents$data)[1]
+    np <- npoints(parents)
     if (np > 0) {
       xparent <- parents$data$x
       yparent <- parents$data$y
       zparent <- parents$data$z
       for (i in seq_len(np)) {
         cluster <- rcluster(...)
-        if (dim(cluster$data)[1] > 0) {
+        if (npoints(cluster) > 0) {
           cluster <- shift(cluster, vec = c(xparent[i], yparent[i], zparent[i]))
           cluster <- pp3(cluster$data$x, cluster$data$y, cluster$data$z,
                          xrange = win$xrange,
@@ -143,12 +143,12 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
           if (is.null(result)) {
             result <- clus.trunc
             res.full <- cluster
-            parentid <- rep.int(1, dim(clus.trunc$data)[1])
+            parentid <- rep.int(1, npoints(clus.trunc))
           }
           else {
             result <- superimpose(result, clus.trunc, W = win)
             res.full <- superimpose(res.full, cluster, W = win)
-            parentid <- c(parentid, rep.int(i, dim(clus.trunc$data)[1]))
+            parentid <- c(parentid, rep.int(i, npoints(clus.trunc)))
           }
         }
       }
@@ -235,4 +235,31 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   ok <- inside.pp3(lat.pp3)
   lat.pp3 <- lat.pp3[ok]
   return(lat.pp3)
+}
+# Extends the rjitter function from "SpatStat" to handle pp3
+rjitter3 <- function(X, domain = box3()) {
+  verifyclass(X, "pp3")
+  nX <- npoints(X)
+  if (nX == 0)
+    return(X)
+  W <- X$domain
+  D <- runifpoint3(nX, domain = domain)
+  xnew <- X$data$x + D$data$x
+  ynew <- X$data$y + D$data$y
+  znew <- X$data$z + D$data$z
+  new <- pp3(xnew, ynew, znew, W)
+  ok <- subset(new, subset =
+                 (x > W$xrange[1] & x < W$xrange[2]) &
+                 (y > W$yrange[1] & y < W$yrange[2]) &
+                 (z > W$zrange[1] & z < W$zrange[2])
+  )
+  return(ok)
+}
+
+# Extends the sample function from "base" to handle pp3
+sample.pp3 <- function(X, size){
+  sam.lab <- rownames(as.data.frame(X$data))
+  sam.pts <- sample(sam.lab, size)
+  sam.dat <- X[sam.pts]
+  return(sam.dat)
 }

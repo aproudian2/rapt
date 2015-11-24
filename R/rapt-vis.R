@@ -28,9 +28,9 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
   invisible();
 }
 # Plot a pretty MassSpectrum
-prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL) {
+prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, add = F) {
   ms.old <- par(no.readonly = T);
-  par(mgp = c(1.9, 0.5, 0), cex = 1.5, las =  1, mar = c(3, 3, 1.5, 0.5));
+  par(mgp = c(2.2, 0.5, 0), cex = 1.5, las =  1, mar = c(3.5, 3.5, 1.5, 1));
   plot(ms, yaxt = "n", tck = -0.02, xlim = xlim, ylim = ylim,
        xlab = "Mass-to-Charge-State Ratio (Da)", ylab = "Counts (arb.)",
        main = "Mass Spectrum");
@@ -46,10 +46,16 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL) {
     ms.diff / 5
   );
   ms.tck[[2]] <- log10(rep(1:9, ms.lims[4]+1) * rep(10^(0:ms.lims[4]), each = 9));
-  invisible(lapply(1:2, function(x){axis(x, at = ms.tck[[x]], labels = NA, tck = -0.01)}));
+  invisible(lapply(1:2, function(x){
+    axis(x, at = ms.tck[[x]], labels = NA, tck = -0.01)
+  }));
   if (!is.na(rng)) {
     polyCurve(ms@mass, ms@intensity, rng$start, rng$end, col = rng$color);
     lines(ms);
   }
   par(ms.old);
+}
+
+plot3d.pp3 <- function(X) {
+  rgl::plot3d(as.data.frame(X$data))
 }

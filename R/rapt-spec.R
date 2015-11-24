@@ -18,7 +18,7 @@ rangeSpec <- function(form, charge = 1:4, resolution = 400) {
   )
   rng.raw <- lapply(rng.env, function(x){
     lapply(x, function(y){
-      range(subset(y, select = "m/z", subset = "abundance" > 20))
+      range(subset(y, select = "m/z", subset = "abundance" > 20)) # Allow user specification
     })
   })
   rng.dat <- lapply(charge, function(x){
