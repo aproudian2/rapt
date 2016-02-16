@@ -45,7 +45,7 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
 {
   if (missing(f) || (is.numeric(f) && length(f) == 1))
-    return(runifpoint(n, win, giveup, nsim = nsim, drop = drop))
+    return(runifpoint3(n, nsim = nsim, drop = drop))
   if (!is.function(f) && !is.im(f))
     stop(paste(sQuote("f"), "must be  a function"))
   verifyclass(win, "box3")
@@ -260,4 +260,10 @@ sample.pp3 <- function(X, size){
   sam.pts <- sample(sam.lab, size)
   sam.dat <- X[sam.pts]
   return(sam.dat)
+}
+
+nmers <- function(sam, parent, n = 2) {
+  nmer.ind <- nncross(sam, parent, what = "which", k = 1:n)
+  nmer.dat <- parent[unlist(nmer.ind)]
+  return(nmer.dat)
 }
