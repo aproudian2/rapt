@@ -45,7 +45,7 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
 {
   if (missing(f) || (is.numeric(f) && length(f) == 1))
-    return(runifpoint3(n, nsim = nsim, drop = drop))
+    return(runifpoint3(n, domain = win, nsim = nsim, drop = drop))
   if (!is.function(f) && !is.im(f))
     stop(paste(sQuote("f"), "must be  a function"))
   verifyclass(win, "box3")
@@ -168,7 +168,8 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
   names(resultlist) <- paste("Simulation", 1:nsim)
   return(as.anylist(resultlist))
 }
-# Transform a matrix of integer indices to spatial coordinates for a specified lattice type
+# Transform a matrix of integer indices to spatial coordinates for a specified
+# lattice type
 latticeVectors <- function(indices, a = 1, lattice = "sc") {
   indices <- as.matrix(indices)
   if (lattice == "sc") {
@@ -255,13 +256,15 @@ rjitter3 <- function(X, domain = box3()) {
 }
 
 # Extends the sample function from "base" to handle pp3
-sample.pp3 <- function(X, size){
+sample.pp3 <- function(X, size) {
   sam.lab <- rownames(as.data.frame(X$data))
   sam.pts <- sample(sam.lab, size)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
 
+# Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
+# sampled point pattern from its parent distribution
 nmers <- function(sam, parent, n = 2) {
   nmer.ind <- nncross(sam, parent, what = "which", k = 1:n)
   nmer.dat <- parent[unlist(nmer.ind)]
