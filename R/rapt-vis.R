@@ -56,6 +56,6 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, add = F) {
   par(ms.old);
 }
 
-plot3d.pp3 <- function(X) {
-  rgl::plot3d(as.data.frame(X$data))
+plot3d.pp3 <- function(X, ...) {
+  rgl::plot3d(as.data.frame(X$data), ...)
 }
