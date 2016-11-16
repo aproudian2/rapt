@@ -2,44 +2,6 @@
 # This file contains methods for simulating APT data
 #
 
-# Extends the superimpose function from "SpatStat" to handle pp3
-superimpose.pp3 <- function(..., W = NULL, check = F) {
-  input.list <- list(...)
-  df.list <- lapply(input.list, as.data.frame)
-  df.comb <- Reduce(rbind, df.list)
-  out.pp3 <-  createSpat(df.comb, win = W)
-  return(out.pp3)
-}
-# Extends the shift function from "SpatStat" to handle pp3
-shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
-{
-  verifyclass(X, "pp3")
-  if (!is.null(origin)) {
-    if (!missing(vec))
-      warning("argument vec ignored; overruled by argument origin")
-    if (is.numeric(origin)) {
-      locn <- origin
-    }
-    else if (is.character(origin)) {
-      origin <- pickoption("origin", origin,
-                           c(midpoint = "midpoint", bottomleft = "bottomleft"))
-      W <- X$domain
-      locn <- switch(origin, midpoint = {
-        c(mean(W$domain$xrange), mean(W$domain$yrange), mean(W$domain$zrange))
-      }, bottomleft = {
-        c(W$domain$xrange[1], W$domain$yrange[1], W$domain$zrange[1])
-      })
-    }
-    else stop("origin must be a character string or a numeric vector")
-    vec <- -locn
-  }
-  Y <- pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
-           xrange = X$domain$xrange + vec[1],
-           yrange = X$domain$yrange + vec[2],
-           zrange = X$domain$zrange + vec[3])
-  attr(Y, "lastshift") <- vec
-  return(Y)
-}
 # Extends the rpoint function from "SpatStat" to handle pp3
 rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
@@ -199,25 +161,6 @@ latticeVectors <- function(indices, a = 1, lattice = "sc") {
   lat.dat <- t(lat.dat)
   return(lat.dat)
 }
-# Extends the inside method to the pp3 class
-inside.pp3 <- function(points, domain = NULL) {
-  if(is.null(domain)) {
-    domain <- points$domain
-  }
-  if (length(points) == 0)
-    return(logical(0))
-  xr <- domain$xrange
-  yr <- domain$yrange
-  zr <- domain$zrange
-  x <- points$data$x
-  y <- points$data$y
-  z <- points$data$z
-  eps <- sqrt(.Machine$double.eps)
-  frameok <- (x >= xr[1] - eps) & (x <= xr[2] + eps) &
-             (y >= yr[1] - eps) & (y <= yr[2] + eps) &
-             (z >= zr[1] - eps) & (z <= zr[2] + eps)
-  return(frameok)
-}
 # Creates a spatial region filled with lattice points of the specified type
 lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   lat.xrange <- round(domain$xrange / a)
@@ -253,14 +196,6 @@ rjitter3 <- function(X, domain = box3()) {
                  (z > W$zrange[1] & z < W$zrange[2])
   )
   return(ok)
-}
-
-# Extends the sample function from "base" to handle pp3
-sample.pp3 <- function(X, size) {
-  sam.lab <- rownames(as.data.frame(X$data))
-  sam.pts <- sample(sam.lab, size)
-  sam.dat <- X[sam.pts]
-  return(sam.dat)
 }
 
 # Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
