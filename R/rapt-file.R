@@ -3,7 +3,11 @@
 #
 
 ### Load Data ###
-# Read a POS file (from IVAS reconstruction) into a data frame
+# Create generic for .ato and .pos
+#' Read a POS file.
+#'
+#' \code{readPOS} reads a POS file (from IVAS) into a data frame
+#'
 readPOS <- function(filepath) {
   pos.len <- file.info(filepath)['size'] / 4;
   pos.len <- as.numeric(pos.len);
@@ -20,7 +24,10 @@ readPOS <- function(filepath) {
   )
   return(pos.dat);
 }
-# Read an ATO file (from IVAS reconstruction) into a data frame
+#' Read an ATO file
+#'
+#' \code{readATO} reads an ATO file (from IVAS) into a data frame
+#'
 readATO <- function(filepath) {
   ato.len <- file.info(filepath)['size'] / 4;
   ato.len <- as.numeric(ato.len);
@@ -32,7 +39,8 @@ readATO <- function(filepath) {
   );
   ato.mat <- matrix(ato.raw, ncol = 14, byrow = T);
   ato.dat <- as.data.frame(ato.mat);
-  names(ato.dat) <- c("x", "y", "z", "mass", "clusID", "pIndex", "Vdc", "TOF", "dx", "dy", "Vp", "shank", "FouR", "FouI");
+  names(ato.dat) <- c("x", "y", "z", "mass", "clusID", "pIndex", "Vdc",
+                      "TOF", "dx", "dy", "Vp", "shank", "FouR", "FouI");
   ato.name <- sub(".ato", "", basename(filepath));
   attr(ato.dat, "metaData") <- list(
     name = ato.name
@@ -55,6 +63,7 @@ readForm <- function(filepath) {
 }
 ### Condition Data ###
 # Create a pp3 object (from package "spatstat") from a pos data frame
+## Add ability to specify marks
 createSpat <- function(pos, win = NULL) {
   pp3.box <- win;
   if(is.null(win)) {
@@ -64,9 +73,13 @@ createSpat <- function(pos, win = NULL) {
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
   return(pp3.dat);
 }
+# Stub for creating a ppp object (from package "spatstat") from an ato data
+# frame, using detector space coordinates
+createDet <- function(ato, win = NULL) {
+}
 # Create a MassSpectrum object (from package "MALDIquant") from a pos data frame
 createSpec <- function(pos, res = 0.001) {
-  ms.range <- range(pos["mass"]);
+  ms.range <- range(pos[,"mass"]);
   ms.range <- ms.range + c(-res, res);
   ms.breaks <- seq(ms.range[1], ms.range[2], res)
   ms.hist <- hist(pos[,"mass"], ms.breaks, plot = F);
