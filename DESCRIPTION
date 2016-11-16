@@ -1,7 +1,7 @@
 Package: rapt
 Type: Package
 Title: Atom Probe Tomography Analysis
-Version: 0.0.1
+Version: 0.1.2
 Date: 2015-07-22
 Authors@R: person("Andrew", "Proudian", email = "aproudia@mines.edu",
   role = c("aut", "cre"))
@@ -12,6 +12,8 @@ Depends:
   spatstat (>= 1.42),
   MALDIquant (>= 1.12)
 Imports:
-  enviPat (>= 2.0)
+  enviPat (>= 2.0),
+  pracma (>= 1.8),
+  parallel (>= 3.2)
 Suggests:
   rgl (>= 0.95.1201)
