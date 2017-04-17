@@ -186,6 +186,13 @@ inside.pp3 <- function(points, domain = NULL) {
     (z >= zr[1] - eps) & (z <= zr[2] + eps)
   return(frameok)
 }
+# Extends the sample function from "base" to handle ppp
+sample.ppp <- function(X, size) {
+  sam.n <- npoints(X)
+  sam.pts <- sample(1:sam.n, size)
+  sam.dat <- X[sam.pts]
+  return(sam.dat)
+}
 # Extends the sample function from "base" to handle pp3
 sample.pp3 <- function(X, size) {
   sam.lab <- rownames(as.data.frame(X$data))
