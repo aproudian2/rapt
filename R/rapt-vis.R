@@ -3,9 +3,11 @@
 #
 
 ### Mass Spectrum ###
-# Shade regions under a MassSpectrum
-# Based on Gavin Simpson:
-# www.fromthebottomoftheheap.net/2013/01/11/shading-regions-under-a-curve
+#' Shade regions under a \code{\link[MALDIquant]{MassSpectrum}}.
+#'
+#' See
+#' \url{www.fromthebottomoftheheap.net/2013/01/11/shading-regions-under-a-curve}
+#' for more details
 # Add ability to shade regions
 polyCurve <- function(x, y, from, to, n = 50, miny,
                       col = "red", border = NA) {
@@ -28,8 +30,8 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
          MoreArgs = list(fun = interp, n = n, miny = miny));
   invisible();
 }
-# Plot a pretty MassSpectrum
-# This assumes a log10 transformed spectrum
+#' Plot a pretty \code{\link[MALDIquant]{MassSpectrum}}.
+# Lift the assumption of a log10 transformed spectrum.
 prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
                        main = "Mass Spectrum", hold.par = F) {
   if(log10(max(ms@intensity)) > 1) {
@@ -69,8 +71,9 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
 }
 
 ### Spatial Points ###
-# Plot a pp3 in a manipulatable 3D plot
-# (requires the rgl library)
+#' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
+#'
+#' (requires the rgl library)
 plot3d.pp3 <- function(X, ...) {
   rgl::plot3d(as.data.frame(X$data), ...)
 }

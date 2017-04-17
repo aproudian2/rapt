@@ -1,8 +1,9 @@
 #
-# This file contains methods for simulating APT data
+# This file contains methods for simulating APT data.
 #
 
-# Extends the rpoint function from "SpatStat" to handle pp3
+#### rpoint3 ####
+#' Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.
 rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
 {
@@ -61,7 +62,9 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
   names(result) <- paste("Simulation", 1:nsim)
   return(as.anylist(result))
 }
-# Extends the rPoissonCluster function from "SpatStat" to pp3
+#### rPoissonCluster3 ####
+#' Extends \code{\link[spatstat]{rPoissonCluster}} to
+#' \code{\link[spatstat]{pp3}}.
 rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
                              nsim = 1, drop = T)
 {
@@ -130,8 +133,9 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
   names(resultlist) <- paste("Simulation", 1:nsim)
   return(as.anylist(resultlist))
 }
-# Transform a matrix of integer indices to spatial coordinates for a specified
-# lattice type
+#### latticeVectors ####
+#' Transform a matrix of integer indices to spatial coordinates for a specified
+#' lattice type
 latticeVectors <- function(indices, a = 1, lattice = "sc") {
   indices <- as.matrix(indices)
   if (lattice == "sc") {
@@ -161,7 +165,8 @@ latticeVectors <- function(indices, a = 1, lattice = "sc") {
   lat.dat <- t(lat.dat)
   return(lat.dat)
 }
-# Creates a spatial region filled with lattice points of the specified type
+#### lattice ####
+#' Creates a spatial region filled with lattice points of the specified type
 lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   lat.xrange <- round(domain$xrange / a)
   lat.yrange <- round(domain$yrange / a)
@@ -178,7 +183,8 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   lat.pp3 <- lat.pp3[ok]
   return(lat.pp3)
 }
-# Extends the rjitter function from "SpatStat" to handle pp3
+#### rjitter3 ####
+#' Extends the \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
 rjitter3 <- function(X, domain = box3()) {
   verifyclass(X, "pp3")
   nX <- npoints(X)
@@ -197,9 +203,9 @@ rjitter3 <- function(X, domain = box3()) {
   )
   return(ok)
 }
-
-# Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
-# sampled point pattern from its parent distribution
+#### nmers ####
+#' Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
+#' sampled point pattern from its parent distribution.
 nmers <- function(sam, parent, n = 2) {
   nmer.ind <- nncross(sam, parent, what = "which", k = 1:n)
   nmer.dat <- parent[unlist(nmer.ind)]

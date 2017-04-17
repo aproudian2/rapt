@@ -8,6 +8,8 @@
 #'
 #' \code{readPOS} reads a POS file (from IVAS) into a data frame.
 #'
+#' @param filepath A string. The file path to the POS file.
+#' @seealso \code{\link{readPOS}}
 readPOS <- function(filepath) {
   pos.len <- file.info(filepath)['size'] / 4;
   pos.len <- as.numeric(pos.len);
@@ -24,10 +26,12 @@ readPOS <- function(filepath) {
   )
   return(pos.dat);
 }
-#' Read an ATO file
+#' Read an ATO file.
 #'
 #' \code{readATO} reads an ATO file (from IVAS) into a data frame.
 #'
+#' @param filepath A string. The file path to the ATO file.
+#' @seealso \code{\link{readPOS}}
 readATO <- function(filepath) {
   ato.len <- file.info(filepath)['size'] / 4;
   ato.len <- as.numeric(ato.len);
@@ -48,7 +52,7 @@ readATO <- function(filepath) {
   close(ato.file);
   return(ato.dat);
 }
-# Create a list of mass spec formulas from a table (class "cform")
+#' Create a list of mass spec formulas from a table (class \code{cform}).
 readForm <- function(filepath) {
   data("isotopes");
   form.dat <- read.csv(filepath, stringsAsFactors = F);
@@ -64,8 +68,10 @@ readForm <- function(filepath) {
   }
 }
 ### Condition Data ###
-# Create a pp3 object (from package "spatstat") from a pos data frame
 ## Add ability to specify marks
+#' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
+#'
+#' @seealso \code{\link{readPOS}}, \code{\link{readATO}}
 createSpat <- function(pos, win = NULL) {
   pp3.box <- win;
   if(is.null(win)) {
@@ -75,11 +81,14 @@ createSpat <- function(pos, win = NULL) {
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
   return(pp3.dat);
 }
-# Stub for creating a ppp object (from package "spatstat") from an ato data
+# Stub for creating a ppp object (from package "spatstat") from an ATO data
 # frame, using detector space coordinates
 createDet <- function(ato, win = NULL) {
 }
-# Create a MassSpectrum object (from package "MALDIquant") from a pos data frame
+#' Create a \code{\link[MALDIquant]{MassSpectrum}} object from a POS or ATO
+#' data frame.
+#'
+#' @seealso \code{\link{readPOS}}, \code{\link{readATO}}
 createSpec <- function(pos, res = 0.001) {
   ms.max <- max(pos[,"mass"])
   ms.max <- ms.max + res

@@ -1,10 +1,6 @@
 #
 # This file contains spatial processing functions for APT data
 #
-rownames.pp3 <- function(pat) {
-  dat <- rownames(as.data.frame(pat))
-  return(dat)
-}
 
 ## Shape Subsets ##
 cylinder <- function(x, ...) {
@@ -16,6 +12,7 @@ cylinder.pp3 <- function(pat, ind, r = 1) {
   dat <- subset(pat, subset = r > sqrt((x-cyl)^2 + (y-cylY)^2))
   return(dat)
 }
+#### cone ####
 cone <- function(x, ...) {
   UseMethod('cone', x)
 }
@@ -53,6 +50,7 @@ pointDist <- function(pat) {
   dat <- dat[dat > 0]
   return(dat)
 }
+#### coneRDF ####
 coneRDF <- function(x, ...) {
   UseMethod('coneRDF', x)
 }
@@ -78,8 +76,8 @@ coneRDF.pp3 <- function(pat, cl, r = 1, phi = pi/4, nrval = 128) {
   rdf.dat <- data.frame(r = rdf.r, g = rdf.g)
   return(rdf.dat)
 }
-
-# Extends marktable (from 'Spatstat') to pp3
+#### marktable.pp3 ####
+#' Extends \code{\link[spatstat]{marktable} to \code{\link[spatstat]{pp3}}.
 marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE)
 {
   verifyclass(X, "pp3")
@@ -127,9 +125,9 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE)
   }
   return(mat)
 }
-
-# Extends the superimpose function from "SpatStat" to handle pp3
-## Add ability to superimpose with marks
+#### superimpose.pp3 ####
+#' Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
+# Add ability to superimpose with marks
 superimpose.pp3 <- function(..., W = NULL, check = F) {
   input.list <- list(...)
   df.list <- lapply(input.list, as.data.frame)
@@ -137,7 +135,8 @@ superimpose.pp3 <- function(..., W = NULL, check = F) {
   out.pp3 <-  createSpat(df.comb, win = W)
   return(out.pp3)
 }
-# Extends the shift function from "SpatStat" to handle pp3
+#### shift.pp3 ####
+#' Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
 shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 {
   verifyclass(X, "pp3")
@@ -167,7 +166,8 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
   attr(Y, "lastshift") <- vec
   return(Y)
 }
-# Extends the inside method to the pp3 class
+#### inside.pp3 ####
+#' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]pp3}}.
 inside.pp3 <- function(points, domain = NULL) {
   if(is.null(domain)) {
     domain <- points$domain
@@ -186,21 +186,24 @@ inside.pp3 <- function(points, domain = NULL) {
     (z >= zr[1] - eps) & (z <= zr[2] + eps)
   return(frameok)
 }
-# Extends the sample function from "base" to handle ppp
+#### sample.ppp ####
+#' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
 sample.ppp <- function(X, size) {
   sam.n <- npoints(X)
   sam.pts <- sample(1:sam.n, size)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
-# Extends the sample function from "base" to handle pp3
+#### sample.pp3 ####
+#' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
 sample.pp3 <- function(X, size) {
   sam.lab <- rownames(as.data.frame(X$data))
   sam.pts <- sample(sam.lab, size)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
-# Finds clusters by NN adjacency marks
+#### findClusters.pp3 ####
+#' Finds clusters by NN adjacency marks.
 findClusters.pp3 <- function(X, mark, k = 1) {
   if(!(mark %in% marks(X)))
     stop('The specified mark does not exist in the pattern')
@@ -227,7 +230,8 @@ findClusters.pp3 <- function(X, mark, k = 1) {
   })
   return(fCl)
 }
-# Extends intensity (from 'Spatstat') to pp3
+#### intensity.pp3 ####
+#' Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
 intensity.pp3 <- function(X, weights = NULL) {
   n <- npoints(X)
   a <- volume(domain(X))
@@ -241,4 +245,11 @@ intensity.pp3 <- function(X, weights = NULL) {
     return(answer)
   } else
     warning('Weights is not yet implemented for pp3')
+}
+
+#### rownames.pp3 ####
+#' Extends \code{\link[base]{rownames}} to \code{\link[spatstat]{pp3}}.
+rownames.pp3 <- function(pat) {
+  dat <- rownames(as.data.frame(pat))
+  return(dat)
 }

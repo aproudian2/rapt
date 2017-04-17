@@ -1,7 +1,8 @@
 #
-# This file contains methods for reconstructing APT data
+# This file contains methods for reconstructing APT data.
 #
 
+#### paraOrthoX ####
 paraOrthoX <- function(x, y, a, d) {
   if(x == 0)
     x <- 1e-12
@@ -16,6 +17,7 @@ paraOrthoX <- function(x, y, a, d) {
                (8 * d^2 + 9*(x^2 + y^2)))))^(1/3))
   return(x.dat)
 }
+#### paraOrthoY ####
 paraOrthoY <- function(x, y, a, d) {
   if(x == 0)
     x <- 1e-12
@@ -30,6 +32,7 @@ paraOrthoY <- function(x, y, a, d) {
            (8*d^2 + 9*(x^2 + y^2)))))^(1/3))
   return(y.dat)
 }
+#### paraOrthoRec ####
 paraOrthoRec <- function(ato, a, d = 90e7, icf = 1, k = 0) {
   para.x <- apply(ato[,c('dx','dy')], 1, function(ato) {
     paraOrthoX(ato[1]*1e8, ato[2]*1e8, a = a, d = d)
@@ -47,7 +50,7 @@ paraOrthoRec <- function(ato, a, d = 90e7, icf = 1, k = 0) {
   para.dat <- as.data.frame(t(para.dat))
   return(para.dat)
 }
-
+#### paraRec ####
 paraRec <- function(ato, a, d = 90e7, icf = 1) {
   para.ind <- rownames(ato)
   para.dr <- sqrt(ato[,'dx']^2 + ato[,'dy']^2)
