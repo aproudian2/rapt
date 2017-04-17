@@ -6,6 +6,12 @@
 \usage{
 readPOS(filepath)
 }
+\arguments{
+\item{filepath}{A string. The file path to the POS file.}
+}
 \description{
 \code{readPOS} reads a POS file (from IVAS) into a data frame.
+}
+\seealso{
+\code{\link{readPOS}}
 }

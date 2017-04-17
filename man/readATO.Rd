@@ -2,10 +2,16 @@
 % Please edit documentation in R/rapt-file.R
 \name{readATO}
 \alias{readATO}
-\title{Read an ATO file}
+\title{Read an ATO file.}
 \usage{
 readATO(filepath)
 }
+\arguments{
+\item{filepath}{A string. The file path to the ATO file.}
+}
 \description{
 \code{readATO} reads an ATO file (from IVAS) into a data frame.
+}
+\seealso{
+\code{\link{readPOS}}
 }

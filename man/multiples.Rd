@@ -12,8 +12,8 @@ multiples(mind)
 }
 \value{
 A vector of integers corresponding to the multiplicity of each hit in
-the ATO that generated the list. The order corresponds to the order in the
-ATO.
+  the ATO that generated the list. The order corresponds to the order in the
+  ATO.
 }
 \description{
 \code{multiples} takes the output list of first hit indicies returned by
