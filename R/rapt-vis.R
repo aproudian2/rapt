@@ -30,14 +30,14 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
 }
 # Plot a pretty MassSpectrum
 # This assumes a log10 transformed spectrum
-prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, add = F,
-                       main = "Mass Spectrum") {
+prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
+                       main = "Mass Spectrum", hold.par = F) {
   if(log10(max(ms@intensity)) > 1) {
     stop("prettyPlot should only be used with log10 transformed spectra.")
   }
   ms.old <- par(no.readonly = T);
   par(mgp = c(2.2, 0.5, 0), cex = 1.5, las =  1, mar = c(3.5, 3.5, 1.5, 1));
-  plot(ms, yaxt = "n", tck = -0.02, xlim = xlim, ylim = ylim,
+  plot(ms, yaxt = "n", tck = -0.02, xlim = xlim, ylim = ylim, lwd = lwd,
        xlab = "Mass-to-Charge-State Ratio (Da)", ylab = "Counts (arb.)",
        main = main);
   ms.lims <- par("usr");
@@ -54,7 +54,8 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, add = F,
     max(ms.tck[[1]] + ms.diff),
     ms.diff / 5
   );
-  ms.tck[[2]] <- log10(rep(1:9, ms.lims[4]+1) * rep(10^(0:ms.lims[4]), each = 9));
+  ms.tck[[2]] <- log10(rep(1:9, ms.lims[4]+1) * rep(10^(0:ms.lims[4]),
+                                                    each = 9));
   invisible(lapply(1:2, function(x){
     axis(x, at = ms.tck[[x]], labels = NA, tck = -0.01)
   }));
@@ -62,7 +63,9 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, add = F,
     polyCurve(ms@mass, ms@intensity, rng$start, rng$end, col = rng$color);
     lines(ms);
   }
-  par(ms.old);
+  if (hold.par){
+    par(ms.old);
+  }
 }
 
 ### Spatial Points ###
