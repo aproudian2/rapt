@@ -6,7 +6,7 @@
 # Create generic for .ato and .pos
 #' Read a POS file.
 #'
-#' \code{readPOS} reads a POS file (from IVAS) into a data frame
+#' \code{readPOS} reads a POS file (from IVAS) into a data frame.
 #'
 readPOS <- function(filepath) {
   pos.len <- file.info(filepath)['size'] / 4;
@@ -26,7 +26,7 @@ readPOS <- function(filepath) {
 }
 #' Read an ATO file
 #'
-#' \code{readATO} reads an ATO file (from IVAS) into a data frame
+#' \code{readATO} reads an ATO file (from IVAS) into a data frame.
 #'
 readATO <- function(filepath) {
   ato.len <- file.info(filepath)['size'] / 4;
@@ -52,10 +52,12 @@ readATO <- function(filepath) {
 readForm <- function(filepath) {
   data("isotopes");
   form.dat <- read.csv(filepath, stringsAsFactors = F);
-  form.chk <- which(check_chemform(isotopes, form.dat[, "formula"])[, "warning"]);
+  form.chk <- which(
+    check_chemform(isotopes, form.dat[, "formula"])[, "warning"]);
   if(length(form.chk) == 0) {
     form.dat <- t(form.dat);
-    class(form.dat) <- c("matrix", "cform")
+    form.dat <- as.data.frame(form.dat)
+    class(form.dat) <- c("data.frame", "cform")
     return(form.dat);
   }else {
     print(paste("The formulae:", form.dat[form.chk], "are not valid."));
@@ -79,15 +81,27 @@ createDet <- function(ato, win = NULL) {
 }
 # Create a MassSpectrum object (from package "MALDIquant") from a pos data frame
 createSpec <- function(pos, res = 0.001) {
-  ms.range <- range(pos[,"mass"]);
-  ms.range <- ms.range + c(-res, res);
-  ms.breaks <- seq(ms.range[1], ms.range[2], res)
+  ms.max <- max(pos[,"mass"])
+  ms.max <- ms.max + res
+  ms.min <- min(pos[,"mass"])
+  ms.min <- ms.min - res
+  ms.breaks <- seq(ms.min, ms.max, res)
   ms.hist <- hist(pos[,"mass"], ms.breaks, plot = F);
   ms.dat <- createMassSpectrum(
     ms.hist$mids, ms.hist$counts,
     metaData = attr(pos, "metaData")
   );
   return(ms.dat);
+}
+createForm <- function(df) {
+  form.chk <- which(
+    check_chemform(isotopes, df[, "formula"])[, "warning"]);
+  if(length(form.chk) == 0) {
+    class(df) <- c("data.frame", "cform")
+    return(df);
+  }else {
+    print(paste("The formulae:", form.dat[form.chk], "are not valid."));
+  }
 }
 ### Write Data ###
 # Export methods?
