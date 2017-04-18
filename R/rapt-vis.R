@@ -1,13 +1,13 @@
 #
-# This file contains methods for visualizing APT data
+# This file contains methods for visualizing APT data.
 #
 
-### Mass Spectrum ###
+#### polyCurve ####
 #' Shade regions under a \code{\link[MALDIquant]{MassSpectrum}}.
 #'
-#' See
+#' @seealso
 #' \url{www.fromthebottomoftheheap.net/2013/01/11/shading-regions-under-a-curve}
-#' for more details
+#' for more details.
 # Add ability to shade regions
 polyCurve <- function(x, y, from, to, n = 50, miny,
                       col = "red", border = NA) {
@@ -30,6 +30,7 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
          MoreArgs = list(fun = interp, n = n, miny = miny));
   invisible();
 }
+#### prettyPlot ####
 #' Plot a pretty \code{\link[MALDIquant]{MassSpectrum}}.
 # Lift the assumption of a log10 transformed spectrum.
 prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
@@ -69,8 +70,7 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
     par(ms.old);
   }
 }
-
-### Spatial Points ###
+#### plot3d.pp3 ####
 #' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
 #'
 #' (requires the rgl library)
