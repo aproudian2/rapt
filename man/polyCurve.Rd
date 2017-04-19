@@ -7,7 +7,9 @@
 polyCurve(x, y, from, to, n = 50, miny, col = "red", border = NA)
 }
 \description{
-See
+Shade regions under a \code{\link[MALDIquant]{MassSpectrum}}.
+}
+\seealso{
 \url{www.fromthebottomoftheheap.net/2013/01/11/shading-regions-under-a-curve}
-for more details
+for more details.
 }
