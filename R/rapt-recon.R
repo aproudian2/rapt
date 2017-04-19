@@ -3,6 +3,9 @@
 #
 
 #### paraOrthoX ####
+#' Internal function used by \code{\link{paraOrthoRec}}.
+#'
+#' @seealso \code{\link{paraOrthoRec}}
 paraOrthoX <- function(x, y, a, d) {
   if(x == 0)
     x <- 1e-12
@@ -18,6 +21,9 @@ paraOrthoX <- function(x, y, a, d) {
   return(x.dat)
 }
 #### paraOrthoY ####
+#' Internal function used by \code{\link{paraOrthoRec}}.
+#'
+#' @seealso \code{\link{paraOrthoRec}}
 paraOrthoY <- function(x, y, a, d) {
   if(x == 0)
     x <- 1e-12
