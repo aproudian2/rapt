@@ -177,3 +177,10 @@ rownames.pp3 <- function(pat) {
   dat <- rownames(as.data.frame(pat))
   return(dat)
 }
+#### plot3d.pp3 ####
+#' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
+#'
+#' (requires the rgl library)
+plot3d.pp3 <- function(X, ...) {
+  rgl::plot3d(as.data.frame(X$data), ...)
+}

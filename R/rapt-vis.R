@@ -72,14 +72,6 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
     par(ms.old);
   }
 }
-#### plot3d.pp3 ####
-#' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
-#'
-#' (requires the rgl library)
-plot3d.pp3 <- function(X, ...) {
-  rgl::plot3d(as.data.frame(X$data), ...)
-}
-
 #### detectorGIF ####
 #' Create a GIF that steps through detector hits.
 #'
