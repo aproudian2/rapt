@@ -32,6 +32,8 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
 }
 #### prettyPlot ####
 #' Plot a pretty \code{\link[MALDIquant]{MassSpectrum}}.
+#'
+#' \code{prettyPlot}
 # Lift the assumption of a log10 transformed spectrum.
 prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
                        main = "Mass Spectrum", hold.par = F) {
@@ -77,3 +79,33 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
 plot3d.pp3 <- function(X, ...) {
   rgl::plot3d(as.data.frame(X$data), ...)
 }
+
+#### detectorGIF ####
+#' Create a GIF that steps through detector hits.
+#'
+#' \code{detectorGIF} generates a GIF that shows the positions of detector hits
+#'
+detectorGIF <- function(ato, len = 100000, range = NULL,
+                        size = 7, name = 'detector', path = './', save.pdf = F,
+                        delay = 10, ...) {
+  gif.wd <- getwd()
+  setwd(path)
+  gif.pdf <- paste0(name, '.pdf')
+  gif.gif <- paste0(name, '.gif')
+  pdf(file = gif.pdf, width = size, height = size, bg = 'white')
+  gif.n <- floor(dim(ato)[1]/len)
+  for(i in 0:gif.n) {
+    with(ato[i*len+seq_len(len),],
+         plot(dy, dx, asp = 1, ... = ...))
+  }
+  dev.off()
+  # convert pngs to one gif using ImageMagick
+  gif.sys <- paste('convert - delay', delay, '-background white',
+                   '-alpha background -density 100 +antialias',
+                   gif.pdf, gif.gif)
+  system(gif.sys)
+  if(!save.pdf)
+    file.remove(list.files(pattern = gif.pdf))
+  setwd(gif.wd)
+}
+
