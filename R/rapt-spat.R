@@ -2,7 +2,7 @@
 # This file contains spatial processing functions for APT data
 #
 
-## Shape Subsets ##
+#### cylinder ####
 cylinder <- function(x, ...) {
   UseMethod('cylinder', x)
 }
@@ -39,7 +39,7 @@ cone.ppp <- function(pat, r = 1, phi = pi/4) {
   )
   return(dat)
 }
-
+#### pointDist ####
 pointDist <- function(pat) {
   orig <- as.data.frame(pat[1])
   pat <- as.data.frame(pat)
@@ -77,7 +77,9 @@ coneRDF.pp3 <- function(pat, cl, r = 1, phi = pi/4, nrval = 128) {
   return(rdf.dat)
 }
 #### marktable.pp3 ####
-#' Extends \code{\link[spatstat]{marktable} to \code{\link[spatstat]{pp3}}.
+#' Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.
+#'
+#' \code{marktable.pp3}
 marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE)
 {
   verifyclass(X, "pp3")
