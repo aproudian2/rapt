@@ -57,7 +57,7 @@ paraRec <- function(ato, a, d = 90e7, icf = 1) {
   para.dr <- 1e8 * para.dr
   para.theta <- atan2(ato[,'dy'], ato[,'dx'])
   para.fun <- function(r) {
-    1/sqrt(2*a) * (r^2 + (d+4*a*d^2)/(4*a))^(1/4)
+    sqrt((sqrt(16 * a^2 * r^2 + (1 + 4*a*d)^2) - 4*a*d - 1) / (8*a^2))
   }
   para.r <- para.fun(para.dr)
   para.r <- icf * para.r
