@@ -75,7 +75,7 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
 #### detectorGIF ####
 #' Create a GIF that steps through detector hits.
 #'
-#' \code{detectorGIF} generates a GIF that shows the positions of detector hits
+#' \code{detectorGIF} generates a GIF that shows the positions of detector hits.
 #'
 detectorGIF <- function(ato, len = 100000, range = NULL,
                         size = 7, name = 'detector', path = './', save.pdf = F,

@@ -8,5 +8,5 @@ prettyPlot(ms, rng = NA, xlim = NULL, ylim = NULL, lwd = 1,
   main = "Mass Spectrum", hold.par = F)
 }
 \description{
-Plot a pretty \code{\link[MALDIquant]{MassSpectrum}}.
+\code{prettyPlot}
 }
