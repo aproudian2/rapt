@@ -2,8 +2,7 @@
 #' Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.
 #'
 #' \code{marktable.pp3}
-marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE)
-{
+marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
   verifyclass(X, "pp3")
   if (!is.marked(X, dfok = FALSE))
     stop("point pattern has no marks")
@@ -51,6 +50,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE)
 }
 #### superimpose.pp3 ####
 #' Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
+#' @export
 # Add ability to superimpose with marks
 superimpose.pp3 <- function(..., W = NULL, check = F) {
   input.list <- list(...)
@@ -92,6 +92,7 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 }
 #### inside.pp3 ####
 #' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]pp3}}.
+#' @export
 inside.pp3 <- function(points, domain = NULL) {
   if(is.null(domain)) {
     domain <- points$domain
