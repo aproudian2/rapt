@@ -17,8 +17,8 @@ Imports:
   parallel (>= 3.2),
   gtools (>= 3.5),
   Hmisc (>= 3.17),
-  ash(>= 1.0)
-  Rcpp (>=0.12)
+  ash(>= 1.0),
+  Rcpp (>= 0.12)
 LinkingTo:
   Rcpp
 Suggests:
