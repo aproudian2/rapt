@@ -5,7 +5,7 @@
 \title{Automatically define ranges from a \code{\link[MALDIquant]{MassPeaks}}
 object.}
 \usage{
-rangePeaks(spec, peaks, cut = 0.1)
+rangePeaks(spec, peaks, cut = 0.1, sig = 1)
 }
 \description{
 Automatically define ranges from a \code{\link[MALDIquant]{MassPeaks}}

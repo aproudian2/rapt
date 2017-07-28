@@ -7,10 +7,20 @@ data frame.}
 \usage{
 createSpec(pos, res = 0.001)
 }
+\arguments{
+\item{pos}{A POS or ATO data frame.}
+
+\item{res}{The desired \code{\link[MALDIquant]{MassSpectrum}} resolution.}
+}
+\value{
+A \code{\link[MALDIquant]{MassSpectrum}} from the \code{mass} field
+  of the POS or ATO, with the resolution set by \code{res}.
+}
 \description{
 Create a \code{\link[MALDIquant]{MassSpectrum}} object from a POS or ATO
 data frame.
 }
 \seealso{
-\code{\link{readPOS}}, \code{\link{readATO}}
+\code{\link{readPOS}}, \code{\link{readATO}},
+  \code{\link[MALDIquant]{MassSpectrum}}
 }

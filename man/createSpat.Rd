@@ -6,6 +6,13 @@
 \usage{
 createSpat(pos, win = NULL)
 }
+\arguments{
+\item{pos}{A POS or ATO data frame.}
+}
+\value{
+A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
+  the supplied POS or ATO.
+}
 \description{
 Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
 }

@@ -7,5 +7,7 @@
 readForm(filepath)
 }
 \description{
-Create a list of mass spec formulae from a table (class \code{cform}).
+\code{readForm} reads a CSV file of formulae into a data frame of class
+\code{cform}. The CSV should have headers specifying the name of the
+compound, its chemical formula, and optionally the color used for plotting.
 }

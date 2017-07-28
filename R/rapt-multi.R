@@ -21,6 +21,7 @@
 #'   cluster with \code{\link[parallel]{makeCluster}}.
 #' @seealso \code{\link{multiples}}, \code{\link{readATO}},
 #'   \code{\link[parallel]{makeCluster}}.
+#'   @export
 indexMultiples <- function(ato, cl.n = 3) {
   mu.ind <- sort(unique(
     c(which(diff(ato$pIndex) == 0), which(diff(ato$pIndex) == 0) + 1L)
@@ -52,6 +53,7 @@ indexMultiples <- function(ato, cl.n = 3) {
 #'   the ATO that generated the list. The order corresponds to the order in the
 #'   ATO.
 #' @seealso \code{\link{indexMultiples}}
+#' @export
 multiples <- function(mind) {
   multi <- vector()
   full <- lapply(1:length(mind), function(n) {
@@ -82,6 +84,7 @@ multiples <- function(mind) {
 #' @param plot.it A logical scalar. Should the result be plotted?
 #' @return The output is the same as that of \code{\link[ash]{ash2}}.
 #' @seealso \code{\link{indexMultiples}}, \code{\link[ash]{ash2}}
+#' @export
 saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
   rng <- end - begin
   if(rng <= 0)
@@ -123,4 +126,10 @@ saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
     par(new = F)
   }
   return(ash)
+}
+
+#### houghClean ####
+# Stub for Hough Transform cleaning of multiple hit noise
+houghClean <- function(sax) {
+  dat <- PET::hough(sax$z)
 }

@@ -57,6 +57,9 @@ paraOrthoRec <- function(ato, a, d = 90e7, icf = 1, k = 0) {
   return(para.dat)
 }
 #### paraRec ####
+#' Reconstruction using a parabolic tip shape assumption.
+#'
+#' @export
 paraRec <- function(ato, a, d = 90e7, icf = 1) {
   para.ind <- rownames(ato)
   para.dr <- sqrt(ato[,'dx']^2 + ato[,'dy']^2)
