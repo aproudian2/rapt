@@ -29,6 +29,7 @@ readPOS <- function(filepath) {
   )
   return(pos.dat);
 }
+
 #' Read an ATO file.
 #'
 #' \code{readATO} reads an ATO file (from IVAS) into a data frame.
@@ -56,6 +57,7 @@ readATO <- function(filepath) {
   close(ato.file)
   return(ato.dat)
 }
+
 #' Create a list of mass spec formulae from a table (class \code{cform}).
 #'
 #' \code{readForm} reads a CSV file of formulae into a data frame of class
@@ -64,16 +66,23 @@ readATO <- function(filepath) {
 readForm <- function(filepath) {
   form.dat <- read.csv(filepath, stringsAsFactors = F)
   form.chk <- which(
-    enviPat::check_chemform(rapt::isotopes, form.dat[, "formula"])[, "warning"])
+    enviPat::check_chemform(rapt::isotopes, form.dat[, 'formula'])[, 'warning'])
   if(length(form.chk) == 0) {
-    form.dat <- form.dat;
+    form.dat <- form.dat
     form.dat <- as.data.frame(form.dat)
     class(form.dat) <- c("data.frame", "cform")
     return(form.dat)
   }else {
-    print(paste("The formulae:", form.dat[form.chk], "are not valid."))
+    print(paste("The formulae:", form.dat[form.chk, 'formula'],
+                "are not valid."))
   }
 }
+
+#' Read an RNG file (from IVAS) into a RNG object
+readRNG <- function(rng) {
+
+}
+
 ### Condition Data ###
 ## Add ability to specify marks
 #' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
@@ -92,6 +101,7 @@ createSpat <- function(pos, win = NULL) {
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
   return(pp3.dat);
 }
+
 #' Create a \code{\link[spatstat]{ppp}} from an ATO.
 #'
 #' \code{createDet} generates a \code{\link[spatstat]{ppp}} of detector hits
@@ -111,6 +121,7 @@ createDet <- function(ato, window = NULL) {
   det.dat <- ppp(ato$dx, ato$dy, window = window)
   return(det.dat)
 }
+
 #' Create a \code{\link[MALDIquant]{MassSpectrum}} object from a POS or ATO
 #' data frame.
 #'
@@ -134,6 +145,7 @@ createSpec <- function(pos, res = 0.001) {
   );
   return(ms.dat);
 }
+
 createForm <- function(df) {
   form.chk <- which(
     check_chemform(isotopes, df[, "formula"])[, "warning"]);
