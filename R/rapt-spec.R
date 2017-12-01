@@ -58,6 +58,8 @@ rangeSpec <- function(cform, charge = 1:4, resolution = 400, thresh = 20) {
   })
   rng.dat <- do.call(rbind, unlist(rng.dat, recursive = F))
   rng.dat <- rng.dat[order(rng.dat$formula, rng.dat$charge),]
+  rng.dat <- cbind(rep(cform$name, each = length(charge)), rng.dat)
+  names(rng.dat) <- c('name', names(rng.dat)[-1])
   rownames(rng.dat) <- apply(rng.dat, 1, function(x){
     paste(c(x["formula"], x["charge"]), collapse = "+")
   })
@@ -69,11 +71,13 @@ rangeSpec <- function(cform, charge = 1:4, resolution = 400, thresh = 20) {
   # }
   return(rng.dat);
 }
+
 #### mergeRange ####
 #' Merge RNG objects
 mergeRange <- function(rng1, rng2) {
 
 }
+
 #### removeRange ####
 #' Remove ranges from an RNG
 removeRange <- function(rng, rem) {
@@ -87,6 +91,18 @@ removeRange <- function(rng, rem) {
 rangeCount <- function(pos, start, end) {
   n <- with(pos, nrow(pos[mass > start & mass < end,]))
   return(n)
+}
+
+#### cformCount ####
+#' Count the number of hits for each entry within a \code{RNG} object
+cformCount <- function(pos, cform) {
+  cts <- apply(cform, 1, function (x) {
+    rangeCount(pos, x['start'], x['end'])
+  })
+  tot <- sum(cts)
+  dat <- data.frame(counts = cts, fraction = cts/tot)
+  rownames(dat) <- names(cts)
+  return(dat)
 }
 
 #### refSpec ####
@@ -118,6 +134,7 @@ refSpec <- function(form, charge = 1:4, resolution = 400) {
   ref.dat <- createMassPeaks(ref.vdet[, "m/z"], ref.vdet[, "abundance"])
   return(ref.dat)
 }
+
 #### rangePeaks ####
 #' Automatically define ranges from a \code{\link[MALDIquant]{MassPeaks}}
 #' object.
@@ -149,6 +166,7 @@ rangePeaks <- function(spec, peaks, cut = 0.1, sig = 1) {
                         )
   return(rng.dat)
 }
+
 #### fragments ####
 #' Calculate all (combinatorically) possible fragments of a chemical formula.
 fragments <- function(chemform) {
