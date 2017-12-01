@@ -9,18 +9,21 @@
 #' \code{readPOS} reads a POS file (from IVAS) into a data frame.
 #'
 #' @param filepath A string. The file path to the POS file.
-#' @seealso \code{\link{readPOS}}
+#' @return A dataframe with columns corresponding to the x, y, and z positions
+#'   of the reconstruction and the mass-to-charge ratio.
+#' @seealso \code{\link{readATO}}
+#' @export
 readPOS <- function(filepath) {
-  pos.len <- file.info(filepath)['size'] / 4;
-  pos.len <- as.numeric(pos.len);
+  pos.len <- file.info(filepath)['size'] / 4
+  pos.len <- as.numeric(pos.len)
   pos.raw <- readBin(
-    filepath, what = "numeric",
-    size = 4, endian = "big", n = pos.len
-  );
-  pos.mat <- matrix(pos.raw, ncol = 4, byrow = T);
-  pos.dat <- as.data.frame(pos.mat);
-  names(pos.dat) <- c("x", "y", "z", "mass");
-  pos.name <- sub(".pos", "", basename(filepath));
+    filepath, what = 'numeric',
+    size = 4, endian = 'big', n = pos.len
+  )
+  pos.mat <- matrix(pos.raw, ncol = 4, byrow = T)
+  pos.dat <- as.data.frame(pos.mat)
+  names(pos.dat) <- c("x", "y", "z", "mass")
+  pos.name <- sub(".pos", "", basename(filepath))
   attr(pos.dat, "metaData") <- list(
     name = pos.name
   )
@@ -32,46 +35,54 @@ readPOS <- function(filepath) {
 #'
 #' @param filepath A string. The file path to the ATO file.
 #' @seealso \code{\link{readPOS}}
+#' @export
 readATO <- function(filepath) {
-  ato.len <- file.info(filepath)['size'] / 4;
-  ato.len <- as.numeric(ato.len);
-  ato.file <- file(filepath, open = "rb");
-  seek(ato.file, where = 8);
+  ato.len <- file.info(filepath)['size'] / 4
+  ato.len <- as.numeric(ato.len)
+  ato.file <- file(filepath, open = 'rb')
+  seek(ato.file, where = 8)
   ato.raw <- readBin(
-    ato.file, what = "numeric",
-    size = 4, endian = "little", n = ato.len
-  );
-  ato.mat <- matrix(ato.raw, ncol = 14, byrow = T);
-  ato.dat <- as.data.frame(ato.mat);
+    ato.file, what = 'numeric',
+    size = 4, endian = 'little', n = ato.len
+  )
+  ato.mat <- matrix(ato.raw, ncol = 14, byrow = T)
+  ato.dat <- as.data.frame(ato.mat)
   names(ato.dat) <- c("x", "y", "z", "mass", "clusID", "pIndex", "Vdc",
                       "TOF", "dx", "dy", "Vp", "shank", "FouR", "FouI");
-  ato.name <- sub(".ato", "", basename(filepath));
+  ato.name <- sub(".ato", "", basename(filepath))
   attr(ato.dat, "metaData") <- list(
     name = ato.name
   )
-  close(ato.file);
-  return(ato.dat);
+  close(ato.file)
+  return(ato.dat)
 }
-#' Create a list of mass spec formulas from a table (class \code{cform}).
+#' Create a list of mass spec formulae from a table (class \code{cform}).
+#'
+#' \code{readForm} reads a CSV file of formulae into a data frame of class
+#' \code{cform}. The CSV should have headers specifying the name of the
+#' compound, its chemical formula, and optionally the color used for plotting.
 readForm <- function(filepath) {
-  data("isotopes");
-  form.dat <- read.csv(filepath, stringsAsFactors = F);
+  form.dat <- read.csv(filepath, stringsAsFactors = F)
   form.chk <- which(
-    check_chemform(isotopes, form.dat[, "formula"])[, "warning"]);
+    enviPat::check_chemform(rapt::isotopes, form.dat[, "formula"])[, "warning"])
   if(length(form.chk) == 0) {
-    form.dat <- t(form.dat);
+    form.dat <- form.dat;
     form.dat <- as.data.frame(form.dat)
     class(form.dat) <- c("data.frame", "cform")
-    return(form.dat);
+    return(form.dat)
   }else {
-    print(paste("The formulae:", form.dat[form.chk], "are not valid."));
+    print(paste("The formulae:", form.dat[form.chk], "are not valid."))
   }
 }
 ### Condition Data ###
 ## Add ability to specify marks
 #' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
 #'
+#' @param pos A POS or ATO data frame.
+#' @return A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
+#'   the supplied POS or ATO.
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}}
+#' @export
 createSpat <- function(pos, win = NULL) {
   pp3.box <- win;
   if(is.null(win)) {
@@ -81,14 +92,35 @@ createSpat <- function(pos, win = NULL) {
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
   return(pp3.dat);
 }
-# Stub for creating a ppp object (from package "spatstat") from an ATO data
-# frame, using detector space coordinates
-createDet <- function(ato, win = NULL) {
+#' Create a \code{\link[spatstat]{ppp}} from an ATO.
+#'
+#' \code{createDet} generates a \code{\link[spatstat]{ppp}} of detector hits
+#' from an ATO.
+#'
+#' @param ato An ATO data frame.
+#' @param win An object of class \code{\link[spatstat]{owin}}. If NULL, a window
+#'   will be calculated from the data using \code{\link[spatstat]{ripras}}.
+#' @return A \code{\link[spatstat]{ppp}} with the positions of the detector hits
+#'   from the ATO.
+#' @seealso \code{\link{readATO}}, \code{\link[spatstat]{ppp}},
+#'   \code{\link[spatstat]{ripras}}
+#' @export
+createDet <- function(ato, window = NULL) {
+  if(is.null(window))
+    window <- ripras(ato$dx, ato$dy)
+  det.dat <- ppp(ato$dx, ato$dy, window = window)
+  return(det.dat)
 }
 #' Create a \code{\link[MALDIquant]{MassSpectrum}} object from a POS or ATO
 #' data frame.
 #'
-#' @seealso \code{\link{readPOS}}, \code{\link{readATO}}
+#' @param pos A POS or ATO data frame.
+#' @param res The desired \code{\link[MALDIquant]{MassSpectrum}} resolution.
+#' @return A \code{\link[MALDIquant]{MassSpectrum}} from the \code{mass} field
+#'   of the POS or ATO, with the resolution set by \code{res}.
+#' @seealso \code{\link{readPOS}}, \code{\link{readATO}},
+#'   \code{\link[MALDIquant]{MassSpectrum}}
+#' @export
 createSpec <- function(pos, res = 0.001) {
   ms.max <- max(pos[,"mass"])
   ms.max <- ms.max + res
