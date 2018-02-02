@@ -146,6 +146,20 @@ createSpec <- function(pos, res = 0.001) {
   return(ms.dat);
 }
 
+createTOF <- function(pos, res = 0.001) {
+  ms.max <- max(pos[,"TOF"])
+  ms.max <- ms.max + res
+  ms.min <- min(pos[,"TOF"])
+  ms.min <- ms.min - res
+  ms.breaks <- seq(ms.min, ms.max, res)
+  ms.hist <- hist(pos[,"TOF"], ms.breaks, plot = F);
+  ms.dat <- createMassSpectrum(
+    ms.hist$mids, ms.hist$counts,
+    metaData = attr(pos, "metaData")
+  );
+  return(ms.dat);
+}
+
 createForm <- function(df) {
   form.chk <- which(
     check_chemform(isotopes, df[, "formula"])[, "warning"]);
