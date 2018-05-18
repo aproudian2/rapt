@@ -1,12 +1,4 @@
-# Import libraries and functions
-library(spatstat)
-library(parallel)
-
-source("R/rapt-file.R")
-source("R/rcp_functions.R")
-source("R/cluster_functions.R")
-
-###############################################################
+# Functions having to do with the calculation of and display of envelopes ran on random re-samplings of pp3 patterns
 
 #Function to grab a cubic subsection from the center of the given data, given dimensions
 subSquare <- function(orig,win){
@@ -59,42 +51,13 @@ percentSelect <- function(perc,pattern){
   return(newPattern)
 }
 
-#################################################################
+######################################################################
 
-# Function to do K3est test with random relabelings of a certain percent, a certain number of times
-# returns a matrix with test results in each column, and the r values in the first column
-
-# OLD - this function is poorly written, but not worth fixing - just use the parallel one below
-rrK3est <- function(perc, pattern, nEvals){
-  # perc = percent of original pattern to sample
-  # pattern = the original pattern
-  # nEvals = number of times to run K3est
-
-  # run the test once to fill the r values
-  toTest <- percentSelect(perc,pattern)
-  tst <- K3est(toTest)
-  tst.length <- length(tst$r)
-  tests <- matrix(0,nrow=tst.length,ncol=(nEvals+1))
-
-  tests[,1] <- tst$r
-  tests[,2] <- tst$iso
-
-  # run the tests and pull the "iso" edge condition results into the array
-  for(i in 1:nEvals-1){
-    toTest <- percentSelect(perc,pattern)
-    tst <- K3est(toTest)
-    tests[,(i+2)] <- tst$iso
-  }
-  return(tests)
-}
-
-#####################################################
-
-# Function to plot envelope results from the rrK3est function above, based on percentiles
+# Function to plot envelope results from the pK3est or panomK3est functions below, based on percentiles
 envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceiling(max(tests[,1])))){
-  # tests = array of values returned from the rrK3est function above
+  # tests = array of values returned from the rrK3est function above,
   # percentiles = vector including the different percentiles you would like to see on the plot (0-1)
-    # do these in descending order please
+  # do these in descending order please
 
   color <- c("lightskyblue","mediumpurple","lightpink")
 
@@ -129,7 +92,6 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceil
   abline(h=0,lty=2,lwd=1,col="black")
   legend(0, ylim[2], legend=c(paste(toString(percentiles[1]*100),"% AI"), paste(toString(percentiles[2]*100),"% AI"),paste(toString(percentiles[3]*100),"% AI")),col=c(color[1],color[2],color[3]), lty=c(1,1,1), lwd=c(10,10,10))
 }
-
 
 ##################################################################
 

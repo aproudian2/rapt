@@ -1,11 +1,6 @@
 # Stitching and re-scaling Functions for Periodic Boundary Conditioned RCP files
 
 
-library(spatstat)
-source("R/rapt-file.R")
-
-###################################
-
 # Function to scale an RCP file to a desired radius, given the original radius
 scale <- function(pp3file, newRadius = .5, oldRadius = NULL, win = NULL){
   # pp3file is a pp3 point pattern that you would like to scale

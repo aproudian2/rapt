@@ -1,12 +1,5 @@
 # Functions to simulate clusers using RCP data sets
 
-library(spatstat)
-library(rgl)
-
-source("R/rapt-file.R")
-source("R/rcp_functions.R")
-source("R/rapt-extend.R")
-
 # This method uses two RCP point patterns.
 # One is the underlying point pattern, from which the actual simulated data will be taken.
 # The other is to randomly place the cluster locations through the underlying pattern.
