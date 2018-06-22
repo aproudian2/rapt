@@ -1,4 +1,5 @@
-# Functions having to do with the calculation of and display of envelopes ran on random re-samplings of pp3 patterns
+# Functions having to do with the calculation of and display of envelopes ran
+# on random re-samplings of pp3 patterns
 
 #Function to grab a cubic subsection from the center of the given data, given dimensions
 subSquare <- function(orig,win){
