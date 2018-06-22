@@ -74,7 +74,6 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
     rcluster <- function(..., rmax) f(...)
   }
   verifyclass(win, "box3")
-  frame <- boundingbox(win)
   dilated <- box3(win$xrange + c(-expand, expand),
                   win$yrange + c(-expand, expand),
                   win$yrange + c(-expand, expand))

@@ -2,7 +2,7 @@
 # This file contains methods for importing and conditioning APT data
 #
 
-### Load Data ###
+#### Load Data ####
 # Create generic for .ato and .pos
 #' Read a POS file.
 #'
@@ -11,7 +11,9 @@
 #' @param filepath A string. The file path to the POS file.
 #' @return A dataframe with columns corresponding to the x, y, and z positions
 #'   of the reconstruction and the mass-to-charge ratio.
+#' @references Local Electrode Atom Probe Tomography: A User's Guide
 #' @seealso \code{\link{readATO}}
+#' @example X <- readPOS("R45_0001-v01.pos")
 #' @export
 readPOS <- function(filepath) {
   pos.len <- file.info(filepath)['size'] / 4
@@ -35,7 +37,10 @@ readPOS <- function(filepath) {
 #' \code{readATO} reads an ATO file (from IVAS) into a data frame.
 #'
 #' @param filepath A string. The file path to the ATO file.
+#' @return A dataframe.
+#' @references Local Electrode Atom Probe Tomography: A User's Guide
 #' @seealso \code{\link{readPOS}}
+#' @example X <- readATO("R45_0001-v01.ato")
 #' @export
 readATO <- function(filepath) {
   ato.len <- file.info(filepath)['size'] / 4
@@ -83,7 +88,7 @@ readRNG <- function(rng) {
 
 }
 
-### Condition Data ###
+#### Condition Data ####
 ## Add ability to specify marks
 #' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
 #'
@@ -108,7 +113,7 @@ createSpat <- function(pos, win = NULL) {
 #' from an ATO.
 #'
 #' @param ato An ATO data frame.
-#' @param win An object of class \code{\link[spatstat]{owin}}. If NULL, a window
+#' @param window An object of class \code{\link[spatstat]{owin}}. If NULL, a window
 #'   will be calculated from the data using \code{\link[spatstat]{ripras}}.
 #' @return A \code{\link[spatstat]{ppp}} with the positions of the detector hits
 #'   from the ATO.
@@ -138,12 +143,12 @@ createSpec <- function(pos, res = 0.001) {
   ms.min <- min(pos[,"mass"])
   ms.min <- ms.min - res
   ms.breaks <- seq(ms.min, ms.max, res)
-  ms.hist <- hist(pos[,"mass"], ms.breaks, plot = F);
+  ms.hist <- hist(pos[,"mass"], ms.breaks, plot = F)
   ms.dat <- createMassSpectrum(
-    ms.hist$mids, ms.hist$counts,
+    ms.hist$mids[-1], ms.hist$counts[-1],
     metaData = attr(pos, "metaData")
-  );
-  return(ms.dat);
+  )
+  return(ms.dat)
 }
 
 createTOF <- function(pos, res = 0.001) {
@@ -170,5 +175,5 @@ createForm <- function(df) {
     print(paste("The formulae:", form.dat[form.chk], "are not valid."));
   }
 }
-### Write Data ###
+#### Write Data ####
 # Export methods?

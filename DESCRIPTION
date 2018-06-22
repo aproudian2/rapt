@@ -18,7 +18,8 @@ Imports:
   gtools (>= 3.5),
   Hmisc (>= 3.17),
   ash(>= 1.0),
-  Rcpp (>= 0.12)
+  Rcpp (>= 0.12),
+  PET (>= 0.4)
 LinkingTo:
   Rcpp
 Suggests:
