@@ -4,8 +4,8 @@
 \alias{detectorGIF}
 \title{Create a GIF that steps through detector hits.}
 \usage{
-detectorGIF(ato, len = 1e+05, range = NULL, size = 7, name = "detector",
-  path = "./", save.pdf = F, delay = 10, ...)
+detectorGIF(ato, len = 1e+05, range = NULL, size = 7,
+  name = "detector", path = "./", save.pdf = F, delay = 10, ...)
 }
 \description{
 \code{detectorGIF} generates a GIF that shows the positions of detector hits.

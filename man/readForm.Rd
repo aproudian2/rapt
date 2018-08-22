@@ -2,12 +2,10 @@
 % Please edit documentation in R/rapt-file.R
 \name{readForm}
 \alias{readForm}
-\title{Create a list of mass spec formulae from a table (class \code{cform}).}
+\title{Create a list of mass spec formulas from a table (class \code{cform}).}
 \usage{
 readForm(filepath)
 }
 \description{
-\code{readForm} reads a CSV file of formulae into a data frame of class
-\code{cform}. The CSV should have headers specifying the name of the
-compound, its chemical formula, and optionally the color used for plotting.
+Create a list of mass spec formulas from a table (class \code{cform}).
 }

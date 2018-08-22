@@ -9,13 +9,9 @@ readPOS(filepath)
 \arguments{
 \item{filepath}{A string. The file path to the POS file.}
 }
-\value{
-A dataframe with columns corresponding to the x, y, and z positions
-  of the reconstruction and the mass-to-charge ratio.
-}
 \description{
 \code{readPOS} reads a POS file (from IVAS) into a data frame.
 }
 \seealso{
-\code{\link{readATO}}
+\code{\link{readPOS}}
 }
