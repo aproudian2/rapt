@@ -10,17 +10,17 @@ stitch(pp3file, reps = c(2, 2, 2), win = NULL)
 \item{pp3file}{A \code{\link[spatstat]{pp3}} object containing the RCP
 generated 3D point positions.}
 
-\item{reps}{A numerical vector containing the number of repetitions you
-would like in the x, y and z directions, respectively. c(x,y,z).}
+\item{reps}{A numerical vector containing the number of repetitions you would
+like in the x, y and z directions, respectively. c(x,y,z).}
 
-\item{win}{A \code{\link[spatstat]{box3}} object indicating the size of
-the original rcp generation. Can leave blank if these are integer value.}
+\item{win}{A \code{\link[spatstat]{box3}} object indicating the size of the
+original rcp generation. Can leave blank if these are integer value.}
 }
 \value{
 Will return a \code{\link[spatstat]{pp3}} object with the total
-stiched point pattern.
+  stiched point pattern.
 }
 \description{
-Takes RCP point patterns with periodic boundary conditions and creates
-a single, larger point cloud by stitching these patterns together.
+Takes RCP point patterns with periodic boundary conditions and creates a
+single, larger point cloud by stitching these patterns together.
 }

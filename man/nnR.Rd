@@ -12,13 +12,12 @@ nnR(X, r)
 \item{r}{Radius to find nearest neighbors within.}
 }
 \value{
-Returns a list of:
-[[1]] The nearest neighbor distances.
-[[2]] The nearest neighbor indixes.
+Returns a list of: [[1]] The nearest neighbor distances. [[2]] The
+  nearest neighbor indixes.
 }
 \description{
-Finds all nearest neighbors within a given input radius of each point
-in the pattern. This function is not needed and slow.
+Finds all nearest neighbors within a given input radius of each point in the
+pattern. This function is not needed and slow.
 \code{\link[spatstat]{closepairs.pp3}} will do the same thing but more
 efficiently.
 }

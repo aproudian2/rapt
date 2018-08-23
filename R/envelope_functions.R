@@ -1,9 +1,21 @@
 # Functions having to do with the calculation of and display of envelopes ran on random re-samplings of pp3 patterns
 
-#Function to grab a cubic subsection from the center of the given data, given dimensions
+#### subSquare ####
+#' Select a subsection from the center of a \code{\link[spatstat]{pp3}} data
+#' file
+#'
+#' Given an original \code{\link[spatstat]{pp3}} object, \code{subSquare} will
+#' select a rectangular prism centered at the center of the original point
+#' pattern, and return a \code{\link[spatstat]{pp3}} object of the subsection.
+#'
+#' @param orig The original \code{\link[spatstat]{pp3}} object
+#' @param win Numerical vector containing the dimensions for the box that you
+#'   would like to select: c(xdim, ydim, zdim) (e.g. c(10,10,10)).
+#' @return Returns a \code{\link[spatstat]{pp3}} object of the selected box,
+#'   shifted so that the origin is still at (0,0,0).
+
 subSquare <- function(orig,win){
- # win = list of dimensions of the box you want to pull: c(xdim,ydim,zdim)
- # orig = the original point pattern (pp3) - needs to be scaled in the same way that your window is scaled
+
   orig.domain <- domain(orig)
   orig.center <- c(mean(orig.domain$xrange),mean(orig.domain$yrange),mean(orig.domain$zrange))
   xs <-orig.center[1]-(win[1]/2)
@@ -39,25 +51,48 @@ subSquare <- function(orig,win){
   return(sub.new)
 }
 
-######################################################################3
+#### percentSelect ####
+#' Randomly select a percent of the points in a \code{\link[spatstat]{pp3}}
+#' object.
+#'
+#' Function randomly selects a certain percent of points within an original
+#' \code{\link[spatstat]{pp3}} object. This function was created to be used in
+#' random relabeling of point patterns.
+#'
+#' @param perc The fraction of points from the original pattern that are to be
+#'   selected. A value between 0 and 1.
+#' @param pattern The original \code{\link[spatstat]{pp3}} object to be selected
+#'   from.
+#' @return A \code{\link[spatstat]{pp3}} object containing only the selected
+#'   points.
 
-# Function to randomly relabel and select perc percent of the given point pattern
 percentSelect <- function(perc,pattern){
-  # perc = fraction of points you want to select (0-1)
-  # pattern = the point pattern you want to draw from
+
   reLabel <- rlabel(pattern,labels = c(rep("A",round(npoints(pattern)*perc)),rep("B",round(npoints(pattern)*(1-perc)))))
   inds <- which(marks(reLabel)=="A")
   newPattern <- reLabel[inds]
   return(newPattern)
 }
 
-######################################################################
+#### envPlot ####
+#' Plot envelopes of K3est test
+#'
+#' Plot the results of envelope calculations from the \code{\link{pK3est}} or
+#' \code{\link{panomK3est}}, with the ability to choose the percentiles for
+#' plotting.
+#'
+#' @param tests The return file from \code{\link{pK3est}} or the first, [[1]],
+#'   entry in the list returned by \code{\link{panomK3est}}. Contains results
+#'   from many 3D K tests.
+#' @param percentiles Numerical vector of percentiles that you want to see the
+#'   envelopes for. Each between 0 and 1.
+#' @param ylim Numerical vector containing the min and max values for the y axis
+#'   on the plot.
+#' @param xlim Numerical vector containing the min and max values for the x axis
+#'   on the plot.
+#' @return Nothing.
 
-# Function to plot envelope results from the pK3est or panomK3est functions below, based on percentiles
 envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceiling(max(tests[,1])))){
-  # tests = array of values returned from the rrK3est function above,
-  # percentiles = vector including the different percentiles you would like to see on the plot (0-1)
-  # do these in descending order please
 
   color <- c("lightskyblue","mediumpurple","lightpink")
 
@@ -93,13 +128,43 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceil
   legend(0, ylim[2], legend=c(paste(toString(percentiles[1]*100),"% AI"), paste(toString(percentiles[2]*100),"% AI"),paste(toString(percentiles[3]*100),"% AI")),col=c(color[1],color[2],color[3]), lty=c(1,1,1), lwd=c(10,10,10))
 }
 
-##################################################################
+#### pK3est ####
+#' Perform K3est on random relabelings in parallel
+#'
+#' \code{pK3est} first randomly relabels a specified percentage of points from
+#' the original \code{\link[spatstat]{pp3}} object. It then performs a 3D K
+#' function test (\code{\link[spatstat]{K3est}}) on these selected points. It
+#' repeats this as many times as specified. These tests are run in parallel to
+#' increase computation speed.
+#'
+#' @param perc The fraction of points to select randomly each time out of the
+#'   original \code{\link[spatstat]{pp3}} object. Number between 0 and 1.
+#' @param pattern The original \code{\link[spatstat]{pp3}} object.
+#' @param nEvals The number of random relabelings and  that should be performed.
+#' @param rmax See \code{\link[spatstat]{K3est}}. Maximum radius to be
+#'   calculated for \code{\link[spatstat]{K3est}}.
+#' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
+#'   \code{\link[spatstat]{K3est}} should be calculated at.
+#' @param iso Either "iso", "trans", or "bord" edge correction.
+#' @section Edge Corrections: See \code{\link[spatstat]{Kest}} or book availible
+#'   at \url{http://spatstat.org/book.html} for more info on these edge
+#'   corrections.
+#'
+#' \subsection{Isotropic - "iso"}{Isotropic edge correction. Assumes point
+#' pattern is isotropic, or that it can rotate in space without changing
+#' statistics.}
+#' \subsection{Translation - "trans"}{Translation edge correction.
+#' Assumes translation of point pattern does not change statistics.}
+#' \subsection{Border - "bord"}{Border edge correction. Makes no assumptions
+#' about data. Uses only data provided in the original point pattern. Only
+#' evaluates \code{\link[spatstat]{K3est}} when the radius of the search stays
+#' within the domain of the point pattern itself.}
+#'
+#' @return Returns a matrix containing the data from all of the
+#'   \code{\link[spatstat]{K3est}} runs on different re-labelings. Can plot data
+#'   using \code{\link{envPlot}}.
 
-# Parellelized version of rrK3est, written above. Perfeorms the K3est function caculations in parallel
 pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso"){
-  # perc = percent of original pattern to sample
-  # pattern = the original pattern
-  # nEvals = number of times to run K3est
 
   #find cores and initialize the cluster
   cores2use <- detectCores()-1
@@ -156,13 +221,54 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso"){
   return(tests)
 }
 
-###############################################
+#### panomK3est ####
+#' Perform anomaly K3est envelope calculations
+#'
+#' See \code{\link{pK3est}}. Performs exactly the same as this function, except
+#' returns the "anomaly K3est" results. This means that it returns the square
+#' room of the \code{\link[spatstat]{K3est}} results, with the 50th percentile
+#' subtracted out. This centers envelopes around zero, and the square root
+#' standardized variance across all r values. See book at
+#' \url{http://spatstat.org/book.html} for a good statistical reference.
+#'
+#' @param perc The fraction of points to select randomly each time out of the
+#'   original \code{\link[spatstat]{pp3}} object. Number between 0 and 1.
+#' @param pattern The original \code{\link[spatstat]{pp3}} object.
+#' @param nEvals The number of random relabelings and  that should be performed.
+#' @param rmax See \code{\link[spatstat]{K3est}}. Maximum radius to be
+#'   calculated for \code{\link[spatstat]{K3est}}.
+#' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
+#'   \code{\link[spatstat]{K3est}} should be calculated at.
+#' @param iso Either "iso", "trans", or "bord" edge correction.
+#' @section Edge Corrections: See \code{\link[spatstat]{Kest}} or book availible
+#'   at \url{http://spatstat.org/book.html} for more info on these edge
+#'   corrections.
+#'
+#' \subsection{Isotropic - "iso"}{Isotropic edge correction. Assumes point
+#' pattern is isotropic, or that it can rotate in space without changing
+#' statistics.}
+#' \subsection{Translation - "trans"}{Translation edge correction.
+#' Assumes translation of point pattern does not change statistics.}
+#' \subsection{Border - "bord"}{Border edge correction. Makes no assumptions
+#' about data. Uses only data provided in the original point pattern. Only
+#' evaluates \code{\link[spatstat]{K3est}} when the radius of the search stays
+#' within the domain of the point pattern itself.}
+#'
+#' @param toSub If NULL, use the 50th percentile of the calculated set of
+#'   \code{\link[spatstat]{K3est}} envelopes to subtract off. Otherwise, the
+#'   second, [[2]], entry in the list returned from this same function. This is
+#'   how to compare envelope calculations from different point patterns. You
+#'   must subtract the same values from both data sets. toSub allows you to
+#'   input the values that were subtracted from a previous set of envelopes, for
+#'   comparison.
+#'
+#' @return A list of: [[1]] Matrix of data for all relabelings. Can be plotted
+#'   using \code{\link{envPlot}}. [[2]] Vector containing the values that were
+#'   subtracted from the results at each r value. Can be used to subtract from
+#'   another set of envelopes for comparison. [[3]] rmax used in the
+#'   calculation. [[4]] nrval used in the calculation.
 
-# Same as the parrrK3est function above, but returns envelopes centered around zero
 panomK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",toSub=NULL){
-  # perc = percent of original pattern to sample
-  # pattern = the original pattern
-  # nEvals = number of times to run K3est
 
   #find cores and initialize the cluster
   cores2use <- detectCores()-1
@@ -243,14 +349,24 @@ panomK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso
   return(list(tests,toSub,rmax,nrval))
 }
 
-####################################
-# Normal K3 anomoly function (no envelopes)
-# Need to pass in the result of an envelope generation, to know what to subtract from the result
+#### anomK3est ####
+#' Perfrom anomaly K3est on a \code{\link[spatstat]{pp3}} object.
+#'
+#' See \code{\link[spatstat]{K3est}}. Performs the anomaly K3est on a set of
+#' point cloud data. This means taking the square root, and subtracting the 50th
+#' percentile from the results. This centers the curve around zero, and
+#' standardizeds the variance aat different radii. Used for comparing data to
+#' envelopes from \code{\link{panomK3est}}. Will subtract the same values used
+#' in the panomK3est test that is being compared to.
+#'
+#' @param pattern The \code{\link[spatstat]{pp3}} object to analyze.
+#' @param result List returned from \code{\link{panomK3est}}.
+#' @param correction See \code{\link{panomK3est}} or \code{\link{pK3est}}.
+#'
+#' @return Returns data fram containing r values and associated anomaly K3est
+#'   values.
 
 anomK3est <- function(pattern,result,correction = "iso"){
-  #pattern is the pp3 pattern you would like to run a test on
-  #result is the list returned by "panomK3est", which holds the information needed to perform the same test
-  #correction is the type of edge correction to use - "iso", "trans", "bord", or "all"
 
   if(correction == "iso"){
     a <- K3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="isotropic")
@@ -291,8 +407,19 @@ anomK3est <- function(pattern,result,correction = "iso"){
   }
 }
 
-#######################################
-# Border correction for K3est
+#### bK3est ####
+#' 3D Border correction for K3est
+#'
+#' Helper function for \code{\link{panomK3est}}, \code{\link{pK3est}}, and
+#' \code{\link{anomK3est}}. This function is a hand written extension of the
+#' border correction for 3D point patterns.
+#'
+#' @param X The point pattern for analysis. \code{\link[spatstat]{pp3}} object.
+#' @param rmax See \code{\link[spatstat]{K3est}}. Maximum radius to be
+#'   calculated for \code{\link[spatstat]{K3est}}.
+#' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
+#'   \code{\link[spatstat]{K3est}} should be calculated at.
+#' @return Border corrected \code{\link[spatstat]{K3est}} data for object X.
 
 bK3est <- function(X,rmax=NULL,nrval=128){
 
@@ -351,8 +478,14 @@ bK3est <- function(X,rmax=NULL,nrval=128){
   return(K)
 }
 
-#############################################
-# Find distance to boundary for each point in pattern
+#### bdist.points3 ####
+#' Helper function for border correction \code{\link{bK3est}}.
+#'
+#' Finds the smallest distance to a boundary for each point in a point pattern.
+#'
+#' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}} object.
+#' @return An object containing the shortest distance to the boundary for each
+#'   point in the pattern X.
 
 bdist.points3 <- function (X) {
 

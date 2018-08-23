@@ -9,19 +9,18 @@ nncrossR(X, Y, r)
 \arguments{
 \item{X}{\code{\link[spatstat]{pp3}} object 1. Base points.}
 
-\item{Y}{\code{\link[spatstat]{pp3}} object 2. Find all points in Y with
-in a given radius of points in X.}
+\item{Y}{\code{\link[spatstat]{pp3}} object 2. Find all points in Y with in a
+given radius of points in X.}
 
 \item{r}{Radius to find nearest neighbors within.}
 }
 \value{
-Returns a list of:
-[[1]] The coordinates of the nearest neighbor points
-[[2]] The index positions of the nearest neighbors
+Returns a list of: [[1]] The coordinates of the nearest neighbor
+  points [[2]] The index positions of the nearest neighbors
 }
 \description{
-Finds all nearest neighbors of one pattern within a given input radius
-of each point in aother pattern. This function is not needed and slow.
+Finds all nearest neighbors of one pattern within a given input radius of
+each point in aother pattern. This function is not needed and slow.
 \code{\link[spatstat]{closepairs.pp3}} will do the same thing but more
 efficiently.
 }

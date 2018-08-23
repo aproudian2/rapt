@@ -39,6 +39,8 @@ paraOrthoY <- function(x, y, a, d) {
   return(y.dat)
 }
 #### paraOrthoRec ####
+#' paraOrthoRec
+#'
 paraOrthoRec <- function(ato, a, d = 90e7, icf = 1, k = 0) {
   para.x <- apply(ato[,c('dx','dy')], 1, function(ato) {
     paraOrthoX(ato[1]*1e8, ato[2]*1e8, a = a, d = d)

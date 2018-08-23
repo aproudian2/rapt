@@ -10,26 +10,26 @@ scale(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL)
 \item{pp3file}{A \code{\link[spatstat]{pp3}} object containing the RCP
 generated 3D point positions.}
 
-\item{newRadius}{The radius that you would like to scale to. Default is
-0.5 units}
+\item{newRadius}{The radius that you would like to scale to. Default is 0.5
+units}
 
-\item{oldRadius}{The radius of the original RCP generation, taken from
-the "system" file output from the generation. Required input.}
+\item{oldRadius}{The radius of the original RCP generation, taken from the
+"system" file output from the generation. Required input.}
 
-\item{win}{A \code{\link[spatstat]{box3}} object indicating the size of
-the original rcp generation. Can leave blank if these are integer value.}
+\item{win}{A \code{\link[spatstat]{box3}} object indicating the size of the
+original rcp generation. Can leave blank if these are integer value.}
 }
 \value{
 Will return a \code{\link[spatstat]{pp3}} object with the scaled
-point positions.
+  point positions.
 }
 \description{
 Given an original raw RCP output file, scale the 3D point cloud as if the
 spheres have a specific radius.
 }
 \details{
-Input the original radius, taken from the "system" file output from the
-RCP generation, and the new desired radius, \code{scale} will scale the
-RCP point cloud as if the original generation hapened with spheres of
-radius that you desire.
+Input the original radius, taken from the "system" file output from the RCP
+generation, and the new desired radius, \code{scale} will scale the RCP point
+cloud as if the original generation hapened with spheres of radius that you
+desire.
 }
