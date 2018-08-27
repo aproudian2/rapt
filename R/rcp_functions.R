@@ -1,6 +1,6 @@
 # Stitching and re-scaling Functions for Periodic Boundary Conditioned RCP files
 
-#### scale ####
+#### scaleRCP ####
 #' Scale RCP data to a desired radius
 #'
 #' Given an original raw RCP output file, scale the 3D point cloud as if the
@@ -21,7 +21,7 @@
 #'   original rcp generation. Can leave blank if these are integer value.
 #' @return Will return a \code{\link[spatstat]{pp3}} object with the scaled
 #'   point positions.
-scale <- function(pp3file, newRadius = .5, oldRadius = NULL, win = NULL){
+scaleRCP <- function(pp3file, newRadius = .5, oldRadius = NULL, win = NULL){
 
   if(is.null(oldRadius)){
     print("Old radius is required.")

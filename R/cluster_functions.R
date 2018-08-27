@@ -1,34 +1,93 @@
 # Functions to simulate clusers using RCP data sets
 
-# This method uses two RCP point patterns.
-# One is the underlying point pattern, from which the actual simulated data will be taken.
-# The other is to randomly place the cluster locations through the underlying pattern.
-# The files input should be rcp files. The underlying RCP should be at the finial desired radius
-# must include libraries rgl and spatstat
-# must include "rapt-file.R" and "rcp-functions.R"
-
-# "ppc"
-# Returns a list of (cluster points pp3, overlaying points pp3, c(ppc1, #clusters with ppc1, ppc2, #clusters with ppc2))
-
-# "cr"
-# Returns a list of (cluster points pp3,overlaying points pp3)
-
-# "dist"
-# Returns a list of (cluster points pp3, overlaying points pp3, c(ppc1, #clusters with ppc1, ppc2, #clusters with ppc2))
+#### makeCluster ####
+#' Simulate point clustering in an RCP matrix
+#'
+#' The \code{makeCluster} function simulates point clusters using two RCP point
+#' clouds. The first point cloud is the "underlaying" pattern. This is the set
+#' of points that will be used as actual cluster point locations in the final
+#' product. The second point cloud is the "overlaying" pattern. This is the set
+#' of points that will determine the positions of the clusters within the
+#' underlaying pattern.
+#'
+#' @param under The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
+#'   object containing the correctly scaled RCP pattern point locations.
+#' @param over The overlaying RCP pattern. A \code{\link[spatstat]{pp3}} object
+#'   containing the RCP pattern point locations. Scaled equal to the underlaying
+#'   pattern.
+#' @param radius1 The small radius of the underlaying RCP pattern. Can be found
+#'   in the system output file, or as whatever the pattern is scaled to.
+#' @param radius2 The small radius of the overlaying RCP pattern. Can be found
+#'   in the system output file, or as whatever the pattern is scaled to.
+#' @param type How to create the clusters. Either "ppc", "cr", or "dist". See
+#'   below for more information on each.
+#' @param ppc Number of points per cluster if type = "ppc", otherwise NULL.
+#' @param cr Cluster radius if type = "cr", otherwise NULL.
+#' @param d Distance between clusters if type = "dist", otherwise NULL.
+#' @param pic Percent In Clusters. Percent of the points marked as cluster type
+#'   that should actually be contained within the clusters. Number between 0 and
+#'   1 For example, if pic = 0.5, 50 percent of the cluster type points will be
+#'   in clusters and 50 percent will be randomly spread through the point cloud.
+#' @param pcp Percent Cluster Points. Percent of the points in the underlaying
+#'   RCP pattern that should be marked as cluster type points. Number between 0
+#'   and 1.
+#' @param toPlot Show a 3D plot of the cluster points once generation is done?
+#'   TRUE or FALSE.
+#' @param showOverPts If toPlot = TRUE, show all of the points in the RCP
+#'   pattern, with clustered points marked in red, or just show the clustered
+#'   points? TRUE or FALSE.
+#'
+#' @section Cluster Creation Methods: What the different arguments for
+#'   \code{type} argument mean.
+#'   \subsection{Points Per Cluster - "ppc"}{
+#'   Specify the number of points that should be in each cluster. Needs to be
+#'   paired with the \code{ppc} argument The program will scale the overlaying
+#'   pattern so that there are approximately the correct number of clusters
+#'   placed through the underlaying patten, mark the n closest points to these
+#'   cluster centers as cluster points, where n is the value input to the ppc
+#'   argument. The cluster centers are defined by the point locations of the
+#'   scaled overlaying RCP pattern. At this point, there should be approximately
+#'   N x \code{pcp} x \code{pip} points containined in clusters (N = total
+#'   points in the underlaying RCP pattern). The method cleans up by marking or
+#'   removing marks around the centers as necesary so that there are exactly N x
+#'   pcp x pip points in clusters. The rest of the N x \code{pcp} x
+#'   (1-\code{pip}) points are then placed randomly through the remaining
+#'   non-cluster-marked points.}
+#'   \subsection{Cluster Radius - "cr"}{
+#'   Specify the radius of the clusters. Needs to be paried with the \code{cr}
+#'   argument. The overlaying RCP pattern will be scaled so that there are
+#'   approximately the correct number of clusters placed through the underlaying
+#'   pattern. All points in the underlaying pattern within distance \code{cr} of
+#'   the cluster centers are marked as cluster points. The cluster centers are
+#'   defined by the point locations of the scaled overlaying RCP pattern. At
+#'   this point, there should be approximately N x \code{pcp} x \code{pip}
+#'   points containined in clusters (N = total points in the underlaying RCP
+#'   pattern). The method cleans up by marking or removing marks around the
+#'   centers as necesary so that there are exactly N x pcp x pip points in
+#'   clusters. The rest of the N x \code{pcp} x (1-\code{pip}) points are then
+#'   placed randomly through the remaining non-cluster-marked points.}
+#'   \subsection{Distance - "dist"}{
+#'   Specify the distance between clusters. Needs to be paired with the \code{d}
+#'   argument. The overlaying RCP pattern will be scaled according to the
+#'   \code{d} argumnet so that the small radius of the overlaying RCP pattern is
+#'   \code{d}/2. Selects the closest n points around each cluster center so that
+#'   there are N x \code{pcp} x \code{pip} points contained in clusters. The
+#'   rest of the N x \code{pcp} x (1-\code{pip}) points are then placed randomly
+#'   through the remaining non-cluster-marked points.}
+#'
+#' @return Returns are different based on \code{type}.
+#'   \subsection{\code{type} = "ppc" or "dist"}{List of:
+#'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
+#'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
+#'   points per cluster 1 [2] number of points with points per cluster 1 [3]
+#'   points per cluster 2 [4] number of points with points per cluster 2. }
+#'   \subsection{\code{type} = "cr"}{List of:
+#'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
+#'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   overlaying RCP pattern after scaling. }
 
 makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL,d=NULL,pic = 1,pcp = 0.06,toPlot=FALSE,showOverPts=FALSE){
-  # under is the underlaying rcp pattern
-  # over is the pattern to place the clusters
-  # radius1 is the small radius of the rcpUnder pattern
-  # radius2 is the small radius of the rcpOver pattern
-  # type can be either "ppc" - points per cluster or "cr" - cluster radius or "dist" - distance between points
-  # ppc is the points per cluster that you want for "ppc" - this is a SUGGESSTION, it will get close
-  # cr is the radius of cluster that you want for "cr"
-  # d is the distance between clusters that you want for "dist"
-  # pic = percent in clusters is the % of the points designated as clusters type points that you would like to actually be in clusters
-  # pcp = percentClusterPoints is the % of points out of the underlying rcp that you want to be included as points of the clustering type
-
-
 ############################################################################################
 # POINTS PER CLUSTER METHOD
 
@@ -221,7 +280,20 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 #########################################
 # Helper functions
 
-# Helper function to subset the points of one pattern which lay within the window of another pattern
+#### subSample ####
+#' Helper for \code{\link{makeCluster}} to cut \code{\link[spatstat]{pp3}} object to size.
+#'
+#' Takes one \code{\link[spatstat]{pp3}} object, and cuts its volume down to the
+#' size of another \code{\link[spatstat]{pp3}} object. Only keeps the points of
+#' the first object that lay within the volume of the second object.
+#'
+#' @param underPattern The second \code{\link[spatstat]{pp3}} object. The volume
+#'   that you want to cut down to.
+#' @param overPattern The first \code{\link[spatstat]{pp3}} object. The object
+#'   that you wish to cut down to the volume of \code{underPattern}.
+#' @return A \code{\link[spatstat]{pp3}} object containing \code{overPattern}
+#'   cut down to the volume of \code{underPattern}.
+
 subSample <- function(underPattern, overPattern){
 
   xr <- round(domain(underPattern)$xrange)
@@ -239,8 +311,21 @@ subSample <- function(underPattern, overPattern){
   return(newPattern)
 }
 
-# function to split a pp3 into two smaller pp3s, depending on how many clusters need an extra point
-# for the "ppc" method
+#### splitpp3 ####
+#' Helper for \code{\link{makeCluster}} that splits a
+#' \code{\link[spatstat]{pp3}} into two.
+#'
+#' Splits a \code{\link[spatstat]{pp3}} function into two smaller subset
+#' \code{\link[spatstat]{pp3}} objects, given an input for how many points to
+#' put in the first object.
+#'
+#' @param overPattern The \code{\link[spatstat]{pp3}} object to be split.
+#' @param num The number of points from \code{overPattern} to be put into the
+#'   first \code{\link[spatstat]{pp3}} object.
+#' @return List containing the two \code{\link[spatstat]{pp3}} patterns. If
+#'   these two patterns were combined, they would create the original
+#'   \code{overPattern} object.
+
 splitpp3 <- function(overPattern, num){
   pat.xyz <- coords(overPattern)
 
@@ -253,7 +338,19 @@ splitpp3 <- function(overPattern, num){
   return(list(pp3.2,pp3.1))
 }
 
-#function to get the true box dimensions of an rcp generation from the original file
+#### trueBox ####
+#' Helper for \code{\link{makeCluster}} that determines a
+#' \code{\link[spatstat]{pp3}} object true dimensions.
+#'
+#' RCP pattern generations, when loaded into R, lose their boundary information.
+#' R interprets their boundary to be the extreme point locations in each
+#' direction, when really they are usually nice integer values. This function
+#' simply rounds the R boundary values to the true ones.
+#'
+#' @param pp3file The \code{\link[spatstat]{pp3}} object to find the bounds of.
+#' @return A \code{\link[spatstat]{as.box3}} object containing the true volume
+#'   dimensions.
+
 trueBox <- function(pp3file) {
 
   xr <- round(domain(pp3file)$xrange)
@@ -265,7 +362,21 @@ trueBox <- function(pp3file) {
   return(a)
 }
 
-#Adjustment method to get correct number of points in each cluster for the "cr" method
+#### crAdjust ####
+#' Helper for \code{\link{makeCluster}} for \code{type} = "cr"
+#'
+#' Adjustment method to get correct number of points in each cluster for the
+#' \code{type} = "cr" cluster generation method. of \code{\link{makeCluster}}
+#' function.
+#'
+#' @param mat Matrix filled with points and associated cluster index values.
+#' @param diff The difference between the number of values needed and the number
+#'   in mat
+#' @param X The overlaying point pattern. A \code{\link[spatstat]{pp3}} object.
+#' @param Y The underlaying point pattern. A \code{\link[spatstat]{pp3}} object.
+#'
+#' @return Updated mat matrix containing the correct number of cluster points.
+
 crAdjust <- function(mat, diff, X, Y){
   # mat is the matrix filled with points and associated cluster index values
   # diff is the difference between the number of values needed and the number in mat
@@ -339,6 +450,19 @@ crAdjust <- function(mat, diff, X, Y){
 
   }else{return(mat)}
 }
+
+#### randomInsert ####
+#' Helper for \code{\link{makeCluster}} to insert random cluster points
+#'
+#' When \code{pip} argument of \code{\link{makeCluster}} is not equal to 1,
+#' there are random points that need to be marked as cluster type placed within
+#' the underlaying pattern. This function does just that.
+#'
+#' @param cluster.Indices A vector containing the indices of the current cluster
+#'   points
+#' @param n The number of points that need to be placed randomly
+#' @param N the number of points in the entire underlaying pattern.
+#' @return New indices vector containing new cluster points randomly placed.
 
 # function to randomly place points within the under data set, if not 100% of the cluster points are set to be in the clusters
 randomInsert <- function(cluster.Indices,n,N){
