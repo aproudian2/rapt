@@ -1,9 +1,9 @@
 # Functions to simulate clusers using RCP data sets
 
-#### makeCluster ####
+#### makecluster ####
 #' Simulate point clustering in an RCP matrix
 #'
-#' The \code{makeCluster} function simulates point clusters using two RCP point
+#' The \code{makecluster} function simulates point clusters using two RCP point
 #' clouds. The first point cloud is the "underlaying" pattern. This is the set
 #' of points that will be used as actual cluster point locations in the final
 #' product. The second point cloud is the "overlaying" pattern. This is the set
@@ -99,7 +99,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
     over.r <- radius2
     over.rf <- under.r*(ppc/rcp)^(1/3)
 
-    over.scaled <- scale(over,newRadius = over.rf, oldRadius = over.r)
+    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
     over.scaledf <- subSample(under,over.scaled)
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
@@ -169,7 +169,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
     over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
 
-    over.scaled <- scale(over,newRadius = over.rf, oldRadius = over.r)
+    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
     over.scaledf <- subSample(under,over.scaled)
 
     cluster.nnR <- nncrossR(over.scaledf,under,cr)
@@ -213,7 +213,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
     over.rf <- d/2
 
-    over.scaled <- scale(over,newRadius = over.rf, oldRadius = over.r)
+    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
     over.scaledf <- subSample(under,over.scaled)
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
@@ -281,7 +281,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 # Helper functions
 
 #### subSample ####
-#' Helper for \code{\link{makeCluster}} to cut \code{\link[spatstat]{pp3}} object to size.
+#' Helper for \code{\link{makecluster}} to cut \code{\link[spatstat]{pp3}} object to size.
 #'
 #' Takes one \code{\link[spatstat]{pp3}} object, and cuts its volume down to the
 #' size of another \code{\link[spatstat]{pp3}} object. Only keeps the points of
@@ -312,7 +312,7 @@ subSample <- function(underPattern, overPattern){
 }
 
 #### splitpp3 ####
-#' Helper for \code{\link{makeCluster}} that splits a
+#' Helper for \code{\link{makecluster}} that splits a
 #' \code{\link[spatstat]{pp3}} into two.
 #'
 #' Splits a \code{\link[spatstat]{pp3}} function into two smaller subset
@@ -339,7 +339,7 @@ splitpp3 <- function(overPattern, num){
 }
 
 #### trueBox ####
-#' Helper for \code{\link{makeCluster}} that determines a
+#' Helper for \code{\link{makecluster}} that determines a
 #' \code{\link[spatstat]{pp3}} object true dimensions.
 #'
 #' RCP pattern generations, when loaded into R, lose their boundary information.
@@ -363,10 +363,10 @@ trueBox <- function(pp3file) {
 }
 
 #### crAdjust ####
-#' Helper for \code{\link{makeCluster}} for \code{type} = "cr"
+#' Helper for \code{\link{makecluster}} for \code{type} = "cr"
 #'
 #' Adjustment method to get correct number of points in each cluster for the
-#' \code{type} = "cr" cluster generation method. of \code{\link{makeCluster}}
+#' \code{type} = "cr" cluster generation method. of \code{\link{makecluster}}
 #' function.
 #'
 #' @param mat Matrix filled with points and associated cluster index values.
@@ -452,9 +452,9 @@ crAdjust <- function(mat, diff, X, Y){
 }
 
 #### randomInsert ####
-#' Helper for \code{\link{makeCluster}} to insert random cluster points
+#' Helper for \code{\link{makecluster}} to insert random cluster points
 #'
-#' When \code{pip} argument of \code{\link{makeCluster}} is not equal to 1,
+#' When \code{pip} argument of \code{\link{makecluster}} is not equal to 1,
 #' there are random points that need to be marked as cluster type placed within
 #' the underlaying pattern. This function does just that.
 #'
