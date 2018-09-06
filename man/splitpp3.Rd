@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_functions.R
 \name{splitpp3}
 \alias{splitpp3}
-\title{Helper for \code{\link{makeCluster}} that splits a
+\title{Helper for \code{\link{makecluster}} that splits a
 \code{\link[spatstat]{pp3}} into two.}
 \usage{
 splitpp3(overPattern, num)

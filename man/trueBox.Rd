@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_functions.R
 \name{trueBox}
 \alias{trueBox}
-\title{Helper for \code{\link{makeCluster}} that determines a
+\title{Helper for \code{\link{makecluster}} that determines a
 \code{\link[spatstat]{pp3}} object true dimensions.}
 \usage{
 trueBox(pp3file)

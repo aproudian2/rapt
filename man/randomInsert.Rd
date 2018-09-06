@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_functions.R
 \name{randomInsert}
 \alias{randomInsert}
-\title{Helper for \code{\link{makeCluster}} to insert random cluster points}
+\title{Helper for \code{\link{makecluster}} to insert random cluster points}
 \usage{
 randomInsert(cluster.Indices, n, N)
 }
@@ -18,7 +18,7 @@ points}
 New indices vector containing new cluster points randomly placed.
 }
 \description{
-When \code{pip} argument of \code{\link{makeCluster}} is not equal to 1,
+When \code{pip} argument of \code{\link{makecluster}} is not equal to 1,
 there are random points that need to be marked as cluster type placed within
 the underlaying pattern. This function does just that.
 }

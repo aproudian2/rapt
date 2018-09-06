@@ -55,13 +55,14 @@ Returns are different based on \code{type}.
   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
   points per cluster 1 [2] number of points with points per cluster 1 [3]
   points per cluster 2 [4] number of points with points per cluster 2. }
-  \subsection{\code{type} = "cr"}{List of:
-  [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
-  point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
-  overlaying RCP pattern after scaling. }
+  \subsection{\code{type} = "cr"}{List of: [[1]] \code{\link[spatstat]{pp3}}
+  object containing the cluster marked point locations. [[2]]
+  \code{\link[spatstat]{pp3}} object containing the overlaying RCP pattern
+  after scaling. [[3]] Numeric vector containing: [1] number of clusters [2]
+  number of points in those clusters.}
 }
 \description{
-The \code{makeCluster} function simulates point clusters using two RCP point
+The \code{makecluster} function simulates point clusters using two RCP point
 clouds. The first point cloud is the "underlaying" pattern. This is the set
 of points that will be used as actual cluster point locations in the final
 product. The second point cloud is the "overlaying" pattern. This is the set

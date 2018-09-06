@@ -4,7 +4,7 @@
 \alias{plot3d.pp3}
 \title{Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.}
 \usage{
-plot3d.pp3(X, ...)
+\method{plot3d}{pp3}(X, ...)
 }
 \description{
 (requires the rgl library)

@@ -8,8 +8,8 @@ Description: Tools for analyzing atom probe tomography (APT) data in R.
 License: CC-BY-SA-4.0
 LazyData: TRUE
 Depends:
-  spatstat (>= 1.49),
-  MALDIquant (>= 1.15)
+  MALDIquant (>= 1.15),
+  spatstat (>= 1.49)
 Imports:
   enviPat (>= 2.0),
   pracma (>= 1.8),

@@ -82,10 +82,11 @@
 #'   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
 #'   points per cluster 1 [2] number of points with points per cluster 1 [3]
 #'   points per cluster 2 [4] number of points with points per cluster 2. }
-#'   \subsection{\code{type} = "cr"}{List of:
-#'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
-#'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
-#'   overlaying RCP pattern after scaling. }
+#'   \subsection{\code{type} = "cr"}{List of: [[1]] \code{\link[spatstat]{pp3}}
+#'   object containing the cluster marked point locations. [[2]]
+#'   \code{\link[spatstat]{pp3}} object containing the overlaying RCP pattern
+#'   after scaling. [[3]] Numeric vector containing: [1] number of clusters [2]
+#'   number of points in those clusters.}
 
 makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL,d=NULL,pic = 1,pcp = 0.06,toPlot=FALSE,showOverPts=FALSE){
 ############################################################################################
@@ -198,7 +199,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
       }
     }
 
-    return(list(cluster,over.scaledf))
+    return(list(cluster,over.scaledf,c(npoints(over.scaledf),npoints(cluster)-more)))
 
 ###########################################################################################
 # CHOOSE DISTANCE BETWEEN CLUSTERS METHOD

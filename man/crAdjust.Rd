@@ -2,7 +2,7 @@
 % Please edit documentation in R/cluster_functions.R
 \name{crAdjust}
 \alias{crAdjust}
-\title{Helper for \code{\link{makeCluster}} for \code{type} = "cr"}
+\title{Helper for \code{\link{makecluster}} for \code{type} = "cr"}
 \usage{
 crAdjust(mat, diff, X, Y)
 }
@@ -21,6 +21,6 @@ Updated mat matrix containing the correct number of cluster points.
 }
 \description{
 Adjustment method to get correct number of points in each cluster for the
-\code{type} = "cr" cluster generation method. of \code{\link{makeCluster}}
+\code{type} = "cr" cluster generation method. of \code{\link{makecluster}}
 function.
 }
