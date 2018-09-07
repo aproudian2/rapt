@@ -88,9 +88,9 @@
 #'   after scaling. [[3]] Numeric vector containing: [1] number of clusters [2]
 #'   number of points in those clusters.}
 
-makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL,d=NULL,pic = 1,pcp = 0.06,toPlot=FALSE,showOverPts=FALSE){
-############################################################################################
-# POINTS PER CLUSTER METHOD
+makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL,fast=TRUE,d=NULL,pic = 1,pcp = 0.06,toPlot=FALSE,showOverPts=FALSE){
+  ############################################################################################
+  # POINTS PER CLUSTER METHOD
 
   if(type == "ppc"){
     #real cluster percent
@@ -157,52 +157,95 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
     return(list(cluster,over.scaledf,c(ppc,npoints(over.scaledf)-diff,ppc+1,diff)))
 
-########################################################################################
-# CHOOSE RADIUS METHOD
+    ########################################################################################
+    # CHOOSE RADIUS METHOD
 
   }else if(type == "cr"){
-    #real cluster percent
-    rcp <- pcp*pic
+    if (fast == FALSE){
+      #real cluster percent
+      rcp <- pcp*pic
 
-    under.r <- radius1
-    over.r <- radius2
-    under.vol <- volume(trueBox(under))
+      under.r <- radius1
+      over.r <- radius2
+      under.vol <- volume(trueBox(under))
 
-    over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
+      over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
 
-    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
-    over.scaledf <- subSample(under,over.scaled)
+      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
+      over.scaledf <- subSample(under,over.scaled)
 
-    cluster.nnR <- nncrossR(over.scaledf,under,cr)
-    cluster.ind <- cluster.nnR[[1]]
-    cluster.matrix <- cluster.nnR[[2]]
-    diff <- round(rcp*npoints(under)-length(cluster.ind))
+      cluster.nnR <- nncrossR(over.scaledf,under,cr)
+      cluster.ind <- cluster.nnR[[1]]
+      cluster.matrix <- cluster.nnR[[2]]
+      diff <- round(rcp*npoints(under)-length(cluster.ind))
 
-    cluster.ind <- crAdjust(cluster.matrix,diff,over.scaledf,under)
+      cluster.ind <- crAdjust(cluster.matrix,diff,over.scaledf,under)
 
-    more <- npoints(under)*pcp-npoints(under)*rcp
-    if(more==0){
+      more <- npoints(under)*pcp-npoints(under)*rcp
+      if(more==0){
 
-    }else{
-      cluster.ind <- randomInsert(cluster.ind,more,npoints(under))
-    }
-
-    cluster.xyz <- coords(under)[cluster.ind,]
-    cluster.xyz <- na.omit(cluster.xyz)
-    cluster <- createSpat(cluster.xyz)
-
-    if(toPlot==TRUE){
-      plot3d.pp3(cluster,col="red",size=5)
-      plot3d.pp3(under,col="lightgray",add=TRUE)
-      if(showOverPts==TRUE){
-        plot3d.pp3(over.scaledf,size= 6,col="black",add=TRUE)
+      }else{
+        cluster.ind <- randomInsert(cluster.ind,more,npoints(under))
       }
+
+      cluster.xyz <- coords(under)[cluster.ind,]
+      cluster.xyz <- na.omit(cluster.xyz)
+      cluster <- createSpat(cluster.xyz)
+
+      if(toPlot==TRUE){
+        plot3d.pp3(cluster,col="red",size=5)
+        plot3d.pp3(under,col="lightgray",add=TRUE)
+        if(showOverPts==TRUE){
+          plot3d.pp3(over.scaledf,size= 6,col="black",add=TRUE)
+        }
+      }
+
+      return(list(cluster,over.scaledf,c(npoints(over.scaledf),npoints(cluster)-more)))
+    }else if (fast == TRUE){
+      #real cluster percent
+      rcp <- pcp*pic
+
+      under.r <- radius1
+      over.r <- radius2
+      under.vol <- volume(trueBox(under))
+
+      over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
+
+      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
+      over.scaledf <- subSample(under,over.scaled)
+
+      cluster.nnR.new <- crosspairs.pp3(over.scaledf,under,cr,what="indices",twice=FALSE,distinct=TRUE,neat=TRUE)
+      cluster.ind <- cluster.nnR.new[[2]]
+      cluster.info <- factor(cluster.nnR.new[[1]])
+      diff <- round(rcp*npoints(under)-length(cluster.ind))
+      cluster.adj <- crAdjust.new(cluster.ind,cluster.info,diff,over.scaledf,under)
+      cluster.ind <- cluster.adj[[1]]
+      cluster.info <- cluster.adj[[2]]
+
+      more <- npoints(under)*pcp-npoints(under)*rcp
+      if(more==0){
+
+      }else{
+        cluster.ind <- randomInsert(cluster.ind,more,npoints(under))
+      }
+
+      cluster.xyz <- coords(under)[cluster.ind,]
+      cluster.xyz <- na.omit(cluster.xyz)
+      cluster <- createSpat(cluster.xyz)
+
+      if(toPlot==TRUE){
+        plot3d.pp3(cluster,col="red",size=5)
+        plot3d.pp3(under,col="lightgray",add=TRUE)
+        if(showOverPts==TRUE){
+          plot3d.pp3(over.scaledf,size= 6,col="black",add=TRUE)
+        }
+      }
+
+      return(list(cluster,over.scaledf,cluster.info))
     }
 
-    return(list(cluster,over.scaledf,c(npoints(over.scaledf),npoints(cluster)-more)))
-
-###########################################################################################
-# CHOOSE DISTANCE BETWEEN CLUSTERS METHOD
+    ###########################################################################################
+    # CHOOSE DISTANCE BETWEEN CLUSTERS METHOD
 
   }else if(type == "dist"){
     #real cluster percent
@@ -237,7 +280,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
         if(ppc==1){
           cluster.ind <- c(cluster.ind,cluster.inddf1[i])
         }else{
-        cluster.ind <- c(cluster.ind,as.numeric(cluster.inddf1[i,]))
+          cluster.ind <- c(cluster.ind,as.numeric(cluster.inddf1[i,]))
         }
       }
       for(i in 1:npoints(over.split[[2]])){
@@ -451,6 +494,98 @@ crAdjust <- function(mat, diff, X, Y){
 
   }else{return(mat)}
 }
+
+#### crAdjust.new ####
+#' ADD DOCUMENTATION HERE
+
+crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
+  # mat is the matrix filled with points and associated cluster index values
+  # diff is the difference between the number of values needed and the number in mat
+  # X is the over point pattern
+  # Y is the under point pattern
+
+  if(diff > 0){
+    over.n <- length(levels(cluster.info))
+    a <- floor(diff/over.n)
+    b <- (diff %% over.n)
+
+    if(a>0){
+      nPoints <- as.numeric(summary(cluster.info))
+      maxn <- max(nPoints)
+      minn <- min(nPoints)
+      d <- nncross(X,Y,k = (minn + 1):(maxn + a),what = "which")
+      cluster.info <- as.numeric(cluster.info)
+      for(i in 1:over.n){
+        n <- nPoints[i]
+        cluster.ind <- c(cluster.ind,as.numeric(d[i,(n-minn+1):(n-minn+a)]))
+        cluster.info <- c(cluster.info,rep(i,length(as.numeric(d[i,(n-minn+1):(n-minn+a)]))))
+      }
+      cluster.info <- factor(cluster.info)
+    }
+    if(b > 0){
+      nPoints <- as.numeric(summary(cluster.info))[1:b]
+      maxn <- max(nPoints)
+      minn <- min(nPoints)
+      d <- nncross(X,Y,k = (minn + 1):(maxn + 1), what = "which")
+      cluster.info <- as.numeric(cluster.info)
+      if (b == 1){
+        cluster.ind <- c(cluster.ind,as.numeric(d[1]))
+        cluster.info <- c(cluster.info, 1)
+      }else {
+        for(i in 1:b){
+          n <- nPoints[i]
+          cluster.ind <- c(cluster.ind,as.numeric(d[i,n-minn+1]))
+          cluster.info <- c(cluster.info,i)
+        }
+      }
+      cluster.info <- factor(cluster.info)
+    }
+    return(list(cluster.ind,cluster.info))
+
+  }else if(diff < 0){
+
+    over.n <- length(levels(cluster.info))
+    a <- floor((-diff)/over.n)
+    b <- ((-diff) %% over.n)
+
+    if(a>0){
+      nPoints <- as.numeric(summary(cluster.info))
+      cluster.info <- as.numeric(cluster.info)
+      for(i in 1:over.n){
+        if(i == 1){
+          cluster.ind[1:a] <- rep(NaN,a)
+          cluster.info[1:a] <- rep(NaN,a)
+        }else{
+          cluster.ind[(sum(nPoints[1:(i-1)])+1):(sum(nPoints[1:(i-1)])+a)] <- rep(NaN,a)
+          cluster.info[(sum(nPoints[1:(i-1)])+1):(sum(nPoints[1:(i-1)])+a)] <- rep(NaN,a)
+        }
+      }
+      cluster.ind <- cluster.ind[!is.nan(cluster.ind)]
+      cluster.info <- cluster.info[!is.nan(cluster.info)]
+      cluster.info <- factor(cluster.info)
+    }
+    if(b>0){
+      nPoints <- as.numeric(summary(cluster.info))
+      cluster.info <- as.numeric(cluster.info)
+      for(i in 1:b){
+        if(i == 1){
+          cluster.ind[1] <- NaN
+          cluster.info[1] <- NaN
+        }else{
+          cluster.ind[(sum(nPoints[1:(i-1)])+1)] <- NaN
+          cluster.info[(sum(nPoints[1:(i-1)])+1)] <- NaN
+        }
+      }
+    }
+    cluster.ind <- cluster.ind[!is.nan(cluster.ind)]
+    cluster.info <- cluster.info[!is.nan(cluster.info)]
+    cluster.info <- factor(cluster.info)
+
+    return(list(cluster.ind,cluster.info))
+
+  }else{return(list(cluster.ind,cluster.info))}
+}
+
 
 #### randomInsert ####
 #' Helper for \code{\link{makecluster}} to insert random cluster points
