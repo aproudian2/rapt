@@ -145,7 +145,7 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceil
 #'   calculated for \code{\link[spatstat]{K3est}}.
 #' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
 #'   \code{\link[spatstat]{K3est}} should be calculated at.
-#' @param iso Either "iso", "trans", or "bord" edge correction.
+#' @param correction Either "iso", "trans", or "bord" edge correction.
 #' @section Edge Corrections: See \code{\link[spatstat]{Kest}} or book availible
 #'   at \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
@@ -239,7 +239,7 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso"){
 #'   calculated for \code{\link[spatstat]{K3est}}.
 #' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
 #'   \code{\link[spatstat]{K3est}} should be calculated at.
-#' @param iso Either "iso", "trans", or "bord" edge correction.
+#' @param correction Either "iso", "trans", or "bord" edge correction.
 #' @section Edge Corrections: See \code{\link[spatstat]{Kest}} or book availible
 #'   at \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.

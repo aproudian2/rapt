@@ -5,8 +5,8 @@
 \title{Simulate point clustering in an RCP matrix}
 \usage{
 makecluster(under, over, radius1, radius2, type = "ppc", ppc = NULL,
-  cr = NULL, d = NULL, pic = 1, pcp = 0.06, toPlot = FALSE,
-  showOverPts = FALSE)
+  cr = NULL, fast = TRUE, d = NULL, pic = 1, pcp = 0.06,
+  toPlot = FALSE, showOverPts = FALSE)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
@@ -28,6 +28,9 @@ below for more information on each.}
 \item{ppc}{Number of points per cluster if type = "ppc", otherwise NULL.}
 
 \item{cr}{Cluster radius if type = "cr", otherwise NULL.}
+
+\item{fast}{Whether or not to use the "fast" cluster radius method if type =
+"cr".}
 
 \item{d}{Distance between clusters if type = "dist", otherwise NULL.}
 
@@ -55,11 +58,16 @@ Returns are different based on \code{type}.
   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
   points per cluster 1 [2] number of points with points per cluster 1 [3]
   points per cluster 2 [4] number of points with points per cluster 2. }
-  \subsection{\code{type} = "cr"}{List of: [[1]] \code{\link[spatstat]{pp3}}
-  object containing the cluster marked point locations. [[2]]
-  \code{\link[spatstat]{pp3}} object containing the overlaying RCP pattern
-  after scaling. [[3]] Numeric vector containing: [1] number of clusters [2]
-  number of points in those clusters.}
+  \subsection{\code{type} = "cr", fast = FALSE}{List of: [[1]]
+  \code{\link[spatstat]{pp3}} object containing the cluster marked point
+  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+  overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
+  number of clusters [2] number of points in those clusters.}
+  \subsection{\code{type} = "cr", fast = TRUE}{List of: [[1]]
+  \code{\link[spatstat]{pp3}} object containing the cluster marked point
+  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+  overlaying RCP pattern after scaling. [[3]] factor containing the number of
+  points in each cluster.}
 }
 \description{
 The \code{makecluster} function simulates point clusters using two RCP point
@@ -98,7 +106,13 @@ underlaying pattern.
   pattern). The method cleans up by marking or removing marks around the
   centers as necesary so that there are exactly N x pcp x pip points in
   clusters. The rest of the N x \code{pcp} x (1-\code{pip}) points are then
-  placed randomly through the remaining non-cluster-marked points.}
+  placed randomly through the remaining non-cluster-marked points.
+
+  If fast = FALSE: Uses the original, hand written function
+  \code{\link{nncrossR}} to calculate points within a given radius. This
+  method is slow, but very accurate. If fast = TRUE: Uses the spatstat
+  function \code{\link[spatstat]{closepairs.pp3}} to find points within a
+  given radius. Faster, but slightly less accurate.}
   \subsection{Distance - "dist"}{
   Specify the distance between clusters. Needs to be paired with the \code{d}
   argument. The overlaying RCP pattern will be scaled according to the

@@ -20,9 +20,11 @@
 #' @param radius2 The small radius of the overlaying RCP pattern. Can be found
 #'   in the system output file, or as whatever the pattern is scaled to.
 #' @param type How to create the clusters. Either "ppc", "cr", or "dist". See
-#'   below for more information on each.
+#' below for more information on each.
 #' @param ppc Number of points per cluster if type = "ppc", otherwise NULL.
 #' @param cr Cluster radius if type = "cr", otherwise NULL.
+#' @param fast Whether or not to use the "fast" cluster radius method if type =
+#'   "cr".
 #' @param d Distance between clusters if type = "dist", otherwise NULL.
 #' @param pic Percent In Clusters. Percent of the points marked as cluster type
 #'   that should actually be contained within the clusters. Number between 0 and
@@ -65,7 +67,13 @@
 #'   pattern). The method cleans up by marking or removing marks around the
 #'   centers as necesary so that there are exactly N x pcp x pip points in
 #'   clusters. The rest of the N x \code{pcp} x (1-\code{pip}) points are then
-#'   placed randomly through the remaining non-cluster-marked points.}
+#'   placed randomly through the remaining non-cluster-marked points.
+#'
+#'   If fast = FALSE: Uses the original, hand written function
+#'   \code{\link{nncrossR}} to calculate points within a given radius. This
+#'   method is slow, but very accurate. If fast = TRUE: Uses the spatstat
+#'   function \code{\link[spatstat]{closepairs.pp3}} to find points within a
+#'   given radius. Faster, but slightly less accurate.}
 #'   \subsection{Distance - "dist"}{
 #'   Specify the distance between clusters. Needs to be paired with the \code{d}
 #'   argument. The overlaying RCP pattern will be scaled according to the
@@ -82,11 +90,16 @@
 #'   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
 #'   points per cluster 1 [2] number of points with points per cluster 1 [3]
 #'   points per cluster 2 [4] number of points with points per cluster 2. }
-#'   \subsection{\code{type} = "cr"}{List of: [[1]] \code{\link[spatstat]{pp3}}
-#'   object containing the cluster marked point locations. [[2]]
-#'   \code{\link[spatstat]{pp3}} object containing the overlaying RCP pattern
-#'   after scaling. [[3]] Numeric vector containing: [1] number of clusters [2]
-#'   number of points in those clusters.}
+#'   \subsection{\code{type} = "cr", fast = FALSE}{List of: [[1]]
+#'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
+#'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
+#'   number of clusters [2] number of points in those clusters.}
+#'   \subsection{\code{type} = "cr", fast = TRUE}{List of: [[1]]
+#'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
+#'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   overlaying RCP pattern after scaling. [[3]] factor containing the number of
+#'   points in each cluster.}
 
 makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL,fast=TRUE,d=NULL,pic = 1,pcp = 0.06,toPlot=FALSE,showOverPts=FALSE){
   ############################################################################################
@@ -407,10 +420,11 @@ trueBox <- function(pp3file) {
 }
 
 #### crAdjust ####
-#' Helper for \code{\link{makecluster}} for \code{type} = "cr"
+#' Helper for \code{\link{makecluster}} for \code{type} = "cr" and \code{fast} =
+#' FALSE
 #'
 #' Adjustment method to get correct number of points in each cluster for the
-#' \code{type} = "cr" cluster generation method. of \code{\link{makecluster}}
+#' \code{type} = "cr" cluster generation method of \code{\link{makecluster}}
 #' function.
 #'
 #' @param mat Matrix filled with points and associated cluster index values.
@@ -496,7 +510,23 @@ crAdjust <- function(mat, diff, X, Y){
 }
 
 #### crAdjust.new ####
-#' ADD DOCUMENTATION HERE
+#' Helper for \code{\link{makecluster}} for \code{type} = "cr" and \code{fast} =
+#' TRUE
+#'
+#' Adjustment method to get correct number of points in each cluster for the
+#' \code{type} = "cr" cluster generation method of \code{\link{makecluster}}
+#' function. This is a version of \code{\link{crAdjust}} meant to work with the
+#' faster, updated verios of \code{type}="cr" \code{\link{makecluster}}.
+#'
+#' @param cluster.ind Vector of indices of the cluster points.
+#' @param cluster.info Factor containing the number of points in each cluster.
+#' @param diff The difference between the number of values needed and the number
+#'   in cluster.ind.
+#' @param X The overlaying point pattern. A \code{\link[spatstat]{pp3}} object.
+#' @param Y The underlaying point pattern. A \code{\link[spatstat]{pp3}} object.
+#'
+#' @return A list of [[1]] The updated cluster.ind vector and [[2]] the updated
+#'   cluster.info factor.
 
 crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
   # mat is the matrix filled with points and associated cluster index values
