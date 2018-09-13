@@ -8,9 +8,8 @@ envPlot(tests, percentiles = c(0.999, 0.99, 0.97), ylim = c(-3, 3),
   xlim = c(0, ceiling(max(tests[, 1]))))
 }
 \arguments{
-\item{tests}{The return file from \code{\link{pK3est}} or the first, [[1]],
-entry in the list returned by \code{\link{panomK3est}}. Contains results
-from many 3D K tests.}
+\item{tests}{The return file from \code{p(K/G/F)3est} or the first, [[1]],
+entry in the list returned by \code{p(K/G/F)3est} with \code{anom = TRUE}.}
 
 \item{percentiles}{Numerical vector of percentiles that you want to see the
 envelopes for. Each between 0 and 1.}
@@ -25,7 +24,7 @@ on the plot.}
 Nothing.
 }
 \description{
-Plot the results of envelope calculations from the \code{\link{pK3est}} or
-\code{\link{panomK3est}}, with the ability to choose the percentiles for
-plotting.
+Plot the results of envelope calculations from the \code{\link{pK3est}},
+\code{\link{pG3est}}, or \code{\link{pF3est}} functions, with the ability to
+choose the percentiles for plotting.
 }

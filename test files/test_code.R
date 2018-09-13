@@ -14,11 +14,11 @@ library(rgl)
 # makecluster
 
 # Upload RCP patterns
-r1 <- as.numeric(levels(read.table('system_test_1')$V1)[2])
-r2 <- as.numeric(levels(read.table('system_test_2')$V1)[2])
-rcp1 <- read.table('rcp_test_1',sep=" ",col.names=c("x","y","z","type"))
+r1 <- as.numeric(levels(read.table('C:/Users/galen/OneDrive/Documents/Research/rapt/test files/system_test_1')$V1)[2])
+r2 <- as.numeric(levels(read.table('C:/Users/galen/OneDrive/Documents/Research/rapt/test files/system_test_2')$V1)[2])
+rcp1 <- read.table('C:/Users/galen/OneDrive/Documents/Research/rapt/test files/rcp_test_1',sep=" ",col.names=c("x","y","z","type"))
 rcp1 <- scaleRCP(createSpat(rcp1[,c("x","y","z")]),newRadius = 0.5,oldRadius = r1)
-rcp2 <- read.table('rcp_test_2',sep=" ",col.names=c("x","y","z","type"))
+rcp2 <- read.table('C:/Users/galen/OneDrive/Documents/Research/rapt/test files/rcp_test_2',sep=" ",col.names=c("x","y","z","type"))
 rcp2 <- scaleRCP(createSpat(rcp2[,c("x","y","z")]),newRadius = 0.5,oldRadius = r2)
 
 # make a cluster of type "ppc"
