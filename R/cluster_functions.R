@@ -11,7 +11,8 @@
 #' underlaying pattern.
 #'
 #' @param under The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
-#'   object containing the correctly scaled RCP pattern point locations.
+#'   object containing the correctly scaled RCP pattern point locations. Should
+#'   have used scaleRCP prior to putting hte object into this argument.
 #' @param over The overlaying RCP pattern. A \code{\link[spatstat]{pp3}} object
 #'   containing the RCP pattern point locations. Scaled equal to the underlaying
 #'   pattern.
@@ -180,7 +181,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
       under.r <- radius1
       over.r <- radius2
-      under.vol <- volume(trueBox(under))
+      under.vol <- volume(domain(under))
 
       over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
 
@@ -220,7 +221,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
       under.r <- radius1
       over.r <- radius2
-      under.vol <- volume(trueBox(under))
+      under.vol <- volume(domain(under))
 
       over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
 
@@ -266,7 +267,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
     under.r <- radius1
     over.r <- radius2
-    under.vol <- volume(trueBox(under))
+    under.vol <- volume(domain(under))
 
     over.rf <- d/2
 
@@ -353,9 +354,9 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
 subSample <- function(underPattern, overPattern){
 
-  xr <- round(domain(underPattern)$xrange)
-  yr <- round(domain(underPattern)$yrange)
-  zr <- round(domain(underPattern)$zrange)
+  xr <- domain(underPattern)$xrange
+  yr <- domain(underPattern)$yrange
+  zr <- domain(underPattern)$zrange
 
   a <- box3(xrange = xr, yrange = yr, zrange = zr)
 
