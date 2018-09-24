@@ -20,7 +20,7 @@ subSquare <- function(orig,win){
   orig.center <- c(mean(orig.domain$xrange),mean(orig.domain$yrange),mean(orig.domain$zrange))
   xs <-orig.center[1]-(win[1]/2)
   ys <-orig.center[2]-(win[2]/2)
-  zs <-orig.center[2]-(win[3]/2)
+  zs <-orig.center[3]-(win[3]/2)
   xb <-orig.center[1]+(win[1]/2)
   yb <-orig.center[2]+(win[2]/2)
   zb <-orig.center[3]+(win[3]/2)

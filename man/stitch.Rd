@@ -2,7 +2,7 @@
 % Please edit documentation in R/rcp_functions.R
 \name{stitch}
 \alias{stitch}
-\title{Stitches together multiple RCP point patterns}
+\title{Stitches together a RCP point pattern with periodic boundary conditions}
 \usage{
 stitch(pp3file, reps = c(2, 2, 2), win = NULL)
 }

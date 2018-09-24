@@ -43,17 +43,18 @@ scaleRCP <- function(pp3file, newRadius = .5, oldRadius = NULL, win = NULL){
 }
 
 #### stitch ####
-#' Stitches together multiple RCP point patterns
+#' Stitches together a RCP point pattern with periodic boundary conditions
 #'
 #' Takes RCP point patterns with periodic boundary conditions and creates a
 #' single, larger point cloud by stitching these patterns together.
 #'
 #' @param pp3file A \code{\link[spatstat]{pp3}} object containing the RCP
-#'   generated 3D point positions.
+#' generated 3D point positions.
 #' @param reps A numerical vector containing the number of repetitions you would
 #'   like in the x, y and z directions, respectively. c(x,y,z).
 #' @param win A \code{\link[spatstat]{box3}} object indicating the size of the
 #'   original rcp generation. Can leave blank if these are integer value.
+#'
 #' @return Will return a \code{\link[spatstat]{pp3}} object with the total
 #'   stiched point pattern.
 stitch <- function(pp3file, reps = c(2,2,2), win=NULL){
@@ -85,6 +86,57 @@ stitch <- function(pp3file, reps = c(2,2,2), win=NULL){
   toReturn <- createSpat(newpp3, win=pp3.box)
 
   return(toReturn)
+}
+
+#### stitch.size ###
+#' Stitches together a RCP point pattern with periodic boundary conditions
+#'
+#' Similar to \code{\link{stitch}}. Instead of only inputting the number of
+#' repetitions in each dimension, \code{stitch.size} allows you to specify the
+#' domain size that you want to return, even if it is not an integer multiple of
+#' the original dimensions.
+#'
+#' @param pp3file A \code{\link[spatstat]{pp3}} object containing the RCP
+#'   generated 3D point positions.
+#' @param win A \code{\link[spatstat]{box3}} object indicating the size of the
+#'   original rcp generation. Can leave blank if these are integer value.
+#' @param boxSize A numeric vector of the dimensions that you want in the final
+#'   \code{\link[spatstat]{pp3}} object: c(xmax,ymax,zmax). Assumes that
+#'   (xmin,ymin,zmin) = (0,0,0).
+
+stitch.size <- function(pp3file, win=NULL, boxSize){
+
+  if(is.null(win)){
+    pp3.domain <- domain(pp3file)
+    pp3.domain <- box3(xrange=pp3.domain$xrange,yrange=pp3.domain$yrange,zrange=pp3.domain$zrange)
+  } else {
+    pp3.domain <- win
+  }
+
+  reps <- ceiling(c(boxSize[1]/pp3.domain$xrange[2],boxSize[2]/pp3.domain$yrange[2],boxSize[3]/pp3.domain$zrange[2]))
+  pp3.box <- box3(xrange=reps[1]*pp3.domain$xrange,yrange=reps[2]*pp3.domain$yrange,zrange=reps[3]*pp3.domain$zrange)
+
+  ogCoords <- coords(pp3file)
+  newpp3 <- NULL
+
+  for(i in 0:(reps[1]-1)){
+    for(j in 0:(reps[2]-1)){
+      for(k in 0:(reps[3]-1)){
+        newCoords <- ogCoords
+        newCoords$x <- newCoords$x + i*(pp3.domain$xrange[2]-pp3.domain$xrange[1])
+        newCoords$y <- newCoords$y + j*(pp3.domain$yrange[2]-pp3.domain$yrange[1])
+        newCoords$z <- newCoords$z + k*(pp3.domain$zrange[2]-pp3.domain$zrange[1])
+
+        newpp3 <- rbind(newpp3,newCoords)
+      }
+    }
+  }
+
+  toReturn <- createSpat(newpp3, win=pp3.box)
+
+  toReturn2 <- subSquare(toReturn,win=boxSize)
+
+  return(toReturn2)
 }
 
 #### nncrossR ####
