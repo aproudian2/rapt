@@ -18,7 +18,8 @@ points}
 New indices vector containing new cluster points randomly placed.
 }
 \description{
-When \code{pip} argument of \code{\link{makecluster}} is not equal to 1,
-there are random points that need to be marked as cluster type placed within
-the underlaying pattern. This function does just that.
+When \code{pip} argument of \code{\link{makecluster}} is not equal to 1, or
+\code{superfast == TRUE}, there may be random points that need to be marked
+as cluster type placed within the underlaying pattern. This function does
+just that.
 }

@@ -67,21 +67,22 @@ stitch <- function(pp3file, reps = c(2,2,2), win=NULL){
     pp3.box <- box3(xrange=reps[1]*win$xrange,yrange=reps[2]*win$yrange,zrange=reps[3]*win$zrange)
   }
 
-  ogCoords <- coords(pp3file)
-  newpp3 <- NULL
+  ogCoords <- as.matrix(coords(pp3file))
+  newpp3 <- matrix(NaN,nrow(ogCoords)*reps[1]*reps[2]*reps[3],3)
+  newpp3[1:nrow(ogCoords),] <- ogCoords
 
-  for(i in 0:(reps[1]-1)){
-    for(j in 0:(reps[2]-1)){
-      for(k in 0:(reps[3]-1)){
-        newCoords <- ogCoords
-        newCoords$x <- newCoords$x + i*(pp3.domain$xrange[2]-pp3.domain$xrange[1])
-        newCoords$y <- newCoords$y + j*(pp3.domain$yrange[2]-pp3.domain$yrange[1])
-        newCoords$z <- newCoords$z + k*(pp3.domain$zrange[2]-pp3.domain$zrange[1])
-
-        newpp3 <- rbind(newpp3,newCoords)
+  for(i in 1:(reps[1]-1)){
+    for(j in 1:(reps[2]-1)){
+      for(k in 1:(reps[3]-1)){
+        newpp3[,1] <- ogCoords[,1] + i*(pp3.domain$xrange[2]-pp3.domain$xrange[1])
+        newpp3[,2] <- ogCoords[,2] + i*(pp3.domain$yrange[2]-pp3.domain$yrange[1])
+        newpp3[,3] <- ogCoords[,3] + i*(pp3.domain$zrange[2]-pp3.domain$zrange[1])
       }
     }
   }
+
+  newpp3 <- as.data.frame(newpp3)
+  colnames(newpp3) <- c('x','y','z')
 
   toReturn <- createSpat(newpp3, win=pp3.box)
 

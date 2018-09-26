@@ -4,13 +4,19 @@
 \alias{anomF3est}
 \title{Perfrom anomaly F3est on a \code{\link[spatstat]{pp3}} object.}
 \usage{
-anomF3est(pattern, result, correction = "rs")
+anomF3est(pattern, toSub, rmax, nrval, correction = "rs")
 }
 \arguments{
 \item{pattern}{The \code{\link[spatstat]{pp3}} object to analyze.}
 
-\item{result}{List returned from \code{\link{pF3est}} with \code{anom =
-TRUE}.}
+\item{toSub}{Returned from \code{\link{pK3est}} with \code{anom = TRUE}.
+Second item in the returned list. The data to subtract from the results.}
+
+\item{rmax}{Max r value. See \code{\link[spatstat]{F3est}}. Should be the
+same as the envelopes that you are comparing to.}
+
+\item{nrval}{Number of r values. See \code{\link[spatstat]{F3est}}. Should be
+the same as the envelopes that you are comparing to.}
 
 \item{correction}{See \code{\link{pF3est}}. "rs", "km", "cs", or "all".}
 }

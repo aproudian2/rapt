@@ -167,42 +167,46 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",an
 #' the same values used in the pK3est test that is being compared to.
 #'
 #' @param pattern The \code{\link[spatstat]{pp3}} object to analyze.
-#' @param result List returned from \code{\link{pK3est}} with \code{anom =
-#'   TRUE}.
+#' @param toSub Returned from \code{\link{pK3est}} with \code{anom = TRUE}.
+#'   Second item in the returned list. The data to subtract from the results.
+#' @param rmax Max r value. See \code{\link[spatstat]{K3est}}. Should be the
+#'   same as the envelopes that you are comparing to.
+#' @param nrval Number of r values. See \code{\link[spatstat]{K3est}}. Should be
+#'   the same as the envelopes that you are comparing to.
 #' @param correction See \code{\link{pK3est}}.
 #'
 #' @return Returns data fram containing r values and associated anomaly K3est
 #'   values.
 
-anomK3est <- function(pattern,result,correction = "iso"){
+anomK3est <- function(pattern,toSub,rmax,nrval,correction = "iso"){
 
   if(correction == "iso"){
-    a <- K3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="isotropic")
-    tvals <- sqrt(a$iso) - result[[2]]
+    a <- K3est(pattern,rmax=rmax,nrval=nrval,correction="isotropic")
+    tvals <- sqrt(a$iso) - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","iso")
     return(b)
 
   }else if(correction == "trans"){
-    a <- K3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="translation")
-    tvals <- sqrt(a$trans) - result[[2]]
+    a <- K3est(pattern,rmax=rmax,nrval=nrval,correction="translation")
+    tvals <- sqrt(a$trans) - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","trans")
     return(b)
 
   }else if(correction == "bord"){
-    a <- bK3est(pattern,rmax=result[[3]],nrval=result[[4]])
-    tvals <- sqrt(a$bord) - result[[2]]
+    a <- bK3est(pattern,rmax=rmax,nrval=nrval)
+    tvals <- sqrt(a$bord) - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","bord")
     return(b)
 
   }else if(correction == "all"){
-    b <- matrix(0,nrow=result[[4]],ncol=3)
+    b <- matrix(0,nrow=nrval,ncol=3)
 
-    a <- K3est(pattern,rmax=result[[3]],nrval=result[[4]])
-    b[,2] <- sqrt(a$iso) - result[[2]]
-    b[,3] <-  sqrt(a$trans) - result[[2]]
+    a <- K3est(pattern,rmax=rmax,nrval=nrval)
+    b[,2] <- sqrt(a$iso) - toSub
+    b[,3] <-  sqrt(a$trans) - toSub
     b[,1] <- a$r
 
     b <- as.data.frame(b)
@@ -367,43 +371,47 @@ pG3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",ano
 #' the same values used in the pG3est test that is being compared to.
 #'
 #' @param pattern The \code{\link[spatstat]{pp3}} object to analyze.
-#' @param result List returned from \code{\link{pG3est}} with \code{anom =
-#'   TRUE}.
+#' @param toSub Returned from \code{\link{pK3est}} with \code{anom = TRUE}.
+#'   Second item in the returned list. The data to subtract from the results.
+#' @param rmax Max r value. See \code{\link[spatstat]{G3est}}. Should be the
+#'   same as the envelopes that you are comparing to.
+#' @param nrval Number of r values. See \code{\link[spatstat]{G3est}}. Should be
+#'   the same as the envelopes that you are comparing to.
 #' @param correction See \code{\link{pG3est}}. "rs", "km", "Hanisch", or "all".
 #'
 #' @return Returns data fram containing r values and associated anomaly G3est
 #'   values.
 
-anomG3est <- function(pattern,result,correction = "rs"){
+anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 
   if(correction == "rs"){
-    a <- G3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="rs")
-    tvals <- a$rs - result[[2]]
+    a <- G3est(pattern,rmax=rmax,nrval=nrval,correction="rs")
+    tvals <- a$rs - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","rs")
     return(b)
 
   }else if(correction == "km"){
-    a <- G3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="km")
-    tvals <- a$km - result[[2]]
+    a <- G3est(pattern,rmax=rmax,nrval=nrval,correction="km")
+    tvals <- a$km - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","km")
     return(b)
 
   }else if(correction == "Hanisch"){
-    a <- G3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="Hanisch")
-    tvals <- a$han - result[[2]]
+    a <- G3est(pattern,rmax=rmax,nrval=nrval,correction="Hanisch")
+    tvals <- a$han - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","han")
     return(b)
 
   }else if(correction == "all"){
-    b <- matrix(0,nrow=result[[4]],ncol=4)
+    b <- matrix(0,nrow=nrval,ncol=4)
 
-    a <- G3est(pattern,rmax=result[[3]],nrval=result[[4]])
-    b[,2] <- a$rs - result[[2]]
-    b[,3] <- a$km - result[[2]]
-    b[,4] <- a$han - result[[2]]
+    a <- G3est(pattern,rmax=rmax,nrval=nrval)
+    b[,2] <- a$rs - toSub
+    b[,3] <- a$km - toSub
+    b[,4] <- a$han - toSub
     b[,1] <- a$r
 
     b <- as.data.frame(b)
@@ -569,43 +577,47 @@ pF3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",ano
 #' the same values used in the pF3est test that is being compared to.
 #'
 #' @param pattern The \code{\link[spatstat]{pp3}} object to analyze.
-#' @param result List returned from \code{\link{pF3est}} with \code{anom =
-#'   TRUE}.
+#' @param toSub Returned from \code{\link{pK3est}} with \code{anom = TRUE}.
+#'   Second item in the returned list. The data to subtract from the results.
+#' @param rmax Max r value. See \code{\link[spatstat]{F3est}}. Should be the
+#'   same as the envelopes that you are comparing to.
+#' @param nrval Number of r values. See \code{\link[spatstat]{F3est}}. Should be
+#'   the same as the envelopes that you are comparing to.
 #' @param correction See \code{\link{pF3est}}. "rs", "km", "cs", or "all".
 #'
 #' @return Returns data fram containing r values and associated anomaly F3est
 #'   values.
 
-anomF3est <- function(pattern,result,correction = "rs"){
+anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 
   if(correction == "rs"){
-    a <- F3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="rs")
-    tvals <- a$rs - result[[2]]
+    a <- F3est(pattern,rmax=rmax,nrval=nrval,correction="rs")
+    tvals <- a$rs - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","rs")
     return(b)
 
   }else if(correction == "km"){
-    a <- F3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="km")
-    tvals <- a$km - result[[2]]
+    a <- F3est(pattern,rmax=rmax,nrval=nrval,correction="km")
+    tvals <- a$km - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","km")
     return(b)
 
   }else if(correction == "cs"){
-    a <- F3est(pattern,rmax=result[[3]],nrval=result[[4]],correction="cs")
-    tvals <- a$cs - result[[2]]
+    a <- F3est(pattern,rmax=rmax,nrval=nrval,correction="cs")
+    tvals <- a$cs - toSub
     b <- as.data.frame(cbind(a$r,tvals))
     colnames(b)<-c("r","cs")
     return(b)
 
   }else if(correction == "all"){
-    b <- matrix(0,nrow=result[[4]],ncol=4)
+    b <- matrix(0,nrow=nrval,ncol=4)
 
-    a <- F3est(pattern,rmax=result[[3]],nrval=result[[4]])
-    b[,2] <- a$rs - result[[2]]
-    b[,3] <- a$km - result[[2]]
-    b[,4] <- a$cs - result[[2]]
+    a <- F3est(pattern,rmax=rmax,nrval=nrval)
+    b[,2] <- a$rs - toSub
+    b[,3] <- a$km - toSub
+    b[,4] <- a$cs - toSub
     b[,1] <- a$r
 
     b <- as.data.frame(b)

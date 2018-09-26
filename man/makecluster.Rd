@@ -5,8 +5,9 @@
 \title{Simulate point clustering in an RCP matrix}
 \usage{
 makecluster(under, over, radius1, radius2, type = "ppc", ppc = NULL,
-  cr = NULL, fast = TRUE, d = NULL, pic = 1, pcp = 0.06,
-  toPlot = FALSE, showOverPts = FALSE)
+  cr = NULL, slow = FALSE, fast = FALSE, superfast = FALSE,
+  d = NULL, pic = 1, pcp = 0.06, toPlot = FALSE,
+  showOverPts = FALSE)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
