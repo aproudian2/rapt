@@ -7,5 +7,5 @@
 \method{superimpose}{pp3}(..., W = NULL, check = F)
 }
 \description{
-Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
+\code{superimpose.pp3}
 }

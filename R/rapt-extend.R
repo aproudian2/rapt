@@ -48,17 +48,21 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
   }
   return(mat)
 }
+
 #### superimpose.pp3 ####
 #' Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
+#'
+#' \code{superimpose.pp3}
 #' @export
-# Add ability to superimpose with marks
 superimpose.pp3 <- function(..., W = NULL, check = F) {
+  # Add ability to superimpose with marks
   input.list <- list(...)
   df.list <- lapply(input.list, as.data.frame)
   df.comb <- Reduce(rbind, df.list)
   out.pp3 <-  createSpat(df.comb, win = W)
   return(out.pp3)
 }
+
 #### shift.pp3 ####
 #' Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
 shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)

@@ -61,6 +61,9 @@ paraOrthoRec <- function(ato, a, d = 90e7, icf = 1, k = 0) {
 #### paraRec ####
 #' Reconstruction using a parabolic tip shape assumption.
 #'
+#' \code{paraRec} creates a reconstruction based upon a parabolic tip shape
+#' assumption and parabolic flight paths.
+#'
 #' @export
 paraRec <- function(ato, a, d = 90e7, icf = 1) {
   para.ind <- rownames(ato)
@@ -78,4 +81,30 @@ paraRec <- function(ato, a, d = 90e7, icf = 1) {
   para.dat <- data.frame(x = para.x, y = para.y, z = para.z)
   rownames(para.dat) <- para.ind
   return(para.dat)
+}
+
+#### sphereRec ####
+#' Reconstruction using the sphere on cone method
+#'
+#' \code{sphereRec} creates a reconstruction based on a sphere on post tip
+#' shape assumption. A conical post will be implemented in the future.
+#'
+#' @export
+sphereRec <- function(ato, r, d = 90e7, icf = 1) {
+  sph.ind <- rownames(ato)
+  sph.dr <- sqrt(ato[,'dx']^2 + ato[,'dy']^2)
+  sph.dr <- 1e8 * sph.dr
+  sph.theta <- atan2(ato[,'dy'], ato[,'dx'])
+  sph.fun <- function(r, dr, d) {
+    x <- dr/d
+    r * x / sqrt(x^2 + 1)
+  }
+  sph.r <- sph.fun(r, sph.dr, d)
+  sph.r <- icf * sph.r
+  sph.x <- sph.r * cos(sph.theta)
+  sph.y <- sph.r * sin(sph.theta)
+  sph.z <- sqrt(r^2 - sph.r^2) - r
+  sph.dat <- data.frame(x = sph.x, y = sph.y, z = sph.z)
+  rownames(sph.dat) <- sph.ind
+  return(sph.dat)
 }

@@ -127,7 +127,10 @@ saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
   }
   return(ash)
 }
-
+#### dissocTrack ####
+dissocTrack <- function(v, m, mp){
+  m*(1-v*(1-m/mp))^-1
+}
 #### houghClean ####
 # Stub for Hough Transform cleaning of multiple hit noise
 houghClean <- function(sax) {
