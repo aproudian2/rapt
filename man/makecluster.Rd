@@ -5,9 +5,8 @@
 \title{Simulate point clustering in an RCP matrix}
 \usage{
 makecluster(under, over, radius1, radius2, type = "ppc", ppc = NULL,
-  cr = NULL, slow = FALSE, fast = FALSE, superfast = FALSE,
-  d = NULL, pic = 1, pcp = 0.06, toPlot = FALSE,
-  showOverPts = FALSE)
+  cr = NULL, speed = "superfast", d = NULL, pic = 1, pcp = 0.06,
+  den = 1, s = 100, toPlot = FALSE, showOverPts = FALSE)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
@@ -31,8 +30,7 @@ below for more information on each.}
 
 \item{cr}{Cluster radius if type = "cr", otherwise NULL.}
 
-\item{fast}{Whether or not to use the "fast" cluster radius method if type =
-"cr".}
+\item{speed}{"slow", "fast", or "superfast" for type = "cr".}
 
 \item{d}{Distance between clusters if type = "dist", otherwise NULL.}
 
@@ -45,6 +43,12 @@ in clusters and 50 percent will be randomly spread through the point cloud.}
 RCP pattern that should be marked as cluster type points. Number between 0
 and 1.}
 
+\item{den}{Intra cluster density of cluster points. Number between 0 and 1.
+Currently written for application to \code{type = "cr"} \code{speed =
+"fast"} and \code{"superfast"}, and to \code{type = "dist"}.}
+
+\item{s}{Seed for the random parts of the cluster generation process.}
+
 \item{toPlot}{Show a 3D plot of the cluster points once generation is done?
 TRUE or FALSE.}
 
@@ -54,22 +58,27 @@ points? TRUE or FALSE.}
 }
 \value{
 Returns are different based on \code{type}.
-  \subsection{\code{type} = "ppc" or "dist"}{List of:
-  [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
-  point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+  \subsection{\code{type} = "ppc" or "dist"}{List of: [[1]]
+  \code{\link[spatstat]{pp3}} object containing the cluster marked point
+  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
   points per cluster 1 [2] number of points with points per cluster 1 [3]
   points per cluster 2 [4] number of points with points per cluster 2. }
-  \subsection{\code{type} = "cr", fast = FALSE}{List of: [[1]]
+  \subsection{\code{type} = "cr", speed = "slow"}{List of: [[1]]
   \code{\link[spatstat]{pp3}} object containing the cluster marked point
   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
   number of clusters [2] number of points in those clusters.}
-  \subsection{\code{type} = "cr", fast = TRUE}{List of: [[1]]
+  \subsection{\code{type} = "cr", speed = "fast"}{List of: [[1]]
   \code{\link[spatstat]{pp3}} object containing the cluster marked point
   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] factor containing the number of
   points in each cluster.}
+  \subsection{\code{type} = "cr", speed = "superfast"}{List of: [[1]]
+  \code{\link[spatstat]{pp3}} object containing the cluster marked point
+  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+  overlaying RCP pattern after scaling. [[3]] number of points put in or
+  taken away at random.}
 }
 \description{
 The \code{makecluster} function simulates point clusters using two RCP point
@@ -109,12 +118,13 @@ underlaying pattern.
   centers as necesary so that there are exactly N x pcp x pip points in
   clusters. The rest of the N x \code{pcp} x (1-\code{pip}) points are then
   placed randomly through the remaining non-cluster-marked points.
-
-  If fast = FALSE: Uses the original, hand written function
-  \code{\link{nncrossR}} to calculate points within a given radius. This
-  method is slow, but very accurate. If fast = TRUE: Uses the spatstat
-  function \code{\link[spatstat]{closepairs.pp3}} to find points within a
-  given radius. Faster, but slightly less accurate.}
+  \code{speed = "slow"} gives the most accurate, but slowest realization.
+  \code{speed = "fast"} gives the second fastest, but less accurate
+  realization (fails with large data sets). Clusters may not be 100\% dense
+  with points. \code{speed = "superfast"} gives the fastest, but least
+  accurate realization (works well with large data sets). Clusters may not be
+  100\% dense with points and additional random points may be scattered
+  through the pattern.}
   \subsection{Distance - "dist"}{
   Specify the distance between clusters. Needs to be paired with the \code{d}
   argument. The overlaying RCP pattern will be scaled according to the

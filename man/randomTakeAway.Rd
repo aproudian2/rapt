@@ -4,15 +4,17 @@
 \alias{randomTakeAway}
 \title{Helper for \code{\link{makecluster}} to take away random cluster points}
 \usage{
-randomTakeAway(cluster.Indices, n, N)
+randomTakeAway(cluster.indices, n, N, s)
 }
 \arguments{
-\item{cluster.Indices}{A vector containing the indices of the current cluster
+\item{cluster.indices}{A vector containing the indices of the current cluster
 points}
 
 \item{n}{The number of points that need to be removed randomly}
 
-\item{N}{the number of points in the entire underlaying pattern.}
+\item{N}{The number of points in the entire underlaying pattern.}
+
+\item{s}{The random seed for the random selection of points to take away.}
 }
 \value{
 New indices vector containing new cluster points randomly placed.

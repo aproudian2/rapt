@@ -4,15 +4,20 @@
 \alias{randomInsert}
 \title{Helper for \code{\link{makecluster}} to insert random cluster points}
 \usage{
-randomInsert(cluster.Indices, n, N)
+randomInsert(cluster.indices, n, N, s, points.avoid = cluster.indices)
 }
 \arguments{
-\item{cluster.Indices}{A vector containing the indices of the current cluster
+\item{cluster.indices}{A vector containing the indices of the current cluster
 points}
 
 \item{n}{The number of points that need to be placed randomly}
 
-\item{N}{the number of points in the entire underlaying pattern.}
+\item{N}{The number of points in the entire underlaying pattern.}
+
+\item{s}{The seed for the random inserted points.}
+
+\item{points.avoid}{A vector containing the indices of the points you don't
+want the function to insert points to.}
 }
 \value{
 New indices vector containing new cluster points randomly placed.

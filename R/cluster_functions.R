@@ -24,20 +24,19 @@
 #' below for more information on each.
 #' @param ppc Number of points per cluster if type = "ppc", otherwise NULL.
 #' @param cr Cluster radius if type = "cr", otherwise NULL.
-#' @param slow Whether or not to use the "slow" cluster radius method if type =
-#'   "cr".
-#' @param fast Whether or not to use the "fast" cluster radius method if type =
-#'   "cr".
-#' @param superfast Whether or not to use the "super fast" cluster radius method
-#'   if type = "cr".
+#' @param speed "slow", "fast", or "superfast" for type = "cr".
 #' @param d Distance between clusters if type = "dist", otherwise NULL.
 #' @param pic Percent In Clusters. Percent of the points marked as cluster type
 #'   that should actually be contained within the clusters. Number between 0 and
 #'   1 For example, if pic = 0.5, 50 percent of the cluster type points will be
 #'   in clusters and 50 percent will be randomly spread through the point cloud.
 #' @param pcp Percent Cluster Points. Percent of the points in the underlaying
-#'   RCP pattern that should be marked as cluster type points. Number between 0
-#'   and 1.
+#' RCP pattern that should be marked as cluster type points. Number between 0
+#' and 1.
+#' @param den Intra cluster density of cluster points. Number between 0 and 1.
+#'   Currently written for application to \code{type = "cr"} \code{speed =
+#'   "fast"} and \code{"superfast"}, and to \code{type = "dist"}.
+#' @param s Seed for the random parts of the cluster generation process.
 #' @param toPlot Show a 3D plot of the cluster points once generation is done?
 #'   TRUE or FALSE.
 #' @param showOverPts If toPlot = TRUE, show all of the points in the RCP
@@ -72,19 +71,15 @@
 #'   pattern). The method cleans up by marking or removing marks around the
 #'   centers as necesary so that there are exactly N x pcp x pip points in
 #'   clusters. The rest of the N x \code{pcp} x (1-\code{pip}) points are then
-#'   placed randomly through the remaining non-cluster-marked points. \code{slow
-#'   = TRUE} gives the most accurate, but slowest realization. \code{fast =
-#'   TRUE} gives the second fastest, but less accurate realization (fails with
-#'   large data sets). Clusters may not be 100% dense with points.
-#'   \code{superfast = TRUE} gives the fastest, but least accurate realization
-#'   (works well with large data sets). Clusters may not be 100% dense with
-#'   points and additional random points may be scattered through the pattern.
-#'
-#'   If fast = FALSE: Uses the original, hand written function
-#'   \code{\link{nncrossR}} to calculate points within a given radius. This
-#'   method is slow, but very accurate. If fast = TRUE: Uses the spatstat
-#'   function \code{\link[spatstat]{closepairs.pp3}} to find points within a
-#'   given radius. Faster, but slightly less accurate.}
+#'   placed randomly through the remaining non-cluster-marked points.
+#'   \code{speed = "slow"} gives the most accurate, but slowest realization.
+#'   \code{speed = "fast"} gives the second fastest, but less accurate
+#'   realization (fails with large data sets). Clusters may not be 100\% dense
+#'   with points. \code{speed = "superfast"} gives the fastest, but least
+#'   accurate realization (works well with large data sets). Clusters may not be
+#'   100\% dense with points and additional random points may be scattered
+#'   through the pattern.}
+
 #'   \subsection{Distance - "dist"}{
 #'   Specify the distance between clusters. Needs to be paired with the \code{d}
 #'   argument. The overlaying RCP pattern will be scaled according to the
@@ -95,29 +90,38 @@
 #'   through the remaining non-cluster-marked points.}
 #'
 #' @return Returns are different based on \code{type}.
-#'   \subsection{\code{type} = "ppc" or "dist"}{List of:
-#'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
-#'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   \subsection{\code{type} = "ppc" or "dist"}{List of: [[1]]
+#'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
+#'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
 #'   points per cluster 1 [2] number of points with points per cluster 1 [3]
 #'   points per cluster 2 [4] number of points with points per cluster 2. }
-#'   \subsection{\code{type} = "cr", slow = TRUE}{List of: [[1]]
+#'   \subsection{\code{type} = "cr", speed = "slow"}{List of: [[1]]
 #'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
 #'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
 #'   number of clusters [2] number of points in those clusters.}
-#'   \subsection{\code{type} = "cr", fast = TRUE}{List of: [[1]]
+#'   \subsection{\code{type} = "cr", speed = "fast"}{List of: [[1]]
 #'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
 #'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] factor containing the number of
 #'   points in each cluster.}
-#'   \subsection{\code{type} = "cr", superfast = TRUE}{List of: [[1]]
+#'   \subsection{\code{type} = "cr", speed = "superfast"}{List of: [[1]]
 #'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
 #'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] number of points put in or
 #'   taken away at random.}
 
-makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL,slow = FALSE,fast=FALSE,superfast=FALSE,d=NULL,pic = 1,pcp = 0.06,toPlot=FALSE,showOverPts=FALSE){
+makecluster <- function(under,over,radius1,radius2,
+                        type = "ppc",
+                        ppc=NULL,
+                        cr=NULL,speed = "superfast",
+                        d=NULL,
+                        pic = 1,
+                        pcp = 0.06,
+                        den = 1,
+                        s = 100,
+                        toPlot=FALSE,showOverPts=FALSE){
   ############################################################################################
   # POINTS PER CLUSTER METHOD
 
@@ -129,7 +133,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
     over.r <- radius2
     over.rf <- under.r*(ppc/rcp)^(1/3)
 
-    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
+    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
     over.scaledf <- subSample(under,over.scaled)
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
@@ -170,7 +174,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
     if(more==0){
 
     }else{
-      cluster.ind <- randomInsert(cluster.ind,more,npoints(under))
+      cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s)
     }
 
     cluster.xyz <- coords(under)[cluster.ind,]
@@ -190,7 +194,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
     # CHOOSE RADIUS METHOD
 
   }else if(type == "cr"){
-    if (slow == TRUE){
+    if (speed == "slow"){
       #real cluster percent
       rcp <- pcp*pic
 
@@ -200,7 +204,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
       over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
 
-      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
+      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
       over.scaledf <- subSample(under,over.scaled)
 
       cluster.nnR <- nncrossR(over.scaledf,under,cr)
@@ -214,7 +218,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
       if(more==0){
 
       }else{
-        cluster.ind <- randomInsert(cluster.ind,more,npoints(under))
+        cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s)
       }
 
       cluster.xyz <- coords(under)[cluster.ind,]
@@ -230,7 +234,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
       }
 
       return(list(cluster,over.scaledf,c(npoints(over.scaledf),npoints(cluster)-more)))
-    }else if (fast == TRUE){
+    }else if (speed == "fast"){
       #real cluster percent
       rcp <- pcp*pic
 
@@ -240,27 +244,35 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
       over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
 
-      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
+      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
       over.scaledf <- subSample(under,over.scaled)
 
-
-
       cluster.nnR.new <- crosspairs.pp3(over.scaledf,under,cr,what="indices",twice=FALSE,distinct=TRUE,neat=TRUE)
+
       cluster.ind <- cluster.nnR.new[[2]]
       cluster.info <- factor(cluster.nnR.new[[1]])
       diff <- round(rcp*npoints(under)-length(cluster.ind))
 
-
-
       cluster.adj <- crAdjust.new(cluster.ind,cluster.info,diff,over.scaledf,under)
       cluster.ind <- cluster.adj[[1]]
-      cluster.info <- cluster.adj[[2]]
+      cluster.info <- as.numeric(cluster.adj[[2]])
 
-      more <- npoints(under)*pcp-npoints(under)*rcp
+      if(den < 1 & den >= 0){
+        set.seed(s)
+        cluster.ind.split <- split(cluster.ind,cluster.info,drop=FALSE)
+        cluster.ind.thinned <- lapply(cluster.ind.split,function(x){
+          return(sample(x,round(den*length(x)),replace=FALSE))})
+        cluster.ind <- unlist(cluster.ind.thinned)
+        cluster.ind.split <- unlist(cluster.ind.split)
+      }else{
+        cluster.ind.split <- cluster.ind
+      }
+
+      more <- npoints(under)*pcp-npoints(under)*rcp*den
       if(more==0){
 
       }else{
-        cluster.ind <- randomInsert(cluster.ind,more,npoints(under))
+        cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s,cluster.ind.split)
       }
 
       cluster.xyz <- coords(under)[cluster.ind,]
@@ -276,7 +288,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
       }
 
       return(list(cluster,over.scaledf,cluster.info))
-    }else if (superfast == TRUE){
+    }else if (speed == "superfast"){
       #real cluster percent
       rcp <- pcp*pic
 
@@ -285,30 +297,39 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
       under.vol <- volume(domain(under))
 
       over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
-
-      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
+      #over.rf <- over.rf * .97
+      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
       over.scaledf <- subSample(under,over.scaled)
 
       cluster.nnR.new <- crosspairs.pp3(over.scaledf,under,cr,what="indices",twice=FALSE,distinct=TRUE,neat=TRUE)
-      cluster.ind <- cluster.nnR.new[[2]]
-      #cluster.info <- factor(cluster.nnR.new[[1]])
-      diff <- round(rcp*npoints(under)-length(cluster.ind))
 
-      #cluster.adj <- crAdjust.new(cluster.ind,cluster.info,diff,over.scaledf,under)
-      #cluster.ind <- cluster.adj[[1]]
-      #cluster.info <- cluster.adj[[2]]
-
-      if(diff > 0){
-        cluster.ind <- randomInsert(cluster.ind,diff,npoints(under))
-      }else if(diff < 0){
-        cluster.ind <- randomTakeAway(cluster.ind,diff,npoints(under))
+      if(den < 1 & den >= 0){
+        set.seed(s)
+        cluster.ind.split <- split(cluster.nnR.new[[2]],cluster.nnR.new[[1]],drop=FALSE)
+        cluster.ind.thinned <- lapply(cluster.ind.split,function(x){
+          return(sample(x,round(den*length(x)),replace=FALSE))})
+        cluster.ind <- unlist(cluster.ind.thinned)
+        cluster.ind.split <- unlist(cluster.ind.split)
+      }else {
+        cluster.ind <- cluster.nnR.new[[2]]
+        cluster.ind.split <- cluster.ind
       }
 
-      more <- npoints(under)*pcp-npoints(under)*rcp
+      #diff <- round(rcp*npoints(under)-length(cluster.ind))
+
+      #if(diff > 0){
+      # cluster.ind <- randomInsert(cluster.ind,diff,npoints(under),s,cluster.ind.split)
+      #}else if(diff < 0){
+      #  cluster.ind <- randomTakeAway(cluster.ind,-1*diff,npoints(under),s)
+      #}
+
+      more <- round(npoints(under)*pcp)-length(cluster.ind)
       if(more==0){
 
-      }else{
-        cluster.ind <- randomInsert(cluster.ind,more,npoints(under))
+      }else if(more > 0){
+        cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s,cluster.ind.split)
+      }else if(more < 0){
+        cluster.ind <- randomTakeAway(cluster.ind,-1*diff,npoints(under),s)
       }
 
       cluster.xyz <- coords(under)[cluster.ind,]
@@ -323,7 +344,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
         }
       }
 
-      return(list(cluster,over.scaledf,c(diff,more)))
+      return(list(cluster,over.scaledf,more))
     }else{
       print('Instert speed for cluster radius method. slow, fast, or superfast.')
     }
@@ -341,7 +362,7 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
     over.rf <- d/2
 
-    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r)
+    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r, win = domain(over))
     over.scaledf <- subSample(under,over.scaled)
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
@@ -358,31 +379,58 @@ makecluster <- function(under,over,radius1,radius2,type = "ppc",ppc=NULL,cr=NULL
 
       cluster.inddf1 <- nncross(over.split[[1]],under,what="which",k=1:ppc)
       cluster.inddf2 <- nncross(over.split[[2]],under,what="which",k=1:(ppc+1))
-      cluster.ind <- NULL
-
+      cluster.ind <- vector("numeric",ppc*npoints(over.split[[1]])+(ppc+1)*npoints(over.split[[2]]))
+      cnt <- 1
       for(i in 1:npoints(over.split[[1]])){
         if(ppc==1){
-          cluster.ind <- c(cluster.ind,cluster.inddf1[i])
+          cluster.ind[cnt] <- cluster.inddf1[i]
+          cnt <- cnt + 1
         }else{
-          cluster.ind <- c(cluster.ind,as.numeric(cluster.inddf1[i,]))
+          cluster.ind[cnt:(cnt+ppc-1)] <- as.numeric(cluster.inddf1[i,])
+          cnt <- cnt + ppc
         }
       }
       for(i in 1:npoints(over.split[[2]])){
-        cluster.ind <- c(cluster.ind,as.numeric(cluster.inddf2[i,]))
+        cluster.ind[cnt:(cnt+ppc)] <- as.numeric(cluster.inddf2[i,])
+        cnt <- cnt + ppc + 1
       }
     }else{
       cluster.ind1 <- nncross(over.scaledf,under,what="which",k=1:ppc)
-      cluster.ind <- NULL
+      cluster.ind <- vector("numeric",ppc*npoints(over.scaledf))
+      cnt <- 1
       for(i in 1:npoints(over.scaledf)){
-        cluster.ind <- c(cluster.ind,as.numeric(cluster.ind1[i,]))
+        cluster.ind[cnt:(cnt+ppc-1)] <- as.numeric(cluster.ind1[i,])
+        cnt <- cnt + ppc
       }
     }
 
-    more <- npoints(under)*pcp-npoints(under)*rcp
-    if(more==0){
+    if(den < 1 & den >= 0){
 
-    }else{
-      cluster.ind <- randomInsert(cluster.ind,more,npoints(under))
+      cluster.ind.info <- vector("numeric",length(cluster.ind))
+      cnt <- 1
+      for(i in 1:npoints(over.split[[1]])){
+        cluster.ind.info[cnt:(cnt + ppc -1)] <- rep(i,ppc)
+        cnt <- cnt + ppc
+      }
+      for(i in 1:npoints(over.split[[2]])){
+        cluster.ind.info[cnt:(cnt + ppc)] <- rep(i,ppc+1)
+        cnt <- cnt + ppc + 1
+      }
+
+      set.seed(s)
+      cluster.ind.split <- split(cluster.ind,cluster.ind.info,drop=FALSE)
+      cluster.ind.thinned <- lapply(cluster.ind.split,function(x){
+        return(sample(x,round(den*length(x)),replace=FALSE))})
+      cluster.ind <- unlist(cluster.ind.thinned)
+      cluster.ind.split <- unlist(cluster.ind.split)
+    }
+
+    more <- round(npoints(under)*pcp)-length(cluster.ind)
+    if(more==0){
+    }else if(more > 0){
+      cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s,cluster.ind.split)
+    }else if(more < 0){
+      cluster.ind <- randomTakeAway(cluster.ind,-1*diff,npoints(under),s)
     }
 
     cluster.xyz <- coords(under)[cluster.ind,]
@@ -698,24 +746,28 @@ crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
 #' as cluster type placed within the underlaying pattern. This function does
 #' just that.
 #'
-#' @param cluster.Indices A vector containing the indices of the current cluster
+#' @param cluster.indices A vector containing the indices of the current cluster
 #'   points
 #' @param n The number of points that need to be placed randomly
-#' @param N the number of points in the entire underlaying pattern.
+#' @param N The number of points in the entire underlaying pattern.
+#' @param s The seed for the random inserted points.
+#' @param points.avoid A vector containing the indices of the points you don't
+#'   want the function to insert points to.
 #' @return New indices vector containing new cluster points randomly placed.
 
 # function to randomly place points within the under data set, if not 100% of the cluster points are set to be in the clusters
-randomInsert <- function(cluster.Indices,n,N){
+randomInsert <- function(cluster.indices,n,N,s,points.avoid = cluster.indices){
   #cluster.Indices is a vector containig the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
 
   full <- 1:N
-  nonclust.ind <- full[!full %in% cluster.Indices]
+  nonclust.ind <- full[!(full %in% points.avoid)]
 
+  set.seed(s)
   inds <- sample(nonclust.ind,n)
 
-  all.ind <- c(cluster.Indices,inds)
+  all.ind <- c(cluster.indices,inds)
 
   return(all.ind)
 }
@@ -727,22 +779,24 @@ randomInsert <- function(cluster.Indices,n,N){
 #' there may be random points that need to be removed from the existing clusters
 #' of the the underlaying pattern. This function does just that.
 #'
-#' @param cluster.Indices A vector containing the indices of the current cluster
+#' @param cluster.indices A vector containing the indices of the current cluster
 #'   points
 #' @param n The number of points that need to be removed randomly
-#' @param N the number of points in the entire underlaying pattern.
+#' @param N The number of points in the entire underlaying pattern.
+#' @param s The random seed for the random selection of points to take away.
 #' @return New indices vector containing new cluster points randomly placed.
 
 # function to randomly place points within the under data set, if not 100% of the cluster points are set to be in the clusters
-randomTakeAway <- function(cluster.Indices,n,N){
+randomTakeAway <- function(cluster.indices,n,N,s){
   #cluster.Indices is a vector containig the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
 
-  inds <- sample(1:length(cluster.Indices),n)
-  cluster.Indices[inds] <- NaN
+  set.seed(s)
+  inds <- sample(1:length(cluster.indices),n)
+  cluster.indices[inds] <- NaN
 
-  all.ind <- cluster.Indices[!is.nan(cluster.Indices)]
+  all.ind <- cluster.indices[!is.nan(cluster.indices)]
 
   return(all.ind)
 }

@@ -36,8 +36,8 @@ scaleRCP <- function(pp3file, newRadius = .5, oldRadius = NULL, win = NULL){
   } else {
     pp3.box <- box3(xrange=s*win$xrange,yrange=s*win$yrange,zrange=s*win$zrange)
   }
-  rcp_xyz <- coords(pp3file)
-  toReturn <- createSpat(s*rcp_xyz,win=pp3.box)
+  rcp_xyz <- coords(pp3file)*s
+  toReturn <- createSpat(rcp_xyz,win=pp3.box)
 
   return(toReturn)
 }
@@ -68,15 +68,17 @@ stitch <- function(pp3file, reps = c(2,2,2), win=NULL){
   }
 
   ogCoords <- as.matrix(coords(pp3file))
-  newpp3 <- matrix(NaN,nrow(ogCoords)*reps[1]*reps[2]*reps[3],3)
-  newpp3[1:nrow(ogCoords),] <- ogCoords
+  n <- nrow(ogCoords)
+  newpp3 <- matrix(NaN,n*reps[1]*reps[2]*reps[3],3)
+  ind <- 0
 
-  for(i in 1:(reps[1]-1)){
-    for(j in 1:(reps[2]-1)){
-      for(k in 1:(reps[3]-1)){
-        newpp3[,1] <- ogCoords[,1] + i*(pp3.domain$xrange[2]-pp3.domain$xrange[1])
-        newpp3[,2] <- ogCoords[,2] + i*(pp3.domain$yrange[2]-pp3.domain$yrange[1])
-        newpp3[,3] <- ogCoords[,3] + i*(pp3.domain$zrange[2]-pp3.domain$zrange[1])
+  for(i in 0:(reps[1]-1)){
+    for(j in 0:(reps[2]-1)){
+      for(k in 0:(reps[3]-1)){
+        newpp3[(ind + 1):(ind + n), 1] <- ogCoords[,1] + i*(pp3.domain$xrange[2]-pp3.domain$xrange[1])
+        newpp3[(ind + 1):(ind + n), 2] <- ogCoords[,2] + j*(pp3.domain$yrange[2]-pp3.domain$yrange[1])
+        newpp3[(ind + 1):(ind + n), 3] <- ogCoords[,3] + k*(pp3.domain$zrange[2]-pp3.domain$zrange[1])
+        ind <- ind + n
       }
     }
   }
@@ -117,21 +119,24 @@ stitch.size <- function(pp3file, win=NULL, boxSize){
   reps <- ceiling(c(boxSize[1]/pp3.domain$xrange[2],boxSize[2]/pp3.domain$yrange[2],boxSize[3]/pp3.domain$zrange[2]))
   pp3.box <- box3(xrange=reps[1]*pp3.domain$xrange,yrange=reps[2]*pp3.domain$yrange,zrange=reps[3]*pp3.domain$zrange)
 
-  ogCoords <- coords(pp3file)
-  newpp3 <- NULL
+  ogCoords <- as.matrix(coords(pp3file))
+  n <- nrow(ogCoords)
+  newpp3 <- matrix(NaN,n*reps[1]*reps[2]*reps[3],3)
+  ind <- 0
 
   for(i in 0:(reps[1]-1)){
     for(j in 0:(reps[2]-1)){
       for(k in 0:(reps[3]-1)){
-        newCoords <- ogCoords
-        newCoords$x <- newCoords$x + i*(pp3.domain$xrange[2]-pp3.domain$xrange[1])
-        newCoords$y <- newCoords$y + j*(pp3.domain$yrange[2]-pp3.domain$yrange[1])
-        newCoords$z <- newCoords$z + k*(pp3.domain$zrange[2]-pp3.domain$zrange[1])
-
-        newpp3 <- rbind(newpp3,newCoords)
+        newpp3[(ind + 1):(ind + n), 1] <- ogCoords[,1] + i*(pp3.domain$xrange[2]-pp3.domain$xrange[1])
+        newpp3[(ind + 1):(ind + n), 2] <- ogCoords[,2] + j*(pp3.domain$yrange[2]-pp3.domain$yrange[1])
+        newpp3[(ind + 1):(ind + n), 3] <- ogCoords[,3] + k*(pp3.domain$zrange[2]-pp3.domain$zrange[1])
+        ind <- ind + n
       }
     }
   }
+
+  newpp3 <- as.data.frame(newpp3)
+  colnames(newpp3) <- c('x','y','z')
 
   toReturn <- createSpat(newpp3, win=pp3.box)
 
@@ -245,6 +250,6 @@ read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5){
     temp <- scaleRCP(createSpat(temp_upload[,c("x","y","z")]),newRadius = 0.5,oldRadius = r)
     return(temp)
   }
-
-  return(temp_upload)
+  temp <- createSpat(temp_upload[,c("x","y","z")])
+  return(temp)
 }
