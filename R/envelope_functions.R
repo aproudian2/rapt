@@ -68,7 +68,7 @@ subSquare <- function(orig,win){
 
 percentSelect <- function(perc,pattern){
 
-  reLabel <- rlabel(pattern,labels = c(rep("A",round(npoints(pattern)*perc)),rep("B",round(npoints(pattern)*(1-perc)))))
+  reLabel <- rlabel(pattern,labels = c(rep("A",round(npoints(pattern)*perc)),rep("B",npoints(pattern)-round(npoints(pattern)*perc))))
   inds <- which(marks(reLabel)=="A")
   newPattern <- reLabel[inds]
   return(newPattern)
@@ -125,4 +125,53 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceil
   }
   abline(h=0,lty=2,lwd=1,col="black")
   legend(0, ylim[2], legend=c(paste(toString(percentiles[1]*100),"% AI"), paste(toString(percentiles[2]*100),"% AI"),paste(toString(percentiles[3]*100),"% AI")),col=c(color[1],color[2],color[3]), lty=c(1,1,1), lwd=c(10,10,10))
+}
+
+#### finite_deriv ####
+#' Find the numerical derivative of a finite set of points.
+#'
+#' Uses the central difference method to calculate the numerical derivative for
+#' a set of x,y data. Vectors x and y must be the same length.
+#'
+#' @param x The x values for your set of points.
+#' @param y The y vales for your set of points.
+#'
+#' @return A vector with the same length as x containing estimated derivative at
+#'   each x value.
+
+finite_deriv <- function(x,y){
+  if(length(x) != length(y)){
+    print("x and y must be same length.")
+    return()
+  }
+  d <- vector("numeric",length(x))
+  for(i in 1:length(x)){
+    if(i == 1){
+      d[i] <- (y[i+1] - y[i])/(x[i+1] - x[i])
+    }else if(i == length(x)){
+      d[i] <- (y[i] - y[i-1])/(x[i] -x[i-1])
+    }else{
+      d[i] <- (y[i+1] - y[i-1])/(x[i+1] - x[i-1])
+    }
+  }
+  return(d)
+}
+
+
+#### argmax ####
+#' Find the peaks of a finite data set using smoothing.
+#'
+#' This function fits a rolling polynomial interpolation to a set of data and
+#' finds maximums and minimums in data based on these interpolating functoins.
+#' See
+#' \url{https://stats.stackexchange.com/questions/36309/how-do-i-find-peaks-in-a-dataset}
+
+argmax <- function(x, y, w=1, ...) {
+  require(zoo)
+  n <- length(y)
+  y.smooth <- loess(y ~ x, ...)$fitted
+  y.max <- rollapply(zoo(y.smooth), 2*w+1, max, align="center")
+  delta <- y.max - y.smooth[-c(1:w, n+1-1:w)]
+  i.max <- which(delta <= 0) + w
+  list(x=x[i.max], i=i.max, y.hat=y.smooth)
 }

@@ -6,7 +6,8 @@
 \usage{
 makecluster(under, over, radius1, radius2, type = "ppc", ppc = NULL,
   cr = NULL, speed = "superfast", d = NULL, pic = 1, pcp = 0.06,
-  den = 1, s = 100, toPlot = FALSE, showOverPts = FALSE)
+  den = 1, gb = FALSE, gbp = c(0, 1), s = 100, toPlot = FALSE,
+  showOverPts = FALSE)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
@@ -47,6 +48,13 @@ and 1.}
 Currently written for application to \code{type = "cr"} \code{speed =
 "fast"} and \code{"superfast"}, and to \code{type = "dist"}.}
 
+\item{gb}{\code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
+blur to the cluster center positions. See \code{\link{rgblur}} for more
+information on the blur function.}
+
+\item{gbp}{Parameters for the cluster center gaussian blurs. \code{gbp =
+c(mean, sd)}. Default is mean = 0, sd = 1.}
+
 \item{s}{Seed for the random parts of the cluster generation process.}
 
 \item{toPlot}{Show a 3D plot of the cluster points once generation is done?
@@ -78,7 +86,7 @@ Returns are different based on \code{type}.
   \code{\link[spatstat]{pp3}} object containing the cluster marked point
   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] number of points put in or
-  taken away at random.}
+  taken away at random. [[4]] the separation between clusters.}
 }
 \description{
 The \code{makecluster} function simulates point clusters using two RCP point
@@ -87,6 +95,13 @@ of points that will be used as actual cluster point locations in the final
 product. The second point cloud is the "overlaying" pattern. This is the set
 of points that will determine the positions of the clusters within the
 underlaying pattern.
+}
+\details{
+Hello friends. A quick update as of 11/8/18; I have added quite a few
+features and upgrades to this function, but mostly just to the cr superfast
+type. It should be fairly easy to generalize these upgrades to the other
+types, but I haven't gotten around to it yet. Some time soon perhaps. Let me,
+Galen Vincent, know if you need some upgrades sooner. Thanks!
 }
 \section{Cluster Creation Methods}{
  What the different arguments for
