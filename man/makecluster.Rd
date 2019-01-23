@@ -6,8 +6,8 @@
 \usage{
 makecluster(under, over, radius1, radius2, type = "ppc", ppc = NULL,
   cr = NULL, speed = "superfast", d = NULL, pic = 1, pcp = 0.06,
-  den = 1, gb = FALSE, gbp = c(0, 1), s = 100, toPlot = FALSE,
-  showOverPts = FALSE)
+  den = 1, gb = FALSE, gbp = c(0, 1), gbmethod = 1, rb = FALSE,
+  rbp = cr * 0.1, s = 100, toPlot = FALSE, showOverPts = FALSE)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
@@ -45,8 +45,8 @@ RCP pattern that should be marked as cluster type points. Number between 0
 and 1.}
 
 \item{den}{Intra cluster density of cluster points. Number between 0 and 1.
-Currently written for application to \code{type = "cr"} \code{speed =
-"fast"} and \code{"superfast"}, and to \code{type = "dist"}.}
+Currently written for application to \code{type = "cr"} \code{speed = "fast"}
+and \code{"superfast"}, and to \code{type = "dist"}.}
 
 \item{gb}{\code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
 blur to the cluster center positions. See \code{\link{rgblur}} for more
@@ -54,6 +54,14 @@ information on the blur function.}
 
 \item{gbp}{Parameters for the cluster center gaussian blurs. \code{gbp =
 c(mean, sd)}. Default is mean = 0, sd = 1.}
+
+\item{gbmethod}{See \code{method} argument in \code{\link{rgblur}}.}
+
+\item{rb}{\code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
+blur to the cluster radius.}
+
+\item{rbp}{Parameters for the cluster radius gaussian blurs. \code{rbp = sd}.
+Default is sd = 0.1*cr.}
 
 \item{s}{Seed for the random parts of the cluster generation process.}
 
@@ -82,11 +90,19 @@ Returns are different based on \code{type}.
   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] factor containing the number of
   points in each cluster.}
-  \subsection{\code{type} = "cr", speed = "superfast"}{List of: [[1]]
+  \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of: [[1]]
   \code{\link[spatstat]{pp3}} object containing the cluster marked point
   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] number of points put in or
-  taken away at random. [[4]] the separation between clusters.}
+  taken away at random. [[4]] Vector of nearest neighbor distance (cluster
+  center to center) from each cluster.}
+  \subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
+  [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
+  point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+  overlaying RCP pattern after scaling. [[3]] number of points put in or
+  taken away at random. [[4]] Vector of nearest neighbor distance (cluster
+  center to center) from each cluster. [[5]] A vector contining the radius of
+  each cluster.}
 }
 \description{
 The \code{makecluster} function simulates point clusters using two RCP point

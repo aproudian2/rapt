@@ -91,7 +91,9 @@ percentSelect <- function(perc,pattern){
 #'   on the plot.
 #' @return Nothing.
 
-envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceiling(max(tests[,1])))){
+envPlot <- function(tests,percentiles=c(.999,.99,.97),
+                    ylim=c(-3,3),xlim=c(0,ceiling(max(tests[,1]))),
+                    leg = TRUE, ...){
 
   color <- c("lightskyblue","mediumpurple","lightpink")
 
@@ -116,15 +118,21 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceil
 
   # plot the envelopes from the percentile data
   par(oma = c(0, 2, 0, 0))
-  plot(rvals,tvals[,1],type="n",main="Envelopes for K Function",xlab="r",ylab="",ylim=ylim,xlim=xlim)
-  mtext(text=expression(sqrt('K'[3]*'(r)')*'  Anomaly'),side=2,line=0,outer=TRUE)
+  toplt <- data.frame(rvals,tvals[,1])
+  plot(toplt,type="n",xlab="r",ylab=expression(sqrt('K'[3]*'(r)')*'  Anomaly'),ylim=ylim,xlim=xlim,xaxt = "n", ...)
   axis(1,at=0:xlim[2],labels=FALSE)
   axis(1,at=seq(0,xlim[2],by=2))
+  a <- c(rvals$V1,rev(rvals$V1))
   for(i in 1:length(percentiles)){
-    polygon(c(rvals,rev(rvals)),c(toPlotBigs[,i],rev(toPlotSmalls[,i])),col=color[i])#,border=color[i],lwd=2)
+    polygon(a,c(toPlotBigs[,i],rev(toPlotSmalls[,i])),col=color[i])#,border=color[i],lwd=2)
   }
   abline(h=0,lty=2,lwd=1,col="black")
-  legend(0, ylim[2], legend=c(paste(toString(percentiles[1]*100),"% AI"), paste(toString(percentiles[2]*100),"% AI"),paste(toString(percentiles[3]*100),"% AI")),col=c(color[1],color[2],color[3]), lty=c(1,1,1), lwd=c(10,10,10))
+  if(leg == TRUE){
+    legend(0, ylim[2], legend=c(paste(toString(percentiles[1]*100),"% AI"),
+                                paste(toString(percentiles[2]*100),"% AI"),
+                                paste(toString(percentiles[3]*100),"% AI")),
+           col=c(color[1],color[2],color[3]), lty=c(1,1,1), lwd=c(10,10,10))
+  }
 }
 
 #### finite_deriv ####

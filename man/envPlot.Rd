@@ -5,7 +5,7 @@
 \title{Plot envelopes of K3est test}
 \usage{
 envPlot(tests, percentiles = c(0.999, 0.99, 0.97), ylim = c(-3, 3),
-  xlim = c(0, ceiling(max(tests[, 1]))))
+  xlim = c(0, ceiling(max(tests[, 1]))), leg = TRUE, ...)
 }
 \arguments{
 \item{tests}{The return file from \code{p(K/G/F)3est} or the first, [[1]],

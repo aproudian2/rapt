@@ -40,13 +40,18 @@
 #' RCP pattern that should be marked as cluster type points. Number between 0
 #' and 1.
 #' @param den Intra cluster density of cluster points. Number between 0 and 1.
-#'   Currently written for application to \code{type = "cr"} \code{speed =
-#'   "fast"} and \code{"superfast"}, and to \code{type = "dist"}.
+#' Currently written for application to \code{type = "cr"} \code{speed = "fast"}
+#' and \code{"superfast"}, and to \code{type = "dist"}.
 #' @param gb \code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
 #'   blur to the cluster center positions. See \code{\link{rgblur}} for more
 #'   information on the blur function.
 #' @param gbp Parameters for the cluster center gaussian blurs. \code{gbp =
 #'   c(mean, sd)}. Default is mean = 0, sd = 1.
+#' @param gbmethod See \code{method} argument in \code{\link{rgblur}}.
+#' @param rb \code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
+#'   blur to the cluster radius.
+#' @param rbp Parameters for the cluster radius gaussian blurs. \code{rbp = sd}.
+#'   Default is sd = 0.1*cr.
 #' @param s Seed for the random parts of the cluster generation process.
 #' @param toPlot Show a 3D plot of the cluster points once generation is done?
 #'   TRUE or FALSE.
@@ -117,11 +122,19 @@
 #'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] factor containing the number of
 #'   points in each cluster.}
-#'   \subsection{\code{type} = "cr", speed = "superfast"}{List of: [[1]]
+#'   \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of: [[1]]
 #'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
 #'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] number of points put in or
-#'   taken away at random. [[4]] the separation between clusters.}
+#'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
+#'   center to center) from each cluster.}
+#'   \subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
+#'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
+#'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   overlaying RCP pattern after scaling. [[3]] number of points put in or
+#'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
+#'   center to center) from each cluster. [[5]] A vector contining the radius of
+#'   each cluster.}
 
 makecluster <- function(under,over,radius1,radius2,
                         type = "ppc",
@@ -133,11 +146,13 @@ makecluster <- function(under,over,radius1,radius2,
                         den = 1,
                         gb = FALSE,
                         gbp = c(0,1),
+                        gbmethod = 1,
+                        rb = FALSE,
+                        rbp = cr*0.1,
                         s = 100,
                         toPlot=FALSE,showOverPts=FALSE){
   ############################################################################################
   # POINTS PER CLUSTER METHOD
-
   if(type == "ppc"){
     #real cluster percent
     if(gb == TRUE){
@@ -207,10 +222,11 @@ makecluster <- function(under,over,radius1,radius2,
 
     return(list(cluster,over.scaledf,c(ppc,npoints(over.scaledf)-diff,ppc+1,diff)))
 
-    ########################################################################################
-    # CHOOSE RADIUS METHOD
+  }
 
-  }else if(type == "cr"){
+  ########################################################################################
+  # CHOOSE RADIUS METHOD
+  else if(type == "cr"){
     if (speed == "slow"){
       if(gb == TRUE){
         print("ERROR - Gaussian blur only implemented for type = cr, speed = superfast.")
@@ -247,15 +263,16 @@ makecluster <- function(under,over,radius1,radius2,
       cluster <- createSpat(cluster.xyz)
 
       if(toPlot==TRUE){
-        plot3d.pp3(cluster,col="red",size=5)
-        plot3d.pp3(under,col="lightgray",add=TRUE)
+        plot3d.pp3(cluster,col="black",size=5)
+        #plot3d.pp3(under,col="lightgray",add=TRUE)
         if(showOverPts==TRUE){
-          plot3d.pp3(over.scaledf,size= 6,col="black",add=TRUE)
+          plot3d.pp3(over.scaledf,size= 6,col="red",add=TRUE)
         }
       }
 
       return(list(cluster,over.scaledf,c(npoints(over.scaledf),npoints(cluster)-more)))
-    }else if (speed == "fast"){
+    }
+    else if (speed == "fast"){
       if(gb == TRUE){
         print("ERROR - Gaussian blur only implemented for type = cr, speed = superfast.")
         return()
@@ -313,10 +330,10 @@ makecluster <- function(under,over,radius1,radius2,
       }
 
       return(list(cluster,over.scaledf,cluster.info))
-    }else if (speed == "superfast"){
+    }
+    else if (speed == "superfast"){
       #real cluster percent
-      #browser()
-
+      set.seed(s)
       rcp <- pcp*pic
 
       under.r <- radius1
@@ -329,7 +346,7 @@ makecluster <- function(under,over,radius1,radius2,
 
       if(gb == TRUE){
         n <- npoints(over.scaled)
-        gbval <- rgblur(n,gbp[1],gbp[2],coords = "rec")
+        gbval <- rgblur(n,gbp[1],gbp[2],coords = "rec", method = gbmethod)
         over.xyz <- coords(over.scaled)
         over.xyz.new <- over.xyz + gbval
         over.scaled.new <- createSpat(over.xyz.new, win = domain(over.scaled))
@@ -344,24 +361,60 @@ makecluster <- function(under,over,radius1,radius2,
       over.scaled.domain <- c(domain(under)$xrange[2]+2*cr,domain(under)$yrange[2]+2*cr,domain(under)$zrange[2]+2*cr)
       over.scaledf <- subSquare(over.scaled.new, over.scaled.domain)
 
+      if(rb == TRUE){
+        n <- npoints(over.scaledf)
+        crrand <- rnorm(n,mean = cr, sd = rbp)
+        crrand[crrand < 0] <- 0
+      }
+
       # Deal with overlapping clusters here
       # Check for overlap, seperate to no overlap if so
-      nnd <- nndist.pp3(over.scaledf)
-      if(any(nnd < 2*cr)){
-        check <- which(nnd < 2*cr)
-        while(!is.empty(check)) {
-          nnw <- nnwhich.pp3(over.scaledf)
-          direction <- (coords(over.scaledf)[nnw[check[1]],]-coords(over.scaledf)[check[1],])/nnd[check[1]]
-          coords(over.scaledf)[check[1],] <- coords(over.scaledf)[check[1],]+(nnd[check[1]]-(2*cr+0.00001))*direction
-          nnd <- nndist.pp3(over.scaledf)
-          check <- which(nnd < 2*cr)
+      if(gb == TRUE){
+        nnd <- nndist.pp3(over.scaledf)
+        if(rb == TRUE){
+          scrrand <- sort(crrand,decreasing = TRUE)
+          comp <- scrrand[1] + scrrand[2]
+        }else{
+          comp <- 2*cr
+        }
+
+        if(any(nnd < comp)){
+          check <- which(nnd < comp)
+          while(!is.empty(check)) {
+            nnw <- nnwhich.pp3(over.scaledf)
+            direction <- (coords(over.scaledf)[nnw[check[1]],]-coords(over.scaledf)[check[1],])/nnd[check[1]]
+            coords(over.scaledf)[check[1],] <- coords(over.scaledf)[check[1],]+(nnd[check[1]]-(comp+0.00001))*direction
+            nnd <- nndist.pp3(over.scaledf)
+            check <- which(nnd < comp)
+          }
         }
       }
 
-      cluster.nnR.new <- crosspairs.pp3(over.scaledf,under.new,cr,what="indices",twice=FALSE,distinct=TRUE,neat=TRUE)
+      #rb
+      if(rb == TRUE){
+        cluster.nnR.ind1 <- list()
+        cluster.nnR.ind2 <- list()
+        #t1 <- Sys.time()
+        cluster.nnR.full <- crosspairs.pp3(over.scaledf,under.new,max(crrand),what="all",twice=FALSE,distinct=TRUE,neat=TRUE)
+        cluster.nnR.split <- list()
+        cluster.nnR.split$d <- split(cluster.nnR.full$d,cluster.nnR.full$i,drop=FALSE)
+        cluster.nnR.split$j <- split(cluster.nnR.full$j,cluster.nnR.full$i,drop=FALSE)
+        split.vals <- sort(unique(cluster.nnR.full$i))
+        for(i in 1:length(split.vals)){
+          cluster.nnR.ind2[[i]] <- cluster.nnR.split$j[[i]][cluster.nnR.split$d[[i]] < crrand[split.vals[i]]]
+          cluster.nnR.ind1[[i]] <- rep(split.vals[i],length(cluster.nnR.ind2[[i]]))
+        }
+        #t2 <- Sys.time()
+        #print(t2 - t1)
+        cluster.nnR.new <- list()
+        cluster.nnR.new[[1]] <- unlist(cluster.nnR.ind1)
+        cluster.nnR.new[[2]] <- unlist(cluster.nnR.ind2)
+      }else{
+        cluster.nnR.new <- crosspairs.pp3(over.scaledf,under.new,cr,what="indices",twice=FALSE,distinct=TRUE,neat=TRUE)
+      }
+
 
       if(den < 1 & den >= 0){
-        set.seed(s)
         cluster.ind.split <- split(cluster.nnR.new[[2]],cluster.nnR.new[[1]],drop=FALSE)
         cluster.ind.thinned <- lapply(cluster.ind.split,function(x){
           return(sample(x,round(den*length(x)),replace=FALSE))})
@@ -388,6 +441,8 @@ makecluster <- function(under,over,radius1,radius2,
       over.scaledf.coo <- coords(over.scaledf)
       over.scaledf <- createSpat(over.scaledf.coo - cr,win = domain(under))
 
+      cluster.nn <- nndist.pp3(over.scaledf, k = 1)
+
       if(toPlot==TRUE){
         plot3d.pp3(cluster,col="red",size=5)
         #plot3d.pp3(under,col="lightgray",add=TRUE)
@@ -396,15 +451,20 @@ makecluster <- function(under,over,radius1,radius2,
         }
       }
 
-      return(list(cluster,over.scaledf,more,over.sep))
-    }else{
+      if(rb == TRUE){
+        return(list(cluster,over.scaledf,more,cluster.nn,crrand))
+      }else{
+        return(list(cluster,over.scaledf,more,cluster.nn))
+      }
+    }
+    else{
       print('Instert speed for cluster radius method. slow, fast, or superfast.')
     }
+  }
 
-    ###########################################################################################
-    # CHOOSE DISTANCE BETWEEN CLUSTERS METHOD
-
-  }else if(type == "dist"){
+  ###########################################################################################
+  # CHOOSE DISTANCE BETWEEN CLUSTERS METHOD
+  else if(type == "dist"){
     if(gb == TRUE){
       print("ERROR - Gaussian blur only implemented for type = cr, speed = superfast.")
       return()
@@ -502,7 +562,8 @@ makecluster <- function(under,over,radius1,radius2,
 
     return(list(cluster,over.scaledf,c(ppc,npoints(over.scaledf)-diff,ppc+1,diff)))
 
-  } else{
+  }
+  else{
     print("Please input a valid type")
     return()
   }
@@ -962,20 +1023,29 @@ randomTakeAway <- function(cluster.indices,n,N,s){
 #' @param mean Mean of the regular normal distribution for radius.
 #' @param sd Standard deviation for the normal distribution for radius.
 #' @param coords Return comand. Either "rec" or "sph". See below for more.
+#' @param method 1 for uniformly distributing direction and normally distributing r, 2 for normally distributing x y and z
 #'
 #' @return If \code{coords = "rec"}, returns a vecotr of cartesian coordinates.
 #'   If \code{coords = "sph"}, returns a vector of spherical coordinates.
-rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec"){
-  r <- abs(rnorm(n,mean,sd))
-  theta <- runif(n,0,2*pi)
-  phi <- acos(runif(n,-1,1))
+rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1){
 
-  if(coords == "sph"){
-    return(as.data.frame(cbind(r,theta,phi)))
-  }else{
-    x <- r*sin(phi)*cos(theta)
-    y <- r*sin(phi)*sin(theta)
-    z <- r*cos(phi)
+  if(method == 1){
+    r <- abs(rnorm(n,mean,sd))
+    theta <- runif(n,0,2*pi)
+    phi <- acos(runif(n,-1,1))
+
+    if(coords == "sph"){
+      return(as.data.frame(cbind(r,theta,phi)))
+    }else{
+      x <- r*sin(phi)*cos(theta)
+      y <- r*sin(phi)*sin(theta)
+      z <- r*cos(phi)
+      return(as.data.frame(cbind(x,y,z)))
+    }
+  }else if(method == 2){
+    x <- rnorm(n, mean, sd)
+    y <- rnorm(n, mean, sd)
+    z <- rnorm(n, mean, sd)
     return(as.data.frame(cbind(x,y,z)))
   }
 }
