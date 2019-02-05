@@ -4,10 +4,10 @@
 \alias{makecluster}
 \title{Simulate point clustering in an RCP matrix}
 \usage{
-makecluster(under, over, radius1, radius2, type = "ppc", ppc = NULL,
+makecluster(under, over, radius1, radius2, type = "cr", ppc = NULL,
   cr = NULL, speed = "superfast", d = NULL, pic = 1, pcp = 0.06,
   den = 1, gb = FALSE, gbp = c(0, 1), gbmethod = 1, rb = FALSE,
-  rbp = cr * 0.1, s = 100, toPlot = FALSE, showOverPts = FALSE)
+  rbp, rbmethod = 1, s = 100, toPlot = FALSE, showOverPts = FALSE)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
@@ -60,8 +60,14 @@ c(mean, sd)}. Default is mean = 0, sd = 1.}
 \item{rb}{\code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
 blur to the cluster radius.}
 
-\item{rbp}{Parameters for the cluster radius gaussian blurs. \code{rbp = sd}.
-Default is sd = 0.1*cr.}
+\item{rbp}{Parameters for the cluster radius blurs. If \code{rbmethod = 1},
+then \code{rbp = sd} for the normal distribution. If \code{rbmethod = 2},
+then \code{rbp = c(p, r1, r2))}, where p is the percent of r1, and (1-p) is
+then the percent of r2. r1 < r2.}
+
+\item{rbmethod}{Metod for distributing radius blur. \code{rbmethod = 1} means
+gaussian distributed, \code{rbmethod = 2} mean split between two radii.
+Can ignore cr if this is the case.}
 
 \item{s}{Seed for the random parts of the cluster generation process.}
 

@@ -44,14 +44,19 @@
 #' and \code{"superfast"}, and to \code{type = "dist"}.
 #' @param gb \code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
 #'   blur to the cluster center positions. See \code{\link{rgblur}} for more
-#'   information on the blur function.
+#' information on the blur function.
 #' @param gbp Parameters for the cluster center gaussian blurs. \code{gbp =
 #'   c(mean, sd)}. Default is mean = 0, sd = 1.
 #' @param gbmethod See \code{method} argument in \code{\link{rgblur}}.
 #' @param rb \code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
 #'   blur to the cluster radius.
-#' @param rbp Parameters for the cluster radius gaussian blurs. \code{rbp = sd}.
-#'   Default is sd = 0.1*cr.
+#' @param rbp Parameters for the cluster radius blurs. If \code{rbmethod = 1},
+#'   then \code{rbp = sd} for the normal distribution. If \code{rbmethod = 2},
+#'   then \code{rbp = c(p, r1, r2))}, where p is the percent of r1, and (1-p) is
+#'   then the percent of r2. r1 < r2.
+#' @param rbmethod Metod for distributing radius blur. \code{rbmethod = 1} means
+#'   gaussian distributed, \code{rbmethod = 2} mean split between two radii. Can
+#'   ignore \code{cr} if \code{rbmethod = 2}.
 #' @param s Seed for the random parts of the cluster generation process.
 #' @param toPlot Show a 3D plot of the cluster points once generation is done?
 #'   TRUE or FALSE.
@@ -137,7 +142,7 @@
 #'   each cluster.}
 
 makecluster <- function(under,over,radius1,radius2,
-                        type = "ppc",
+                        type = "cr",
                         ppc=NULL,
                         cr=NULL,speed = "superfast",
                         d=NULL,
@@ -148,7 +153,8 @@ makecluster <- function(under,over,radius1,radius2,
                         gbp = c(0,1),
                         gbmethod = 1,
                         rb = FALSE,
-                        rbp = cr*0.1,
+                        rbp,
+                        rbmethod = 1,
                         s = 100,
                         toPlot=FALSE,showOverPts=FALSE){
   ############################################################################################
@@ -332,15 +338,52 @@ makecluster <- function(under,over,radius1,radius2,
       return(list(cluster,over.scaledf,cluster.info))
     }
     else if (speed == "superfast"){
+
+      # If rb is true, we need to set a new cr to deal with spacing - Added 2/4/19
+      if(rb == TRUE){
+        if(rbmethod == 1){
+          #scale cr to average *volume*
+          cr <- (cr * (cr^2 + 3*rbp^2))^(1/3)
+          #print(cr)
+        }else if(rbmethod == 2){
+          #scale cr to average *volume*
+          cr <- (rbp[1]*rbp[2]^3 + (1-rbp[1])*rbp[3]^3)^(1/3)
+        }
+      }
+
       #real cluster percent
       set.seed(s)
       rcp <- pcp*pic
 
       under.r <- radius1
       over.r <- radius2
+      over.vol <- volume(domain(over))
       under.vol <- volume(domain(under))
 
-      over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
+      # Calculate scaling factor for over point pattern
+      # Added 2/4/19
+      ####
+      # There's some hairy math here that took me a while to figure out. Come see me if you need it explained,
+      # or see my reseatch notebook.
+      z63 <- (((4/3)*pi*over.r^3)*npoints(over)*0.75 + ((4/3)*pi*(over.r*1.20)^3)*npoints(over)*0.25)/over.vol
+      under.xdim <- domain(under)$xrange[2]
+      under.ydim <- domain(under)$yrange[2]
+      under.zdim <- domain(under)$zrange[2]
+
+      innervol <- (under.xdim - 2 * cr)*(under.ydim - 2 * cr)*(under.zdim - 2 * cr)
+      outervol <- (under.xdim + 2 * cr)*(under.ydim + 2 * cr)*(under.zdim + 2 * cr)
+      middlevol <- outervol - innervol
+
+      volfactor <- ((innervol/outervol) + (middlevol/outervol)*(5/12))
+
+      over.rf <- cr*((under.xdim + 2*cr)*(under.ydim + 2*cr)*(under.zdim + 2*cr)*z63*volfactor/(under.vol * rcp * 1.182))^(1/3)
+
+      if(rbmethod == 1){
+        sdfactor <- (rbp/cr)*0.37
+        over.rf <- over.rf + over.rf*sdfactor
+      }
+      #####
+
       over.sep <- over.rf*2
       over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
 
@@ -363,8 +406,15 @@ makecluster <- function(under,over,radius1,radius2,
 
       if(rb == TRUE){
         n <- npoints(over.scaledf)
-        crrand <- rnorm(n,mean = cr, sd = rbp)
-        crrand[crrand < 0] <- 0
+        if(rbmethod == 1){
+          crrand <- rnorm(n,mean = cr, sd = rbp)
+          crrand[crrand < 0] <- 0
+        } else if(rbmethod == 2){
+          n1 <- round(n*rbp[1])
+          n2 <- n - n1
+          a <- c(rep(rbp[2], n1), rep(rbp[3], n2))
+          crrand <- sample(a, replace = FALSE)
+        }
       }
 
       # Deal with overlapping clusters here
