@@ -247,7 +247,7 @@ read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5){
   if(scaleUp == TRUE){
     a <- read.table(fpath_sys)
     r<-as.numeric(levels(a$V1)[2])
-    temp <- scaleRCP(createSpat(temp_upload[,c("x","y","z")]),newRadius = 0.5,oldRadius = r)
+    temp <- scaleRCP(createSpat(temp_upload[,c("x","y","z")]),newRadius = newRadius, oldRadius = r)
     return(temp)
   }
   temp <- createSpat(temp_upload[,c("x","y","z")])
