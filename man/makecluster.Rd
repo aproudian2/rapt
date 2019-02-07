@@ -7,7 +7,8 @@
 makecluster(under, over, radius1, radius2, type = "cr", ppc = NULL,
   cr = NULL, speed = "superfast", d = NULL, pic = 1, pcp = 0.06,
   den = 1, gb = FALSE, gbp = c(0, 1), gbmethod = 1, rb = FALSE,
-  rbp, rbmethod = 1, s = 100, toPlot = FALSE, showOverPts = FALSE)
+  rbp = 1, rbmethod = 1, s = 100, toPlot = FALSE,
+  showOverPts = FALSE)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
@@ -49,7 +50,7 @@ Currently written for application to \code{type = "cr"} \code{speed = "fast"}
 and \code{"superfast"}, and to \code{type = "dist"}.}
 
 \item{gb}{\code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
-blur to the cluster center positions. See \code{\link{rgblur}} for more
+  blur to the cluster center positions. See \code{\link{rgblur}} for more
 information on the blur function.}
 
 \item{gbp}{Parameters for the cluster center gaussian blurs. \code{gbp =
@@ -66,8 +67,8 @@ then \code{rbp = c(p, r1, r2))}, where p is the percent of r1, and (1-p) is
 then the percent of r2. r1 < r2.}
 
 \item{rbmethod}{Metod for distributing radius blur. \code{rbmethod = 1} means
-gaussian distributed, \code{rbmethod = 2} mean split between two radii.
-Can ignore cr if this is the case.}
+gaussian distributed, \code{rbmethod = 2} mean split between two radii. Can
+ignore \code{cr} if \code{rbmethod = 2}.}
 
 \item{s}{Seed for the random parts of the cluster generation process.}
 

@@ -153,7 +153,7 @@ makecluster <- function(under,over,radius1,radius2,
                         gbp = c(0,1),
                         gbmethod = 1,
                         rb = FALSE,
-                        rbp,
+                        rbp = 1,
                         rbmethod = 1,
                         s = 100,
                         toPlot=FALSE,showOverPts=FALSE){
@@ -365,22 +365,26 @@ makecluster <- function(under,over,radius1,radius2,
       ####
       # There's some hairy math here that took me a while to figure out. Come see me if you need it explained,
       # or see my reseatch notebook.
-      z63 <- (((4/3)*pi*over.r^3)*npoints(over)*0.75 + ((4/3)*pi*(over.r*1.20)^3)*npoints(over)*0.25)/over.vol
-      under.xdim <- domain(under)$xrange[2]
-      under.ydim <- domain(under)$yrange[2]
-      under.zdim <- domain(under)$zrange[2]
+      if(rb == TRUE){
+        z63 <- (((4/3)*pi*over.r^3)*npoints(over)*0.75 + ((4/3)*pi*(over.r*1.20)^3)*npoints(over)*0.25)/over.vol
+        under.xdim <- domain(under)$xrange[2]
+        under.ydim <- domain(under)$yrange[2]
+        under.zdim <- domain(under)$zrange[2]
 
-      innervol <- (under.xdim - 2 * cr)*(under.ydim - 2 * cr)*(under.zdim - 2 * cr)
-      outervol <- (under.xdim + 2 * cr)*(under.ydim + 2 * cr)*(under.zdim + 2 * cr)
-      middlevol <- outervol - innervol
+        innervol <- (under.xdim - 2 * cr)*(under.ydim - 2 * cr)*(under.zdim - 2 * cr)
+        outervol <- (under.xdim + 2 * cr)*(under.ydim + 2 * cr)*(under.zdim + 2 * cr)
+        middlevol <- outervol - innervol
 
-      volfactor <- ((innervol/outervol) + (middlevol/outervol)*(5/12))
+        volfactor <- ((innervol/outervol) + (middlevol/outervol)*(5/12))
 
-      over.rf <- cr*((under.xdim + 2*cr)*(under.ydim + 2*cr)*(under.zdim + 2*cr)*z63*volfactor/(under.vol * rcp * 1.182))^(1/3)
+        over.rf <- cr*((under.xdim + 2*cr)*(under.ydim + 2*cr)*(under.zdim + 2*cr)*z63*volfactor/(under.vol * rcp * 1.182))^(1/3)
 
-      if(rbmethod == 1){
-        sdfactor <- (rbp/cr)*0.37
-        over.rf <- over.rf + over.rf*sdfactor
+        if(rbmethod == 1){
+          sdfactor <- (rbp/cr)*0.37
+          over.rf <- over.rf + over.rf*sdfactor
+        }
+      } else {
+        over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
       }
       #####
 
@@ -634,40 +638,49 @@ makecluster <- function(under,over,radius1,radius2,
 #' @param sigma2 Background density. Value between 0 and 1.
 #' @param win A \code{\link[spatstat]{box3}} object containing the window of the
 #'   cluster set you want to make.
+#' @param background Either \code{'poisson'} or \code{'rcp'}. Whether to have
+#' Poission distributed points or RCP points for the points in the clusters and
+#' in the background.
+#' @param filepath Needed if \code{background = 'rcp'}. Vector with the filepath
+#'   to [1] the FinalConfig file of the RCP pattern desired, [2] the system file
+#'   of the RCP pattern desired
 #'
 #' @return A list of [[1]] A \code{\link[spatstat]{pp3}} object containing the
 #'   cluster points, [[2]] The overall intensity of the point pattern; Total
 #'   number of points/total volume.
-hcpcluster <- function(csep_r, R, sigma1, sigma2, win){
+hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
   hcp.c <- hcp.gen(csep_r,win)
   hcp.pp3 <- createSpat(hcp.c,win)
   tr <- inside.boxx(hcp.pp3,w=win)
   hcp.pp3 <- hcp.pp3[tr]
 
-  #plot(hcp.pp3)
+  if(background == 'poisson'){
+    # Generate poission clusters around the hcp lattice
+    inside.pp3 <- rpoispp3(sigma1, domain = win)
+    outside.pp3 <- rpoispp3(sigma2, domain = win)
+  }else if(background == 'rcp'){
+    # OR upload rcp pattern from filepath given
+    inside.pp31 <- read.rcp(filepath[1],filepath[2],scaleUp = TRUE,newRadius = 0.50475)
+    inside.pp32 <- stitch.size(inside.pp31,domain(inside.pp31),c(60,60,60))
+    inside.pp3 <- percentSelect(sigma1, inside.pp32)
+    outside.pp3 <- percentSelect(sigma2, inside.pp32)
+  }
 
-  # Generate poission clusters around the hcp lattice
-  #sigma1 <- 1
-  #R <- 3
-  inside.pp3 <- rpoispp3(sigma1, domain = win)
   nnr <- crosspairs.pp3(hcp.pp3,inside.pp3,rmax = R,what ="indices")
-
   cluster.pts <- inside.pp3[nnr[[2]]]
-  #plot(cluster.pts)
 
-  #Generate poission background noints ouside the clusters
-  #sigma2 <- 0.01
-  outside.pp3 <- rpoispp3(sigma2, domain = win)
+  #Generate background points ouside the clusters
   nnr2 <- crosspairs.pp3(hcp.pp3,outside.pp3,rmax = R,what ="indices")
   bg.pts <- outside.pp3[-nnr2[[2]]]
 
   full.coo <- rbind(coords(cluster.pts),coords(bg.pts))
   full.pp3 <- createSpat(full.coo, win)
-  #plot(full.pp3)
+
   sigma3 <- npoints(full.pp3)/volume(win)
 
   return(list(full.pp3,sigma3))
 }
+
 
 
 #########################################

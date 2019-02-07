@@ -4,7 +4,7 @@
 \alias{k3metrics}
 \title{Extract metrics from 3D K function output}
 \usage{
-k3metrics(rvals.new, tvals.new)
+k3metrics(rvals.new, tvals.new, toplot)
 }
 \arguments{
 \item{rvals.new}{The radius values from the \code{\link{anomK3est}}. These
