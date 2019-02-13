@@ -17,7 +17,6 @@
 #'   NaNs.
 
 k3metrics <- function(rvals.new, tvals.new, toplot){
-
   peak.info <- argmax(rvals.new, tvals.new, w = 3, span = 0.08)
   #lines(rvals.new, peak.info$y.hat)
   #points(peak.info$x,tvals.new[peak.info$i],pch = 6, cex = 2, col="red")
@@ -47,6 +46,7 @@ k3metrics <- function(rvals.new, tvals.new, toplot){
   Rddm_ind <- peak.info$ddderivsm$i[peak.info$ddderivsm$i > lb & peak.info$ddderivsm$i < ub][1]
 
   # stuff if you want to plot
+  #browser()
   if(toplot == TRUE){
     plot(rvals.new,tvals.new, type = "n")
 
@@ -68,4 +68,32 @@ k3metrics <- function(rvals.new, tvals.new, toplot){
               peak.info$derivsm$x[1], #Rdm
               rvals.new[Rddm_ind[1]], #Rddm
               -peak.info$derivsm$y.hat[peak.info$derivsm$i[1]])) #Kdm
+}
+
+kseries <- function(props, maxr, nr, under, over, toSub){
+  #make cluster
+  sd <- props[1]*props[3]
+  seed <- round(runif(1, min = 0, max = 100000))
+
+  cluster <- makecluster(under,over,0.5,0.5,type="cr",speed="superfast",cr=props[1],den = props[2],rb = TRUE, rbp = sd, gb = TRUE, gbp = c(0,props[4]), s = seed)
+
+  #test
+  result <- anomK3est(cluster[[1]],toSub,maxr,nr,correction="trans")
+  rvals <- result$r
+  tvals <- result$trans
+
+  # get out that peak info son
+  rvals.new <- rvals[15:length(rvals)]
+  tvals.new <- tvals[15:length(rvals)]
+
+  #get those metrics out
+  metrics <- k3metrics(rvals.new, tvals.new, FALSE)
+
+  #Km[i,count] <- metrics[[1]]
+  #Rm[i,count] <- metrics[[2]]
+  #Rdm[i,count] <- metrics[[3]]
+  #Rddm[i,count] <- metrics[[4]]
+  #Kdm[i,count] <- metrics[[5]]
+
+  return(c(metrics[[1]],metrics[[2]],metrics[[3]],metrics[[4]],metrics[[5]],seed))
 }
