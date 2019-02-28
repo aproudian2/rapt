@@ -1,32 +1,36 @@
 # Functions having to do with the calculation of and display of envelopes ran
 # on random re-samplings of pp3 patterns
 
-#Function to grab a cubic subsection from the center of the given data, given dimensions
-subSquare <- function(orig,win){
+# Function to grab a cubic subsection from the center of the given data, given
+# dimensions
+subSquare <- function(orig, win) {
  # win = list of dimensions of the box you want to pull: c(xdim,ydim,zdim)
- # orig = the original point pattern (pp3) - needs to be scaled in the same way that your window is scaled
+ # orig = the original point pattern (pp3) - needs to be scaled in the same way
+ # that your window is scaled
   orig.domain <- domain(orig)
-  orig.center <- c(mean(orig.domain$xrange),mean(orig.domain$yrange),mean(orig.domain$zrange))
-  xs <-orig.center[1]-(win[1]/2)
-  ys <-orig.center[2]-(win[2]/2)
-  zs <-orig.center[2]-(win[3]/2)
-  xb <-orig.center[1]+(win[1]/2)
-  yb <-orig.center[2]+(win[2]/2)
-  zb <-orig.center[3]+(win[3]/2)
+  orig.center <- c(mean(orig.domain$xrange),
+                   mean(orig.domain$yrange),
+                   mean(orig.domain$zrange))
+  xs <-orig.center[1] - (win[1]/2)
+  ys <-orig.center[2] - (win[2]/2)
+  zs <-orig.center[2] - (win[3]/2)
+  xb <-orig.center[1] + (win[1]/2)
+  yb <-orig.center[2] + (win[2]/2)
+  zb <-orig.center[3] + (win[3]/2)
 
-  xr <- c(xs,xb)
-  yr <- c(ys,yb)
-  zr <- c(zs,zb)
+  xr <- c(xs, xb)
+  yr <- c(ys, yb)
+  zr <- c(zs, zb)
 
   sub.box <- box3(xrange = xr, yrange = yr, zrange = zr)
 
-  tflist <- inside.boxx(orig,w=sub.box)
+  tflist <- inside.boxx(orig, w = sub.box)
 
   sub <- orig[tflist]
 
-  xrn <- c(0,xb-xs)
-  yrn <- c(0,yb-ys)
-  zrn <- c(0,zb-zs)
+  xrn <- c(0, xb-xs)
+  yrn <- c(0, yb-ys)
+  zrn <- c(0, zb-zs)
   sub.box.new <- box3(xrange = xrn, yrange = yrn, zrange = zrn)
 
   coo <- coords(sub)
@@ -40,63 +44,78 @@ subSquare <- function(orig,win){
   return(sub.new)
 }
 
-######################################################################3
+######################################################################
 
-# Function to randomly relabel and select perc percent of the given point pattern
-percentSelect <- function(perc,pattern){
+# Function to randomly relabel and select perc percent of the given point
+# pattern
+percentSelect <- function(perc, pattern) {
   # perc = fraction of points you want to select (0-1)
   # pattern = the point pattern you want to draw from
-  reLabel <- rlabel(pattern,labels = c(rep("A",round(npoints(pattern)*perc)),rep("B",round(npoints(pattern)*(1-perc)))))
-  inds <- which(marks(reLabel)=="A")
+  reLabel <- rlabel(pattern,
+                    labels = c(rep("A", round(npoints(pattern) * perc)),
+                               rep("B", round(npoints(pattern) * (1-perc))))
+                    )
+  inds <- which(marks(reLabel) == "A")
   newPattern <- reLabel[inds]
   return(newPattern)
 }
 
 ######################################################################
 
-# Function to plot envelope results from the pK3est or panomK3est functions below, based on percentiles
-envPlot <- function(tests,percentiles=c(.999,.99,.97),ylim=c(-3,3),xlim=c(0,ceiling(max(tests[,1])))){
+# Function to plot envelope results from the pK3est or panomK3est functions
+# below, based on percentiles
+envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
+                    ylim = c(-3, 3), xlim = c(0, ceiling(max(tests[,1])))
+                    ) {
   # tests = array of values returned from the rrK3est function above,
-  # percentiles = vector including the different percentiles you would like to see on the plot (0-1)
+  # percentiles = vector including the different percentiles you would like to
+  #               see on the plot (0-1)
   # do these in descending order please
 
-  color <- c("lightskyblue","mediumpurple","lightpink")
+  color <- c("lightskyblue", "mediumpurple", "lightpink")
 
   # break up data into r values and test results
   rvals <- tests[,1]
   tvals <- tests[,2:ncol(tests)]
 
   nTests <- ncol(tvals) # number of tests done
-  prange <- percentiles*nTests # get the range of indeces for which each percentile spans
+  prange <- percentiles * nTests # get the range of indeces for which each percentile spans
 
   sortedtVals <- t(apply(tvals,1,sort)) # sort the results at each r value from lowest to highest
-  percentileIndicesBig <- round(nTests/2)+floor(prange/2) # select the high end indexes based on being 1/2 of the percentile span from the middle of the tests
-  percentileIndicesSmall <- round(nTests/2)-floor(prange/2) # do the same for the low end
+  percentileIndicesBig <- round(nTests/2) + floor(prange/2) # select the high end indexes based on being 1/2 of the percentile span from the middle of the tests
+  percentileIndicesSmall <- round(nTests/2) - floor(prange/2) # do the same for the low end
 
   # grab out the columns from the sorted test results that we will plot
-  toPlotBigs <- matrix(0,nrow=nrow(tvals),ncol=length(percentiles))
-  toPlotSmalls <- matrix(0,nrow=nrow(tvals),ncol=length(percentiles))
-  for(i in 1:length(percentiles)){
+  toPlotBigs <- matrix(0, nrow = nrow(tvals), ncol = length(percentiles))
+  toPlotSmalls <- matrix(0, nrow = nrow(tvals), ncol = length(percentiles))
+  for(i in 1:length(percentiles)) {
     toPlotBigs[,i] <- sortedtVals[,percentileIndicesBig[i]]
     toPlotSmalls[,i] <- sortedtVals[,percentileIndicesSmall[i]]
   }
 
   # plot the envelopes from the percentile data
   par(oma = c(0, 2, 0, 0))
-  plot(rvals,tvals[,1],type="n",main="Envelopes for K Function",xlab="r",ylab="",ylim=ylim,xlim=xlim)
-  mtext(text=expression(sqrt('K'[3]*'(r)')*'  Anomaly'),side=2,line=0,outer=TRUE)
-  axis(1,at=0:xlim[2],labels=FALSE)
-  axis(1,at=seq(0,xlim[2],by=2))
-  for(i in 1:length(percentiles)){
-    polygon(c(rvals,rev(rvals)),c(toPlotBigs[,i],rev(toPlotSmalls[,i])),col=color[i])#,border=color[i],lwd=2)
+  plot(rvals, tvals[,1],
+       type = "n", main = "Envelopes for K Function", xlab = "r", ylab = "",
+       ylim = ylim, xlim = xlim)
+  mtext(text = expression(sqrt('K'[3]*'(r)')*'  Anomaly'),
+        side = 2, line = 0, outer = TRUE)
+  axis(1 ,at = 0:xlim[2], labels = FALSE)
+  axis(1, at = seq(0, xlim[2], by = 2))
+  for(i in 1:length(percentiles)) {
+    polygon(c(rvals, rev(rvals)), c(toPlotBigs[,i], rev(toPlotSmalls[,i])),
+            col = color[i])#,border=color[i],lwd=2)
   }
-  abline(h=0,lty=2,lwd=1,col="black")
-  legend(0, ylim[2], legend=c(paste(toString(percentiles[1]*100),"% AI"), paste(toString(percentiles[2]*100),"% AI"),paste(toString(percentiles[3]*100),"% AI")),col=c(color[1],color[2],color[3]), lty=c(1,1,1), lwd=c(10,10,10))
+  abline(h = 0, lty = 2, lwd = 1, col = "black")
+  legend(0, ylim[2], legend = c(paste(toString(percentiles[1]*100),"% AI"),
+                                paste(toString(percentiles[2]*100),"% AI"),
+                                paste(toString(percentiles[3]*100),"% AI")),
+         col = c(color[1], color[2], color[3]),
+         lty = c(1, 1, 1), lwd = c(10, 10, 10))
 }
 
-##################################################################
-
-# Parellelized version of rrK3est, written above. Perfeorms the K3est function caculations in parallel
+# Parellelized version of rrK3est, written above. Perfeorms the K3est function
+# calculations in parallel
 pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso"){
   # perc = percent of original pattern to sample
   # pattern = the original pattern
@@ -156,8 +175,6 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso"){
 
   return(tests)
 }
-
-###############################################
 
 # Same as the parrrK3est function above, but returns envelopes centered around zero
 panomK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",toSub=NULL){
@@ -244,11 +261,10 @@ panomK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso
   return(list(tests,toSub,rmax,nrval))
 }
 
-####################################
 # Normal K3 anomoly function (no envelopes)
 # Need to pass in the result of an envelope generation, to know what to subtract from the result
 
-anomK3est <- function(pattern,result,correction = "iso"){
+anomK3est <- function(pattern,result,correction = "iso") {
   #pattern is the pp3 pattern you would like to run a test on
   #result is the list returned by "panomK3est", which holds the information needed to perform the same test
   #correction is the type of edge correction to use - "iso", "trans", "bord", or "all"
@@ -354,7 +370,6 @@ bK3est <- function(X,rmax=NULL,nrval=128){
 
 #############################################
 # Find distance to boundary for each point in pattern
-
 bdist.points3 <- function (X) {
 
   verifyclass(X, "pp3")
@@ -374,5 +389,3 @@ bdist.points3 <- function (X) {
 
   return(result)
 }
-
-
