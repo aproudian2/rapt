@@ -9,3 +9,6 @@ marktable.pp3(X, R, N, exclude = TRUE, collapse = FALSE)
 \description{
 \code{marktable.pp3}
 }
+\seealso{
+\code{\link[spatstat]{marktable}}
+}

@@ -6,6 +6,17 @@
 \usage{
 sample.ppp(X, size)
 }
+\arguments{
+\item{X}{A \code{ppp}. The point pattern from which to sample.}
+
+\item{size}{A numeric. The number of points to sample.}
+}
+\value{
+A \code{ppp}. The sampled point pattern.
+}
 \description{
 Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
+}
+\seealso{
+\code{\link[base]{sample}}
 }

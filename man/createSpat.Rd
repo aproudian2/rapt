@@ -8,6 +8,8 @@ createSpat(pos, win = NULL)
 }
 \arguments{
 \item{pos}{A POS or ATO data frame.}
+
+\item{win}{The domain of the data.}
 }
 \value{
 A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in

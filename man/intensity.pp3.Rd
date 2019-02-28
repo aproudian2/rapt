@@ -9,3 +9,6 @@ intensity.pp3(X, weights = NULL)
 \description{
 Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
 }
+\seealso{
+\code{\link[spatstat]{intensity}}
+}

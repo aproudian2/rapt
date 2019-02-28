@@ -9,3 +9,6 @@
 \description{
 Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
 }
+\seealso{
+\code{\link[spatstat]{shift}}
+}
