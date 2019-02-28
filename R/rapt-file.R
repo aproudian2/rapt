@@ -93,6 +93,7 @@ readRNG <- function(rng) {
 #' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
 #'
 #' @param pos A POS or ATO data frame.
+#' @param win The domain of the data.
 #' @return A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
 #'   the supplied POS or ATO.
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}}
@@ -113,8 +114,9 @@ createSpat <- function(pos, win = NULL) {
 #' from an ATO.
 #'
 #' @param ato An ATO data frame.
-#' @param window An object of class \code{\link[spatstat]{owin}}. If NULL, a window
-#'   will be calculated from the data using \code{\link[spatstat]{ripras}}.
+#' @param window An object of class \code{\link[spatstat]{owin}}. If NULL,
+#'   a window will be calculated from the data using
+#'   \code{\link[spatstat]{ripras}}.
 #' @return A \code{\link[spatstat]{ppp}} with the positions of the detector hits
 #'   from the ATO.
 #' @seealso \code{\link{readATO}}, \code{\link[spatstat]{ppp}},
@@ -127,21 +129,35 @@ createDet <- function(ato, window = NULL) {
   return(det.dat)
 }
 
-#' Create a \code{\link[MALDIquant]{MassSpectrum}} object from a POS or ATO
+#' Create a \code{\link[MALDIquant]{MassSpectrum}} from a POS or ATO
 #' data frame.
+#'
+#' \code{createSpec} generates a \code{\link[MALDIquant]{MassSpectrum}} object
+#' with a specified resolution from an ATO or POS data frame (like that created
+#' by \code{\link(readPOS)}).
 #'
 #' @param pos A POS or ATO data frame.
 #' @param res The desired \code{\link[MALDIquant]{MassSpectrum}} resolution.
 #' @return A \code{\link[MALDIquant]{MassSpectrum}} from the \code{mass} field
 #'   of the POS or ATO, with the resolution set by \code{res}.
+#'
+#' @details
+#' The input POS or ATO is binned by mass values; the resolution parameter sets
+#' the width of the mass bins used in \code{\link[base]hist}} to create the
+#' input to the \code{\link[MALDIquant]{createMassSpectrum}} call, and also acts
+#' as a tolerance around the spectrum minimum and maximum mass. The minimum of
+#' the mass value is zero.
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}},
 #'   \code{\link[MALDIquant]{MassSpectrum}}
 #' @export
-createSpec <- function(pos, res = 0.001) {
+createSpec <- function(pos, res = 0.001, snip = NULL) {
   ms.max <- max(pos[,"mass"])
   ms.max <- ms.max + res
   ms.min <- min(pos[,"mass"])
   ms.min <- ms.min - res
+  if(ms.min < 0) {
+    ms.min <- 0
+  }
   ms.breaks <- seq(ms.min, ms.max, res)
   ms.hist <- hist(pos[,"mass"], ms.breaks, plot = F)
   ms.dat <- createMassSpectrum(
@@ -151,18 +167,19 @@ createSpec <- function(pos, res = 0.001) {
   return(ms.dat)
 }
 
+#' Create a TOF spectrum from an ATO data frame
 createTOF <- function(pos, res = 0.001) {
   ms.max <- max(pos[,"TOF"])
   ms.max <- ms.max + res
   ms.min <- min(pos[,"TOF"])
   ms.min <- ms.min - res
   ms.breaks <- seq(ms.min, ms.max, res)
-  ms.hist <- hist(pos[,"TOF"], ms.breaks, plot = F);
+  ms.hist <- hist(pos[,"TOF"], ms.breaks, plot = F)
   ms.dat <- createMassSpectrum(
     ms.hist$mids, ms.hist$counts,
     metaData = attr(pos, "metaData")
-  );
-  return(ms.dat);
+  )
+  return(ms.dat)
 }
 
 createForm <- function(df) {
@@ -175,5 +192,6 @@ createForm <- function(df) {
     print(paste("The formulae:", form.dat[form.chk], "are not valid."));
   }
 }
+
 #### Write Data ####
 # Export methods?
