@@ -221,32 +221,34 @@ void Results::print_result(unsigned int n) {
 DataFrame readResults(char* fp) {
   Results c_data(fp);
   StringVector col_names(26);
-  col_names(0) = "Index";
-  col_names(1) = "ID";
-  col_names(2) = "Number";
-  col_names(3) = "Voltage";
-  col_names(4) = "StartX";
-  col_names(5) = "StartY";
-  col_names(6) = "StartZ";
-  col_names(7) = "StopX";
-  col_names(8) = "StopY";
-  col_names(9) = "StopZ";
-  col_names(10) = "TOF";
-  col_names(11) = "Prob";
-  col_names(12) = "PotBef";
-  col_names(13) = "FieldBefX";
-  col_names(14) = "FieldBefY";
-  col_names(15) = "FieldBefZ";
-  col_names(16) = "PotAft";
-  col_names(17) = "FieldAftX";
-  col_names(18) = "FieldAftY";
-  col_names(19) = "FieldAftZ";
-  col_names(20) = "NormalX";
-  col_names(21) = "NormalY";
-  col_names(22) = "NormalZ";
-  col_names(23) = "ApexX";
-  col_names(24) = "ApexY";
-  col_names(25) = "ApexZ";
+
+  DataFrame r_data = DataFrame::create(Named("Index") = index_vec,
+                                       Named("ID") =  id_vec,
+                                       Named("Number") = number_vec,
+                                       Named("Voltage") = voltage_vec,
+                                       Named("StartX") = startX_vec,
+                                       Named("StartY") = startY_vec,
+                                       Named("StartZ") = startZ_vec,
+                                       Named("StopX") = stopX_vec,
+                                       Named("StopY") = stopY_vec,
+                                       Named("StopZ") = stopZ_vec,
+                                       Named("TOF") = tof_vec,
+                                       Named("Prob") = prob_vec,
+                                       Named("PotBef") = potentialBefore_vec,
+                                       Named("FieldBefX") = fieldBeforeX_vec,
+                                       Named("FieldBefY") = fieldBeforeY_vec,
+                                       Named("FieldBefZ") = fieldBeforeZ_vec,
+                                       Named("PotAft") = potentialAfter_vec,
+                                       Named("FieldAftX") = fieldAfterX_vec,
+                                       Named("FieldAftY") = fieldAfterY_vec,
+                                       Named("FieldAftZ") = fieldAfterZ_vec,
+                                       Named("NormalX") = normalX_vec,
+                                       Named("NormalY") = normalY_vec,
+                                       Named("NormalZ") = normalZ_vec,
+                                       Named("ApexX") = apexX_vec,
+                                       Named("ApexY") = apexY_vec,
+                                       Named("ApexZ") = apexZ_vec
+                                       );
 }
 
 // [[Rcpp::export]]
