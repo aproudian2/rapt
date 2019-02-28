@@ -1,10 +1,10 @@
 # Functions to simulate clusters using RCP data sets
 
-#' Simulate clusters
+#' Simulate Clusters
 #'
 #' \code{makeCluster} uses two point patterns to generate clusters. One is the
 #' underlying point pattern, from which the actual simulated data will be taken.
-# The other is to randomly place the cluster locations through the underlying
+#' The other is to randomly place the cluster locations through the underlying
 #' pattern.
 #'
 #' @param under A pp3. The underlying point pattern
@@ -272,12 +272,12 @@ trueBox <- function(pp3file) {
 #' Correct points per cluster
 #' \code{crAdjust} adjusts the number of points in each cluster defined by the
 #' "cr" method to get the correct number of points in each cluster.
-#' \@param mat A matrix. The matrix filled with points and associated cluster
+#' @param mat A matrix. The matrix filled with points and associated cluster
 #' index values.
-#' \@param diff A numeric. The difference between the number of values needed
+#' @param diff A numeric. The difference between the number of values needed
 #' and the number in \code{mat}.
-#' \@param X A \code{pp3}. The over point pattern.
-#' \@param Y A \code{pp3}. The under point pattern.
+#' @param X A \code{pp3}. The over point pattern.
+#' @param Y A \code{pp3}. The under point pattern.
 crAdjust <- function(mat, diff, X, Y) {
 
   if(diff > 0) {
@@ -353,11 +353,11 @@ crAdjust <- function(mat, diff, X, Y) {
 #' \code{randomInsert} randomly places points within the under data set, if not
 #' 100% of the cluster points are set to be in the clusters
 #'
-#' \@param cluster.Indices A numeric vector. A vector containing the indices of
+#' @param cluster.Indices A numeric vector. A vector containing the indices of
 #' the current cluster points.
-#' \@param n A numeric. The number of points that need to be placed randomly.
-#' \@param N A numeric. The number of points in the entire underlying pattern.
-#' \@return A numeric vector containing the indicies of the background points.
+#' @param n A numeric. The number of points that need to be placed randomly.
+#' @param N A numeric. The number of points in the entire underlying pattern.
+#' @return A numeric vector containing the indicies of the background points.
 randomInsert <- function(cluster.Indices, n, N) {
   full <- 1:N
   nonclust.ind <- full[!full %in% cluster.Indices]

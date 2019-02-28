@@ -4,12 +4,12 @@
 #'
 #' \code{scale} scales an RCP file to a desired radius, given the original
 #' radius.
-#' \@param pp3file A \code{pp3}. A point pattern to scale.
-#' \@param newRadius A numeric. The radius that you would like your particles
+#' @param pp3file A \code{pp3}. A point pattern to scale.
+#' @param newRadius A numeric. The radius that you would like your particles
 #' to have after scaling.
-#' |@param oldRadius A numeric. The radius that your particles have in the
+#' @param oldRadius A numeric. The radius that your particles have in the
 #' original \code{pp3}.
-#' \@param win A \code{box3}. A domain indicating the size of the rcp
+#' @param win A \code{box3}. A domain indicating the size of the rcp
 #' generation (leave null if integer values, the program will figure it out).
 scale <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
 
@@ -40,11 +40,11 @@ scale <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
 #' \code{stitch} takes a \code{pp3} generated with periodic boundary conditions
 #' (usually read in from an external RCP generator) and tiles it together.
 #'
-#' \@param pp3file A \code{pp3}. A point pattern with periodic boundary
+#' @param pp3file A \code{pp3}. A point pattern with periodic boundary
 #' conditions which you want to stitch together.
-#' \@param reps A numeric vector. The number of iterations you want in each
+#' @param reps A numeric vector. The number of iterations you want in each
 #' direction: c(xreps, yreps, zreps).
-#' \@param win A \code{box3}. The size of the rcp generation (leave null if
+#' @param win A \code{box3}. The size of the rcp generation (leave null if
 #' integer values, the program will figure it out).
 stitch <- function(pp3file, reps = c(2,2,2), win = NULL) {
   if(is.null(win)) {
