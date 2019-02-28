@@ -36,7 +36,7 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
 #' \code{prettyPlot}
 # Lift the assumption of a log10 transformed spectrum.
 prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
-                       main = "Mass Spectrum", hold.par = F) {
+                       main = "Mass Spectrum", hold.par = F, ...) {
   if(log10(max(ms@intensity)) > 1) {
     stop("prettyPlot should only be used with log10 transformed spectra.")
   }
@@ -65,7 +65,8 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
     axis(x, at = ms.tck[[x]], labels = NA, tck = -0.01)
   }))
   if (!is.na(rng)) {
-    polyCurve(ms@mass, ms@intensity, rng$start, rng$end, col = rng$color)
+    polyCurve(ms@mass, ms@intensity, rng$start, rng$end, col = rng$color,
+              ... = ...)
     lines(ms)
   }
   if (hold.par){
