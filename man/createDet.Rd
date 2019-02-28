@@ -9,9 +9,8 @@ createDet(ato, window = NULL)
 \arguments{
 \item{ato}{An ATO data frame.}
 
-\item{window}{An object of class \code{\link[spatstat]{owin}}. If NULL,
-a window will be calculated from the data using
-\code{\link[spatstat]{ripras}}.}
+\item{window}{An object of class \code{\link[spatstat]{owin}}. If NULL, a window
+will be calculated from the data using \code{\link[spatstat]{ripras}}.}
 }
 \value{
 A \code{\link[spatstat]{ppp}} with the positions of the detector hits
