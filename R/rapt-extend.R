@@ -2,6 +2,8 @@
 #' Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.
 #'
 #' \code{marktable.pp3}
+#' @seealso \code{\link[spatstat]{marktable}}
+#' @export
 marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
   verifyclass(X, "pp3")
   if (!is.marked(X, dfok = FALSE))
@@ -53,6 +55,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
 #' Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
 #'
 #' \code{superimpose.pp3}
+#' @seealso \code{\link[spatstat]{superimpose}}
 #' @export
 superimpose.pp3 <- function(..., W = NULL, check = F) {
   # Add ability to superimpose with marks
@@ -65,6 +68,9 @@ superimpose.pp3 <- function(..., W = NULL, check = F) {
 
 #### shift.pp3 ####
 #' Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
+#'
+#' @seealso \code{\link[spatstat]{shift}}
+#' @export
 shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 {
   verifyclass(X, "pp3")
@@ -96,6 +102,8 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 }
 #### inside.pp3 ####
 #' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]pp3}}.
+#'
+#' @seealso \code{\link[spatstat]{inside}}
 #' @export
 inside.pp3 <- function(points, domain = NULL) {
   if(is.null(domain)) {
@@ -117,6 +125,13 @@ inside.pp3 <- function(points, domain = NULL) {
 }
 #### sample.ppp ####
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
+#'
+#' @param X A \code{ppp}. The point pattern from which to sample.
+#' @param size A numeric. The number of points to sample.
+#' @return A \code{ppp}. The sampled point pattern.
+#'
+#' @seealso \code{\link[base]{sample}}
+#' @export
 sample.ppp <- function(X, size) {
   sam.n <- npoints(X)
   sam.pts <- sample(1:sam.n, size)
@@ -125,6 +140,13 @@ sample.ppp <- function(X, size) {
 }
 #### sample.pp3 ####
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
+#'
+#' @param X A \code{pp3}. The point pattern from which to sample.
+#' @param size A numeric. The number of points to sample.
+#' @return A \code{pp3}. The sampled point pattern.
+#'
+#' @seealso \code{\link[base]{sample}}
+#' @export
 sample.pp3 <- function(X, size) {
   sam.lab <- rownames(as.data.frame(X$data))
   sam.pts <- sample(sam.lab, size)
@@ -161,6 +183,9 @@ findClusters.pp3 <- function(X, mark, k = 1) {
 }
 #### intensity.pp3 ####
 #' Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
+#'
+#' @seealso \code{\link[spatstat]{intensity}}
+#' @export
 intensity.pp3 <- function(X, weights = NULL) {
   n <- npoints(X)
   a <- volume(domain(X))
@@ -178,6 +203,10 @@ intensity.pp3 <- function(X, weights = NULL) {
 
 #### rownames.pp3 ####
 #' Extends \code{\link[base]{rownames}} to \code{\link[spatstat]{pp3}}.
+#'
+#' @param pat A \code{pp3}. The point pattern from which to extract rownames.
+#' @return A string vector. The rownames of the point pattern.
+#' @seealso \code{\link[base]{rownames}}
 rownames.pp3 <- function(pat) {
   dat <- rownames(as.data.frame(pat))
   return(dat)
@@ -186,6 +215,89 @@ rownames.pp3 <- function(pat) {
 #' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
 #'
 #' (requires the rgl library)
+#' @param X A \code{pp3}. The point pattern to visualize
+#' @param ... Other arguments to pass to \code{plot3d} from the \code{rgl}
+#' library.
+#' @seealso \code{\link[rgl]{plot3d}}
 plot3d.pp3 <- function(X, ...) {
   rgl::plot3d(as.data.frame(X$data), ...)
+}
+
+#### K3cross ####
+K3multi <- function(X, I, J, r, breaks,
+              correction = c("none", "isotropic", "translation"),
+              ..., ratio = FALSE) {
+  verifyclass(X, "pp3")
+  npts <- npoints(X)
+  W <- X$domain
+  volW <- volume(W)
+  I <- ppsubset(X, I)
+  J <- ppsubset(X, J)
+  if (is.null(I) || is.null(J))
+    stop("I and J must be valid subset indices")
+  if (!any(I))
+    stop("no points belong to subset I")
+  if (!any(J))
+    stop("no points belong to subset J")
+  nI <- sum(I)
+  nJ <- sum(J)
+  lambdaI <- nI/volW
+  lambdaJ <- nJ/volW
+  rmax <- max(r)
+  alim <- c(0, rmax)
+  K <- data.frame(r = r, theo = (4/3) * pi * r^3)
+  desc <- c("distance argument r", "theoretical Poisson %s")
+  K <- fv(K, "r", quote(K[IJ](r)), "theo", , alim, c("r", "{%s[%s]^{pois}}(r)"),
+          desc, fname = c("K", "list(I,J)"), yexp = quote(K[list(I,
+                                                                 J)](r)))
+  if (ratio) {
+    denom <- lambdaI * lambdaJ * volW
+    numK <- eval.fv(denom * K)
+    denK <- eval.fv(denom + K * 0)
+    attributes(numK) <- attributes(denK) <- attributes(K)
+    attr(numK, "desc")[2] <- "numerator for theoretical Poisson %s"
+    attr(denK, "desc")[2] <- "denominator for theoretical Poisson %s"
+  }
+  XI <- X[I]
+  XJ <- X[J]
+  close <- crosspairs(XI, XJ, max(r))
+  orig <- seq_len(npts)
+  imap <- orig[I]
+  jmap <- orig[J]
+  iX <- imap[close$i]
+  jX <- jmap[close$j]
+  if (any(I & J)) {
+    ok <- (iX != jX)
+    if (!all(ok)) {
+      close$i <- close$i[ok]
+      close$j <- close$j[ok]
+      close$d <- close$d[ok]
+    }
+  }
+  dcloseIJ <- close$d
+  icloseI <- close$i
+  jcloseJ <- close$j
+  if (any(correction == "none")) {
+    wh <- whist(dcloseIJ, breaks)
+    numKun <- cumsum(wh)
+    denKun <- lambdaI * lambdaJ * volW
+    Kun <- numKun/denKun
+    K <- bind.fv(K, data.frame(un = Kun), "{hat(%s)[%s]^{un}}(r)",
+                 "uncorrected estimate of %s", "un")
+    if (ratio) {
+      numK <- bind.fv(numK, data.frame(un = numKun), "{hat(%s)[%s]^{un}}(r)",
+                      "numerator of uncorrected estimate of %s", "un")
+      denK <- bind.fv(denK, data.frame(un = denKun), "{hat(%s)[%s]^{un}}(r)",
+                      "denominator of uncorrected estimate of %s",
+                      "un")
+    }
+  }
+  formula(K) <- . ~ r
+  unitname(K) <- unitname(X)
+  if (ratio) {
+    formula(numK) <- formula(denK) <- . ~ r
+    unitname(numK) <- unitname(denK) <- unitname(K)
+    K <- rat(K, numK, denK, check = FALSE)
+  }
+  return(K)
 }
