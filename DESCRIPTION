@@ -12,6 +12,7 @@ provides methos for both spatial and mass spectral analysis, along with
 simulation tools.
 License: CC-BY-SA-4.0
 LazyData: TRUE
+SystemRequirements: C++11
 Depends:
   MALDIquant (>= 1.15),
   spatstat (>= 1.49)
@@ -23,6 +24,7 @@ Imports:
   Hmisc (>= 3.17),
   ash(>= 1.0),
   Rcpp (>= 0.12),
+  Rcpp11 (>= 3.1),
   PET (>= 0.4)
 LinkingTo:
   Rcpp
