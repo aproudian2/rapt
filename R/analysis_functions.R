@@ -127,7 +127,7 @@ localk3metrics <- function(kl, start){
 #'
 #' @return Matrix containing 5 metrics and the seed value for each parameter
 #'   combination given in the \code{tot} list.
-kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE){
+kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
   #t1 <- Sys.time()
   under.nums <- seq(2,(p+1),1)
   under.nums[length(under.nums)] <- 1
@@ -145,7 +145,8 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE){
   under.big <- stitch.size(under, boxSize = c(60,60,60))
   over.big <- stitch.size(over, boxSize = c(60,60,60))
 
-  cnt <- j*length(tot)
+  set.seed(s)
+  cnt <- j*length(tot)*round(runif(1, 1, 10,000))
 
   outtemp <- matrix(NA, nrow = length(tot), ncol = 6)
 
