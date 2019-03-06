@@ -4,7 +4,7 @@
 \alias{intensity.pp3}
 \title{Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.}
 \usage{
-\method{intensity}{pp3}(X, weights = NULL)
+intensity.pp3(X, weights = NULL)
 }
 \description{
 Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.

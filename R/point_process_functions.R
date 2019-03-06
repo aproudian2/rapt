@@ -1,3 +1,27 @@
+#### anomlocalK3est ####
+#' Perform localK3est with 50th percentile of a RRL subtracted off.
+#'
+#' Similar to \code{\link{anomK3est}}, but returns the anomaly K3est for each
+#' point in the pattern.
+#'
+#' @param X The \code{\link[spatstat]{pp3}} object to be tested.
+#' @param toSub The vector of values to subtract from the square root of the
+#'   results of the K function applied to X.
+#' @param rmax See \code{\link[spatstat]{K3est}}.
+#' @param nrval See \code{\link[spatstat]{K3est}}.
+#'
+#' @return Date frame with columns of the anomaly K test for each point in the
+#'   pattern.
+
+anomlocalK3est <- function(X, toSub, rmax, nrval){
+  a <- localK3est(X, rmax = rmax, nrval = nrval, correction = "translation")
+  for(i in 2:ncol(a)){
+    a[,i] <- sqrt(a[,i])-toSub
+  }
+
+  return(a)
+}
+
 #### pK3est ####
 #' Perform K3est on random relabelings in parallel
 #'
@@ -178,7 +202,7 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",an
 #' @return Returns data fram containing r values and associated anomaly K3est
 #'   values.
 
-anomK3est <- function(pattern,toSub,rmax,nrval,correction = "iso"){
+anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 
   if(correction == "iso"){
     a <- K3est(pattern,rmax=rmax,nrval=nrval,correction="isotropic")
