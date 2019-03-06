@@ -4,7 +4,7 @@
 \alias{anomK3est}
 \title{Perfrom anomaly K3est on a \code{\link[spatstat]{pp3}} object.}
 \usage{
-anomK3est(pattern, toSub, rmax, nrval, correction = "iso")
+anomK3est(pattern, toSub, rmax, nrval, correction = "trans")
 }
 \arguments{
 \item{pattern}{The \code{\link[spatstat]{pp3}} object to analyze.}

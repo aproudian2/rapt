@@ -5,7 +5,7 @@
 \title{Helper function to allow for parallelization of metric extraction from
 cluster simulations}
 \usage{
-kseries2(j, p, tot, maxr, nr, toSub)
+kseries2(j, p, tot, maxr, nr, toSub, hpc = TRUE, s)
 }
 \arguments{
 \item{j}{The index of the RCP pattern to run (note that this might only be
@@ -23,6 +23,10 @@ vectors containing c(r, den, rb, gbp).}
 
 \item{toSub}{A vector of values to substitute for the \code{\link{anomK3est}}
 function.}
+
+\item{hpc}{Whether or not using the hpc.}
+
+\item{s}{seed.}
 }
 \value{
 Matrix containing 5 metrics and the seed value for each parameter

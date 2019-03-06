@@ -124,6 +124,8 @@ localk3metrics <- function(kl, start){
 #' @param nr Number of r values to evaluate k function at.
 #' @param toSub A vector of values to substitute for the \code{\link{anomK3est}}
 #'   function.
+#' @param hpc Whether or not using the hpc.
+#' @param s seed.
 #'
 #' @return Matrix containing 5 metrics and the seed value for each parameter
 #'   combination given in the \code{tot} list.
