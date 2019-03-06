@@ -148,7 +148,7 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
   over.big <- stitch.size(over, boxSize = c(60,60,60))
 
   set.seed(s)
-  cnt <- j*length(tot)*round(runif(1, 1, 10,000))
+  cnt <- j*length(tot)*round(runif(1, 1, 10000))
 
   outtemp <- matrix(NA, nrow = length(tot), ncol = 6)
 
