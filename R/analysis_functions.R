@@ -83,6 +83,8 @@ localk3metrics <- function(kl, start){
 
     peak.info <- argmax(r.n, t.n, w = 3, span = 0.1)
     span <- (peak.info$x[1]/7)*(0.3)
+
+    i <- i + 1
   }
 
   np <- ncol(kl)-3
@@ -97,7 +99,7 @@ localk3metrics <- function(kl, start){
   pks2 <- rep(0,nsamp)
   pts <- sample(1:np, nsamp, replace = FALSE)
   for(i in 1:nsamp){
-    t.n <- kl[15:nrow(kl),i+3]
+    t.n <- kl[15:nrow(kl),pts[i]]
     a <- argmax(r.n, t.n, w = 3, span = span)
     pks2[i] <- a$x[1]
   }
