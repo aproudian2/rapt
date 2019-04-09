@@ -5,7 +5,7 @@
 \title{Perform K3est on random relabelings in parallel}
 \usage{
 pK3est(perc, pattern, nEvals, rmax = NULL, nrval = 128,
-  correction = "iso", anom = FALSE, toSub = NULL)
+  correction = "iso", anom = FALSE, toSub = NULL, sorted = TRUE)
 }
 \arguments{
 \item{perc}{The fraction of points to select randomly each time out of the
@@ -28,6 +28,9 @@ calculated for \code{\link[spatstat]{K3est}}.}
 
 \item{toSub}{The numeric vector of data to subtract for the "anom" pK3est.
 Only used when \code{anom = TRUE}. See below for more info.}
+
+\item{sorted}{Whether to return a sorted table of RRLs (TRUE) or an unsorted
+one, where the RRLs are in their original rows.}
 }
 \value{
 \subsection{For \code{anom = FALSE}}{Returns a matrix containing the data

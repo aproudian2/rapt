@@ -63,11 +63,14 @@ subSquare <- function(orig,win){
 #'   selected. A value between 0 and 1.
 #' @param pattern The original \code{\link[spatstat]{pp3}} object to be selected
 #'   from.
+#' @param s Seed for the random selection
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
 
-percentSelect <- function(perc,pattern){
-
+percentSelect <- function(perc,pattern,s = NULL){
+  if(!is.null(s)){
+    set.seed(s)
+  }
   reLabel <- rlabel(pattern,labels = c(rep("A",round(npoints(pattern)*perc)),rep("B",npoints(pattern)-round(npoints(pattern)*perc))))
   inds <- which(marks(reLabel)=="A")
   newPattern <- reLabel[inds]

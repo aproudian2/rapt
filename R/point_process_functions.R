@@ -41,9 +41,11 @@ anomlocalK3est <- function(X, toSub, rmax, nrval){
 #'   \code{\link[spatstat]{K3est}} should be calculated at.
 #' @param correction Either "iso", "trans", or "bord" edge correction.
 #' @param anom Whether or not to retun the anomaly results. \code{TRUE} or
-#'   \code{FALSE}. See section below for more info.
+#' \code{FALSE}. See section below for more info.
 #' @param toSub The numeric vector of data to subtract for the "anom" pK3est.
 #'   Only used when \code{anom = TRUE}. See below for more info.
+#' @param sorted Whether to return a sorted table of RRLs (TRUE) or an unsorted
+#'   one, where the RRLs are in their original rows.
 #' @section Edge Corrections: See \code{\link[spatstat]{Kest}} or book availible
 #'   at \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
@@ -83,7 +85,7 @@ anomlocalK3est <- function(X, toSub, rmax, nrval){
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
 
-pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",anom=FALSE,toSub=NULL){
+pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",anom=FALSE,toSub=NULL, sorted=TRUE){
 
   #find cores and initialize the cluster
   cores2use <- detectCores()-1
@@ -154,25 +156,31 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",an
     # pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]
     tvals <- sqrt(tvals)
-    tvals <- t(apply(tvals,1,sort))
+
+    tvals_sorted <- t(apply(tvals,1,sort))
+
+#browser()
 
     if(is.null(toSub)){
       if(nEvals%%2==0){
         top <- nEvals/2
         bot <- top+1
-        toSub <- (tvals[,top]+tvals[,bot])/2
+        toSub <- (tvals_sorted[,top]+tvals_sorted[,bot])/2
       }else {
         toSub <- tvals[,(round(nEvals/2))]
       }
+    }
 
-      tvals <- apply(tvals,2,function(x){
-        x-toSub
-      })
+#browser()
+    if(sorted == TRUE){
+      tvals <- apply(tvals_sorted,2,function(x){
+        x-toSub})
     }else{
       tvals <- apply(tvals,2,function(x){
-        x-toSub
-      })
+        x-toSub})
     }
+
+#browser()
 
     tests <- cbind(tests[,1],tvals)
 

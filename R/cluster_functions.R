@@ -219,7 +219,7 @@ makecluster <- function(under,over,radius1,radius2,
 
     if(toPlot==TRUE){
       plot3d.pp3(cluster,col="red",size=5)
-      plot3d.pp3(under,col="lightgray",add=TRUE)
+      #plot3d.pp3(under,col="lightgray",add=TRUE)
       if(showOverPts==TRUE){
         plot3d.pp3(over.scaledf,size= 6,col="black",add=TRUE)
       }
