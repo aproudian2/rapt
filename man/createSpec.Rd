@@ -5,7 +5,7 @@
 \title{Create a \code{\link[MALDIquant]{MassSpectrum}} from a POS or ATO
 data frame.}
 \usage{
-createSpec(pos, res = 0.001)
+createSpec(pos, res = 0.001, snip = NULL)
 }
 \arguments{
 \item{pos}{A POS or ATO data frame.}
