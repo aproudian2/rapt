@@ -125,7 +125,12 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),
   plot(toplt,type="n",xlab="r",ylab=expression(sqrt('K'[3]*'(r)')*'  Anomaly'),ylim=ylim,xlim=xlim,xaxt = "n", ...)
   axis(1,at=0:xlim[2],labels=FALSE)
   axis(1,at=seq(0,xlim[2],by=2))
-  a <- c(rvals$V1,rev(rvals$V1))
+
+  if(class(rvals) == "data.frame"){
+    rvals <- as.numeric(rvals$V1)
+  }
+
+  a <- c(rvals,rev(rvals))
   for(i in 1:length(percentiles)){
     polygon(a,c(toPlotBigs[,i],rev(toPlotSmalls[,i])),col=color[i])#,border=color[i],lwd=2)
   }
