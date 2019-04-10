@@ -135,6 +135,7 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
 #### latticeVectors ####
 #' Transform a matrix of integer indices to spatial coordinates for a specified
 #' lattice type
+#' @export
 latticeVectors <- function(indices, a = 1, lattice = "sc") {
   indices <- as.matrix(indices)
   if (lattice == "sc") {
@@ -166,6 +167,7 @@ latticeVectors <- function(indices, a = 1, lattice = "sc") {
 }
 #### lattice ####
 #' Creates a spatial region filled with lattice points of the specified type
+#' @export
 lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   lat.xrange <- round(domain$xrange / a)
   lat.yrange <- round(domain$yrange / a)
