@@ -272,3 +272,114 @@ localk3engine <- function(x, y, z, box=c(0,1,0,1,0,1), rmax=1, nrval=100){
             PACKAGE = "rapt")
   return(res$full)
 }
+
+#### quadratcount.pp3 ####
+#' Extension of \code{\link[spatstat]{quadrat}} to \code{\link[spatstat]{pp3}} objects.
+#'
+#' Divides volume into quadrats and counts the number of points in each quadrat.
+#'
+#' @param X The \code{\link[spatstat]{pp3}} object to split up.
+#' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions.
+#'
+#' @return A \code{data.frame} object containing the number of counts in each quadrat.
+quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
+  verifyclass(X, "pp3")
+  w <- domain(X)
+
+  # create box3objects for each quadrat
+  xlim <- w$xrange
+  ylim <- w$yrange
+  zlim <- w$zrange
+
+  xbreaks <- seq(xlim[1],xlim[2],length.out = (nx+1))
+  ybreaks <- seq(ylim[1],ylim[2],length.out = (ny+1))
+  zbreaks <- seq(zlim[1],zlim[2],length.out = (nz+1))
+
+  ntot <- nx*ny*nz
+  gridvals <- list()
+  cnt <- 1
+
+  for(i in 1:nx){
+    for(j in 1:ny){
+      for(k in 1:nz){
+        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)], yrange = ybreaks[j:(j+1)], zrange = zbreaks[k:(k+1)])
+        cnt <- cnt + 1
+      }
+    }
+  }
+
+  inside.tf <- lapply(gridvals, function(x){inside.boxx(X, w = x)})
+  counts <- lapply(inside.tf, function(x){sum(x)})
+  counts <- unlist(counts)
+  return(data.frame(quad.no = seq(1,ntot), count = counts))
+}
+
+#### nndensity.pp3 ####
+#' Extension of \code{\link[spatstat]{nndensity}} to handle pp3 objects.
+#'
+#' Calculates the 3D nearest-neighbor intensity estimate of a point process at
+#' either a grid of points or at the point locations in the data set. Utilizes
+#' the volume weighted edge correction. See Statistics for Spatial Data by
+#' Cressie pg. 654 for more info.
+#'
+#' @param X The point pattern to estimate the intensity of.
+#' @param k Vector containing the nearest-neighbor #s that the estimate should
+#'   be calculated for.
+#' @param nx,ny,nz If estimating on a grid, the number of grid points in x, y,
+#'   and z.
+#' @param dz The z spacing for numeric integration for the edge correction
+#'   (suggested ~ 0.1-0.5)
+#' @param at.points \code{TRUE} or \code{FALSE}. Whether or not to estimate
+#'   intensity at points in pattern. If \code{TRUE}, nx, ny, and nz are not
+#'   used.
+#' @param par \code{TRUE} or \code{FALSE}: whether or not to calculate in
+#'   parallel
+#' @param cores If \code{par = TRUE}, this is the number of cores to use for the
+#'   parallel calculation.
+#'
+#' @return List containing: [[1]] A data frame of the intensity estimates for
+#'   each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
+#'   The coordinates of the original points from the data set.
+nndensity.pp3 <- function(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, cores = 7){
+
+  if(at.points == FALSE){
+    # set up grid of points and find nearest neighbors from grid to data set
+    d <- domain(X)
+
+    xsep <- (d$xrange[2]-d$xrange[1])/nx
+    xstart <- d$xrange[1] + xsep/2
+    xend <- d$xrange[2] - xsep/2
+
+    ysep <- (d$yrange[2]-d$yrange[1])/ny
+    ystart <- d$yrange[1] + ysep/2
+    yend <- d$yrange[2] - ysep/2
+
+    zsep <- (d$zrange[2]-d$zrange[1])/nz
+    zstart <- d$zrange[1] + zsep/2
+    zend <- d$zrange[2] - zsep/2
+
+    x <- seq(xstart,xend, xsep)
+    y <- seq(ystart,yend, ysep)
+    z <- seq(zstart,zend, zsep)
+
+    coo <- expand.grid(x,y,z)
+    names(coo) <- c('x','y','z')
+    grid <- pp3(coo$x, coo$y, coo$z, domain(X))
+
+    nnk <- nncross(grid, X, what = "dist", k = k)
+    bdist <- bdist.points3.multi(grid) # distances to nearest boundaries
+    est.points <- coo
+
+  }else{
+    #find nearest neighbors from data set to itself
+    nnk <- nndist(X, k = k)
+    bdist <- bdist.points3.multi(X) # distances to nearest boundaries
+    est.points <- coords(X)
+  }
+
+  lambda.est <- local.den.engine(bdist, nnk, k, dz, par, cores)
+
+  res <- list(lambda.est = lambda.est, estimate.coords = est.points, x = coords(X))
+
+  return(res)
+}

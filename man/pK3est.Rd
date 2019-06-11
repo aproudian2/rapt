@@ -5,7 +5,7 @@
 \title{Perform K3est on random relabelings in parallel}
 \usage{
 pK3est(perc, pattern, nEvals, rmax = NULL, nrval = 128,
-  correction = "iso", anom = FALSE, toSub = NULL, sorted = TRUE)
+  correction = "trans", anom = FALSE, toSub = NULL, sorted = TRUE)
 }
 \arguments{
 \item{perc}{The fraction of points to select randomly each time out of the

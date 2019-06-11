@@ -85,13 +85,13 @@ anomlocalK3est <- function(X, toSub, rmax, nrval){
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
 
-pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",anom=FALSE,toSub=NULL, sorted=TRUE){
+pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="trans",anom=FALSE,toSub=NULL, sorted=TRUE){
 
   #find cores and initialize the cluster
   cores2use <- detectCores()-1
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
+  clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -167,7 +167,7 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",an
         bot <- top+1
         toSub <- (tvals_sorted[,top]+tvals_sorted[,bot])/2
       }else {
-        toSub <- tvals[,(round(nEvals/2))]
+        toSub <- tvals_sorted[,(round(nEvals/2))]
       }
     }
 
@@ -311,7 +311,7 @@ pG3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",ano
   cores2use <- detectCores()-1
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
+  clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -763,3 +763,4 @@ bdist.points3 <- function (X) {
 
   return(result)
 }
+
