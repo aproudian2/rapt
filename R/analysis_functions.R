@@ -156,12 +156,20 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
 
   for(i in 1:length(tot)){
     print(i)
-    cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
-                           cr=tot[[i]][1],
-                           den = tot[[i]][2],
-                           rb = TRUE, rbp = tot[[i]][1]*tot[[i]][3],
-                           gb = TRUE, gbp = c(0, tot[[i]][4]),
-                           s = cnt)
+    if(length(tot[[1]]) == 4){
+      cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                             cr=tot[[i]][1],
+                             den = tot[[i]][2],
+                             rb = TRUE, rbp = tot[[i]][1]*tot[[i]][3],
+                             gb = TRUE, gbp = c(0, tot[[i]][4]),
+                             s = cnt)
+    }else{
+      cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                             cr=tot[[i]][1],
+                             den = tot[[i]][2],
+                             gb = TRUE, gbp = c(0, tot[[i]][3]),
+                             s = cnt)
+    }
     if(is.numeric(cluster)){
       outtemp[i,] <- c(NA, NA, NA, NA, NA)
       a <- as.data.frame(1)
