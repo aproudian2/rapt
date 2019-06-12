@@ -383,3 +383,106 @@ nndensity.pp3 <- function(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, c
 
   return(res)
 }
+
+#### nncrossden.pp3 ####
+#' Similar to \code{\link{nndensity.pp3}}, but specifically for marked patterns with a global intensity inhomogeneity.
+#'
+#' Calculates the 3D nearest-neighbor intensity estimate of a point process at
+#' either a grid of points or at the point locations in the data set. Requires two point patterns: One (\code{X}) that contains
+#' just points of the type you want to estimate the intesnity of. A second (\code{Y}) that contains all points from the sample (note
+#' that this includes the points from pattern \code{X}) for removing global intensity.
+#'
+#' @param X The point pattern to estimate the intensity of.
+#' @param Y The full point pattern to estimate global intensity.
+#' @param k Vector containing the nearest-neighbor #s that the estimate should
+#'   be calculated for.
+#' @param nx,ny,nz If estimating on a grid, the number of grid points in x, y,
+#'   and z.
+#' @param at.points \code{TRUE} or \code{FALSE}. Whether or not to estimate
+#'   intensity at points in pattern. If \code{TRUE}, nx, ny, and nz are not
+#'   used.
+#' @return List containing: [[1]] A data frame of the intensity estimates for
+#'   each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
+#'   The coordinates of the original points from the data set.
+nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, cores = 8){
+  if(at.points == FALSE){
+    # set up grid of points and find nearest neighbors from grid to data set
+    d <- domain(X)
+
+    xsep <- (d$xrange[2]-d$xrange[1])/nx
+    xstart <- d$xrange[1] + xsep/2
+    xend <- d$xrange[2] - xsep/2
+
+    ysep <- (d$yrange[2]-d$yrange[1])/ny
+    ystart <- d$yrange[1] + ysep/2
+    yend <- d$yrange[2] - ysep/2
+
+    zsep <- (d$zrange[2]-d$zrange[1])/nz
+    zstart <- d$zrange[1] + zsep/2
+    zend <- d$zrange[2] - zsep/2
+
+    x <- seq(xstart,xend, xsep)
+    y <- seq(ystart,yend, ysep)
+    z <- seq(zstart,zend, zsep)
+
+    coo <- expand.grid(x,y,z)
+    names(coo) <- c('x','y','z')
+    grid <- pp3(coo$x, coo$y, coo$z, domain(X))
+
+    nnk.X <- nncross(grid, X, what = "dist", k = k)
+    cp.Y <- crosspairs(grid, Y, rmax = max(nnk.X), what = "ijd")
+
+    est.points <- coo
+
+  }else{
+    #find nearest neighbors from data set to itself
+    nnk.X <- nndist(X, k = k)
+    cp.Y <- crosspairs(X, Y, rmax = max(nnk.X), what = "ijd")
+
+    est.points <- coords(X)
+  }
+
+  # Try splitting the grid points into groups and calculating from there to decrease memory needs
+  # also go down to the linux lab and try fork parallelization
+
+  cp.Y <- data.frame(i = cp.Y[[1]], j = cp.Y[[2]], dist = cp.Y[[3]])
+  cp.Y.list <- cp.Y.list <- split(cp.Y, factor(cp.Y$i))
+  lambda.global.Y <- npoints(Y)/volume(domain(Y))
+
+  if(class(nnk.X) == "data.frame"){
+    xi <- 1:nrow(nnk.X)
+    lambda.est <- matrix(NA, nrow = nrow(nnk.X), ncol = length(k))
+
+    # See what happens when you use FORK cluster on linux maxhine
+    cl <- makePSOCKcluster(cores)
+    clusterExport(cl,c("k","cp.Y.list","nnk.X","lambda.global.Y"), envir = environment())
+
+    for(i in 1:length(k)){
+      clusterExport(cl,c("i"), envir = environment())
+      lambda.est[,i] <- parSapply(cl, xi, function(xq){(k[i]/sum(cp.Y.list[[xq]]$dist < nnk.X[[xq,i]]))*lambda.global.Y})
+      print(round((i/length(k))*100,2))
+    }
+
+  }else{
+    xi <- 1:length(nnk.X)
+    lambda.est <- matrix(NA, nrow = length(nnk.X), ncol = 1)
+
+    cl <- makePSOCKcluster(cores)
+    clusterExport(cl,c("k","cp.Y.list","nnk.X","lambda.global.Y"), envir = environment())
+
+    #t1 <- Sys.time()
+    lambda.est[,1] <- parSapply(cl, xi, function(xq){(k/sum(cp.Y.list[[xq]]$dist < nnk.X[[xq]]))*lambda.global.Y})
+    #t2 <- Sys.time()
+    #print(t2- t1)
+  }
+  stopCluster(cl)
+
+  res <- list(lambda.est = lambda.est, estimate.coords = est.points, x = coords(X))
+
+  res <- as.data.frame(lambda.est)
+  names <- sapply(k,function(x){return(paste("nn",toString(x),sep = ""))})
+  colnames(res) <- names
+
+  return(list(lambda.est = res, estimate.coords = est.points, x = coords(X)))
+}
+
