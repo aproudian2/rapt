@@ -385,12 +385,16 @@ nndensity.pp3 <- function(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, c
 }
 
 #### nncrossden.pp3 ####
-#' Similar to \code{\link{nndensity.pp3}}, but specifically for marked patterns with a global intensity inhomogeneity.
+#' Similar to \code{\link{nndensity.pp3}}, but specifically for marked patterns
+#' with a global intensity inhomogeneity.
 #'
 #' Calculates the 3D nearest-neighbor intensity estimate of a point process at
-#' either a grid of points or at the point locations in the data set. Requires two point patterns: One (\code{X}) that contains
-#' just points of the type you want to estimate the intesnity of. A second (\code{Y}) that contains all points from the sample (note
-#' that this includes the points from pattern \code{X}) for removing global intensity.
+#' either a grid of points or at the point locations in the data set. Requires
+#' two point patterns: One (\code{X}) that contains just points of the type you
+#' want to estimate the intesnity of. A second (\code{Y}) that contains all
+#' points from the sample (note that this includes the points from pattern
+#' \code{X}) for removing global intensity. Note that this function runs faster
+#' on linux and mac machines than windows, but will work on both.
 #'
 #' @param X The point pattern to estimate the intensity of.
 #' @param Y The full point pattern to estimate global intensity.
@@ -401,12 +405,23 @@ nndensity.pp3 <- function(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, c
 #' @param at.points \code{TRUE} or \code{FALSE}. Whether or not to estimate
 #'   intensity at points in pattern. If \code{TRUE}, nx, ny, and nz are not
 #'   used.
+#' @param nsplit In this function, large \code{pp3} objects are split into
+#'   multiple smaller data sets so that the memory is not overloaded while doing
+#'   computations. This parameter is the number of points per split set.
+#' @param cores Number of cores to use for parallelization. Set to one for
+#'   serial calculation.
+#' @param os Either 'windows', 'mac', or 'linux'. Changes the parallelization
+#'   method used.
 #' @return List containing: [[1]] A data frame of the intensity estimates for
 #'   each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
-#'   The coordinates of the original points from the data set.
-nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, cores = 8){
+#'   The coordinates of the original points from the data set. [[4]] A vector
+#'   containing all k values tested.
+nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000, cores = 8, os = "linux"){
+  # yes this is complicated as hell... but it works I promise -GV
+
+  t1 <- Sys.time()
   if(at.points == FALSE){
-    # set up grid of points and find nearest neighbors from grid to data set
+    # set up grid of points
     d <- domain(X)
 
     xsep <- (d$xrange[2]-d$xrange[1])/nx
@@ -427,55 +442,98 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, cores = 8){
 
     coo <- expand.grid(x,y,z)
     names(coo) <- c('x','y','z')
-    grid <- pp3(coo$x, coo$y, coo$z, domain(X))
 
-    nnk.X <- nncross(grid, X, what = "dist", k = k)
-    cp.Y <- crosspairs(grid, Y, rmax = max(nnk.X), what = "ijd")
+    grid.n <- nrow(coo)
+    if(grid.n > nsplit){
+      coo.split.ind <- split(1:nrow(coo), ceiling(1:nrow(coo)/nsplit))
+      coo.split <- lapply(coo.split.ind, function(x){coo[x,]})
+      grid.split <- lapply(coo.split, function(x){pp3(x$x, x$y, x$z, domain(X))})
+    }else{
+      grid.split <- list(pp3(coo$x, coo$y, coo$z, domain(X)))
+      coo.split.ind <- list(1:grid.n)
+    }
 
     est.points <- coo
 
   }else{
-    #find nearest neighbors from data set to itself
-    nnk.X <- nndist(X, k = k)
-    cp.Y <- crosspairs(X, Y, rmax = max(nnk.X), what = "ijd")
+    grid.n <- npoints(X)
+    if(grid.n > nsplit){
+      coo <- coords(X)
+      coo.split.ind <- split(1:nrow(coo), ceiling(1:nrow(coo)/nsplit))
+      coo.split <- lapply(coo.split.ind, function(x){coo[x,]})
+      grid.split <- lapply(coo.split, function(x){pp3(x$x, x$y, x$z, domain(X))})
+    }else{
+      grid.split <- list(X)
+      coo.split.ind <- list(1:grid.n)
+    }
 
     est.points <- coords(X)
   }
 
-  # Try splitting the grid points into groups and calculating from there to decrease memory needs
-  # also go down to the linux lab and try fork parallelization
-
-  cp.Y <- data.frame(i = cp.Y[[1]], j = cp.Y[[2]], dist = cp.Y[[3]])
-  cp.Y.list <- cp.Y.list <- split(cp.Y, factor(cp.Y$i))
   lambda.global.Y <- npoints(Y)/volume(domain(Y))
 
-  if(class(nnk.X) == "data.frame"){
-    xi <- 1:nrow(nnk.X)
-    lambda.est <- matrix(NA, nrow = nrow(nnk.X), ncol = length(k))
+  if(length(k) > 1){
+    lambda.est <- matrix(NA, nrow = grid.n, ncol = length(k))
 
-    # See what happens when you use FORK cluster on linux maxhine
-    cl <- makePSOCKcluster(cores)
-    clusterExport(cl,c("k","cp.Y.list","nnk.X","lambda.global.Y"), envir = environment())
-
-    for(i in 1:length(k)){
-      clusterExport(cl,c("i"), envir = environment())
-      lambda.est[,i] <- parSapply(cl, xi, function(xq){(k[i]/sum(cp.Y.list[[xq]]$dist < nnk.X[[xq,i]]))*lambda.global.Y})
-      print(round((i/length(k))*100,2))
+    if(os == "windows"){
+      cl <- makePSOCKcluster(cores)
+      clusterExport(cl, "nncross")
+      clusterExport(cl, c("X", "k"), envir = environment())
+    }else{
+      cl <- makeForkCluster(cores)
     }
 
+    nnk.X.split <- parLapply(cl, grid.split, function(x){nncross(x, X, what = "dist", k = k)})
+
+    if(os == "windows"){
+      clusterExport(cl,c("lambda.global.Y","nnk.X.split"), envir = environment())
+    }
+
+    tot <- length(k) * length(grid.split)
+    cnt <- 0
+
+    for(i in 1:length(k)){
+      for(j in 1:length(grid.split)){
+        cp.Y <- crosspairs(grid.split[[j]], Y, rmax = max(nnk.X.split[[j]]), what = "ijd")
+        cp.Y <- data.frame(i = cp.Y[[1]], j = cp.Y[[2]], dist = cp.Y[[3]])
+        cp.Y.list <- split(cp.Y, factor(cp.Y$i))
+        xi <- 1:nrow(nnk.X.split[[j]])
+        lambda.est[coo.split.ind[[j]],i] <- parSapply(cl, xi, function(xq,i,cp.Y.list){(k[i]/sum(cp.Y.list[[xq]]$dist < nnk.X.split[[j]][[xq,i]]))*lambda.global.Y},i,cp.Y.list)
+        cnt <- cnt + 1
+        print(paste(toString(round(100*cnt/tot, 1)), "%", sep = ""))
+      }
+    }
+    stopCluster(cl)
+
   }else{
-    xi <- 1:length(nnk.X)
-    lambda.est <- matrix(NA, nrow = length(nnk.X), ncol = 1)
+    lambda.est <- matrix(NA, nrow = grid.n, ncol = 1)
 
-    cl <- makePSOCKcluster(cores)
-    clusterExport(cl,c("k","cp.Y.list","nnk.X","lambda.global.Y"), envir = environment())
+    if(os == "windows"){
+      cl <- makePSOCKcluster(cores)
+      clusterExport(cl, "nncross")
+      clusterExport(cl, c("X", "k"), envir = environment())
+    }else{
+      cl <- makeForkCluster(cores)
+    }
 
-    #t1 <- Sys.time()
-    lambda.est[,1] <- parSapply(cl, xi, function(xq){(k/sum(cp.Y.list[[xq]]$dist < nnk.X[[xq]]))*lambda.global.Y})
-    #t2 <- Sys.time()
-    #print(t2- t1)
+    nnk.X.split <- parLapply(cl, grid.split, function(x){nncross(x, X, what = "dist", k = k)})
+
+    if(os == "windows"){
+      clusterExport(cl,c("lambda.global.Y","nnk.X.split"), envir = environment())
+    }
+
+    for(i in 1:length(grid.split)){
+      cp.Y <- crosspairs(grid.split[[i]], Y, rmax = max(nnk.X.split[[i]]), what = "ijd")
+      cp.Y <- data.frame(i = cp.Y[[1]], j = cp.Y[[2]], dist = cp.Y[[3]])
+      cp.Y.list <- split(cp.Y, factor(cp.Y$i))
+      xi <- 1:length(nnk.X.split[[i]])
+
+      lambda.est[coo.split.ind[[i]],1] <- parSapply(cl, xi, function(xq, i, cp.Y.list){(k/sum(cp.Y.list[[xq]]$dist < nnk.X.split[[i]][[xq]]))*lambda.global.Y}, i, cp.Y.list)
+
+      print(paste(toString(round(100*i/length(grid.split), 1)), "%", sep = ""))
+    }
+    stopCluster(cl)
   }
-  stopCluster(cl)
 
   res <- list(lambda.est = lambda.est, estimate.coords = est.points, x = coords(X))
 
@@ -483,6 +541,9 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, cores = 8){
   names <- sapply(k,function(x){return(paste("nn",toString(x),sep = ""))})
   colnames(res) <- names
 
-  return(list(lambda.est = res, estimate.coords = est.points, x = coords(X)))
+  t2 <- Sys.time()
+  print("Time to complete:")
+  print(t2-t1)
+  return(list(lambda.est = res, estimate.coords = est.points, x = coords(X), k = k))
 }
 
