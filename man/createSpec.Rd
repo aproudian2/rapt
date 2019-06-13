@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt-file.R
 \name{createSpec}
 \alias{createSpec}
-\title{Create a \code{\link[MALDIquant]{MassSpectrum}} object from a POS or ATO
+\title{Create a \code{\link[MALDIquant]{MassSpectrum}} from a POS or ATO
 data frame.}
 \usage{
 createSpec(pos, res = 0.001)
@@ -17,8 +17,9 @@ A \code{\link[MALDIquant]{MassSpectrum}} from the \code{mass} field
   of the POS or ATO, with the resolution set by \code{res}.
 }
 \description{
-Create a \code{\link[MALDIquant]{MassSpectrum}} object from a POS or ATO
-data frame.
+\code{createSpec} generates a \code{\link[MALDIquant]{MassSpectrum}} object
+with a specified resolution from an ATO or POS data frame (like that created
+by \code{\link(readPOS)}).
 }
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},

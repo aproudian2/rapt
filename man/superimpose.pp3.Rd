@@ -9,3 +9,6 @@
 \description{
 \code{superimpose.pp3}
 }
+\seealso{
+\code{\link[spatstat]{superimpose}}
+}

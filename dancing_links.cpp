@@ -4,7 +4,7 @@
 #define ROOT 0
 #define HITS 0
 #define BINS 1
-#define MAX_SOL 60000
+#define MAX_SOL 100000
 using namespace Rcpp;
 
 /* Type Definitions */
@@ -126,10 +126,10 @@ List exact_cover(IntegerVector ind, IntegerVector bin, IntegerVector shift,
   ans["cover"] = cover_mat;
   ans["energy"] = energy;
   ans["shift"] = shift_vec;
-  delete col_list;
-  delete row_list;
-  delete choice;
-  delete total_shift;
+  delete[] col_list;
+  delete[] row_list;
+  delete[] choice;
+  delete[] total_shift;
   return ans;
 }
 

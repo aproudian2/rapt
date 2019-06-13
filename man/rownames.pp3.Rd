@@ -6,6 +6,15 @@
 \usage{
 rownames.pp3(pat)
 }
+\arguments{
+\item{pat}{A \code{pp3}. The point pattern from which to extract rownames.}
+}
+\value{
+A string vector. The rownames of the point pattern.
+}
 \description{
 Extends \code{\link[base]{rownames}} to \code{\link[spatstat]{pp3}}.
+}
+\seealso{
+\code{\link[base]{rownames}}
 }

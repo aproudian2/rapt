@@ -9,3 +9,6 @@
 \description{
 Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
 }
+\seealso{
+\code{\link[spatstat]{intensity}}
+}

@@ -1,4 +1,5 @@
-# Functions having to do with the calculation of and display of envelopes ran on random re-samplings of pp3 patterns
+# Functions having to do with the calculation of and display of envelopes ran
+# on random re-samplings of pp3 patterns
 
 #### subSquare ####
 #' Select a subsection from the center of a \code{\link[spatstat]{pp3}} data
@@ -14,30 +15,31 @@
 #' @return Returns a \code{\link[spatstat]{pp3}} object of the selected box,
 #'   shifted so that the origin is still at (0,0,0).
 
-subSquare <- function(orig,win){
+subSquare <- function(orig, win) {
 
   orig.domain <- domain(orig)
-  orig.center <- c(mean(orig.domain$xrange),mean(orig.domain$yrange),mean(orig.domain$zrange))
-  xs <-orig.center[1]-(win[1]/2)
-  ys <-orig.center[2]-(win[2]/2)
-  zs <-orig.center[3]-(win[3]/2)
-  xb <-orig.center[1]+(win[1]/2)
-  yb <-orig.center[2]+(win[2]/2)
-  zb <-orig.center[3]+(win[3]/2)
+  orig.center <- c(mean(orig.domain$xrange),
+                   mean(orig.domain$yrange),
+                   mean(orig.domain$zrange))
+  xs <-orig.center[1] - (win[1]/2)
+  ys <-orig.center[2] - (win[2]/2)
+  zs <-orig.center[3] - (win[3]/2)
+  xb <-orig.center[1] + (win[1]/2)
+  yb <-orig.center[2] + (win[2]/2)
+  zb <-orig.center[3] + (win[3]/2)
 
-  xr <- c(xs,xb)
-  yr <- c(ys,yb)
-  zr <- c(zs,zb)
-
+  xr <- c(xs, xb)
+  yr <- c(ys, yb)
+  zr <- c(zs, zb)
   sub.box <- box3(xrange = xr, yrange = yr, zrange = zr)
 
-  tflist <- inside.boxx(orig,w=sub.box)
+  tflist <- inside.boxx(orig, w = sub.box)
 
   sub <- orig[tflist]
 
-  xrn <- c(0,xb-xs)
-  yrn <- c(0,yb-ys)
-  zrn <- c(0,zb-zs)
+  xrn <- c(0, xb-xs)
+  yrn <- c(0, yb-ys)
+  zrn <- c(0, zb-zs)
   sub.box.new <- box3(xrange = xrn, yrange = yrn, zrange = zrn)
 
   coo <- coords(sub)
@@ -66,13 +68,13 @@ subSquare <- function(orig,win){
 #' @param s Seed for the random selection
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
+percentSelect <- function(perc, pattern) {
 
-percentSelect <- function(perc,pattern,s = NULL){
-  if(!is.null(s)){
-    set.seed(s)
-  }
-  reLabel <- rlabel(pattern,labels = c(rep("A",round(npoints(pattern)*perc)),rep("B",npoints(pattern)-round(npoints(pattern)*perc))))
-  inds <- which(marks(reLabel)=="A")
+  reLabel <- rlabel(pattern,
+                    labels = c(rep("A", round(npoints(pattern) * perc)),
+    rep("B", npoints(pattern) - round(npoints(pattern) * perc))))
+  inds <- which(marks(reLabel) == "A")
+
   newPattern <- reLabel[inds]
   return(newPattern)
 }
@@ -97,9 +99,10 @@ percentSelect <- function(perc,pattern,s = NULL){
 #' @param ... Arguments to be passed into \code{plot()}.
 #' @return Nothing.
 
-envPlot <- function(tests,percentiles=c(.999,.99,.97),
-                    ylim=c(-3,3),xlim=c(0,ceiling(max(tests[,1]))),
-                    leg = TRUE, colors = c("lightskyblue","mediumpurple","lightpink"),...){
+envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
+                    ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),
+                    leg = TRUE, ...) {
+  color <- c("lightskyblue", "mediumpurple", "lightpink")
 
   color <- colors
   # break up data into r values and test results
@@ -107,16 +110,16 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),
   tvals <- tests[,2:ncol(tests)]
 
   nTests <- ncol(tvals) # number of tests done
-  prange <- percentiles*nTests # get the range of indeces for which each percentile spans
+  prange <- percentiles * nTests # get the range of indeces for which each percentile spans
 
-  sortedtVals <- t(apply(tvals,1,sort)) # sort the results at each r value from lowest to highest
-  percentileIndicesBig <- round(nTests/2)+floor(prange/2) # select the high end indexes based on being 1/2 of the percentile span from the middle of the tests
-  percentileIndicesSmall <- round(nTests/2)-floor(prange/2) # do the same for the low end
+  sortedtVals <- t(apply(tvals, 1, sort)) # sort the results at each r value from lowest to highest
+  percentileIndicesBig <- round(nTests/2) + floor(prange/2) # select the high end indexes based on being 1/2 of the percentile span from the middle of the tests
+  percentileIndicesSmall <- round(nTests/2) - floor(prange/2) # do the same for the low end
 
   # grab out the columns from the sorted test results that we will plot
-  toPlotBigs <- matrix(0,nrow=nrow(tvals),ncol=length(percentiles))
-  toPlotSmalls <- matrix(0,nrow=nrow(tvals),ncol=length(percentiles))
-  for(i in 1:length(percentiles)){
+  toPlotBigs <- matrix(0, nrow = nrow(tvals), ncol = length(percentiles))
+  toPlotSmalls <- matrix(0, nrow = nrow(tvals), ncol = length(percentiles))
+  for(i in 1:length(percentiles)) {
     toPlotBigs[,i] <- sortedtVals[,percentileIndicesBig[i]]
     toPlotSmalls[,i] <- sortedtVals[,percentileIndicesSmall[i]]
   }
@@ -124,25 +127,24 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),
   # plot the envelopes from the percentile data
   #par(oma = c(0, 2, 0, 0))
   toplt <- data.frame(rvals,tvals[,1])
-  plot(toplt,type="n",xlab="r",ylab=expression(sqrt('K'[3]*'(r)')*'  Anomaly'),ylim=ylim,xlim=xlim,xaxt = "n", ...)
-  axis(1,at=0:xlim[2],labels=FALSE)
-  axis(1,at=seq(0,xlim[2],by=2))
 
-  if(class(rvals) == "data.frame"){
-    rvals <- as.numeric(rvals$V1)
+  plot(toplt, type = "n", xlab = "r",
+       ylab = expression(sqrt('K'[3]*'(r)')*'  Anomaly'),
+       ylim = ylim, xlim = xlim, xaxt = "n", ...)
+  axis(1, at = 0:xlim[2], labels=FALSE)
+  axis(1, at = seq(0,xlim[2],by=2))
+  a <- c(rvals$V1, rev(rvals$V1))
+  for(i in 1:length(percentiles)) {
+    polygon(a, c(toPlotBigs[,i], rev(toPlotSmalls[,i])), col = color[i])#,border=color[i],lwd=2)
   }
+  abline(h = 0, lty = 2, lwd = 1, col="black")
+  if(leg == TRUE) {
+    legend(0, ylim[2], legend = c(paste(toString(percentiles[1]*100), "% AI"),
+                                  paste(toString(percentiles[2]*100), "% AI"),
+                                  paste(toString(percentiles[3]*100), "% AI")),
+           col=c(color[1], color[2], color[3]),
+           lty = c(1,1,1), lwd = c(10,10,10))
 
-  a <- c(rvals,rev(rvals))
-  for(i in 1:length(percentiles)){
-    polygon(a,c(toPlotBigs[,i],rev(toPlotSmalls[,i])),col=color[i])#,border=color[i],lwd=2)
-  }
-  abline(h=0,lty=2,lwd=1,col="black")
-
-  if(leg == TRUE){
-    legend(0, ylim[2], legend=c(paste(toString(percentiles[1]*100),"% AI"),
-                                paste(toString(percentiles[2]*100),"% AI"),
-                                paste(toString(percentiles[3]*100),"% AI")),
-           col=c(color[1],color[2],color[3]), lty=c(1,1,1), lwd=c(10,10,10))
   }
 }
 
@@ -158,24 +160,23 @@ envPlot <- function(tests,percentiles=c(.999,.99,.97),
 #' @return A vector with the same length as x containing estimated derivative at
 #'   each x value.
 
-finite_deriv <- function(x,y){
-  if(length(x) != length(y)){
+finite_deriv <- function(x,y) {
+  if(length(x) != length(y)) {
     print("x and y must be same length.")
     return()
   }
-  d <- vector("numeric",length(x))
-  for(i in 1:length(x)){
+  d <- vector("numeric", length(x))
+  for(i in 1:length(x)) {
     if(i == 1){
       d[i] <- (y[i+1] - y[i])/(x[i+1] - x[i])
-    }else if(i == length(x)){
+    }else if(i == length(x)) {
       d[i] <- (y[i] - y[i-1])/(x[i] -x[i-1])
-    }else{
+    }else {
       d[i] <- (y[i+1] - y[i-1])/(x[i+1] - x[i-1])
     }
   }
   return(d)
 }
-
 
 #### argmax ####
 #' Find the peaks of a finite data set using smoothing.
@@ -185,12 +186,12 @@ finite_deriv <- function(x,y){
 #' See
 #' \url{https://stats.stackexchange.com/questions/36309/how-do-i-find-peaks-in-a-dataset}
 
-argmax <- function(x, y, w=1, ...) {
+argmax <- function(x, y, w = 1, ...) {
   require(zoo)
   n <- length(y)
   y.smooth <- loess(y ~ x, ...)$fitted
   y.max <- rollapply(zoo(y.smooth), 2*w+1, max, align="center")
   delta <- y.max - y.smooth[-c(1:w, n+1-1:w)]
   i.max <- which(delta <= 0) + w
-  list(x=x[i.max], i=i.max, y.hat=y.smooth)
+  list(x = x[i.max], i = i.max, y.hat = y.smooth)
 }

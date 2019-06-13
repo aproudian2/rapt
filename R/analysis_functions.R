@@ -1,4 +1,4 @@
-# A bunch of helper functions for analysis
+#Functions to analyze and produce results from data
 
 #### k3metrics ####
 #' Extract metrics from 3D K function output
@@ -16,12 +16,13 @@
 #'   the input K function. If no first K peak is found, returns a list of 5
 #'   NaNs.
 
-k3metrics <- function(rvals.new, tvals.new, toplot){
-  #browser()
+k3metrics <- function(rvals.new, tvals.new, toplot) {
+  peak.info <- argmax(rvals.new, tvals.new, w = 3, span = 0.08)
+
   if(any(is.infinite(tvals.new))){
     return(list(NA, NA, NA, NA, NA))
   }
-  peak.info <- argmax(rvals.new, tvals.new, w = 3, span = 0.1)
+
   #lines(rvals.new, peak.info$y.hat)
   #points(peak.info$x,tvals.new[peak.info$i],pch = 6, cex = 2, col="red")
   if(is.na(peak.info$x[1])){
@@ -32,39 +33,47 @@ k3metrics <- function(rvals.new, tvals.new, toplot){
 
   peak.info$deriv <- finite_deriv(rvals.new, peak.info$y.hat)
   #points(rvals.new,peak.info$deriv)
-  peak.info$derivsm <- argmax(rvals.new, -1*peak.info$deriv, w = 3, span = span)
-  peak.info$derivsm_neg <- argmax(rvals.new, peak.info$deriv, w = 3, span = span)
+  peak.info$derivsm <- argmax(rvals.new, -1*peak.info$deriv, w = 3,
+                              span = span)
+  peak.info$derivsm_neg <- argmax(rvals.new, peak.info$deriv, w = 3,
+                                  span = span)
 
   peak.info$dderiv <- finite_deriv(rvals.new, -1*peak.info$derivsm$y.hat)
-  peak.info$dderivsm <- argmax(rvals.new, peak.info$dderiv, w = 3, span = span)
+  peak.info$dderivsm <- argmax(rvals.new, peak.info$dderiv, w = 3,
+                               span = span)
   #points(rvals.new,peak.info$dderiv)
 
   peak.info$ddderiv <- finite_deriv(rvals.new, peak.info$dderivsm$y.hat)
-  peak.info$ddderivsm <- argmax(rvals.new, peak.info$ddderiv, w = 3, span = span)
+  peak.info$ddderivsm <- argmax(rvals.new, peak.info$ddderiv, w = 3,
+                                span = span)
   #points(rvals.new, peak.info$ddderiv)
   lb <- peak.info$i[1]
   ub <- (peak.info$derivsm$i[1] + peak.info$derivsm_neg$i[1])/2
-  if(is.na(ub)){
+  if(is.na(ub)) {
     ub <- length(rvals.new)
   }
-  Rddm_ind <- peak.info$ddderivsm$i[peak.info$ddderivsm$i > lb & peak.info$ddderivsm$i < ub][1]
+  Rddm_ind <- peak.info$ddderivsm$i[peak.info$ddderivsm$i >
+                                      lb & peak.info$ddderivsm$i < ub][1]
 
   # stuff if you want to plot
   #browser()
-  if(toplot == TRUE){
-    plot(rvals.new,tvals.new, type = "n")
+  if(toplot == TRUE) {
+    plot(rvals.new, tvals.new, type = "n")
 
     lines(rvals.new, peak.info$y.hat)
-    points(peak.info$x,tvals.new[peak.info$i],pch = 6, cex = 2, col="red")
+    points(peak.info$x, tvals.new[peak.info$i], pch = 6, cex = 2, col="red")
 
     lines(rvals.new, -peak.info$derivsm$y.hat, lwd = 2, col = "red")
-    points(peak.info$derivsm$x,peak.info$deriv[peak.info$derivsm$i], col="blue", cex = 2)
+    points(peak.info$derivsm$x, peak.info$deriv[peak.info$derivsm$i],
+           col="blue", cex = 2)
 
     lines(rvals.new, peak.info$dderivsm$y.hat, lwd = 2, col = "purple")
-    points(peak.info$dderivsm$x,peak.info$dderiv[peak.info$dderivsm$i], col="green", cex = 2, pch = 19)
+    points(peak.info$dderivsm$x, peak.info$dderiv[peak.info$dderivsm$i],
+           col="green", cex = 2, pch = 19)
 
     lines(rvals.new, peak.info$ddderivsm$y.hat,lwd = 2, col = "blue")
-    points(rvals.new[Rddm_ind],peak.info$ddderiv[Rddm_ind], col="green", cex = 1, pch = 19)
+    points(rvals.new[Rddm_ind], peak.info$ddderiv[Rddm_ind],
+           col="green", cex = 1, pch = 19)
   }
 
   return(list(peak.info$y.hat[peak.info$i[1]], #Km
