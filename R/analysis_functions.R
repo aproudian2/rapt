@@ -173,15 +173,22 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
     if(is.numeric(cluster)){
       outtemp[i,] <- c(NA, NA, NA, NA, NA)
       a <- as.data.frame(1)
-      if(i > 1){
-        file.remove(paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
+      if(hpc == TRUE){
+        if(i > 1){
+          file.remove(paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
+        }
+        write.csv(a, file = paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i),".csv", sep = ""))
+      }else{
+        if(i > 1){
+          file.remove(paste("~/Research/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
+        }
+        write.csv(a, file = paste("~/Research/junk/",toString(j),"_",toString(i),".csv", sep = ""))
       }
-      write.csv(a, file = paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i),".csv", sep = ""))
       next
     }
-    result <- anomlocalK3est(cluster[[1]],toSub,maxr,nr)
+    result <- anomK3est(cluster[[1]],toSub,maxr,nr)
     rvals <- result$r
-    tvals <- result$kavg
+    tvals <- result$trans
 
     # get out that peak info son
     rvals.new <- rvals[15:length(rvals)]
@@ -198,10 +205,19 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
     cnt <- cnt + 1
 
     a <- as.data.frame(1)
-    if(i > 1){
-      file.remove(paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
+
+    if(hpc == TRUE){
+      if(i > 1){
+        file.remove(paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
+      }
+      write.csv(a, file = paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i),".csv", sep = ""))
+    }else{
+      if(i > 1){
+        file.remove(paste("~/Research/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
+      }
+      write.csv(a, file = paste("~/Research/junk/",toString(j),"_",toString(i),".csv", sep = ""))
     }
-    write.csv(a, file = paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i),".csv", sep = ""))
+
   }
 
   #t2 <- Sys.time()

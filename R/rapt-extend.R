@@ -498,7 +498,7 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000
         cp.Y <- data.frame(i = cp.Y[[1]], j = cp.Y[[2]], dist = cp.Y[[3]])
         cp.Y.list <- split(cp.Y, factor(cp.Y$i))
         xi <- 1:nrow(nnk.X.split[[j]])
-        lambda.est[coo.split.ind[[j]],i] <- parSapply(cl, xi, function(xq,i,cp.Y.list){(k[i]/sum(cp.Y.list[[xq]]$dist < nnk.X.split[[j]][[xq,i]]))*lambda.global.Y},i,cp.Y.list)
+        lambda.est[coo.split.ind[[j]],i] <- parSapply(cl, xi, function(xq,i,cp.Y.list,j){(k[i]/sum(cp.Y.list[[xq]]$dist < nnk.X.split[[j]][[xq,i]]))*lambda.global.Y},i,cp.Y.list,j)
         cnt <- cnt + 1
         print(paste(toString(round(100*cnt/tot, 1)), "%", sep = ""))
       }
