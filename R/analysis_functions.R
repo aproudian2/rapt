@@ -249,12 +249,24 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
 
 bdist.points3.multi <- function (X){
 
+<<<<<<< HEAD
   verifyclass(X, "pp3")
 
   x <- X$data$x
   y <- X$data$y
   z <- X$data$z
   d <- X$domain
+=======
+  cluster <- makecluster(under, over, 0.5, 0.5,
+                         type = "cr", speed = "superfast", cr = props[1],
+                         den = props[2], rb = TRUE, rbp = sd, gb = TRUE,
+                         gbp = c(0,props[4]), s = seed)
+
+  #test
+  result <- anomK3est(cluster[[1]], toSub, maxr, nr, correction = "trans")
+  rvals <- result$r
+  tvals <- result$trans
+>>>>>>> a54e6d28facbb2490101091bb7211c58558492b0
 
   xmin <- min(d$xrange)
   xmax <- max(d$xrange)
@@ -364,5 +376,10 @@ local.den.engine <- function(bdist, nnk, k, dz, par = TRUE, cores = 7){
   names <- sapply(k,function(x){return(paste("nn",toString(x),sep = ""))})
   colnames(res) <- names
 
+<<<<<<< HEAD
   return(res)
+=======
+  return(c(metrics[[1]], metrics[[2]], metrics[[3]], metrics[[4]], metrics[[5]],
+           seed))
+>>>>>>> a54e6d28facbb2490101091bb7211c58558492b0
 }

@@ -127,7 +127,6 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
   # plot the envelopes from the percentile data
   #par(oma = c(0, 2, 0, 0))
   toplt <- data.frame(rvals,tvals[,1])
-
   plot(toplt, type = "n", xlab = "r",
        ylab = expression(sqrt('K'[3]*'(r)')*'  Anomaly'),
        ylim = ylim, xlim = xlim, xaxt = "n", ...)
@@ -144,7 +143,6 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
                                   paste(toString(percentiles[3]*100), "% AI")),
            col=c(color[1], color[2], color[3]),
            lty = c(1,1,1), lwd = c(10,10,10))
-
   }
 }
 

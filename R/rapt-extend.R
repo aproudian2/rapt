@@ -223,6 +223,7 @@ plot3d.pp3 <- function(X, ...) {
   rgl::plot3d(as.data.frame(X$data), ...)
 }
 
+<<<<<<< HEAD
 #### localK3est ####
 #' Extends \code{\link[spatstat]{localK}} to 3D
 #'
@@ -579,6 +580,8 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000
   return(list(lambda.est = res, estimate.coords = est.points, x = coords(X), k = k))
 }
 
+=======
+>>>>>>> a54e6d28facbb2490101091bb7211c58558492b0
 #### K3cross ####
 K3multi <- function(X, I, J, r, breaks,
               correction = c("none", "isotropic", "translation"),
