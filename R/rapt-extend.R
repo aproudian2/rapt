@@ -579,6 +579,7 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000
   return(list(lambda.est = res, estimate.coords = est.points, x = coords(X), k = k))
 }
 
+
 #### K3cross ####
 K3multi <- function(X, I, J, r, breaks,
               correction = c("none", "isotropic", "translation"),
