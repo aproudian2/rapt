@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt-vis.R
 \name{prettyPlot}
 \alias{prettyPlot}
-\title{Plot a pretty \code{\link[MALDIquant]{MassSpectrum}}.}
+\title{Plot a pretty \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}.}
 \usage{
 prettyPlot(ms, rng = NA, xlim = NULL, ylim = NULL, lwd = 1,
   main = NULL, hold.par = F, ...)

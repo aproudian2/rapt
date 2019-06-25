@@ -1,3 +1,7 @@
+#
+# This file contains 3D extensions to the spatstat package.
+#
+
 #### marktable.pp3 ####
 #' Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.
 #'
@@ -101,6 +105,7 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
   attr(Y, "lastshift") <- vec
   return(Y)
 }
+
 #### inside.pp3 ####
 #' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]pp3}}.
 #'
@@ -124,6 +129,7 @@ inside.pp3 <- function(points, domain = NULL) {
     (z >= zr[1] - eps) & (z <= zr[2] + eps)
   return(frameok)
 }
+
 #### sample.ppp ####
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
 #'
@@ -139,6 +145,7 @@ sample.ppp <- function(X, size) {
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
+
 #### sample.pp3 ####
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
 #'
@@ -154,6 +161,7 @@ sample.pp3 <- function(X, size) {
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
+
 #### findClusters.pp3 ####
 #' Finds clusters by NN adjacency marks.
 findClusters.pp3 <- function(X, mark, k = 1) {
@@ -182,6 +190,7 @@ findClusters.pp3 <- function(X, mark, k = 1) {
   })
   return(fCl)
 }
+
 #### intensity.pp3 ####
 #' Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
 #'
@@ -203,15 +212,16 @@ intensity.pp3 <- function(X, weights = NULL) {
 }
 
 #### rownames.pp3 ####
-#' Extends \code{\link[base]{rownames}} to \code{\link[spatstat]{pp3}}.
+#' Extends \code{\link[base:row+colnames]{rownames}} to \code{\link[spatstat]{pp3}}.
 #'
 #' @param pat A \code{pp3}. The point pattern from which to extract rownames.
 #' @return A string vector. The rownames of the point pattern.
-#' @seealso \code{\link[base]{rownames}}
+#' @seealso \code{\link[base:row+colnames]{rownames}}
 rownames.pp3 <- function(pat) {
   dat <- rownames(as.data.frame(pat))
   return(dat)
 }
+
 #### plot3d.pp3 ####
 #' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
 #'
@@ -307,7 +317,7 @@ localk3engine <- function(x, y, z, box=c(0,1,0,1,0,1), rmax=1, nrval=100){
 }
 
 #### quadratcount.pp3 ####
-#' Extension of \code{\link[spatstat]{quadrat}} to \code{\link[spatstat]{pp3}} objects.
+#' Extension of \code{\link[spatstat]{quadratcount}} to \code{\link[spatstat]{pp3}} objects.
 #'
 #' Divides volume into quadrats and counts the number of points in each quadrat.
 #'
@@ -615,7 +625,6 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz,
               k = k))
 }
 
-
 #### K3cross ####
 # barely works... Needs corrections and inferface streamlining
 K3multi <- function(X, I, J, r, breaks,
@@ -694,6 +703,7 @@ K3multi <- function(X, I, J, r, breaks,
   }
   return(K)
 }
+
 #### split.pp3 ####
 #' Extends split to pp3
 
