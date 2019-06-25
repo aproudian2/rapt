@@ -92,13 +92,10 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="trans",
   #find cores and initialize the cluster
   cores2use <- detectCores()-1
   cl <- makePSOCKcluster(cores2use)
-<<<<<<< HEAD
   #clusterExport(cl,"percentSelect")
   clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
-=======
   clusterExport(cl,"percentSelect")
   clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
->>>>>>> ba46bacacad8c0c0e545248cb01b1e31df6df81d
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))

@@ -68,12 +68,8 @@ subSquare <- function(orig, win) {
 #' @param s Seed for the random selection
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
-<<<<<<< HEAD
 #'
 #'   @export
-
-=======
->>>>>>> ba46bacacad8c0c0e545248cb01b1e31df6df81d
 percentSelect <- function(perc, pattern) {
 
   reLabel <- rlabel(pattern,

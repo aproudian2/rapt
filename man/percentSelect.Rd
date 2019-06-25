@@ -5,7 +5,7 @@
 \title{Randomly select a percent of the points in a \code{\link[spatstat]{pp3}}
 object.}
 \usage{
-percentSelect(perc, pattern, s = NULL)
+percentSelect(perc, pattern)
 }
 \arguments{
 \item{perc}{The fraction of points from the original pattern that are to be
