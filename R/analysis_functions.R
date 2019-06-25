@@ -15,6 +15,7 @@
 #' @return A list of [[1]] Km, [[2]] Rm, [[3]] Rdm, [[4]] Rddm, [[5]] Kdm for
 #'   the input K function. If no first K peak is found, returns a list of 5
 #'   NaNs.
+#' @seealso \code{\link{anomK3est}}
 
 k3metrics <- function(rvals.new, tvals.new, toplot) {
   peak.info <- argmax(rvals.new, tvals.new, w = 3, span = 0.08)
