@@ -225,6 +225,8 @@ Rcpp::DataFrame readResults(string fp) {
   char* c_fp = new char [fp.length()+1];
   strcpy(c_fp, fp.c_str());
   Results c_data(c_fp);
+  unsigned int entries = c_data.get_entries();
+
   Rcpp::IntegerVector index_vec;
   Rcpp::IntegerVector id_vec;
   Rcpp::IntegerVector number_vec;
@@ -252,7 +254,6 @@ Rcpp::DataFrame readResults(string fp) {
   Rcpp::NumericVector apexY_vec;
   Rcpp::NumericVector apexZ_vec;
 
-  unsigned int entries = c_data.get_entries();
   for(int i = 0; i < entries; i++) {
     Result result = c_data.get_result(i);
     index_vec.push_back(result.get_index());
