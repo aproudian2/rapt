@@ -6,6 +6,16 @@
 \usage{
 rangeCount(pos, start, end)
 }
+\arguments{
+\item{pos}{A data.frame. The pos to be ranged}
+
+\item{start}{The start of the mass range}
+
+\item{end}{The end of the mass range}
+}
+\value{
+The number of hits falling within the range.
+}
 \description{
 To get the hit information within a mass range, use \code{\link{rangePOS}}
 }

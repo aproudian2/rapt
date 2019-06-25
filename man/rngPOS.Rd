@@ -2,12 +2,20 @@
 % Please edit documentation in R/rapt-spec.R
 \name{rngPOS}
 \alias{rngPOS}
-\title{Extract hits according to a RNG}
+\title{Extract hits according to a RNG and create a new pos}
 \usage{
 rngPOS(pos, rng)
 }
+\arguments{
+\item{pos}{The pos or ato to extract hits}
+
+\item{rng}{The ranges to extract}
+}
+\value{
+A data.frame of the same structure as pos
+}
 \description{
-Extract hits according to a RNG
+Extract hits according to a RNG and create a new pos
 }
 \seealso{
 \code{\link{rangePOS}}

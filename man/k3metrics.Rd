@@ -23,3 +23,6 @@ A list of [[1]] Km, [[2]] Rm, [[3]] Rdm, [[4]] Rddm, [[5]] Kdm for
 Takes as inputs the results from \code{\link{anomK3est}} function performed
 on a clustered data set. Returns five different metrics of this result.
 }
+\seealso{
+\code{\link{anomK3est}}
+}

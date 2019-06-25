@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt-file.R
 \name{createSpec}
 \alias{createSpec}
-\title{Create a \code{\link[MALDIquant]{MassSpectrum}} from a POS or ATO
+\title{Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS or ATO
 data frame.}
 \usage{
 createSpec(pos, res = 0.001, snip = NULL)
@@ -10,24 +10,24 @@ createSpec(pos, res = 0.001, snip = NULL)
 \arguments{
 \item{pos}{A POS or ATO data frame.}
 
-\item{res}{The desired \code{\link[MALDIquant]{MassSpectrum}} resolution.}
+\item{res}{The desired \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} resolution.}
 }
 \value{
-A \code{\link[MALDIquant]{MassSpectrum}} from the \code{mass} field
+A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the \code{mass} field
   of the POS or ATO, with the resolution set by \code{res}.
 }
 \description{
-Create a \code{\link[MALDIquant]{MassSpectrum}} from a POS or ATO
+Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS or ATO
 data frame.
 }
 \details{
 The input POS or ATO is binned by mass values; the resolution parameter sets
-the width of the mass bins used in \code{\link[base]{hist}} to create the
+the width of the mass bins used in \code{\link[graphics]{hist}} to create the
 input to the \code{\link[MALDIquant]{createMassSpectrum}} call, and also acts
 as a tolerance around the spectrum minimum and maximum mass. The minimum of
 the mass value is zero.
 }
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},
-  \code{\link[MALDIquant]{MassSpectrum}}
+  \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
 }

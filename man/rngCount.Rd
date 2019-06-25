@@ -6,6 +6,15 @@
 \usage{
 rngCount(pos, rng)
 }
+\arguments{
+\item{pos}{The pos to range}
+
+\item{rng}{The ranges}
+}
+\value{
+A data.frame containing the name of each range, the number of counts
+and fraction of the total ranged counts.
+}
 \description{
 Count the number of hits for each entry within a \code{RNG} object
 }

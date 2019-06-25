@@ -1,3 +1,7 @@
+#
+# This file contains 3D extensions to the spatstat package.
+#
+
 #### marktable.pp3 ####
 #' Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.
 #'
@@ -101,6 +105,7 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
   attr(Y, "lastshift") <- vec
   return(Y)
 }
+
 #### inside.pp3 ####
 #' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]pp3}}.
 #'
@@ -124,6 +129,7 @@ inside.pp3 <- function(points, domain = NULL) {
     (z >= zr[1] - eps) & (z <= zr[2] + eps)
   return(frameok)
 }
+
 #### sample.ppp ####
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
 #'
@@ -139,6 +145,7 @@ sample.ppp <- function(X, size) {
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
+
 #### sample.pp3 ####
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
 #'
@@ -154,6 +161,7 @@ sample.pp3 <- function(X, size) {
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
+
 #### findClusters.pp3 ####
 #' Finds clusters by NN adjacency marks.
 findClusters.pp3 <- function(X, mark, k = 1) {
@@ -182,6 +190,7 @@ findClusters.pp3 <- function(X, mark, k = 1) {
   })
   return(fCl)
 }
+
 #### intensity.pp3 ####
 #' Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
 #'
@@ -203,15 +212,16 @@ intensity.pp3 <- function(X, weights = NULL) {
 }
 
 #### rownames.pp3 ####
-#' Extends \code{\link[base]{rownames}} to \code{\link[spatstat]{pp3}}.
+#' Extends \code{\link[base:row+colnames]{rownames}} to \code{\link[spatstat]{pp3}}.
 #'
 #' @param pat A \code{pp3}. The point pattern from which to extract rownames.
 #' @return A string vector. The rownames of the point pattern.
-#' @seealso \code{\link[base]{rownames}}
+#' @seealso \code{\link[base:row+colnames]{rownames}}
 rownames.pp3 <- function(pat) {
   dat <- rownames(as.data.frame(pat))
   return(dat)
 }
+
 #### plot3d.pp3 ####
 #' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
 #'
@@ -307,7 +317,7 @@ localk3engine <- function(x, y, z, box=c(0,1,0,1,0,1), rmax=1, nrval=100){
 }
 
 #### quadratcount.pp3 ####
-#' Extension of \code{\link[spatstat]{quadrat}} to \code{\link[spatstat]{pp3}} objects.
+#' Extension of \code{\link[spatstat]{quadratcount}} to \code{\link[spatstat]{pp3}} objects.
 #'
 #' Divides volume into quadrats and counts the number of points in each quadrat.
 #'
@@ -335,7 +345,9 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   for(i in 1:nx){
     for(j in 1:ny){
       for(k in 1:nz){
-        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)], yrange = ybreaks[j:(j+1)], zrange = zbreaks[k:(k+1)])
+        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)],
+                                yrange = ybreaks[j:(j+1)],
+                                zrange = zbreaks[k:(k+1)])
         cnt <- cnt + 1
       }
     }
@@ -373,7 +385,8 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
 #' @return List containing: [[1]] A data frame of the intensity estimates for
 #'   each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
 #'   The coordinates of the original points from the data set.
-nndensity.pp3 <- function(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, cores = 7){
+nndensity.pp3 <- function(X, k, nx, ny, nz, dz,
+                          at.points = FALSE, par = TRUE, cores = 7){
 
   if(at.points == FALSE){
     # set up grid of points and find nearest neighbors from grid to data set
@@ -412,7 +425,9 @@ nndensity.pp3 <- function(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, c
 
   lambda.est <- local.den.engine(bdist, nnk, k, dz, par, cores)
 
-  res <- list(lambda.est = lambda.est, estimate.coords = est.points, x = coords(X))
+  res <- list(lambda.est = lambda.est,
+              estimate.coords = est.points,
+              x = coords(X))
 
   return(res)
 }
@@ -449,7 +464,9 @@ nndensity.pp3 <- function(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, c
 #'   each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
 #'   The coordinates of the original points from the data set. [[4]] A vector
 #'   containing all k values tested.
-nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000, cores = 8, os = "linux"){
+nncrossden.pp3 <- function(X, Y, k, nx, ny, nz,
+                           at.points = FALSE, nsplit = 1000,
+                           cores = 8, os = "linux") {
   # yes this is complicated as hell... but it works I promise -GV
 
   t1 <- Sys.time()
@@ -477,25 +494,29 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000
     names(coo) <- c('x','y','z')
 
     grid.n <- nrow(coo)
-    if(grid.n > nsplit){
+    if(grid.n > nsplit) {
       coo.split.ind <- split(1:nrow(coo), ceiling(1:nrow(coo)/nsplit))
       coo.split <- lapply(coo.split.ind, function(x){coo[x,]})
-      grid.split <- lapply(coo.split, function(x){pp3(x$x, x$y, x$z, domain(X))})
-    }else{
+      grid.split <- lapply(coo.split, function(x){
+        pp3(x$x, x$y, x$z, domain(X))
+      })
+    }else {
       grid.split <- list(pp3(coo$x, coo$y, coo$z, domain(X)))
       coo.split.ind <- list(1:grid.n)
     }
 
     est.points <- coo
 
-  }else{
+  }else {
     grid.n <- npoints(X)
     if(grid.n > nsplit){
       coo <- coords(X)
       coo.split.ind <- split(1:nrow(coo), ceiling(1:nrow(coo)/nsplit))
       coo.split <- lapply(coo.split.ind, function(x){coo[x,]})
-      grid.split <- lapply(coo.split, function(x){pp3(x$x, x$y, x$z, domain(X))})
-    }else{
+      grid.split <- lapply(coo.split, function(x) {
+        pp3(x$x, x$y, x$z, domain(X))
+      })
+    }else {
       grid.split <- list(X)
       coo.split.ind <- list(1:grid.n)
     }
@@ -505,21 +526,24 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000
 
   lambda.global.Y <- npoints(Y)/volume(domain(Y))
 
-  if(length(k) > 1){
+  if(length(k) > 1) {
     lambda.est <- matrix(NA, nrow = grid.n, ncol = length(k))
 
     if(os == "windows"){
       cl <- makePSOCKcluster(cores)
       clusterExport(cl, "nncross")
       clusterExport(cl, c("X", "k"), envir = environment())
-    }else{
+    }else {
       cl <- makeForkCluster(cores)
     }
 
-    nnk.X.split <- parLapply(cl, grid.split, function(x){nncross(x, X, what = "dist", k = k)})
+    nnk.X.split <- parLapply(cl, grid.split, function(x){
+      nncross(x, X, what = "dist", k = k)
+      })
 
-    if(os == "windows"){
-      clusterExport(cl,c("lambda.global.Y","nnk.X.split"), envir = environment())
+    if(os == "windows") {
+      clusterExport(cl, c("lambda.global.Y","nnk.X.split"),
+                    envir = environment())
     }
 
     tot <- length(k) * length(grid.split)
@@ -527,18 +551,25 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000
 
     for(i in 1:length(k)){
       for(j in 1:length(grid.split)){
-        cp.Y <- crosspairs(grid.split[[j]], Y, rmax = max(nnk.X.split[[j]]), what = "ijd")
+        cp.Y <- crosspairs(grid.split[[j]], Y,
+                           rmax = max(nnk.X.split[[j]]), what = "ijd")
         cp.Y <- data.frame(i = cp.Y[[1]], j = cp.Y[[2]], dist = cp.Y[[3]])
         cp.Y.list <- split(cp.Y, factor(cp.Y$i))
         xi <- 1:nrow(nnk.X.split[[j]])
-        lambda.est[coo.split.ind[[j]],i] <- parSapply(cl, xi, function(xq,i,cp.Y.list,j){(k[i]/sum(cp.Y.list[[xq]]$dist < nnk.X.split[[j]][[xq,i]]))*lambda.global.Y},i,cp.Y.list,j)
+        lambda.est[coo.split.ind[[j]],i] <- parSapply(
+          cl, xi, function(xq,i,cp.Y.list,j) {
+            (k[i] / sum(cp.Y.list[[xq]]$dist <
+                          nnk.X.split[[j]][[xq,i]])) * lambda.global.Y
+            },
+          i,cp.Y.list,j
+          )
         cnt <- cnt + 1
         print(paste(toString(round(100*cnt/tot, 1)), "%", sep = ""))
       }
     }
     stopCluster(cl)
 
-  }else{
+  }else {
     lambda.est <- matrix(NA, nrow = grid.n, ncol = 1)
 
     if(os == "windows"){
@@ -549,26 +580,37 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000
       cl <- makeForkCluster(cores)
     }
 
-    nnk.X.split <- parLapply(cl, grid.split, function(x){nncross(x, X, what = "dist", k = k)})
+    nnk.X.split <- parLapply(cl, grid.split, function(x) {
+      nncross(x, X, what = "dist", k = k)
+      })
 
     if(os == "windows"){
-      clusterExport(cl,c("lambda.global.Y","nnk.X.split"), envir = environment())
+      clusterExport(cl,c("lambda.global.Y","nnk.X.split"),
+                    envir = environment())
     }
 
     for(i in 1:length(grid.split)){
-      cp.Y <- crosspairs(grid.split[[i]], Y, rmax = max(nnk.X.split[[i]]), what = "ijd")
+      cp.Y <- crosspairs(grid.split[[i]], Y,
+                         rmax = max(nnk.X.split[[i]]), what = "ijd")
       cp.Y <- data.frame(i = cp.Y[[1]], j = cp.Y[[2]], dist = cp.Y[[3]])
       cp.Y.list <- split(cp.Y, factor(cp.Y$i))
       xi <- 1:length(nnk.X.split[[i]])
 
-      lambda.est[coo.split.ind[[i]],1] <- parSapply(cl, xi, function(xq, i, cp.Y.list){(k/sum(cp.Y.list[[xq]]$dist < nnk.X.split[[i]][[xq]]))*lambda.global.Y}, i, cp.Y.list)
+      lambda.est[coo.split.ind[[i]],1] <- parSapply(
+        cl, xi, function(xq, i, cp.Y.list) {
+          (k/sum(cp.Y.list[[xq]]$dist <
+                   nnk.X.split[[i]][[xq]])) * lambda.global.Y},
+        i, cp.Y.list
+        )
 
       print(paste(toString(round(100*i/length(grid.split), 1)), "%", sep = ""))
     }
     stopCluster(cl)
   }
 
-  res <- list(lambda.est = lambda.est, estimate.coords = est.points, x = coords(X))
+  res <- list(lambda.est = lambda.est,
+              estimate.coords = est.points,
+              x = coords(X))
 
   res <- as.data.frame(lambda.est)
   names <- sapply(k,function(x){return(paste("nn",toString(x),sep = ""))})
@@ -577,9 +619,11 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000
   t2 <- Sys.time()
   print("Time to complete:")
   print(t2-t1)
-  return(list(lambda.est = res, estimate.coords = est.points, x = coords(X), k = k))
+  return(list(lambda.est = res,
+              estimate.coords = est.points,
+              x = coords(X),
+              k = k))
 }
-
 
 #### K3cross ####
 # barely works... Needs corrections and inferface streamlining
@@ -659,6 +703,7 @@ K3multi <- function(X, I, J, r, breaks,
   }
   return(K)
 }
+
 #### split.pp3 ####
 #' Extends split to pp3
 
