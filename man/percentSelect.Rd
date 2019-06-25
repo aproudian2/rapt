@@ -5,7 +5,7 @@
 \title{Randomly select a percent of the points in a \code{\link[spatstat]{pp3}}
 object.}
 \usage{
-percentSelect(perc, pattern)
+percentSelect(perc, pattern, s = NULL)
 }
 \arguments{
 \item{perc}{The fraction of points from the original pattern that are to be
@@ -13,6 +13,8 @@ selected. A value between 0 and 1.}
 
 \item{pattern}{The original \code{\link[spatstat]{pp3}} object to be selected
 from.}
+
+\item{s}{Seed for the random selection}
 }
 \value{
 A \code{\link[spatstat]{pp3}} object containing only the selected

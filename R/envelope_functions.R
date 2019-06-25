@@ -65,17 +65,22 @@ subSquare <- function(orig, win) {
 #'   selected. A value between 0 and 1.
 #' @param pattern The original \code{\link[spatstat]{pp3}} object to be selected
 #'   from.
+#' @param s Seed for the random selection
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
+<<<<<<< HEAD
 #'
 #'   @export
 
+=======
+>>>>>>> ba46bacacad8c0c0e545248cb01b1e31df6df81d
 percentSelect <- function(perc, pattern) {
 
   reLabel <- rlabel(pattern,
                     labels = c(rep("A", round(npoints(pattern) * perc)),
     rep("B", npoints(pattern) - round(npoints(pattern) * perc))))
   inds <- which(marks(reLabel) == "A")
+
   newPattern <- reLabel[inds]
   return(newPattern)
 }
@@ -95,6 +100,9 @@ percentSelect <- function(perc, pattern) {
 #'   on the plot.
 #' @param xlim Numerical vector containing the min and max values for the x axis
 #'   on the plot.
+#' @param leg True or falsel whether to show the automatically generated legend.
+#' @param colors List of color names to make the envelopes.
+#' @param ... Arguments to be passed into \code{plot()}.
 #' @return Nothing.
 #'
 #' @export
@@ -104,6 +112,7 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
                     leg = TRUE, ...) {
   color <- c("lightskyblue", "mediumpurple", "lightpink")
 
+  color <- colors
   # break up data into r values and test results
   rvals <- tests[,1]
   tvals <- tests[,2:ncol(tests)]
@@ -124,7 +133,7 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
   }
 
   # plot the envelopes from the percentile data
-  par(oma = c(0, 2, 0, 0))
+  #par(oma = c(0, 2, 0, 0))
   toplt <- data.frame(rvals,tvals[,1])
   plot(toplt, type = "n", xlab = "r",
        ylab = expression(sqrt('K'[3]*'(r)')*'  Anomaly'),

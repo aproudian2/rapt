@@ -170,7 +170,6 @@ makecluster <- function(under,over,radius1,radius2,
     under.r <- radius1
     over.r <- radius2
     over.rf <- under.r*(ppc/rcp)^(1/3)
-
     over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
     over.scaledf <- subSample(under,over.scaled)
 
@@ -220,7 +219,7 @@ makecluster <- function(under,over,radius1,radius2,
 
     if(toPlot==TRUE){
       plot3d.pp3(cluster,col="red",size=5)
-      plot3d.pp3(under,col="lightgray",add=TRUE)
+      #plot3d.pp3(under,col="lightgray",add=TRUE)
       if(showOverPts==TRUE){
         plot3d.pp3(over.scaledf,size= 6,col="black",add=TRUE)
       }
@@ -338,7 +337,7 @@ makecluster <- function(under,over,radius1,radius2,
       return(list(cluster,over.scaledf,cluster.info))
     }
     else if (speed == "superfast"){
-
+      #browser()
       # If rb is true, we need to set a new cr to deal with spacing - Added 2/4/19
       if(rb == TRUE){
         if(rbmethod == 1){
@@ -387,7 +386,6 @@ makecluster <- function(under,over,radius1,radius2,
         over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
       }
       #####
-
       over.sep <- over.rf*2
       over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
 
@@ -433,14 +431,23 @@ makecluster <- function(under,over,radius1,radius2,
         }
 
         if(any(nnd < comp)){
+          #browser()
           check <- which(nnd < comp)
+          lc <- 0
+          t1 <- Sys.time()
           while(!is.empty(check)) {
+            t2 <- Sys.time()
             nnw <- nnwhich.pp3(over.scaledf)
             direction <- (coords(over.scaledf)[nnw[check[1]],]-coords(over.scaledf)[check[1],])/nnd[check[1]]
             coords(over.scaledf)[check[1],] <- coords(over.scaledf)[check[1],]+(nnd[check[1]]-(comp+0.00001))*direction
             nnd <- nndist.pp3(over.scaledf)
             check <- which(nnd < comp)
+            if((as.numeric(t2) - as.numeric(t1)) > 15){
+              return(-1)
+            }
+
           }
+          #browser()
         }
       }
 
