@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt-extend.R
 \name{quadratcount.pp3}
 \alias{quadratcount.pp3}
-\title{Extension of \code{\link[spatstat]{quadrat}} to \code{\link[spatstat]{pp3}} objects.}
+\title{Extension of \code{\link[spatstat]{quadratcount}} to \code{\link[spatstat]{pp3}} objects.}
 \usage{
 \method{quadratcount}{pp3}(X, nx = 5, ny = 5, nz = 5)
 }

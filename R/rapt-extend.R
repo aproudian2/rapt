@@ -1,3 +1,7 @@
+#
+# This file contains 3D extensions to the spatstat package.
+#
+
 #### marktable.pp3 ####
 #' Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.
 #'
@@ -203,11 +207,11 @@ intensity.pp3 <- function(X, weights = NULL) {
 }
 
 #### rownames.pp3 ####
-#' Extends \code{\link[base]{rownames}} to \code{\link[spatstat]{pp3}}.
+#' Extends \code{\link[base:row+colnames]{rownames}} to \code{\link[spatstat]{pp3}}.
 #'
 #' @param pat A \code{pp3}. The point pattern from which to extract rownames.
 #' @return A string vector. The rownames of the point pattern.
-#' @seealso \code{\link[base]{rownames}}
+#' @seealso \code{\link[base:row+colnames]{rownames}}
 rownames.pp3 <- function(pat) {
   dat <- rownames(as.data.frame(pat))
   return(dat)
@@ -307,7 +311,7 @@ localk3engine <- function(x, y, z, box=c(0,1,0,1,0,1), rmax=1, nrval=100){
 }
 
 #### quadratcount.pp3 ####
-#' Extension of \code{\link[spatstat]{quadrat}} to \code{\link[spatstat]{pp3}} objects.
+#' Extension of \code{\link[spatstat]{quadratcount}} to \code{\link[spatstat]{pp3}} objects.
 #'
 #' Divides volume into quadrats and counts the number of points in each quadrat.
 #'

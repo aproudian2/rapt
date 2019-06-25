@@ -6,6 +6,17 @@
 \usage{
 rangePOS(pos, start, end)
 }
+\arguments{
+\item{pos}{A data.frame. The pos to be ranged}
+
+\item{start}{The start of the mass range}
+
+\item{end}{The end of the mass range}
+}
+\value{
+A data.frame of the same structure as pos containing only hits in the
+provided range
+}
 \description{
 rangePOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
 is within the provided range.

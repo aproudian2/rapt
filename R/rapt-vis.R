@@ -3,7 +3,7 @@
 #
 
 #### polyCurve ####
-#' Shade regions under a \code{\link[MALDIquant]{MassSpectrum}}.
+#' Shade regions under a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}.
 #'
 #' @seealso
 #' \url{www.fromthebottomoftheheap.net/2013/01/11/shading-regions-under-a-curve}
@@ -31,7 +31,7 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
   invisible();
 }
 #### prettyPlot ####
-#' Plot a pretty \code{\link[MALDIquant]{MassSpectrum}}.
+#' Plot a pretty \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}.
 #'
 #' \code{prettyPlot}
 #' @export
