@@ -5,7 +5,8 @@
 \title{Plot envelopes of K3est test}
 \usage{
 envPlot(tests, percentiles = c(0.999, 0.99, 0.97), ylim = c(-3, 3),
-  xlim = c(0, ceiling(max(tests[, 1]))), leg = TRUE, ...)
+  xlim = c(0, ceiling(max(tests[, 1]))), leg = TRUE,
+  colors = c("lightskyblue", "mediumpurple", "lightpink"), ...)
 }
 \arguments{
 \item{tests}{The return file from \code{p(K/G/F)3est} or the first, [[1]],
@@ -19,6 +20,12 @@ on the plot.}
 
 \item{xlim}{Numerical vector containing the min and max values for the x axis
 on the plot.}
+
+\item{leg}{True or falsel whether to show the automatically generated legend.}
+
+\item{colors}{List of color names to make the envelopes.}
+
+\item{...}{Arguments to be passed into \code{plot()}.}
 }
 \value{
 Nothing.

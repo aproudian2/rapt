@@ -1,3 +1,27 @@
+#### anomlocalK3est ####
+#' Perform localK3est with 50th percentile of a RRL subtracted off.
+#'
+#' Similar to \code{\link{anomK3est}}, but returns the anomaly K3est for each
+#' point in the pattern.
+#'
+#' @param X The \code{\link[spatstat]{pp3}} object to be tested.
+#' @param toSub The vector of values to subtract from the square root of the
+#'   results of the K function applied to X.
+#' @param rmax See \code{\link[spatstat]{K3est}}.
+#' @param nrval See \code{\link[spatstat]{K3est}}.
+#'
+#' @return Date frame with columns of the anomaly K test for each point in the
+#'   pattern.
+
+anomlocalK3est <- function(X, toSub, rmax, nrval){
+  a <- localK3est(X, rmax = rmax, nrval = nrval, correction = "translation")
+  for(i in 2:ncol(a)){
+    a[,i] <- sqrt(a[,i])-toSub
+  }
+
+  return(a)
+}
+
 #### pK3est ####
 #' Perform K3est on random relabelings in parallel
 #'
@@ -17,9 +41,11 @@
 #'   \code{\link[spatstat]{K3est}} should be calculated at.
 #' @param correction Either "iso", "trans", or "bord" edge correction.
 #' @param anom Whether or not to retun the anomaly results. \code{TRUE} or
-#'   \code{FALSE}. See section below for more info.
+#' \code{FALSE}. See section below for more info.
 #' @param toSub The numeric vector of data to subtract for the "anom" pK3est.
 #'   Only used when \code{anom = TRUE}. See below for more info.
+#' @param sorted Whether to return a sorted table of RRLs (TRUE) or an unsorted
+#'   one, where the RRLs are in their original rows.
 #' @section Edge Corrections: See \code{\link[spatstat]{Kest}} or book availible
 #'   at \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
@@ -59,13 +85,13 @@
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
 
-pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",anom=FALSE,toSub=NULL){
+pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="trans",anom=FALSE,toSub=NULL, sorted=TRUE){
 
   #find cores and initialize the cluster
   cores2use <- detectCores()-1
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
+  clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -130,25 +156,31 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",an
     # pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]
     tvals <- sqrt(tvals)
-    tvals <- t(apply(tvals,1,sort))
+
+    tvals_sorted <- t(apply(tvals,1,sort))
+
+#browser()
 
     if(is.null(toSub)){
       if(nEvals%%2==0){
         top <- nEvals/2
         bot <- top+1
-        toSub <- (tvals[,top]+tvals[,bot])/2
+        toSub <- (tvals_sorted[,top]+tvals_sorted[,bot])/2
       }else {
-        toSub <- tvals[,(round(nEvals/2))]
+        toSub <- tvals_sorted[,(round(nEvals/2))]
       }
+    }
 
-      tvals <- apply(tvals,2,function(x){
-        x-toSub
-      })
+#browser()
+    if(sorted == TRUE){
+      tvals <- apply(tvals_sorted,2,function(x){
+        x-toSub})
     }else{
       tvals <- apply(tvals,2,function(x){
-        x-toSub
-      })
+        x-toSub})
     }
+
+#browser()
 
     tests <- cbind(tests[,1],tvals)
 
@@ -178,7 +210,7 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",an
 #' @return Returns data fram containing r values and associated anomaly K3est
 #'   values.
 
-anomK3est <- function(pattern,toSub,rmax,nrval,correction = "iso"){
+anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 
   if(correction == "iso"){
     a <- K3est(pattern,rmax=rmax,nrval=nrval,correction="isotropic")
@@ -279,7 +311,7 @@ pG3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",ano
   cores2use <- detectCores()-1
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
+  clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -731,3 +763,4 @@ bdist.points3 <- function (X) {
 
   return(result)
 }
+
