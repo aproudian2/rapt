@@ -68,6 +68,8 @@ subSquare <- function(orig, win) {
 #' @param s Seed for the random selection
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
+#'
+#'   @export
 percentSelect <- function(perc, pattern) {
 
   reLabel <- rlabel(pattern,
@@ -98,6 +100,8 @@ percentSelect <- function(perc, pattern) {
 #' @param colors List of color names to make the envelopes.
 #' @param ... Arguments to be passed into \code{plot()}.
 #' @return Nothing.
+#'
+#' @export
 
 envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
                     ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),

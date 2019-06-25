@@ -1,6 +1,10 @@
 #include <fstream>
+#include <Rcpp.h>
 #include "tapsim_reader.h"
 #define R_BYTES 104
+
+using namespace std;
+// [[Rcpp::plugins(cpp11)]]
 
 Result::Result (Results results, unsigned int n) {
   char* fp = results.get_filepath();
@@ -164,7 +168,6 @@ Tapsim::Tapsim (char* fp) {
   head_len = 0;
   head_lines = 0;
   string buff;
-  unsigned int pos = 0;
   bool head = true;
   int i = 0;
   for (i = 0; head && i < 50; i++) {
@@ -218,44 +221,140 @@ void Results::print_result(unsigned int n) {
   result.print();
 }
 
-DataFrame readResults(char* fp) {
-  Results c_data(fp);
-  StringVector col_names(26);
-  col_names(0) = "Index";
-  col_names(1) = "ID";
-  col_names(2) = "Number";
-  col_names(3) = "Voltage";
-  col_names(4) = "StartX";
-  col_names(5) = "StartY";
-  col_names(6) = "StartZ";
-  col_names(7) = "StopX";
-  col_names(8) = "StopY";
-  col_names(9) = "StopZ";
-  col_names(10) = "TOF";
-  col_names(11) = "Prob";
-  col_names(12) = "PotBef";
-  col_names(13) = "FieldBefX";
-  col_names(14) = "FieldBefY";
-  col_names(15) = "FieldBefZ";
-  col_names(16) = "PotAft";
-  col_names(17) = "FieldAftX";
-  col_names(18) = "FieldAftY";
-  col_names(19) = "FieldAftZ";
-  col_names(20) = "NormalX";
-  col_names(21) = "NormalY";
-  col_names(22) = "NormalZ";
-  col_names(23) = "ApexX";
-  col_names(24) = "ApexY";
-  col_names(25) = "ApexZ";
+Rcpp::DataFrame readResults(string fp) {
+  char* c_fp = new char [fp.length()+1];
+  strcpy(c_fp, fp.c_str());
+  Results c_data(c_fp);
+  unsigned int entries = c_data.get_entries();
+
+  Rcpp::IntegerVector index_vec;
+  Rcpp::IntegerVector id_vec;
+  Rcpp::IntegerVector number_vec;
+  Rcpp::NumericVector voltage_vec;
+  Rcpp::NumericVector startX_vec;
+  Rcpp::NumericVector startY_vec;
+  Rcpp::NumericVector startZ_vec;
+  Rcpp::NumericVector stopX_vec;
+  Rcpp::NumericVector stopY_vec;
+  Rcpp::NumericVector stopZ_vec;
+  Rcpp::NumericVector tof_vec;
+  Rcpp::NumericVector prob_vec;
+  Rcpp::NumericVector potentialBefore_vec;
+  Rcpp::NumericVector fieldBeforeX_vec;
+  Rcpp::NumericVector fieldBeforeY_vec;
+  Rcpp::NumericVector fieldBeforeZ_vec;
+  Rcpp::NumericVector potentialAfter_vec;
+  Rcpp::NumericVector fieldAfterX_vec;
+  Rcpp::NumericVector fieldAfterY_vec;
+  Rcpp::NumericVector fieldAfterZ_vec;
+  Rcpp::NumericVector normalX_vec;
+  Rcpp::NumericVector normalY_vec;
+  Rcpp::NumericVector normalZ_vec;
+  Rcpp::NumericVector apexX_vec;
+  Rcpp::NumericVector apexY_vec;
+  Rcpp::NumericVector apexZ_vec;
+
+  for(int i = 0; i < entries; i++) {
+    Result result = c_data.get_result(i);
+    index_vec.push_back(result.get_index());
+    id_vec.push_back(result.get_id());
+    number_vec.push_back(result.get_number());
+    voltage_vec.push_back(result.get_voltage());
+    startX_vec.push_back(result.get_startX());
+    startY_vec.push_back(result.get_startY());
+    startZ_vec.push_back(result.get_startZ());
+    stopX_vec.push_back(result.get_stopX());
+    stopY_vec.push_back(result.get_stopY());
+    stopZ_vec.push_back(result.get_stopZ());
+    tof_vec.push_back(result.get_tof());
+    prob_vec.push_back(result.get_probability());
+    potentialBefore_vec.push_back(result.get_potentialBefore());
+    fieldBeforeX_vec.push_back(result.get_fieldBeforeX());
+    fieldBeforeY_vec.push_back(result.get_fieldBeforeY());
+    fieldBeforeZ_vec.push_back(result.get_fieldBeforeZ());
+    potentialAfter_vec.push_back(result.get_potentialAfter());
+    fieldAfterX_vec.push_back(result.get_fieldAfterX());
+    fieldAfterY_vec.push_back(result.get_fieldAfterY());
+    fieldAfterZ_vec.push_back(result.get_fieldAfterZ());
+    normalX_vec.push_back(result.get_normalX());
+    normalY_vec.push_back(result.get_normalY());
+    normalZ_vec.push_back(result.get_normalZ());
+    apexX_vec.push_back(result.get_apexX());
+    apexY_vec.push_back(result.get_apexY());
+    apexZ_vec.push_back(result.get_apexZ());
+  }
+
+  Rcpp::StringVector col_names;
+  col_names.push_back("Index");
+  col_names.push_back("ID");
+  col_names.push_back("Number");
+  col_names.push_back("Voltage");
+  col_names.push_back("StartX");
+  col_names.push_back("StartY");
+  col_names.push_back("StartZ");
+  col_names.push_back("StopX");
+  col_names.push_back("StopY");
+  col_names.push_back("StopZ");
+  col_names.push_back("TOF");
+  col_names.push_back("Prob");
+  col_names.push_back("PotBef");
+  col_names.push_back("FieldBefX");
+  col_names.push_back("FieldBefY");
+  col_names.push_back("FieldBefZ");
+  col_names.push_back("PotAft");
+  col_names.push_back("FieldAftX");
+  col_names.push_back("FieldAftY");
+  col_names.push_back("FieldAftZ");
+  col_names.push_back("NormalX");
+  col_names.push_back("NormalY");
+  col_names.push_back("NormalZ");
+  col_names.push_back("ApexX");
+  col_names.push_back("ApexY");
+  col_names.push_back("ApexZ");
+
+  Rcpp::List r_data(26);
+  r_data(0) = index_vec;
+  r_data(1) =  id_vec;
+  r_data(2) = number_vec;
+  r_data(3) = voltage_vec;
+  r_data(4) = startX_vec;
+  r_data(5) = startY_vec;
+  r_data(6) = startZ_vec;
+  r_data(7) = stopX_vec;
+  r_data(8) = stopY_vec;
+  r_data(9) = stopZ_vec;
+  r_data(10) = tof_vec;
+  r_data(11) = prob_vec;
+  r_data(12) = potentialBefore_vec;
+  r_data(13) = fieldBeforeX_vec;
+  r_data(14) = fieldBeforeY_vec;
+  r_data(15) = fieldBeforeZ_vec;
+  r_data(16) = potentialAfter_vec;
+  r_data(17) = fieldAfterX_vec;
+  r_data(18) = fieldAfterY_vec;
+  r_data(19) = fieldAfterZ_vec;
+  r_data(20) = normalX_vec;
+  r_data(21) = normalY_vec;
+  r_data(22) = normalZ_vec;
+  r_data(23) = apexX_vec;
+  r_data(24) = apexY_vec;
+  r_data(25) = apexZ_vec;
+  r_data.attr("names") = col_names;
+  r_data.attr("row.names") =
+    Rcpp::IntegerVector::create(NA_INTEGER, entries);
+  r_data.attr("class") = "data.frame";
+
+  return r_data;
 }
 
 // [[Rcpp::export]]
-DataFrame readTAPSim(char* fp, string type) {
+Rcpp::DataFrame read_TAPSim(string fp, string type) {
   if (type == "results") {
-    DataFrame results = readResults(fp);
+    Rcpp::DataFrame results = readResults(fp);
     return results;
   }
   else {
     Rprintf("Not yet implemented.");
+    return NULL;
   }
 }

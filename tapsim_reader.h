@@ -1,4 +1,4 @@
-#ifndef READER_h
+#ifndef READER_H
 #define READER_H
 
 #include <cstdlib>
@@ -6,6 +6,8 @@
 #include <vector>
 #include <fstream>
 using namespace std;
+
+// [[Rcpp::plugins(cpp11)]]
 
 // Defined based on v1.0 TAPSim spec in howto.pdf included with distribution.
 class Results;

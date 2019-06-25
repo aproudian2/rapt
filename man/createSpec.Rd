@@ -5,7 +5,7 @@
 \title{Create a \code{\link[MALDIquant]{MassSpectrum}} from a POS or ATO
 data frame.}
 \usage{
-createSpec(pos, res = 0.001)
+createSpec(pos, res = 0.001, snip = NULL)
 }
 \arguments{
 \item{pos}{A POS or ATO data frame.}
@@ -17,9 +17,15 @@ A \code{\link[MALDIquant]{MassSpectrum}} from the \code{mass} field
   of the POS or ATO, with the resolution set by \code{res}.
 }
 \description{
-\code{createSpec} generates a \code{\link[MALDIquant]{MassSpectrum}} object
-with a specified resolution from an ATO or POS data frame (like that created
-by \code{\link(readPOS)}).
+Create a \code{\link[MALDIquant]{MassSpectrum}} from a POS or ATO
+data frame.
+}
+\details{
+The input POS or ATO is binned by mass values; the resolution parameter sets
+the width of the mass bins used in \code{\link[base]{hist}} to create the
+input to the \code{\link[MALDIquant]{createMassSpectrum}} call, and also acts
+as a tolerance around the spectrum minimum and maximum mass. The minimum of
+the mass value is zero.
 }
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},

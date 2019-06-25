@@ -23,6 +23,8 @@ the same as the envelopes that you are comparing to.}
 \value{
 Returns data fram containing r values and associated anomaly F3est
   values.
+
+  @export
 }
 \description{
 See \code{\link[spatstat]{F3est}}. Performs the anomaly F3est on a set of

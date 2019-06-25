@@ -21,7 +21,7 @@
 #'   cluster with \code{\link[parallel]{makeCluster}}.
 #' @seealso \code{\link{multiples}}, \code{\link{readATO}},
 #'   \code{\link[parallel]{makeCluster}}.
-#'   @export
+#' @export
 indexMultiples <- function(ato, cl.n = 3) {
   mu.ind <- sort(unique(
     c(which(diff(ato$pIndex) == 0), which(diff(ato$pIndex) == 0) + 1L)
