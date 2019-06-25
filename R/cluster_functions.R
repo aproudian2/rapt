@@ -1119,14 +1119,3 @@ rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1){
     return(as.data.frame(cbind(x,y,z)))
   }
 }
-
-#### norepeats ####
-norep <- function(X){
-  if(nrow(unique(coords(X))) == npoints(X)){
-    print("All good.")
-    return(TRUE)
-  }else{
-    print("Not good.")
-    return(FALSE)
-  }
-}
