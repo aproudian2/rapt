@@ -26,8 +26,8 @@ rangeCount <- function(pos, start, end) {
 #' @param pos A data.frame. The pos to be ranged
 #' @param start The start of the mass range
 #' @param end The end of the mass range
-#' @return A data.frame of the same structure as pos containing only hits in the
-#' provided range
+#' @return A data.frame of the same structure as \code{pos} containing only hits
+#' in the provided range
 #' @export
 rangePOS <- function(pos, start, end) {
   with(pos, pos[mass > start & mass < end,])
@@ -67,4 +67,10 @@ rngPOS <- function(pos, rng) {
   })
   dat <- do.call(rbind, hits)
   return(dat)
+}
+
+#### autoRange ####
+# Range peaks at a specified level
+autoRange <- function(pos, rng, width = 10) {
+
 }

@@ -14,8 +14,8 @@ rangePOS(pos, start, end)
 \item{end}{The end of the mass range}
 }
 \value{
-A data.frame of the same structure as pos containing only hits in the
-provided range
+A data.frame of the same structure as \code{pos} containing only hits
+in the provided range
 }
 \description{
 rangePOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
