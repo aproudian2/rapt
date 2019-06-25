@@ -18,6 +18,10 @@ rangeCount <- function(pos, start, end) {
 #'
 #' rangePOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
 #' is within the provided range.
+#'
+#' @param pos The pos data.frame to be range
+#' @param start The start of the mass range
+#' @param end The end of the mass range
 #' @export
 rangePOS <- function(pos, start, end) {
   with(pos, pos[mass > start & mass < end,])
@@ -25,6 +29,9 @@ rangePOS <- function(pos, start, end) {
 
 #### rngCount ####
 #' Count the number of hits for each entry within a \code{RNG} object
+#'
+#' @param pos The pos to range
+#' @param rng The ranges
 #' @seealso \code{\link{readRRNG}}, \code{\link{rangeCount}}
 #' @export
 rngCount <- function(pos, rng) {
@@ -37,7 +44,11 @@ rngCount <- function(pos, rng) {
 }
 
 #### rngPOS ####
-#' Extract hits according to a RNG
+#' Extract hits according to a RNG and create a new pos
+#'
+#' @param pos The pos or ato to extract hits
+#' @param rng The ranges to extract
+#' @return A data.frame of the same structure as pos
 #' @seealso \code{\link{rangePOS}}
 #' @export
 rngPOS <- function(pos, rng) {
