@@ -41,7 +41,7 @@
 #' and the square root standardized variance across all r values. See book at
 #' \url{http://spatstat.org/book.html} for a good statistical reference.
 #'
-#' \code{toSub} is an argumet to be paired with \code{anom = TRUE}. If NULL, use
+#' \code{toSub} is an argument to be paired with \code{anom = TRUE}. If NULL, use
 #' the 50th percentile of the calculated set of \code{\link[spatstat]{K3est}}
 #' envelopes to subtract off. Otherwise, use the second, [[2]], entry in the
 #' list returned from this same function. This is how to compare envelope
@@ -58,13 +58,15 @@
 #' containing the values that were subtracted from the results at each r value.
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
+#'
+#' @export
 
 pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",anom=FALSE,toSub=NULL){
 
   #find cores and initialize the cluster
   cores2use <- detectCores()-1
   cl <- makePSOCKcluster(cores2use)
-  clusterExport(cl,"percentSelect")
+  #clusterExport(cl,"percentSelect")
   clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
@@ -177,6 +179,8 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="iso",an
 #'
 #' @return Returns data fram containing r values and associated anomaly K3est
 #'   values.
+#'
+#'   @export
 
 anomK3est <- function(pattern,toSub,rmax,nrval,correction = "iso"){
 
@@ -272,6 +276,8 @@ anomK3est <- function(pattern,toSub,rmax,nrval,correction = "iso"){
 #' containing the values that were subtracted from the results at each r value.
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
+#'
+#' @export
 
 pG3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",anom=FALSE,toSub=NULL){
 
@@ -381,6 +387,8 @@ pG3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",ano
 #'
 #' @return Returns data fram containing r values and associated anomaly G3est
 #'   values.
+#'
+#'   @export
 
 anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 
@@ -478,6 +486,8 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #' containing the values that were subtracted from the results at each r value.
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
+#'
+#' @export
 
 pF3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",anom=FALSE,toSub=NULL){
 
@@ -587,6 +597,8 @@ pF3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",ano
 #'
 #' @return Returns data fram containing r values and associated anomaly F3est
 #'   values.
+#'
+#'   @export
 
 anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 

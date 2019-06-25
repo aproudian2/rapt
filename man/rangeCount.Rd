@@ -7,5 +7,8 @@
 rangeCount(pos, start, end)
 }
 \description{
-Count the hits within a mass range
+To get the hit information within a mass range, use \code{\link{rangePOS}}
+}
+\seealso{
+\code{\link{rngCount}}, \code{\link{rangePOS}}
 }

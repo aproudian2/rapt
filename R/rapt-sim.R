@@ -186,6 +186,7 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
 }
 #### rjitter3 ####
 #' Extends the \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
+#' @export
 rjitter3 <- function(X, domain = box3()) {
   verifyclass(X, "pp3")
   nX <- npoints(X)

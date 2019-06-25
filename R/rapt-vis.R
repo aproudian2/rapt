@@ -34,11 +34,15 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
 #' Plot a pretty \code{\link[MALDIquant]{MassSpectrum}}.
 #'
 #' \code{prettyPlot}
+#' @export
 # Lift the assumption of a log10 transformed spectrum.
 prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
-                       main = "Mass Spectrum", hold.par = F, ...) {
+                       main = NULL, hold.par = F, ...) {
   if(log10(max(ms@intensity)) > 1) {
     stop("prettyPlot should only be used with log10 transformed spectra.")
+  }
+  if(is.null(main)) {
+    main <- attr(ms, 'metaData')$name
   }
   ms.old <- par(no.readonly = T)
   par(mgp = c(2.2, 0.5, 0), cex = 1.5, las =  1, mar = c(3.5, 3.5, 1.5, 1));
@@ -64,7 +68,7 @@ prettyPlot <- function(ms, rng = NA,  xlim = NULL, ylim = NULL, lwd = 1,
   invisible(lapply(1:2, function(x){
     axis(x, at = ms.tck[[x]], labels = NA, tck = -0.01)
   }))
-  if (!is.na(rng)) {
+  if (class(rng) == 'data.frame') {
     polyCurve(ms@mass, ms@intensity, rng$start, rng$end, col = rng$color,
               ... = ...)
     lines(ms)

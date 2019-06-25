@@ -27,5 +27,4 @@ to \code{\link[parallel]{makeCluster}}.
 \seealso{
 \code{\link{multiples}}, \code{\link{readATO}},
   \code{\link[parallel]{makeCluster}}.
-  @export
 }

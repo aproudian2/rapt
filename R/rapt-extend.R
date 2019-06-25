@@ -18,7 +18,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
     stop("marks must be a factor")
   if (gotR) {
     stopifnot(is.numeric(R) && length(R) == 1 && R > 0)
-    p <- closepairs.pp3(X, R, what = "indices")
+    p <- closepairs(X, R, what = "indices")
     pi <- p$i
     pj <- p$j
     if (!exclude) {
@@ -58,11 +58,12 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
 #' @seealso \code{\link[spatstat]{superimpose}}
 #' @export
 superimpose.pp3 <- function(..., W = NULL, check = F) {
-  # Add ability to superimpose with marks
   input.list <- list(...)
+  m <- unlist(sapply(input.list, marks))
   df.list <- lapply(input.list, as.data.frame)
   df.comb <- Reduce(rbind, df.list)
   out.pp3 <-  createSpat(df.comb, win = W)
+  marks(out.pp3) <- m
   return(out.pp3)
 }
 
@@ -224,6 +225,7 @@ plot3d.pp3 <- function(X, ...) {
 }
 
 #### K3cross ####
+# barely works... Needs corrections and inferface streamlining
 K3multi <- function(X, I, J, r, breaks,
               correction = c("none", "isotropic", "translation"),
               ..., ratio = FALSE) {
@@ -248,8 +250,7 @@ K3multi <- function(X, I, J, r, breaks,
   K <- data.frame(r = r, theo = (4/3) * pi * r^3)
   desc <- c("distance argument r", "theoretical Poisson %s")
   K <- fv(K, "r", quote(K[IJ](r)), "theo", , alim, c("r", "{%s[%s]^{pois}}(r)"),
-          desc, fname = c("K", "list(I,J)"), yexp = quote(K[list(I,
-                                                                 J)](r)))
+          desc, fname = c("K", "list(I,J)"), yexp = quote(K[list(I,J)](r)))
   if (ratio) {
     denom <- lambdaI * lambdaJ * volW
     numK <- eval.fv(denom * K)
@@ -300,4 +301,187 @@ K3multi <- function(X, I, J, r, breaks,
     K <- rat(K, numK, denK, check = FALSE)
   }
   return(K)
+}
+#### split.pp3 ####
+#' Extends split to pp3
+
+#### studpermu.pp3 ####
+#' Extends studpermu.test to pp3
+#'
+#' This function is still experimental. It needs full testing and validation.
+studpermu.pp3 <- function (X, formula,
+                           summaryfunction = G3est, ..., rinterval = NULL,
+                           nperm = 999, use.Tbar = FALSE,
+                           minpoints = 20, rsteps = 128,
+                           r = NULL, arguments.in.data = FALSE)
+{
+  if (arguments.in.data & !is.hyperframe(X))
+    stop(paste("X needs to be a hyperframe",
+               "if arguments for summary function are to be retrieved"),
+         call. = FALSE)
+  stopifnot(is.function(summaryfunction))
+  if (is.hyperframe(X)) {
+    if (dim(X)[2] < 2)
+      stop(paste("Hyperframe X needs to contain at least 2 columns,",
+                 "one for patterns, one indicating groups"), call. = FALSE)
+    data <- X
+    Xclass <- unclass(X)$vclass
+    factorcandidate <- Xclass %in% c("integer", "numeric",
+                                     "character", "factor")
+    ppcandidate <- Xclass == "pp3"
+    Xnames <- names(X)
+    names(factorcandidate) <- names(ppcandidate) <- names(Xclass) <- Xnames
+    if (all(!factorcandidate) || all(!ppcandidate))
+      stop(paste("Hyperframe X needs to contain at least a column",
+                 "with point patterns, and one indicating groups"),
+           call. = FALSE)
+    if (!missing(formula)) {
+      if (!inherits(formula, "formula"))
+        stop(paste("Argument", dQuote("formula"), "should be a formula"))
+      if (length(formula) < 3)
+        stop(paste("Argument", sQuote("formula"), "must have a left hand side"))
+      rhs <- rhs.of.formula(formula)
+      ppname <- formula[[2]]
+      if (!is.name(ppname))
+        stop("Left hand side of formula should be a single name")
+      ppname <- paste(ppname)
+      if (!ppcandidate[ppname])
+        stop(paste("Left hand side of formula",
+                   "should be the name of a column of point patterns"),
+             call. = FALSE)
+      groupvars <- all.vars(as.expression(rhs))
+      if (!all(groupvars %in% Xnames) || any(!factorcandidate[groupvars]))
+        stop(paste("Not all variables on right hand side of formula",
+                   "can be interpreted as factors"), call. = FALSE)
+      group <- interaction(lapply(
+        as.data.frame(data[,groupvars, drop = FALSE]), factor))
+      newnames <- Xnames
+      newnames[Xnames == ppname] <- "pp"
+      names(data) <- newnames
+      data$group <- group
+    }
+    else {
+      thepp <- which.max(ppcandidate)
+      thegroup <- which.max(factorcandidate)
+      formula <- as.formula(paste(Xnames[thepp], "~", Xnames[thegroup]))
+      newnames <- Xnames
+      newnames[thepp] <- "pp"
+      newnames[thegroup] <- "group"
+      names(data) <- newnames
+      data$group <- as.factor(data$group)
+    }
+  }
+  else {
+    if (!is.list(X))
+      stop("X should be a hyperframe or a list of lists of point patterns")
+    if (!is.list(X[[1]]) || !is.pp3(X[[1]][[1]]))
+      stop("X is a list, but not a list of lists of point patterns")
+    nams <- names(X)
+    if (is.null(nams))
+      nams <- paste("group", seq_along(X))
+    pp <- list()
+    group <- NULL
+    for (i in seq_along(X)) {
+      pp <- c(pp, X[[i]])
+      group <- c(group, rep(nams[i], length(X[[i]])))
+    }
+    group <- as.factor(group)
+    data <- hyperframe(pp = pp, group = group)
+    ppname <- "pp"
+  }
+  framename <- deparse(substitute(X))
+  fooname <- deparse(substitute(summaryfunction))
+  OK <- sapply(data$pp, npoints) >= minpoints
+  if ((nbad <- sum(!OK)) > 0)
+    warning(paste(nbad, "patterns have been discarded",
+                  "because they contained fewer than",
+                  minpoints, "points"), call. = FALSE)
+  data <- data[OK, , drop = FALSE]
+  pp <- data$pp
+  groupi <- as.integer(data$group)
+  ngroups <- max(groupi)
+  if (ngroups < 2)
+    stop(paste("Sorry, after discarding patterns with fewer than",
+               minpoints, "points,", if (ngroups < 1)
+                 "nothing"
+               else "only one group", "is left over.",
+                "\n- nothing to compare, take a break!"),
+         call. = FALSE)
+  lev <- 1:ngroups
+  m <- as.vector(table(groupi))
+  if (any(m < 3))
+    stop(paste("Data groups need to contain at least two patterns;",
+               "\nafter discarding those with fewer than", minpoints,
+               "points, the remaining group sizes are", commasep(m)),
+         call. = FALSE)
+  npossible <- factorial(sum(m))/prod(factorial(m))/prod(factorial(table(m)))
+  if (npossible < max(100, nperm))
+    warning("Don't expect exact results - group sizes are too small")
+  if (!is.null(r)) {
+    rinterval <- range(r)
+    rsteps <- length(r)
+  }
+  else if (is.null(rinterval)) {
+    foochar <- substr(fooname, 1, 1)
+    if (foochar %in% c("p", "L"))
+      foochar <- "K"
+    if (fooname %in% c("Kscaled", "Lscaled"))
+      foochar <- "Kscaled"
+    rinterval <- c(0, min(with(data,
+                               rmax.rule(foochar, domain(pp), intensity(pp)))))
+  }
+  ranger <- diff(range(rinterval))
+  rr <- r %orifnull% seq(0, rinterval[2], length.out = rsteps + 1)
+  taker <- rr >= rinterval[1] & rr <= rinterval[2]
+  if (arguments.in.data)
+    fvlist <- multicall(summaryfunction, pp, data, r = rr, ...)
+  else fvlist <- with(data, summaryfunction(pp, r = rr, ...))
+  fvtemplate <- fvlist[[1]]
+  valu <- attr(fvtemplate, "valu")
+  argu <- attr(fvtemplate, "argu")
+  foar <- sapply(lapply(fvlist, "[[", valu), "[", taker)
+  combs <- combn(lev, 2)
+  predigested <- list(lev = lev, foar = foar, m = m, combs = combs,
+                      rrr = rr[taker], ranger = ranger)
+  if (use.Tbar) {
+    Tobs <- Tbarstat(groupi, predigested)
+    Tsim <- replicate(nperm, Tbarstat(sample(groupi), predigested))
+  }
+  else {
+    Tobs <- Tstat(groupi, predigested)
+    Tsim <- replicate(nperm, Tstat(sample(groupi), predigested))
+  }
+  names(Tobs) <- if (use.Tbar)
+    "Tbar"
+  else "T"
+  pval <- (1 + sum(Tobs < Tsim))/(1 + nperm)
+  method <- c("Studentized permutation test for grouped point patterns",
+              if (is.hyperframe(X)) pasteFormula(formula) else NULL,
+              choptext(ngroups, "groups:", paste(levels(data$group),
+                collapse = ", ")), choptext("summary function:",
+                  paste0(fooname, ","), "evaluated on r in", prange(rinterval)),
+              choptext("test statistic:", if (use.Tbar) "Tbar," else "T,",
+                       nperm, "random permutations"))
+  fooshort <- switch(fooname, pcf = "pair correlation ",
+                     Kinhom = "inhomogeneous K-",
+                     Linhom = "inhomogeneous L-",
+                     Kscaled = "locally scaled K-",
+                     Lscaled = "locally scaled L-",
+                     paste(substr(fooname,1, 1), "-", sep = ""))
+  alternative <- c(paste("not the same ", fooshort, "function",
+                         sep = ""))
+  testerg <- list(statistic = Tobs, p.value = pval, alternative = alternative,
+                  method = method, data.name = framename)
+  class(testerg) <- c("studpermutest", "htest")
+  fvs <- lapply(fvlist, "[.fv", j = c(argu, valu))
+  fvs <- lapply(fvs, "attr<-", which = "alim", value = rinterval)
+  testerg$curves <- hyperframe(fvs = fvs, groups = data$group)
+  fvtheo <- fvlist[[1]]
+  fvnames(fvtheo, ".y") <- "theo"
+  attr(fvtheo, "alim") <- rinterval
+  testerg$curvtheo <- fvtheo[, c(argu, "theo")]
+  grmn <- lapply(lev, splitmean, ind = groupi, f = foar)
+  testerg$groupmeans <- lapply(grmn, makefv, xvals = rr[taker],
+                               template = fvtheo)
+  return(testerg)
 }

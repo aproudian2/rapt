@@ -17,6 +17,8 @@ from.}
 \value{
 A \code{\link[spatstat]{pp3}} object containing only the selected
   points.
+
+  @export
 }
 \description{
 Function randomly selects a certain percent of points within an original

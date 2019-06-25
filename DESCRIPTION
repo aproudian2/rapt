@@ -20,11 +20,14 @@ Imports:
   ash(>= 1.0),
   Rcpp (>= 0.12),
   Rcpp11 (>= 3.1),
-  PET (>= 0.4)
+  PET (>= 0.4),
+  magrittr (>= 1.5)
 LinkingTo:
   Rcpp
 Suggests:
-  rgl (>= 0.95.1201)
-  tidyverse (>= 1.2.1)
+    rgl (>= 0.95.1201),
+    knitr,
+    rmarkdown
 RdMacros: Rdpack
 RoxygenNote: 6.1.1
+VignetteBuilder: knitr

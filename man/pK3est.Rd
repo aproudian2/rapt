@@ -70,7 +70,7 @@ with the 50th percentile subtracted out. This centers envelopes around zero,
 and the square root standardized variance across all r values. See book at
 \url{http://spatstat.org/book.html} for a good statistical reference.
 
-\code{toSub} is an argumet to be paired with \code{anom = TRUE}. If NULL, use
+\code{toSub} is an argument to be paired with \code{anom = TRUE}. If NULL, use
 the 50th percentile of the calculated set of \code{\link[spatstat]{K3est}}
 envelopes to subtract off. Otherwise, use the second, [[2]], entry in the
 list returned from this same function. This is how to compare envelope

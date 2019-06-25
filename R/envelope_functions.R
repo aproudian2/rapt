@@ -67,6 +67,8 @@ subSquare <- function(orig, win) {
 #'   from.
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
+#'
+#'   @export
 
 percentSelect <- function(perc, pattern) {
 
@@ -94,6 +96,8 @@ percentSelect <- function(perc, pattern) {
 #' @param xlim Numerical vector containing the min and max values for the x axis
 #'   on the plot.
 #' @return Nothing.
+#'
+#' @export
 
 envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
                     ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),
