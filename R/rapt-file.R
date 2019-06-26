@@ -145,8 +145,8 @@ read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5){
   return(temp)
 }
 
-#### Condition Data ####
 ## Add ability to specify marks
+#### Condition Data ####
 #' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
 #'
 #' @param pos A POS or ATO data frame.

@@ -154,24 +154,19 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
 
   percents <- as.list(rep(perc, nEvals))
 
-  ### old, heavy memory usage
-  #toTest <- parLapply(cl,percents,function(x){
-  #  percentSelect(x,pattern)
-  #})
-
   # apply K3est function to each of the pp3 patterns in parallel
   if(correction=="iso"){
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       K3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "isotropic")
     })
   }else if(correction=="trans"){
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       K3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "translation")
     })
   }else if(correction=="bord"){
     clusterExport(cl,"bK3est")
     clusterExport(cl,"bdist.points3")
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       bK3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval)
     })
     if(is.null(result[[1]])){
@@ -384,21 +379,17 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 
   percents <- as.list(rep(perc, nEvals))
 
-  #toTest <- parLapply(cl,percents,function(x){
-  #  percentSelect(x,pattern)
-  #})
-
   # apply G3est function to each of the pp3 patterns in parallel
   if(correction=="rs"){
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       G3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "rs")
     })
   }else if(correction=="km"){
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       G3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "km")
     })
   }else if(correction=="Hanisch"){
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       G3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "Hanisch")
     })
   }else{
@@ -601,21 +592,17 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 
   percents <- as.list(rep(perc, nEvals))
 
-  #toTest <- parLapply(cl,percents,function(x){
-  #  percentSelect(x,pattern)
-  #})
-
   # apply F3est function to each of the pp3 patterns in parallel
   if(correction=="rs"){
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       F3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "rs")
     })
   }else if(correction=="km"){
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       F3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "km")
     })
   }else if(correction=="cs"){
-    result <- parLapply(cl,percents,function(x){
+    result <- parallel::parLapply(cl,percents,function(x){
       F3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "cs")
     })
   }else{

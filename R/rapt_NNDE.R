@@ -182,7 +182,7 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz,
       cl <- makeForkCluster(cores)
     }
 
-    nnk.X.split <- parLapply(cl, grid.split, function(x){
+    nnk.X.split <- parallel::parLapply(cl, grid.split, function(x){
       nncross(x, X, what = "dist", k = k)
     })
 
@@ -225,7 +225,7 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz,
       cl <- makeForkCluster(cores)
     }
 
-    nnk.X.split <- parLapply(cl, grid.split, function(x) {
+    nnk.X.split <- parallel::parLapply(cl, grid.split, function(x) {
       nncross(x, X, what = "dist", k = k)
     })
 
@@ -347,7 +347,7 @@ local.den.engine <- function(bdist, nnk, k, dz, par = TRUE, cores = 7){
     clusterExport(cl,"local.den.onevol")
     clusterExport(cl,c("x","y","z","dz","k","r","ind.x","ind.k"), envir = environment())
 
-    lambda.est <- parLapply(cl, ind.k, function(i.k){
+    lambda.est <- parallel::parLapply(cl, ind.k, function(i.k){
       vols <- sapply(ind.x, function(i.x,rn){local.den.onevol(x[i.x],y[i.x],z[i.x],rn[i.x],dz)}, r[[i.k]])
       l.est <- k[i.k]/vols
       return(l.est)
