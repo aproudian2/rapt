@@ -1,4 +1,6 @@
-# Functions to simulate clusers using RCP data sets
+#
+# This file contains functions pertaining to the simulation of clustered point patterns,
+#
 
 #### makecluster ####
 #' Simulate point clustering in an RCP matrix
@@ -140,6 +142,7 @@
 #'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
 #'   center to center) from each cluster. [[5]] A vector contining the radius of
 #'   each cluster.}
+#' @export
 
 makecluster <- function(under,over,radius1,radius2,
                         type = "cr",
@@ -646,8 +649,8 @@ makecluster <- function(under,over,radius1,radius2,
 #' @param win A \code{\link[spatstat]{box3}} object containing the window of the
 #'   cluster set you want to make.
 #' @param background Either \code{'poisson'} or \code{'rcp'}. Whether to have
-#' Poission distributed points or RCP points for the points in the clusters and
-#' in the background.
+#'   Poission distributed points or RCP points for the points in the clusters
+#'   and in the background.
 #' @param filepath Needed if \code{background = 'rcp'}. Vector with the filepath
 #'   to [1] the FinalConfig file of the RCP pattern desired, [2] the system file
 #'   of the RCP pattern desired
@@ -655,6 +658,7 @@ makecluster <- function(under,over,radius1,radius2,
 #' @return A list of [[1]] A \code{\link[spatstat]{pp3}} object containing the
 #'   cluster points, [[2]] The overall intensity of the point pattern; Total
 #'   number of points/total volume.
+#' @export
 
 hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
   hcp.c <- hcp.gen(csep_r,win)

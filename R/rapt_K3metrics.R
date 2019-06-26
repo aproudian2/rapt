@@ -1,4 +1,6 @@
-#Functions to analyze and produce results from data
+#
+# This file contains functions relating to the calculation of metrics from the 3D K function
+#
 
 #### k3metrics ####
 #' Extract metrics from 3D K function output
@@ -247,133 +249,50 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub,
   return(outtemp)
 }
 
-
-#### bdist.points3.multi ####
-#' Returns the shortest distances to boundaries in the x, y, and z directions
-#' separately.
+#### finite_deriv ####
+#' Find the numerical derivative of a finite set of points.
 #'
-#' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
-#'   object.
-#' @return A data.frame containing the shortest distance to the closest three
-#'   boundaries for each point in the pattern X.
+#' Uses the central difference method to calculate the numerical derivative for
+#' a set of x,y data. Vectors x and y must be the same length.
+#'
+#' @param x The x values for your set of points.
+#' @param y The y vales for your set of points.
+#'
+#' @return A vector with the same length as x containing estimated derivative at
+#'   each x value.
 
-bdist.points3.multi <- function (X){
-
-  verifyclass(X, "pp3")
-
-  x <- X$data$x
-  y <- X$data$y
-  z <- X$data$z
-  d <- X$domain
-
-  xmin <- min(d$xrange)
-  xmax <- max(d$xrange)
-  ymin <- min(d$yrange)
-  ymax <- max(d$yrange)
-  zmin <- min(d$zrange)
-  zmax <- max(d$zrange)
-
-  result <- data.frame(x = pmin.int(x - xmin, xmax - x), y =  pmin.int(y - ymin, ymax - y), z = pmin.int(z - zmin, zmax - z))
-
-  return(result)
+finite_deriv <- function(x,y) {
+  if(length(x) != length(y)) {
+    print("x and y must be same length.")
+    return()
+  }
+  d <- vector("numeric", length(x))
+  for(i in 1:length(x)) {
+    if(i == 1){
+      d[i] <- (y[i+1] - y[i])/(x[i+1] - x[i])
+    }else if(i == length(x)) {
+      d[i] <- (y[i] - y[i-1])/(x[i] -x[i-1])
+    }else {
+      d[i] <- (y[i+1] - y[i-1])/(x[i+1] - x[i-1])
+    }
+  }
+  return(d)
 }
 
-#### local.den.onevol ####
-#' Helper for \code{\link{local.den.engine}}.
+#### argmax ####
+#' Find the peaks of a finite data set using smoothing.
 #'
-#' Calculates the volume of a sphere that lies inside the domain given its
-#' distance to the domain boundary in x, y, z, and its radius.
-#'
-#' @param x,y,z Shortest distance to boundary in the x, y, and z directions,
-#'   respectively.
-#' @param r Distance to nearest neighbor of interest (radius of sphere)
-#' @param dz z spacing for numeric integration
-local.den.onevol <- function(x, y, z, r, dz){
+#' This function fits a rolling polynomial interpolation to a set of data and
+#' finds maximums and minimums in data based on these interpolating functoins.
+#' See
+#' \url{https://stats.stackexchange.com/questions/36309/how-do-i-find-peaks-in-a-dataset}
 
-  if(x > r & y > r & z > r){ #If sphere lies fully inside, just return the full sphere volume
-    return((4/3)*pi*r^3)
-  }
-
-  # If not, calculate the volume inside (SEE MATHEMATICA NOTEBOOK FOR DERIVATIONS)
-  Rcalc <- function(z,r){return(sqrt(r^2 - abs(z)^2))} # Plane intersection circle radius at z value from center of sphere of radius r
-  Cseg <- function(x,R){return(R^2 * acos(x/R) - x * sqrt(R^2 - x^2))} # Area of circular segment a distance x from center of circle with radius R
-  Iseg <- function(x,y,R){return(0.5 * (sqrt((R - x)*(R + x)) - y) * (sqrt((R - y)*(R + y)) - x) -
-                                   0.5 * sqrt(R^2 - sqrt((R - x) * (R + x)) * y - sqrt((R - y) * (R + y)) * x) * sqrt(R^2 + sqrt((R - x) * (R + x)) * y + sqrt((R - y) * (R + y)) * x) +
-                                   R^2 * acos(sqrt(R^2 + sqrt(R^2 - x^2) * y + sqrt(R^2 - y^2) * x)/(R*sqrt(2))))} # Area of intersection of two circular segments
-  Carea <- function(x,y,z,zmax,R){ # The outside area of a circle of radius R at some x, y in the xy plane a distance z from the center of the sphere
-    if(z >= zmax){
-      return(pi * R^2)
-    }else if (sqrt(x^2 + y^2) < R){
-      return(Cseg(x,R) + Cseg(y,R) - Iseg(x, y, R))
-    }else if(x < R & y < R){
-      return(Cseg(x,R) + Cseg(y,R))
-    }else if(x < R & y >= R){
-      return(Cseg(x,R))
-    }else if(x >= R & y < R){
-      return(Cseg(y,R))
-    }else{
-      return(0)
-    }}
-
-  # numeric integration
-  zseq <- seq(-r,r,by = dz)
-
-  return((4/3)*pi*r^3 - sum(sapply(zseq, function(q){Carea(x,y,q,z,Rcalc(q,r))*dz})))
-}
-
-#### local.den.engine ####
-#' Find the local intensity density estimate based on nearest neighbors.
-#'
-#' Helper for \code{\link{nndensity.pp3}}.
-#'
-#' @param bdist Result from \code{\link{bdist.points3.multi}} giving shortest
-#'   distance to boundary in the x, y, and z directions.
-#' @param nnk Result from \code{\link[spatstat]{nndist}} or
-#'   \code{\link[spatstat]{nncross}} containing nearest neighbor distances.
-#' @param k Vector of nn#s to calculate estimate for.
-#' @param dz The spacing for numeric integration over the z direction to
-#'   determine edge corrections.
-#' @param par \code{TRUE} or \code{FALSE}: whether or not to calculate in
-#'   parallel
-#' @param cores If \code{par = TRUE}, this is the number of cores to use for the
-#'   parallel calculation.
-#' @return A data.frame with intensity estimates for each value of k (# of
-#'   nearest neighbors).
-#' @seealso \code{\link{nndensity.pp3}}
-
-local.den.engine <- function(bdist, nnk, k, dz, par = TRUE, cores = 7){
-  x <- bdist$x
-  y <- bdist$y
-  z <- bdist$z
-
-  r <- as.list(nnk)
-  ind.x <- 1:length(x)
-  ind.k <- 1:length(k)
-
-  if(par == TRUE){
-    cl <- makePSOCKcluster(cores)
-    clusterExport(cl,"local.den.onevol")
-    clusterExport(cl,c("x","y","z","dz","k","r","ind.x","ind.k"), envir = environment())
-
-    lambda.est <- parLapply(cl, ind.k, function(i.k){
-      vols <- sapply(ind.x, function(i.x,rn){local.den.onevol(x[i.x],y[i.x],z[i.x],rn[i.x],dz)}, r[[i.k]])
-      l.est <- k[i.k]/vols
-      return(l.est)
-    })
-
-    stopCluster(cl)
-
-  }else{
-    lambda.est <- lapply(ind.k, function(i.k){
-      vols <- sapply(ind.x, function(i.x,rn){local.den.onevol(x[i.x],y[i.x],z[i.x],rn[i.x],dz)}, r[[i.k]])
-      l.est <- k[i.k]/vols
-      return(l.est)
-    })
-  }
-
-  res <- as.data.frame(lambda.est)
-  names <- sapply(k,function(x){return(paste("nn",toString(x),sep = ""))})
-  colnames(res) <- names
-
-  return(res)
+argmax <- function(x, y, w = 1, ...) {
+  require(zoo)
+  n <- length(y)
+  y.smooth <- loess(y ~ x, ...)$fitted
+  y.max <- rollapply(zoo(y.smooth), 2*w+1, max, align="center")
+  delta <- y.max - y.smooth[-c(1:w, n+1-1:w)]
+  i.max <- which(delta <= 0) + w
+  list(x = x[i.max], i = i.max, y.hat = y.smooth)
 }

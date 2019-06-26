@@ -1,25 +1,74 @@
-#### anomlocalK3est ####
-#' Perform localK3est with 50th percentile of a RRL subtracted off.
-#'
-#' Similar to \code{\link{anomK3est}}, but returns the anomaly K3est for each
-#' point in the pattern.
-#'
-#' @param X The \code{\link[spatstat]{pp3}} object to be tested.
-#' @param toSub The vector of values to subtract from the square root of the
-#'   results of the K function applied to X.
-#' @param rmax See \code{\link[spatstat]{K3est}}.
-#' @param nrval See \code{\link[spatstat]{K3est}}.
-#'
-#' @return Date frame with columns of the anomaly K test for each point in the
-#'   pattern.
+#
+# This file contains information relating to the calculation and display of envelopes.
+#
 
-anomlocalK3est <- function(X, toSub, rmax, nrval){
-  a <- localK3est(X, rmax = rmax, nrval = nrval, correction = "translation")
-  for(i in 2:ncol(a)){
-    a[,i] <- sqrt(a[,i])-toSub
+#### envPlot ####
+#' Plot envelopes of K3est test
+#'
+#' Plot the results of envelope calculations from the \code{\link{pK3est}},
+#' \code{\link{pG3est}}, or \code{\link{pF3est}} functions, with the ability to
+#' choose the percentiles for plotting.
+#'
+#' @param tests The return file from \code{p(K/G/F)3est} or the first, [[1]],
+#'   entry in the list returned by \code{p(K/G/F)3est} with \code{anom = TRUE}.
+#' @param percentiles Numerical vector of percentiles that you want to see the
+#'   envelopes for. Each between 0 and 1.
+#' @param ylim Numerical vector containing the min and max values for the y axis
+#'   on the plot.
+#' @param xlim Numerical vector containing the min and max values for the x axis
+#'   on the plot.
+#' @param leg True or falsel whether to show the automatically generated legend.
+#' @param colors List of color names to make the envelopes.
+#' @param ... Arguments to be passed into \code{plot()}.
+#' @return Nothing, just produces a plot.
+#' @seealso \code{\link{pK3est}}, \code{\link{pG3est}}, \code{\link{pF3est}}
+#' @export
+
+envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
+                    ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),
+                    leg = TRUE, ...) {
+  color <- c("lightskyblue", "mediumpurple", "lightpink")
+
+  color <- colors
+  # break up data into r values and test results
+  rvals <- tests[,1]
+  tvals <- tests[,2:ncol(tests)]
+
+  nTests <- ncol(tvals) # number of tests done
+  prange <- percentiles * nTests # get the range of indeces for which each percentile spans
+
+  sortedtVals <- t(apply(tvals, 1, sort)) # sort the results at each r value from lowest to highest
+  percentileIndicesBig <- round(nTests/2) + floor(prange/2) # select the high end indexes based on being 1/2 of the percentile span from the middle of the tests
+  percentileIndicesSmall <- round(nTests/2) - floor(prange/2) # do the same for the low end
+
+  # grab out the columns from the sorted test results that we will plot
+  toPlotBigs <- matrix(0, nrow = nrow(tvals), ncol = length(percentiles))
+  toPlotSmalls <- matrix(0, nrow = nrow(tvals), ncol = length(percentiles))
+  for(i in 1:length(percentiles)) {
+    toPlotBigs[,i] <- sortedtVals[,percentileIndicesBig[i]]
+    toPlotSmalls[,i] <- sortedtVals[,percentileIndicesSmall[i]]
   }
 
-  return(a)
+  # plot the envelopes from the percentile data
+  #par(oma = c(0, 2, 0, 0))
+  toplt <- data.frame(rvals,tvals[,1])
+  plot(toplt, type = "n", xlab = "r",
+       ylab = expression(sqrt('K'[3]*'(r)')*'  Anomaly'),
+       ylim = ylim, xlim = xlim, xaxt = "n", ...)
+  axis(1, at = 0:xlim[2], labels=FALSE)
+  axis(1, at = seq(0,xlim[2],by=2))
+  a <- c(rvals$V1, rev(rvals$V1))
+  for(i in 1:length(percentiles)) {
+    polygon(a, c(toPlotBigs[,i], rev(toPlotSmalls[,i])), col = color[i])#,border=color[i],lwd=2)
+  }
+  abline(h = 0, lty = 2, lwd = 1, col="black")
+  if(leg == TRUE) {
+    legend(0, ylim[2], legend = c(paste(toString(percentiles[1]*100), "% AI"),
+                                  paste(toString(percentiles[2]*100), "% AI"),
+                                  paste(toString(percentiles[3]*100), "% AI")),
+           col=c(color[1], color[2], color[3]),
+           lty = c(1,1,1), lwd = c(10,10,10))
+  }
 }
 
 #### pK3est ####
@@ -36,7 +85,7 @@ anomlocalK3est <- function(X, toSub, rmax, nrval){
 #' @param pattern The original \code{\link[spatstat]{pp3}} object.
 #' @param nEvals The number of random relabelings and  that should be performed.
 #' @param rmax See \code{\link[spatstat]{K3est}}. Maximum radius to be
-#' calculated for \code{\link[spatstat]{K3est}}.
+#'   calculated for \code{\link[spatstat]{K3est}}.
 #' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
 #'   \code{\link[spatstat]{K3est}} should be calculated at.
 #' @param correction Either "iso", "trans", or "bord" edge correction.
@@ -53,40 +102,40 @@ anomlocalK3est <- function(X, toSub, rmax, nrval){
 #'   at \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
 #'
-#' \subsection{Isotropic - "iso"}{Isotropic edge correction. Assumes point
-#' pattern is isotropic, or that it can rotate in space without changing
-#' statistics.}
-#' \subsection{Translation - "trans"}{Translation edge correction. Assumes
-#' translation of point pattern does not change statistics.}
-#' \subsection{Border - "bord"}{Border edge correction. Makes no assumptions
-#' about data. Uses only data provided in the original point pattern. Only
-#' evaluates \code{\link[spatstat]{K3est}} when the radius of the search stays
-#' within the domain of the point pattern itself.}
+#'   \subsection{Isotropic - "iso"}{Isotropic edge correction. Assumes point
+#'   pattern is isotropic, or that it can rotate in space without changing
+#'   statistics.} \subsection{Translation - "trans"}{Translation edge
+#'   correction. Assumes translation of point pattern does not change
+#'   statistics.} \subsection{Border - "bord"}{Border edge correction. Makes no
+#'   assumptions about data. Uses only data provided in the original point
+#'   pattern. Only evaluates \code{\link[spatstat]{K3est}} when the radius of
+#'   the search stays within the domain of the point pattern itself.}
 #'
-#' @section Anomaly K3est:
-#' When \code{anom = TRUE}, the function returns the anomaly K3est.This means
-#' that it returns the square root of the \code{\link[spatstat]{K3est}} results,
-#' with the 50th percentile subtracted out. This centers envelopes around zero,
-#' and the square root standardized variance across all r values. See book at
-#' \url{http://spatstat.org/book.html} for a good statistical reference.
+#' @section Anomaly K3est: When \code{anom = TRUE}, the function returns the
+#'   anomaly K3est.This means that it returns the square root of the
+#'   \code{\link[spatstat]{K3est}} results, with the 50th percentile subtracted
+#'   out. This centers envelopes around zero, and the square root standardized
+#'   variance across all r values. See book at
+#'   \url{http://spatstat.org/book.html} for a good statistical reference.
 #'
-#' \code{toSub} is an argument to be paired with \code{anom = TRUE}. If NULL, use
-#' the 50th percentile of the calculated set of \code{\link[spatstat]{K3est}}
-#' envelopes to subtract off. Otherwise, use the second, [[2]], entry in the
-#' list returned from this same function. This is how to compare envelope
-#' calculations from different point patterns. You must subtract the same values
-#' from both data sets. toSub allows you to input the values that were
-#' subtracted from a previous set of envelopes, for comparison.
+#'   \code{toSub} is an argument to be paired with \code{anom = TRUE}. If NULL,
+#'   use the 50th percentile of the calculated set of
+#'   \code{\link[spatstat]{K3est}} envelopes to subtract off. Otherwise, use the
+#'   second, [[2]], entry in the list returned from this same function. This is
+#'   how to compare envelope calculations from different point patterns. You
+#'   must subtract the same values from both data sets. toSub allows you to
+#'   input the values that were subtracted from a previous set of envelopes, for
+#'   comparison.
 #'
-#' @return
-#' \subsection{For \code{anom = FALSE}}{Returns a matrix containing the data
-#' from the all of the \code{\link[spatstat]{K3est}} runs on different
-#' re-labelings. Can plot data using \code{\link{envPlot}}.}
-#' \subsection{For \code{anom = TRUE}}{A list of: [[1]] Matrix of data for all
-#' relabelings. Can be plotted using \code{\link{envPlot}}. [[2]] Vector
-#' containing the values that were subtracted from the results at each r value.
-#' Can be used to subtract from another set of envelopes for comparison. [[3]]
-#' rmax used in the calculation. [[4]] nrval used in the calculation.}
+#' @return \subsection{For \code{anom = FALSE}}{Returns a matrix containing the
+#' data from the all of the \code{\link[spatstat]{K3est}} runs on different
+#' re-labelings. Can plot data using \code{\link{envPlot}}.} \subsection{For
+#' \code{anom = TRUE}}{A list of: [[1]] Matrix of data for all relabelings. Can
+#' be plotted using \code{\link{envPlot}}. [[2]] Vector containing the values
+#' that were subtracted from the results at each r value. Can be used to
+#' subtract from another set of envelopes for comparison. [[3]] rmax used in the
+#' calculation. [[4]] nrval used in the calculation.}
+#' @export
 
 pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
                    correction="trans",anom=FALSE,toSub=NULL, sorted=TRUE,
@@ -168,7 +217,7 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
 
     tvals_sorted <- t(apply(tvals,1,sort))
 
-#browser()
+    #browser()
 
     if(is.null(toSub)){
       if(nEvals%%2==0){
@@ -216,7 +265,7 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
 #' @return Returns data fram containing r values and associated anomaly K3est
 #'   values.
 #'
-#'   @export
+#' @export
 
 anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 
@@ -433,7 +482,7 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 #' @return Returns data fram containing r values and associated anomaly G3est
 #'   values.
 #'
-#'   @export
+#' @export
 
 anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 
@@ -507,33 +556,31 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #'   \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
 #'
-#' \subsection{Reduced Sample - "rs"}{}
-#' \subsection{Kaplan-Meier - "km"}{}
-#' \subsection{Chiu-Stoyan (aka Hanisch) - "cs"}{}
+#'   \subsection{Reduced Sample - "rs"}{} \subsection{Kaplan-Meier - "km"}{}
+#'   \subsection{Chiu-Stoyan (aka Hanisch) - "cs"}{}
 #'
-#' @section Anomaly F3est:
-#' When \code{anom = TRUE}, the function returns the anomaly
-#' \code{\link[spatstat]{F3est}}.This means that it returns the
-#' \code{\link[spatstat]{F3est}} results with the 50th percentile subtracted
-#' out. This centers envelopes around zero.
+#' @section Anomaly F3est: When \code{anom = TRUE}, the function returns the
+#'   anomaly \code{\link[spatstat]{F3est}}.This means that it returns the
+#'   \code{\link[spatstat]{F3est}} results with the 50th percentile subtracted
+#'   out. This centers envelopes around zero.
 #'
-#' \code{toSub} is an argumet to be paired with \code{anom = TRUE}. If NULL, use
-#' the 50th percentile of the calculated set of \code{\link[spatstat]{F3est}}
-#' envelopes to subtract off. Otherwise, use the second, [[2]], entry in the
-#' list returned from this same function. This is how to compare envelope
-#' calculations from different point patterns. You must subtract the same values
-#' from both data sets. toSub allows you to input the values that were
-#' subtracted from a previous set of envelopes, for comparison.
+#'   \code{toSub} is an argumet to be paired with \code{anom = TRUE}. If NULL,
+#'   use the 50th percentile of the calculated set of
+#'   \code{\link[spatstat]{F3est}} envelopes to subtract off. Otherwise, use the
+#'   second, [[2]], entry in the list returned from this same function. This is
+#'   how to compare envelope calculations from different point patterns. You
+#'   must subtract the same values from both data sets. toSub allows you to
+#'   input the values that were subtracted from a previous set of envelopes, for
+#'   comparison.
 #'
-#' @return
-#' \subsection{For \code{anom = FALSE}}{Returns a matrix containing the data
-#' from the all of the \code{\link[spatstat]{F3est}} runs on different
-#' re-labelings. Can plot data using \code{\link{envPlot}}.}
-#' \subsection{For \code{anom = TRUE}}{A list of: [[1]] Matrix of data for all
-#' relabelings. Can be plotted using \code{\link{envPlot}}. [[2]] Vector
-#' containing the values that were subtracted from the results at each r value.
-#' Can be used to subtract from another set of envelopes for comparison. [[3]]
-#' rmax used in the calculation. [[4]] nrval used in the calculation.}
+#' @return \subsection{For \code{anom = FALSE}}{Returns a matrix containing the
+#' data from the all of the \code{\link[spatstat]{F3est}} runs on different
+#' re-labelings. Can plot data using \code{\link{envPlot}}.} \subsection{For
+#' \code{anom = TRUE}}{A list of: [[1]] Matrix of data for all relabelings. Can
+#' be plotted using \code{\link{envPlot}}. [[2]] Vector containing the values
+#' that were subtracted from the results at each r value. Can be used to
+#' subtract from another set of envelopes for comparison. [[3]] rmax used in the
+#' calculation. [[4]] nrval used in the calculation.}
 #'
 #' @export
 
@@ -652,7 +699,7 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 #' @return Returns data fram containing r values and associated anomaly F3est
 #'   values.
 #'
-#'   @export
+#' @export
 
 anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 
@@ -695,9 +742,6 @@ anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
     return()
   }
 }
-
-
-############## Helper Functions #################
 
 #### bK3est ####
 #' 3D Border correction for K3est
@@ -768,35 +812,3 @@ bK3est <- function(X, rmax=NULL, nrval=128){
 
   return(K)
 }
-
-#### bdist.points3 ####
-#' Extension of \code{\link[spatstat]{bdist.points}}. Helper function for border
-#' correction \code{\link{bK3est}}.
-#'
-#' Finds the smallest distance to a boundary for each point in a point pattern.
-#'
-#' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
-#'   object.
-#' @return An object containing the shortest distance to the boundary for each
-#'   point in the pattern X.
-
-bdist.points3 <- function (X) {
-
-  verifyclass(X, "pp3")
-
-  x <- X$data$x
-  y <- X$data$y
-  z <- X$data$z
-  d <- X$domain
-
-  xmin <- min(d$xrange)
-  xmax <- max(d$xrange)
-  ymin <- min(d$yrange)
-  ymax <- max(d$yrange)
-  zmin <- min(d$zrange)
-  zmax <- max(d$zrange)
-  result <- pmin.int(x - xmin, xmax - x, y - ymin, ymax - y , z - zmin , zmax - z)
-
-  return(result)
-}
-
