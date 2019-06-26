@@ -3,7 +3,7 @@
 
 #### subSquare ####
 #' Select a subsection from the center of a \code{\link[spatstat]{pp3}} data
-#' file
+#' file.
 #'
 #' Given an original \code{\link[spatstat]{pp3}} object, \code{subSquare} will
 #' select a rectangular prism centered at the center of the original point
@@ -68,8 +68,7 @@ subSquare <- function(orig, win) {
 #' @param s Seed for the random selection
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
-#'
-#'   @export
+
 percentSelect <- function(perc, pattern) {
 
   reLabel <- rlabel(pattern,
@@ -99,9 +98,8 @@ percentSelect <- function(perc, pattern) {
 #' @param leg True or falsel whether to show the automatically generated legend.
 #' @param colors List of color names to make the envelopes.
 #' @param ... Arguments to be passed into \code{plot()}.
-#' @return Nothing.
-#'
-#' @export
+#' @return Nothing, just produces a plot.
+#' @seealso \code{\link{pK3est}}, \code{\link{pG3est}}, \code{\link{pF3est}}
 
 envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
                     ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),

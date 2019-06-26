@@ -84,7 +84,25 @@ k3metrics <- function(rvals.new, tvals.new, toplot) {
               -peak.info$derivsm$y.hat[peak.info$derivsm$i[1]])) #Kdm
 }
 
-localk3metrics <- function(kl, start){
+#### localk3metrics ####
+#' Extract variance of R_max over local K functions from a point pattern.
+#'
+#' This function takes the output of \code{\link{localK3est}}, calculates R_max
+#' for the individual local K measures around each point, and returns the
+#' variance of these measures.
+#'
+#' @param kl The output object from a \code{\link{localK3est}} function call.
+#' @param start The x value index to start searching for mertics at (to avoid
+#'   strange behavior near r = 0).
+#' @param nsamp How many samples of R_max to take from the sample. If
+#'   \code{NULL}, defaults to the number of points in the pattern (this can be
+#'   very computationally expensive for large patterns).
+#' @return A signle numerical value which is the variance of the R_max metric
+#'   over \code{nsamp} individual points in the pattern.
+#' @seealso \code{\link{localK3est}}, \code{\link[spatstat]{K3est}},
+#'   \code{\link{kseries2}}
+
+localk3metrics <- function(kl, start, nsamp = NULL){
   span <- NA
   i <- 1
   while(is.na(span)){
@@ -97,15 +115,10 @@ localk3metrics <- function(kl, start){
     i <- i + 1
   }
 
-  np <- ncol(kl)-3
-  pks <- rep(0,np)
-  # for(i in 1:np){
-  #   t.n <- kl[15:nrow(kl),i+3]
-  #   a <- argmax(r.n, t.n, w = 3, span = span)
-  #   pks[i] <- a$x[1]
-  # }
+  if(is.null(nsamp)){
+    nsamp <- np
+  }
 
-  nsamp <- 2000
   pks2 <- rep(0,nsamp)
   pts <- sample(1:np, nsamp, replace = FALSE)
   for(i in 1:nsamp){
@@ -136,25 +149,34 @@ localk3metrics <- function(kl, start){
 #' @param nr Number of r values to evaluate k function at.
 #' @param toSub A vector of values to substitute for the \code{\link{anomK3est}}
 #'   function.
-#' @param hpc Whether or not using the hpc.
-#' @param s seed.
+#' @param rcp_path String holding the file path to the directory holding the RCP
+#'   'FinalConfig' and 'system' files.
+#' @param verbose \code{TRUE} or \code{FALSE}. Whether to output update files to
+#'   a junk folder.
+#' @param junk_path String holding the file path to the directory where the
+#'   update files should go if \code{verbose = TRUE}.
+#' @param s Random seed.
 #'
 #' @return Matrix containing 5 metrics and the seed value for each parameter
 #'   combination given in the \code{tot} list.
-kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
+
+kseries2 <- function(j, p ,tot, maxr, nr, toSub,
+                     rcp_path = '~/Research/point_patterns/Final',
+                     verbose = FALSE,
+                     junk_path = '~/Research/junk/',
+                     s){
   #t1 <- Sys.time()
   under.nums <- seq(2,(p+1),1)
   under.nums[length(under.nums)] <- 1
   over.nums <- seq(1,p,1)
 
   #upload
-  if(hpc == FALSE){
-    under <- read.rcp(paste('~/Research/point_patterns/Final/FinalConfig',toString(under.nums[j]),sep=""),paste('~/Research/point_patterns/Final/system',toString(under.nums[j]),sep=""),scaleUp = TRUE,newRadius = 0.5)
-    over <- read.rcp(paste('~/Research/point_patterns/Final/FinalConfig',toString(over.nums[j]),sep=""),paste('~/Research/point_patterns/Final/system',toString(over.nums[j]),sep=""),scaleUp = TRUE,newRadius = 0.5)
-  }else{
-    under <- read.rcp(paste('~/scratch/Rcode/FinalConfigs/FinalConfig',toString(under.nums[j]),sep=""),paste('~/scratch/Rcode/systems/system',toString(under.nums[j]),sep=""),scaleUp = TRUE,newRadius = 0.5)
-    over <- read.rcp(paste('~/scratch/Rcode/FinalConfigs/FinalConfig',toString(over.nums[j]),sep=""),paste('~/scratch/Rcode/systems/system',toString(over.nums[j]),sep=""),scaleUp = TRUE,newRadius = 0.5)
-  }
+  under <- read.rcp(paste(rcp_path, '/FinalConfig', toString(under.nums[j]), sep=''),
+                    paste(rcp_path, '/system', toString(under.nums[j]), sep=''),
+                    scaleUp = TRUE,newRadius = 0.5)
+  over <- read.rcp(paste(rcp_path, '/FinalConfig', toString(over.nums[j]), sep=''),
+                   paste(rcp_path, '/system', toString(over.nums[j]), sep=''),
+                   scaleUp = TRUE,newRadius = 0.5)
 
   under.big <- stitch.size(under, boxSize = c(60,60,60))
   over.big <- stitch.size(over, boxSize = c(60,60,60))
@@ -165,7 +187,7 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
   outtemp <- matrix(NA, nrow = length(tot), ncol = 5)
 
   for(i in 1:length(tot)){
-    print(i)
+    #print(i)
     if(length(tot[[1]]) == 4){
       cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
                              cr=tot[[i]][1],
@@ -183,16 +205,11 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
     if(is.numeric(cluster)){
       outtemp[i,] <- c(NA, NA, NA, NA, NA)
       a <- as.data.frame(1)
-      if(hpc == TRUE){
+      if(verbose == TRUE){
         if(i > 1){
-          file.remove(paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
+          file.remove(paste(junk_path, '/', toString(j), '_', toString(i-1), '.csv', sep = ''))
         }
-        write.csv(a, file = paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i),".csv", sep = ""))
-      }else{
-        if(i > 1){
-          file.remove(paste("~/Research/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
-        }
-        write.csv(a, file = paste("~/Research/junk/",toString(j),"_",toString(i),".csv", sep = ""))
+        write.csv(a, file = paste(junk_path, '/', toString(j), '_', toString(i), '.csv', sep = ''))
       }
       next
     }
@@ -203,9 +220,9 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
     # get out that peak info son
     rvals.new <- rvals[15:length(rvals)]
     tvals.new <- tvals[15:length(rvals)]
+
     #get those metrics out
     metrics <- k3metrics(rvals.new, tvals.new, FALSE)
-    #locmetric <- localk3metrics(result, 15)
 
     outtemp[i,] <- c(metrics[[1]], metrics[[2]], metrics[[3]], metrics[[4]], metrics[[5]])
 
@@ -216,24 +233,16 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
 
     a <- as.data.frame(1)
 
-    if(hpc == TRUE){
+    if(verbose == TRUE){
       if(i > 1){
-        file.remove(paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
+        file.remove(paste(junk_path, '/', toString(j), '_', toString(i-1), '.csv', sep = ''))
       }
-      write.csv(a, file = paste("~/scratch/Rcode/junk/",toString(j),"_",toString(i),".csv", sep = ""))
-    }else{
-      if(i > 1){
-        file.remove(paste("~/Research/junk/",toString(j),"_",toString(i-1),".csv", sep = ""))
-      }
-      write.csv(a, file = paste("~/Research/junk/",toString(j),"_",toString(i),".csv", sep = ""))
+      write.csv(a, file = paste(junk_path, '/', toString(j), '_', toString(i), '.csv', sep = ''))
     }
-
   }
 
-  #t2 <- Sys.time()
-  #print(t2-t1)
-
   rm(over, under, over.big, under.big)
+  gc()
 
   return(outtemp)
 }
@@ -245,7 +254,7 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, hpc = TRUE, s){
 #'
 #' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
 #'   object.
-#' @return An object containing the shortest distance to the closest three
+#' @return A data.frame containing the shortest distance to the closest three
 #'   boundaries for each point in the pattern X.
 
 bdist.points3.multi <- function (X){
@@ -328,9 +337,10 @@ local.den.onevol <- function(x, y, z, r, dz){
 #'   parallel
 #' @param cores If \code{par = TRUE}, this is the number of cores to use for the
 #'   parallel calculation.
-#'
 #' @return A data.frame with intensity estimates for each value of k (# of
 #'   nearest neighbors).
+#' @seealso \code{\link{nndensity.pp3}}
+
 local.den.engine <- function(bdist, nnk, k, dz, par = TRUE, cores = 7){
   x <- bdist$x
   y <- bdist$y

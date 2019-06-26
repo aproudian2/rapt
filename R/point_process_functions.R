@@ -36,16 +36,19 @@ anomlocalK3est <- function(X, toSub, rmax, nrval){
 #' @param pattern The original \code{\link[spatstat]{pp3}} object.
 #' @param nEvals The number of random relabelings and  that should be performed.
 #' @param rmax See \code{\link[spatstat]{K3est}}. Maximum radius to be
-#'   calculated for \code{\link[spatstat]{K3est}}.
+#' calculated for \code{\link[spatstat]{K3est}}.
 #' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
 #'   \code{\link[spatstat]{K3est}} should be calculated at.
 #' @param correction Either "iso", "trans", or "bord" edge correction.
 #' @param anom Whether or not to retun the anomaly results. \code{TRUE} or
-#' \code{FALSE}. See section below for more info.
+#'   \code{FALSE}. See section below for more info.
 #' @param toSub The numeric vector of data to subtract for the "anom" pK3est.
 #'   Only used when \code{anom = TRUE}. See below for more info.
 #' @param sorted Whether to return a sorted table of RRLs (TRUE) or an unsorted
 #'   one, where the RRLs are in their original rows.
+#' @param cores Number of cores to use for parallel processing. If no parallel
+#'   desired, set to 1. If NULL, will automatically set to the number of cores
+#'   available on the machine.
 #' @section Edge Corrections: See \code{\link[spatstat]{Kest}} or book availible
 #'   at \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
@@ -84,18 +87,20 @@ anomlocalK3est <- function(X, toSub, rmax, nrval){
 #' containing the values that were subtracted from the results at each r value.
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
-#'
-#' @export
 
-pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="trans",anom=FALSE,toSub=NULL, sorted=TRUE){
+pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
+                   correction="trans",anom=FALSE,toSub=NULL, sorted=TRUE,
+                   cores = NULL){
 
   #find cores and initialize the cluster
-  cores2use <- detectCores()-1
+  if(is.null(cores)){
+    cores2use <- detectCores()
+  }else{
+    cores2use <- cores
+  }
   cl <- makePSOCKcluster(cores2use)
-  #clusterExport(cl,"percentSelect")
   clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -175,7 +180,6 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="trans",
       }
     }
 
-#browser()
     if(sorted == TRUE){
       tvals <- apply(tvals_sorted,2,function(x){
         x-toSub})
@@ -183,8 +187,6 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="trans",
       tvals <- apply(tvals,2,function(x){
         x-toSub})
     }
-
-#browser()
 
     tests <- cbind(tests[,1],tvals)
 
@@ -279,6 +281,9 @@ anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 #'   \code{FALSE}. See section below for more info.
 #' @param toSub The numeric vector of data to subtract for the "anom" pG3est.
 #'   Only used when \code{anom = TRUE}. See below for more info.
+#' @param cores Number of cores to use for parallel processing. If no parallel
+#'   desired, set to 1. If NULL, will automatically set to the number of cores
+#'   available on the machine.
 #' @section Edge Corrections: See  book availible at
 #'   \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
@@ -313,10 +318,16 @@ anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 #'
 #' @export
 
-pG3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",anom=FALSE,toSub=NULL){
+pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
+                   correction="rs", anom=FALSE, toSub=NULL,
+                   cores=NULL){
 
   #find cores and initialize the cluster
-  cores2use <- detectCores()-1
+  if(is.null(cores)){
+    cores2use <- detectCores()
+  } else {
+    cores2use <- cores
+  }
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
   clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
@@ -489,6 +500,9 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #'   \code{FALSE}. See section below for more info.
 #' @param toSub The numeric vector of data to subtract for the "anom" pF3est.
 #'   Only used when \code{anom = TRUE}. See below for more info.
+#' @param cores Number of cores to use for parallel processing. If no parallel
+#'   desired, set to 1. If NULL, will automatically set to the number of cores
+#'   available on the machine.
 #' @section Edge Corrections: See  book availible at
 #'   \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
@@ -523,10 +537,16 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #'
 #' @export
 
-pF3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,correction="rs",anom=FALSE,toSub=NULL){
+pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
+                   correction="rs", anom=FALSE, toSub=NULL,
+                   cores=NULL){
 
   #find cores and initialize the cluster
-  cores2use <- detectCores()-1
+  if(is.null(cores)){
+    cores2use <- detectCores()
+  } else {
+    cores2use <- cores
+  }
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
   clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
@@ -692,7 +712,7 @@ anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #'   \code{\link[spatstat]{K3est}} should be calculated at.
 #' @return Border corrected \code{\link[spatstat]{K3est}} data for object X.
 
-bK3est <- function(X,rmax=NULL,nrval=128){
+bK3est <- function(X, rmax=NULL, nrval=128){
 
   verifyclass(X,"pp3")
 
@@ -707,18 +727,18 @@ bK3est <- function(X,rmax=NULL,nrval=128){
     return()
   }
 
-  cp <- closepairs(X,rmax,twice=FALSE,what="indices")
-  cpm <- cbind(cp[[1]],cp[[2]])
+  cp <- closepairs(X, rmax, twice=FALSE, what="indices")
+  cpm <- cbind(cp[[1]], cp[[2]])
   cpm<-cpm[order(cpm[,1]),]
   distmat <- as.matrix(dist(coords(X)))
   cpmdist <- rep(0,nrow(cpm))
   for(i in 1:nrow(cpm)){
     temp <- sort(cpm[i,])
-    cpmdist[i] <- distmat[temp[2],temp[1]]
+    cpmdist[i] <- distmat[temp[2], temp[1]]
   }
 
-  rlist <- seq(from=0,to=rmax,length.out=nrval)
-  Kb <- rep(0,nrval)
+  rlist <- seq(from=0, to=rmax, length.out=nrval)
+  Kb <- rep(0, nrval)
 
   np <- 0
   for(i in 1:n){
@@ -750,11 +770,13 @@ bK3est <- function(X,rmax=NULL,nrval=128){
 }
 
 #### bdist.points3 ####
-#' Helper function for border correction \code{\link{bK3est}}.
+#' Extension of \code{\link[spatstat]{bdist.points}}. Helper function for border
+#' correction \code{\link{bK3est}}.
 #'
 #' Finds the smallest distance to a boundary for each point in a point pattern.
 #'
-#' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}} object.
+#' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
+#'   object.
 #' @return An object containing the shortest distance to the boundary for each
 #'   point in the pattern X.
 

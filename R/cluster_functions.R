@@ -655,6 +655,7 @@ makecluster <- function(under,over,radius1,radius2,
 #' @return A list of [[1]] A \code{\link[spatstat]{pp3}} object containing the
 #'   cluster points, [[2]] The overall intensity of the point pattern; Total
 #'   number of points/total volume.
+
 hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
   hcp.c <- hcp.gen(csep_r,win)
   hcp.pp3 <- createSpat(hcp.c,win)
@@ -703,6 +704,8 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 #' @param win A \code{\link[spatstat]{box3}} object defining the window for the generation.
 #'
 #' @return A data frame object containing xyz coordinates of the HCP lattice centers.
+#' @seealso \code{\link{hcpcluster}}
+
 hcp.gen <- function(r,win){
   xyz <- list()
   i <- 0
@@ -791,30 +794,6 @@ splitpp3 <- function(overPattern, num){
   pp3.2 <- createSpat(pat2.xyz)
 
   return(list(pp3.2,pp3.1))
-}
-
-#### trueBox ####
-#' Helper for \code{\link{makecluster}} that determines a
-#' \code{\link[spatstat]{pp3}} object true dimensions.
-#'
-#' RCP pattern generations, when loaded into R, lose their boundary information.
-#' R interprets their boundary to be the extreme point locations in each
-#' direction, when really they are usually nice integer values. This function
-#' simply rounds the R boundary values to the true ones.
-#'
-#' @param pp3file The \code{\link[spatstat]{pp3}} object to find the bounds of.
-#' @return A \code{\link[spatstat]{as.box3}} object containing the true volume
-#'   dimensions.
-
-trueBox <- function(pp3file) {
-
-  xr <- round(domain(pp3file)$xrange)
-  yr <- round(domain(pp3file)$yrange)
-  zr <- round(domain(pp3file)$zrange)
-
-  a <- box3(xrange = xr, yrange = yr, zrange = zr)
-
-  return(a)
 }
 
 #### crAdjust ####
@@ -1034,8 +1013,7 @@ crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
 #'   want the function to insert points to.
 #' @return New indices vector containing new cluster points randomly placed.
 
-# function to randomly place points within the under data set, if not 100% of the cluster points are set to be in the clusters
-randomInsert <- function(cluster.indices,n,N,s,points.avoid = cluster.indices){
+randomInsert <- function(cluster.indices, n, N,s, points.avoid = cluster.indices){
   #cluster.Indices is a vector containig the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
@@ -1065,8 +1043,7 @@ randomInsert <- function(cluster.indices,n,N,s,points.avoid = cluster.indices){
 #' @param s The random seed for the random selection of points to take away.
 #' @return New indices vector containing new cluster points randomly placed.
 
-# function to randomly place points within the under data set, if not 100% of the cluster points are set to be in the clusters
-randomTakeAway <- function(cluster.indices,n,N,s){
+randomTakeAway <- function(cluster.indices, n, N, s){
   #cluster.Indices is a vector containig the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
@@ -1097,6 +1074,7 @@ randomTakeAway <- function(cluster.indices,n,N,s){
 #'
 #' @return If \code{coords = "rec"}, returns a vecotr of cartesian coordinates.
 #'   If \code{coords = "sph"}, returns a vector of spherical coordinates.
+
 rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1){
 
   if(method == 1){
