@@ -143,7 +143,6 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
 pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
                    correction="trans",anom=FALSE,toSub=NULL, sorted=TRUE,
                    cores = NULL){
-
   #find cores and initialize the cluster
   if(is.null(cores)){
     cores2use <- detectCores()
