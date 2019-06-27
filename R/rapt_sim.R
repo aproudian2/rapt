@@ -4,6 +4,7 @@
 
 #### rpoint3 ####
 #' Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.
+#' @export
 rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
 {
@@ -65,6 +66,7 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
 #### rPoissonCluster3 ####
 #' Extends \code{\link[spatstat]{rPoissonCluster}} to
 #' \code{\link[spatstat]{pp3}}.
+#' @export
 rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
                              nsim = 1, drop = T)
 {
