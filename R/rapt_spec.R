@@ -54,6 +54,9 @@ rngCount <- function(pos, rng) {
 #### rngPOS ####
 #' Extract hits according to a RNG and create a new pos
 #'
+#' rngPOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
+#' is within the ranges of the provided \code{RRNG}.
+#'
 #' @param pos The pos or ato to extract hits
 #' @param rng The ranges to extract
 #' @return A data.frame of the same structure as pos
