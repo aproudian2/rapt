@@ -698,6 +698,45 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 #########################################
 # Helper functions
 
+#### bcc.gen ####
+#' Generate body centerd cubic (BCC) lattice of points in 3D.
+#'
+#' Generates a BCC point pattern with a specified window size and number of
+#' points desired in the pattern.
+#'
+#' @param npoint Approximate number of points to have in the pattern.
+#' @param win A \code{\link[spatstat]{box3}} object containing the window for
+#'   the final pattern.
+#'
+#' @return A \code{\link[spatstat]{pp3}} object with the lattice points.
+#' @export
+
+bcc.gen <- function(npoint, win){
+  vol <- volume(win)
+  n.units <- npoint/2
+  vol.per.unit <- vol/n.units
+  a <- (vol.per.unit)^(1/3)
+
+  x <- seq(win$xrange[1], win$xrange[2], by = a)
+  y <- seq(win$yrange[1], win$yrange[2], by = a)
+  z <- seq(win$zrange[1], win$zrange[2], by = a)
+
+  grid <- expand.grid(x, y, z)
+
+  x.c <- seq(win$xrange[1] + a/2, win$xrange[2] - a/2, by = a)
+  y.c <- seq(win$yrange[1] + a/2, win$yrange[2] - a/2, by = a)
+  z.c <- seq(win$zrange[1] + a/2, win$zrange[2] - a/2, by = a)
+
+  grid.c <- expand.grid(x.c, y.c, z.c)
+
+  grid.full <- rbind(grid, grid.c)
+  names(grid.full) <- c('x','y','z')
+
+  lat.pp3 <- pp3(grid.full$x, grid.full$y, grid.full$z, win)
+
+  return(lat.pp3)
+}
+
 #### hcp.gen ####
 #' Helper for \code{\link{hcpcluster}} which generates a HCP lattice with the correct spacing.
 #'
@@ -710,7 +749,7 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 #' @return A data frame object containing xyz coordinates of the HCP lattice centers.
 #' @seealso \code{\link{hcpcluster}}
 
-hcp.gen <- function(r,win){
+hcp.gen <- function(r, win){
   xyz <- list()
   i <- 0
   j <- 0
