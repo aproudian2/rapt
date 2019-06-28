@@ -15,7 +15,8 @@ rngPOS(pos, rng)
 A data.frame of the same structure as pos
 }
 \description{
-Extract hits according to a RNG and create a new pos
+rngPOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
+is within the ranges of the provided \code{RRNG}.
 }
 \seealso{
 \code{\link{rangePOS}}
