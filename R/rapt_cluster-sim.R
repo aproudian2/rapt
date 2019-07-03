@@ -1115,7 +1115,7 @@ randomTakeAway <- function(cluster.indices, n, N, s){
 #' @param coords Return comand. Either "rec" or "sph". See below for more.
 #' @param method 1 for uniformly distributing direction and normally distributing r, 2 for normally distributing x y and z
 #'
-#' @return If \code{coords = "rec"}, returns a vecotr of cartesian coordinates.
+#' @return If \code{coords = "rec"}, returns a vector of cartesian coordinates.
 #'   If \code{coords = "sph"}, returns a vector of spherical coordinates.
 
 rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1){
