@@ -161,6 +161,7 @@ localk3metrics <- function(kl, start, nsamp = NULL){
 #'
 #' @return Matrix containing 5 metrics and the seed value for each parameter
 #'   combination given in the \code{tot} list.
+#' @export
 
 kseries2 <- function(j, p ,tot, maxr, nr, toSub,
                      rcp_path = '~/Research/point_patterns/Final',
@@ -293,7 +294,7 @@ finite_deriv <- function(x,y) {
 argmax <- function(x, y, w = 1, ...) {
   n <- length(y)
   y.smooth <- loess(y ~ x, ...)$fitted
-  y.max <- zoo::rollapply(zoo(y.smooth), 2*w+1, max, align="center")
+  y.max <- rollapply(zoo(y.smooth), 2*w+1, max, align="center")
   delta <- y.max - y.smooth[-c(1:w, n+1-1:w)]
   i.max <- which(delta <= 0) + w
   list(x = x[i.max], i = i.max, y.hat = y.smooth)
