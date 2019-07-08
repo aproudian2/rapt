@@ -18,7 +18,7 @@ rgblur(n = 1, mean = 0, sd = 1, coords = "rec", method = 1)
 \item{method}{1 for uniformly distributing direction and normally distributing r, 2 for normally distributing x y and z}
 }
 \value{
-If \code{coords = "rec"}, returns a vecotr of cartesian coordinates.
+If \code{coords = "rec"}, returns a vector of cartesian coordinates.
   If \code{coords = "sph"}, returns a vector of spherical coordinates.
 }
 \description{

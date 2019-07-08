@@ -146,7 +146,7 @@ localk3metrics <- function(kl, start, nsamp = NULL){
 #'   written)
 #' @param p The total number of RCP patterns available.
 #' @param tot A list of cluster properties to test. This should be a list of
-#'   vectors containing c(r, den, rb, gbp).
+#'   vectors containing \code{c(r, den, rb, gbp)} OR \code{c(r, den, gbp)}.
 #' @param maxr Maximum r to calculate K function to.
 #' @param nr Number of r values to evaluate k function at.
 #' @param toSub A vector of values to substitute for the \code{\link{anomK3est}}
@@ -166,7 +166,7 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub,
                      rcp_path = '~/Research/point_patterns/Final',
                      verbose = FALSE,
                      junk_path = '~/Research/junk/',
-                     s){
+                     s = NULL){
   #t1 <- Sys.time()
   under.nums <- seq(2,(p+1),1)
   under.nums[length(under.nums)] <- 1
@@ -183,7 +183,10 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub,
   under.big <- stitch.size(under, boxSize = c(60,60,60))
   over.big <- stitch.size(over, boxSize = c(60,60,60))
 
-  set.seed(s)
+  if(!is.null(s)){
+    set.seed(s)
+  }
+
   cnt <- j*length(tot)*round(runif(1, 1, 10000))
 
   outtemp <- matrix(NA, nrow = length(tot), ncol = 5)
