@@ -7,7 +7,7 @@ cluster simulations}
 \usage{
 kseries2(j, p, tot, maxr, nr, toSub,
   rcp_path = "~/Research/point_patterns/Final", verbose = FALSE,
-  junk_path = "~/Research/junk/", s)
+  junk_path = "~/Research/junk/", s = NULL)
 }
 \arguments{
 \item{j}{The index of the RCP pattern to run (note that this might only be
@@ -17,7 +17,7 @@ written)}
 \item{p}{The total number of RCP patterns available.}
 
 \item{tot}{A list of cluster properties to test. This should be a list of
-vectors containing c(r, den, rb, gbp).}
+vectors containing \code{c(r, den, rb, gbp)} OR \code{c(r, den, gbp)}.}
 
 \item{maxr}{Maximum r to calculate K function to.}
 

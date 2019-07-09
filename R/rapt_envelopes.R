@@ -59,8 +59,8 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
        ylab = ylab, xlab = xlab,
        ylim = ylim, xlim = xlim, xaxt = "n", ...)
   axis(1, at = 0:xlim[2], labels=FALSE)
-  axis(1, at = seq(0,xlim[2],by=2))
-  a <- c(rvals$V1, rev(rvals$V1))
+  axis(1, at = seq(0,xlim[2],by=xlim[2]/10), ...)
+  a <- c(rvals, rev(rvals))
   for(i in 1:length(percentiles)) {
     polygon(a, c(toPlotBigs[,i], rev(toPlotSmalls[,i])), col = color[i])#,border=color[i],lwd=2)
   }
