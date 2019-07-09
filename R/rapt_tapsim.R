@@ -16,11 +16,21 @@ readResult <- function(fp, type = 'ASCII') {
     txt <- readLines(fp, n = 100)  # Not ideal to hard code the max...
     skip <- grep(type, txt)
     dat <- read.delim(fp, header = FALSE, skip = skip)
-    names(dat) <- c('index','id','number','voltage','startX','startY','startZ',
-                    'stopX','stopY','stopZ','tof','probability',
-                    'potentialBefore',
-                    'fieldBeforeX','fieldBeforeY','fieldBeforeZ',
-                    'potentialAfter','fieldAfterX','fieldAfterY','fieldAfterZ',
-                    'normalX','normalY','normalZ','apexX','apexY','apexZ')
+    n <- ncol(dat)
+    if(n == 26) {
+        names(dat) <- c('index','id','number','voltage',
+                        'startX','startY','startZ',
+                        'stopX','stopY','stopZ','tof','probability',
+                        'potentialBefore',
+                        'fieldBeforeX','fieldBeforeY','fieldBeforeZ',
+                        'potentialAfter',
+                        'fieldAfterX','fieldAfterY','fieldAfterZ',
+                        'normalX','normalY','normalZ','apexX','apexY','apexZ')
+    } else if(n == 18) {
+        names(dat) <- c('index','id','number','voltage',
+                        'startX','startY','startZ',
+                        'stopX','stopY','stopZ','tof','probability',
+                        'normalX','normalY','normalZ','apexX','apexY','apexZ')
+    } else {}
     return(dat)
 }
