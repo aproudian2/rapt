@@ -133,6 +133,86 @@ localk3metrics <- function(kl, start, nsamp = NULL){
   return(b)
 }
 
+#### kseries ####
+#' Simulate a clustered point pattern and extract the K-function metrics from
+#' it.
+#'
+#' This function takes an RCP point pattern and a single set of parameters to
+#' create a cluster and extracts the K function metrics.
+#'
+#' @param j The index of the RCP pattern to run.
+#' @param params Vector of length 3 or 4 containing either \code{c(r, den, gbp)}
+#'   or \code{c(r, den, rb, gbp)}.
+#' @param maxr Maximum r to calculate K-function to.
+#' @param nr Number of r values to evaluate K-function at.
+#' @param toSub A vector of values to substitute for the \code{\link{anomK3est}}
+#'   function.
+#' @param rcp_path String holding the file path to the directory holding the RCP
+#'   'FinalConfig' and 'system' files.
+#' @param s Random seed.
+#'
+#' @return Vector containing 5 metrics.
+#' @export
+
+kseries <- function(j, params, maxr, nr, toSub,
+                    rcp_path = '~/Research/point_patterns/Final',
+                    s = NULL){
+  #upload
+  under <- read.rcp(paste(rcp_path, '/FinalConfig', toString(j), sep=''),
+                    paste(rcp_path, '/system', toString(j), sep=''),
+                    scaleUp = TRUE, newRadius = 0.5)
+  over <- read.rcp(paste(rcp_path, '/FinalConfig', toString(j), sep=''),
+                   paste(rcp_path, '/system', toString(j), sep=''),
+                   scaleUp = TRUE, newRadius = 0.5)
+
+  under.big <- stitch.size(under, boxSize = c(60,60,60))
+  over.big <- stitch.size(over, boxSize = c(60,60,60))
+
+  if(!is.null(s)){
+    set.seed(s)
+  }else{
+    s <- 100
+    set.seed(s)
+  }
+
+  if(length(params) == 4){
+    cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                           cr=params[1],
+                           den = params[2],
+                           rb = TRUE, rbp = params[1]*params[3],
+                           gb = TRUE, gbp = c(0, params[4]),
+                           s = s)
+  }else{
+    cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                           cr=params[1],
+                           den = params[2],
+                           gb = TRUE, gbp = c(0, params[3]),
+                           s = s)
+  }
+  if(is.numeric(cluster)){
+    outtemp[i,] <- c(NA, NA, NA, NA, NA)
+  }
+
+  result <- anomK3est(cluster[[1]],toSub,maxr,nr)
+  rvals <- result$r
+  tvals <- result$trans
+
+  # get out that peak info son
+  rvals.new <- rvals[15:length(rvals)]
+  tvals.new <- tvals[15:length(rvals)]
+
+  #get those metrics out
+  metrics <- k3metrics(rvals.new, tvals.new, FALSE)
+
+  out <- c(metrics[[1]], metrics[[2]], metrics[[3]], metrics[[4]], metrics[[5]])
+
+  rm(cluster, result, rvals, tvals, rvals.new, tvals.new, over, under, over.big, under.big)
+  gc()
+
+
+  return(out)
+}
+
 #### kseries2 ####
 #' Helper function to allow for parallelization of metric extraction from
 #' cluster simulations
@@ -141,9 +221,7 @@ localk3metrics <- function(kl, start, nsamp = NULL){
 #' metrics on different cluster properties passed into the function. Used to
 #' parallelize large sets of cluster property runs.
 #'
-#' @param j The index of the RCP pattern to run (note that this might only be
-#'   able to be applied on the mines HPC under Galen's account right now as
-#'   written)
+#' @param j The index of the RCP pattern to run.
 #' @param p The total number of RCP patterns available.
 #' @param tot A list of cluster properties to test. This should be a list of
 #'   vectors containing \code{c(r, den, rb, gbp)} OR \code{c(r, den, gbp)}.
@@ -159,8 +237,8 @@ localk3metrics <- function(kl, start, nsamp = NULL){
 #'   update files should go if \code{verbose = TRUE}.
 #' @param s Random seed.
 #'
-#' @return Matrix containing 5 metrics and the seed value for each parameter
-#'   combination given in the \code{tot} list.
+#' @return Matrix containing 5 metrics for each parameter combination given in
+#'   the \code{tot} list.
 #' @export
 
 kseries2 <- function(j, p ,tot, maxr, nr, toSub,
