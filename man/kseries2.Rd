@@ -10,9 +10,7 @@ kseries2(j, p, tot, maxr, nr, toSub,
   junk_path = "~/Research/junk/", s = NULL)
 }
 \arguments{
-\item{j}{The index of the RCP pattern to run (note that this might only be
-able to be applied on the mines HPC under Galen's account right now as
-written)}
+\item{j}{The index of the RCP pattern to run.}
 
 \item{p}{The total number of RCP patterns available.}
 
@@ -38,8 +36,8 @@ update files should go if \code{verbose = TRUE}.}
 \item{s}{Random seed.}
 }
 \value{
-Matrix containing 5 metrics and the seed value for each parameter
-  combination given in the \code{tot} list.
+Matrix containing 5 metrics for each parameter combination given in
+  the \code{tot} list.
 }
 \description{
 This function takes a single RCP pattern and creates and tests the K function
