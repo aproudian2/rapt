@@ -117,8 +117,35 @@ readRRNG <- function(filepath) {
   return(dat)
 }
 
-#### Condition Data ####
+### read.rcp ####
+#' Read in an RCP simulation.
+#'
+#' Function to read in an RCP code output file into R as a pp3 object.
+#'
+#' @param fpath_config The file path to the RCP FinalConfig file.
+#' @param fpath_sys The file path to the associated RCP system file.
+#' @param scaleUP Boolean. If \code{TRUE}, scales RCP so particles have new
+#'   radius. If \code{FALSE}, RCP stays as generated.
+#' @param newRadius If \code{scaleUP = TRUE}, this is the new radius that the
+#'   RCP particles will be scaled to. Default is 0.5.
+#'
+#' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
+#' @export
+
+read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5){
+  temp_upload <- read.table(fpath_config,sep=" ",col.names=c("x","y","z","type"))
+  if(scaleUp == TRUE){
+    a <- read.table(fpath_sys)
+    r<-as.numeric(levels(a$V1)[2])
+    temp <- scaleRCP(createSpat(temp_upload[,c("x","y","z")]),newRadius = newRadius, oldRadius = r)
+    return(temp)
+  }
+  temp <- createSpat(temp_upload[,c("x","y","z")])
+  return(temp)
+}
+
 ## Add ability to specify marks
+#### Condition Data ####
 #' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
 #'
 #' @param pos A POS or ATO data frame.
@@ -134,6 +161,7 @@ createSpat <- function(pos, win = NULL) {
   }
   pp3.dat <- pp3(pos$x, pos$y, pos$z, pp3.box);
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
+  #pp3.dat <- pp3.dat[inside.boxx(pp3.dat, w = pp3.box)];
   return(pp3.dat);
 }
 

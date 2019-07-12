@@ -1,4 +1,6 @@
-# Functions to simulate clusers using RCP data sets
+#
+# This file contains functions pertaining to the simulation of clustered point patterns,
+#
 
 #### makecluster ####
 #' Simulate point clustering in an RCP matrix
@@ -140,6 +142,7 @@
 #'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
 #'   center to center) from each cluster. [[5]] A vector contining the radius of
 #'   each cluster.}
+#' @export
 
 makecluster <- function(under,over,radius1,radius2,
                         type = "cr",
@@ -646,8 +649,8 @@ makecluster <- function(under,over,radius1,radius2,
 #' @param win A \code{\link[spatstat]{box3}} object containing the window of the
 #'   cluster set you want to make.
 #' @param background Either \code{'poisson'} or \code{'rcp'}. Whether to have
-#' Poission distributed points or RCP points for the points in the clusters and
-#' in the background.
+#'   Poission distributed points or RCP points for the points in the clusters
+#'   and in the background.
 #' @param filepath Needed if \code{background = 'rcp'}. Vector with the filepath
 #'   to [1] the FinalConfig file of the RCP pattern desired, [2] the system file
 #'   of the RCP pattern desired
@@ -655,6 +658,8 @@ makecluster <- function(under,over,radius1,radius2,
 #' @return A list of [[1]] A \code{\link[spatstat]{pp3}} object containing the
 #'   cluster points, [[2]] The overall intensity of the point pattern; Total
 #'   number of points/total volume.
+#' @export
+
 hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
   hcp.c <- hcp.gen(csep_r,win)
   hcp.pp3 <- createSpat(hcp.c,win)
@@ -693,6 +698,45 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 #########################################
 # Helper functions
 
+#### bcc.gen ####
+#' Generate body centerd cubic (BCC) lattice of points in 3D.
+#'
+#' Generates a BCC point pattern with a specified window size and number of
+#' points desired in the pattern.
+#'
+#' @param npoint Approximate number of points to have in the pattern.
+#' @param win A \code{\link[spatstat]{box3}} object containing the window for
+#'   the final pattern.
+#'
+#' @return A \code{\link[spatstat]{pp3}} object with the lattice points.
+#' @export
+
+bcc.gen <- function(npoint, win){
+  vol <- volume(win)
+  n.units <- npoint/2
+  vol.per.unit <- vol/n.units
+  a <- (vol.per.unit)^(1/3)
+
+  x <- seq(win$xrange[1], win$xrange[2], by = a)
+  y <- seq(win$yrange[1], win$yrange[2], by = a)
+  z <- seq(win$zrange[1], win$zrange[2], by = a)
+
+  grid <- expand.grid(x, y, z)
+
+  x.c <- seq(win$xrange[1] + a/2, win$xrange[2] - a/2, by = a)
+  y.c <- seq(win$yrange[1] + a/2, win$yrange[2] - a/2, by = a)
+  z.c <- seq(win$zrange[1] + a/2, win$zrange[2] - a/2, by = a)
+
+  grid.c <- expand.grid(x.c, y.c, z.c)
+
+  grid.full <- rbind(grid, grid.c)
+  names(grid.full) <- c('x','y','z')
+
+  lat.pp3 <- pp3(grid.full$x, grid.full$y, grid.full$z, win)
+
+  return(lat.pp3)
+}
+
 #### hcp.gen ####
 #' Helper for \code{\link{hcpcluster}} which generates a HCP lattice with the correct spacing.
 #'
@@ -703,7 +747,9 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 #' @param win A \code{\link[spatstat]{box3}} object defining the window for the generation.
 #'
 #' @return A data frame object containing xyz coordinates of the HCP lattice centers.
-hcp.gen <- function(r,win){
+#' @seealso \code{\link{hcpcluster}}
+
+hcp.gen <- function(r, win){
   xyz <- list()
   i <- 0
   j <- 0
@@ -791,30 +837,6 @@ splitpp3 <- function(overPattern, num){
   pp3.2 <- createSpat(pat2.xyz)
 
   return(list(pp3.2,pp3.1))
-}
-
-#### trueBox ####
-#' Helper for \code{\link{makecluster}} that determines a
-#' \code{\link[spatstat]{pp3}} object true dimensions.
-#'
-#' RCP pattern generations, when loaded into R, lose their boundary information.
-#' R interprets their boundary to be the extreme point locations in each
-#' direction, when really they are usually nice integer values. This function
-#' simply rounds the R boundary values to the true ones.
-#'
-#' @param pp3file The \code{\link[spatstat]{pp3}} object to find the bounds of.
-#' @return A \code{\link[spatstat]{as.box3}} object containing the true volume
-#'   dimensions.
-
-trueBox <- function(pp3file) {
-
-  xr <- round(domain(pp3file)$xrange)
-  yr <- round(domain(pp3file)$yrange)
-  zr <- round(domain(pp3file)$zrange)
-
-  a <- box3(xrange = xr, yrange = yr, zrange = zr)
-
-  return(a)
 }
 
 #### crAdjust ####
@@ -1034,8 +1056,7 @@ crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
 #'   want the function to insert points to.
 #' @return New indices vector containing new cluster points randomly placed.
 
-# function to randomly place points within the under data set, if not 100% of the cluster points are set to be in the clusters
-randomInsert <- function(cluster.indices,n,N,s,points.avoid = cluster.indices){
+randomInsert <- function(cluster.indices, n, N,s, points.avoid = cluster.indices){
   #cluster.Indices is a vector containig the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
@@ -1065,8 +1086,7 @@ randomInsert <- function(cluster.indices,n,N,s,points.avoid = cluster.indices){
 #' @param s The random seed for the random selection of points to take away.
 #' @return New indices vector containing new cluster points randomly placed.
 
-# function to randomly place points within the under data set, if not 100% of the cluster points are set to be in the clusters
-randomTakeAway <- function(cluster.indices,n,N,s){
+randomTakeAway <- function(cluster.indices, n, N, s){
   #cluster.Indices is a vector containig the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
@@ -1095,8 +1115,9 @@ randomTakeAway <- function(cluster.indices,n,N,s){
 #' @param coords Return comand. Either "rec" or "sph". See below for more.
 #' @param method 1 for uniformly distributing direction and normally distributing r, 2 for normally distributing x y and z
 #'
-#' @return If \code{coords = "rec"}, returns a vecotr of cartesian coordinates.
+#' @return If \code{coords = "rec"}, returns a vector of cartesian coordinates.
 #'   If \code{coords = "sph"}, returns a vector of spherical coordinates.
+
 rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1){
 
   if(method == 1){
