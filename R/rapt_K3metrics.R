@@ -190,7 +190,8 @@ kseries <- function(j, params, maxr, nr, toSub,
                            s = s)
   }
   if(is.numeric(cluster)){
-    outtemp[i,] <- c(NA, NA, NA, NA, NA)
+    out <- c(NA, NA, NA, NA, NA)
+    return(out)
   }
 
   result <- anomK3est(cluster[[1]],toSub,maxr,nr)
