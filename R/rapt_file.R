@@ -131,13 +131,14 @@ readRRNG <- function(filepath) {
 #'
 #' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
 #' @export
-
-read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5){
-  temp_upload <- read.table(fpath_config,sep=" ",col.names=c("x","y","z","type"))
+read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5) {
+  temp_upload <- read.table(fpath_config,
+                            sep=" ", col.names=c("x","y","z","type"))
   if(scaleUp == TRUE){
     a <- read.table(fpath_sys)
     r<-as.numeric(levels(a$V1)[2])
-    temp <- scaleRCP(createSpat(temp_upload[,c("x","y","z")]),newRadius = newRadius, oldRadius = r)
+    temp <- scaleRCP(createSpat(temp_upload[,c("x","y","z")]),
+                     newRadius = newRadius, oldRadius = r)
     return(temp)
   }
   temp <- createSpat(temp_upload[,c("x","y","z")])
