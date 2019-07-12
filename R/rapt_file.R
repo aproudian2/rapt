@@ -161,7 +161,7 @@ createSpat <- function(pos, win = NULL) {
   }
   pp3.dat <- pp3(pos$x, pos$y, pos$z, pp3.box);
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
-  #pp3.dat <- pp3.dat[inside.boxx(pp3.dat, w = pp3.box)];
+  pp3.dat <- pp3.dat[inside.boxx(pp3.dat, w = pp3.box)];
   return(pp3.dat);
 }
 

@@ -391,7 +391,7 @@ makecluster <- function(under,over,radius1,radius2,
       #####
       over.sep <- over.rf*2
       over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
-
+      #browser()
       if(gb == TRUE){
         n <- npoints(over.scaled)
         gbval <- rgblur(n,gbp[1],gbp[2],coords = "rec", method = gbmethod)
@@ -405,7 +405,7 @@ makecluster <- function(under,over,radius1,radius2,
       # new addition as of 11/8/2018 - use cluster centers that can fall outside of the under pattern domain. This reduces
       # number of cluster points error significantly
       under.coo <- coords(under)
-      under.new <- createSpat(under.coo + cr, win = domain(under))
+      under.new <- createSpat(under.coo + cr)
       over.scaled.domain <- c(domain(under)$xrange[2]+2*cr,domain(under)$yrange[2]+2*cr,domain(under)$zrange[2]+2*cr)
       over.scaledf <- subSquare(over.scaled.new, over.scaled.domain)
 
@@ -500,10 +500,10 @@ makecluster <- function(under,over,radius1,radius2,
 
       cluster.xyz <- coords(under)[cluster.ind,]
       cluster.xyz <- na.omit(cluster.xyz)
-      cluster <- createSpat(cluster.xyz)
+      cluster <- createSpat(cluster.xyz, win = domain(under))
 
       over.scaledf.coo <- coords(over.scaledf)
-      over.scaledf <- createSpat(over.scaledf.coo - cr,win = domain(under))
+      over.scaledf <- createSpat(over.scaledf.coo - cr, win = domain(under))
 
       cluster.nn <- nndist.pp3(over.scaledf, k = 1)
 

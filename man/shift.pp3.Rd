@@ -4,7 +4,7 @@
 \alias{shift.pp3}
 \title{Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.}
 \usage{
-\method{shift}{pp3}(X, vec = c(0, 0, 0), ..., origin = NULL)
+shift.pp3(X, vec = c(0, 0, 0), ..., origin = NULL)
 }
 \description{
 Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
