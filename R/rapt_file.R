@@ -134,7 +134,6 @@ readRRNG <- function(filepath) {
 
 read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5){
   temp_upload <- read.table(fpath_config,sep=" ",col.names=c("x","y","z","type"))
-
   if(scaleUp == TRUE){
     a <- read.table(fpath_sys)
     r<-as.numeric(levels(a$V1)[2])
@@ -162,7 +161,7 @@ createSpat <- function(pos, win = NULL) {
   }
   pp3.dat <- pp3(pos$x, pos$y, pos$z, pp3.box);
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
-  pp3.dat <- pp3.dat[inside.pp3[pp3.dat, domain = pp3.box]];
+  #pp3.dat <- pp3.dat[inside.boxx(pp3.dat, w = pp3.box)];
   return(pp3.dat);
 }
 
