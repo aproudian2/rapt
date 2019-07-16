@@ -45,7 +45,10 @@ readResult <- function(fp, type = 'ASCII') {
 #' @seealso \code{\link{readPOS}}, \code{\link{readResult}}
 #' @export
 resultToPOS <- function(res, clip.radius = NULL) {
-    pos <- with(res, data.frame(x = startX, y = startY, z = startZ, mass = id))
+    pos <- with(res, data.frame(x = startX*1e9,
+                                y = startY*1e9,
+                                z = startZ*1e9,
+                                mass = id))
     if (!is.null(clip.radius)) {
         r <- with(res, sqrt(stopX^2 + stopY^2))
         pos <- pos[r <= clip.radius,]
