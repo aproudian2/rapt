@@ -21,7 +21,6 @@
 #' @export
 
 k3metrics <- function(rvals.new, tvals.new, toplot) {
-
   if(any(is.infinite(tvals.new))){
     return(list(NA, NA, NA, NA, NA))
   }
@@ -33,6 +32,7 @@ k3metrics <- function(rvals.new, tvals.new, toplot) {
   }
   span <- (peak.info$x[1]/7)*(0.3)
   peak.info <- argmax(rvals.new, tvals.new, w = 3, span = span)
+  peak.info$neg <- argmax(rvals.new, -1*tvals.new, w = 3, span = span)
 
   peak.info$deriv <- finite_deriv(rvals.new, peak.info$y.hat)
 
@@ -51,7 +51,7 @@ k3metrics <- function(rvals.new, tvals.new, toplot) {
                                 span = span)
 
   lb <- peak.info$i[1]
-  ub <- (peak.info$derivsm$i[1] + peak.info$derivsm_neg$i[1])/2
+  ub <- (peak.info$derivsm$i[1] + 2*peak.info$neg$i[1])/3
   if(is.na(ub)) {
     ub <- length(rvals.new)
   }
@@ -65,6 +65,7 @@ k3metrics <- function(rvals.new, tvals.new, toplot) {
 
     lines(rvals.new, peak.info$y.hat)
     points(peak.info$x, tvals.new[peak.info$i], pch = 6, cex = 2, col="red")
+    points(peak.info$neg$x, tvals.new[peak.info$neg$i], pch = 6, cex = 2, col="black")
 
     lines(rvals.new, -peak.info$derivsm$y.hat, lwd = 2, col = "red")
     points(peak.info$derivsm$x, peak.info$deriv[peak.info$derivsm$i],
