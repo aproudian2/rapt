@@ -1,5 +1,6 @@
 #
-# This file contains information relating to the calculation and display of envelopes.
+# This file contains information relating to the calculation and display of
+# envelopes.
 #
 
 #### envPlot ####
@@ -26,22 +27,29 @@
 #' @seealso \code{\link{pK3est}}, \code{\link{pG3est}}, \code{\link{pF3est}}
 #' @export
 
-envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
-                    ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),
-                    ylab = expression(sqrt('K'[3]*'(r)')*'  Anomaly'), xlab = 'r',
-                    leg = TRUE, colors = c("lightskyblue", "mediumpurple", "lightpink"),
-                    ...) {
+envPlot <- function(
+  tests, percentiles = c(0.999, 0.99, 0.97),
+  ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),
+  ylab = expression(sqrt('K'[3]*'(r)')*'  Anomaly'), xlab = 'r',
+  leg = TRUE, colors = c("lightskyblue", "mediumpurple", "lightpink"),
+  ...) {
   color <- colors
   # break up data into r values and test results
   rvals <- tests[,1]
   tvals <- tests[,2:ncol(tests)]
 
-  nTests <- ncol(tvals) # number of tests done
-  prange <- percentiles * nTests # get the range of indeces for which each percentile spans
+  # number of tests done
+  nTests <- ncol(tvals)
+  # get the range of indices for which each percentile spans
+  prange <- percentiles * nTests
 
-  sortedtVals <- t(apply(tvals, 1, sort)) # sort the results at each r value from lowest to highest
-  percentileIndicesBig <- round(nTests/2) + floor(prange/2) # select the high end indexes based on being 1/2 of the percentile span from the middle of the tests
-  percentileIndicesSmall <- round(nTests/2) - floor(prange/2) # do the same for the low end
+  # sort the results at each r value from lowest to highest
+  sortedtVals <- t(apply(tvals, 1, sort))
+  # select the high end indexes based on being 1/2 of the percentile span
+  # from the middle of the tests
+  percentileIndicesSmall <- round(nTests/2) - floor(prange/2)
+  # do the same for the low end
+  percentileIndicesBig <- round(nTests/2) + floor(prange/2)
 
   # grab out the columns from the sorted test results that we will plot
   toPlotBigs <- matrix(0, nrow = nrow(tvals), ncol = length(percentiles))
@@ -62,7 +70,8 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
   axis(1, at = seq(0,xlim[2],by=xlim[2]/10), ...)
   a <- c(rvals, rev(rvals))
   for(i in 1:length(percentiles)) {
-    polygon(a, c(toPlotBigs[,i], rev(toPlotSmalls[,i])), col = color[i])#,border=color[i],lwd=2)
+    polygon(a, c(toPlotBigs[,i], rev(toPlotSmalls[,i])), col = color[i])
+    #,border=color[i],lwd=2)
   }
   abline(h = 0, lty = 2, lwd = 1, col="black")
   if(leg == TRUE) {
@@ -150,7 +159,8 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
     cores2use <- cores
   }
   cl <- makePSOCKcluster(cores2use)
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
+  clusterExport(cl, c("pattern","rmax","nrval","correction"),
+                envir = environment())
   clusterExport(cl,"percentSelect")
   clusterEvalQ(cl,library(spatstat))
 
@@ -158,12 +168,14 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
 
   # apply K3est function to each of the pp3 patterns in parallel
   if(correction=="iso"){
-    result <- parallel::parLapply(cl,percents,function(x){
-      K3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "isotropic")
+    result <- parallel::parLapply(cl, percents, function(x) {
+      K3est(percentSelect(x,pattern), rmax=rmax, nrval=nrval,
+            correction = "isotropic")
     })
   }else if(correction=="trans"){
-    result <- parallel::parLapply(cl,percents,function(x){
-      K3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "translation")
+    result <- parallel::parLapply(cl, percents, function(x) {
+      K3est(percentSelect(x,pattern), rmax=rmax, nrval=nrval,
+            correction = "translation")
     })
   }else if(correction=="bord"){
     clusterExport(cl,"bK3est")
@@ -206,9 +218,9 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
     return(tests)
 
   }else if (anom == TRUE){
-    # If yes, sort the values, take the sqare root (to keep variance constant over r)
-    # then subtract toSub from another pattern or from the 50th perentile of this
-    # pattern. Return the results.
+    # If yes, sort the values, take the square root (to keep variance constant
+    # over r) then subtract toSub from another pattern or
+    # from the 50th perentile of this pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]
     tvals <- sqrt(tvals)
 
@@ -376,7 +388,8 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
   }
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
+  clusterExport(cl,c("pattern","rmax","nrval","correction"),
+                envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -392,7 +405,8 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
     })
   }else if(correction=="Hanisch"){
     result <- parallel::parLapply(cl,percents,function(x){
-      G3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "Hanisch")
+      G3est(percentSelect(x,pattern), rmax=rmax, nrval=nrval,
+            correction = "Hanisch")
     })
   }else{
     print("Please input valid correction argument.")
@@ -424,8 +438,8 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
     return(tests)
 
   }else if (anom == TRUE){
-    # If yes, sort the values, subtract toSub from another pattern or from the 50th perentile of this
-    # pattern. Return the results.
+    # If yes, sort the values, subtract toSub from another pattern or
+    # from the 50th perentile of this pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]
     #tvals <- sqrt(tvals)
     tvals <- t(apply(tvals,1,sort))
@@ -589,7 +603,8 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
   }
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
+  clusterExport(cl, c("pattern","rmax","nrval","correction"),
+                envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -637,8 +652,8 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
     return(tests)
 
   }else if (anom == TRUE){
-    # If yes, sort the values, subtract toSub from another pattern or from the 50th perentile of this
-    # pattern. Return the results.
+    # If yes, sort the values, subtract toSub from another pattern or
+    # from the 50th perentile of this pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]
     #tvals <- sqrt(tvals)
     tvals <- t(apply(tvals,1,sort))
@@ -800,4 +815,42 @@ bK3est <- function(X, rmax=NULL, nrval=128){
   colnames(K)<-c("r","bord")
 
   return(K)
+}
+
+#### pEnvelope ####
+#' Create an envelope in parallel
+#'
+#' @param cl A \code{\link[parallel]{cluster}} object
+#' @param X A point pattern
+#' @param fun Function that computes the desired summary statistic for a 3D
+#'   point pattern.
+#' @param Number of simulated point patterns to be generated when computing the
+#'   envelopes.
+#' @param nrank Integer. Rank of the envelope value amongst the nsim simulated
+#'   values. A rank of 1 means that the minimum and maximum simulated values
+#'   will be used.
+#' @param ... Extra arguments passed to fun.
+#' @param Optional. Specifies how to generate the simulated point patterns. If
+#'   simulate is an expression in the R language, then this expression will be
+#'   evaluated nsim times, to obtain nsim point patterns which are taken as the
+#'   simulated patterns from which the envelopes are computed. If simulate is a
+#'   function, then this function will be repeatedly applied to the data pattern
+#'   X to obtain nsim simulated patterns. If simulate is a list of point
+#'   patterns, then the entries in this list will be treated as the simulated
+#'   patterns from which the envelopes are computed.
+#' @param savefuns Logical flag indicating whether to save all the simulated
+#'   function values.
+#' @return A function value table (object of class "fv") which can be plotted
+#'   directly. See \code{\link[spatstat]{envelope}} for further details.
+#' @seealso \link[spatstat]{envelope}, \link[spatstat]{K3est},
+#'   \link[spatstat]{G3est}, \link[spatstat]{F3est}, \link[spatstat]{pcf3est}
+pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
+                      simulate=NULL, savefuns=TRUE) {
+  # Should the ability to specify a subset of marks be added?
+  env <- parLapply(cl, seq_len(nsim), function(n) {
+    envelope(X, fun=fun, nsim=1, nrank=1,
+             simulate=simulate[[n]], savefuns=savefuns, verbose=FALSE)
+  })
+  po <- pool(env, savefuns=savefuns)
+  return(po)
 }
