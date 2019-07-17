@@ -268,7 +268,7 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub,
     set.seed(s)
   }
 
-  cnt <- j*length(tot)*round(runif(1, 1, 10000))
+  cnt <- j*length(tot)*round(runif(length(tot), 1, 10000))
 
   outtemp <- matrix(NA, nrow = length(tot), ncol = 5)
 
@@ -280,13 +280,13 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub,
                              den = tot[[i]][2],
                              rb = TRUE, rbp = tot[[i]][1]*tot[[i]][3],
                              gb = TRUE, gbp = c(0, tot[[i]][4]),
-                             s = cnt)
+                             s = cnt[i])
     }else{
       cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
                              cr=tot[[i]][1],
                              den = tot[[i]][2],
                              gb = TRUE, gbp = c(0, tot[[i]][3]),
-                             s = cnt)
+                             s = cnt[i])
     }
     if(is.numeric(cluster)){
       outtemp[i,] <- c(NA, NA, NA, NA, NA)
