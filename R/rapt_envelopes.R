@@ -846,8 +846,9 @@ bK3est <- function(X, rmax=NULL, nrval=128){
 #'   \link[spatstat]{G3est}, \link[spatstat]{F3est}, \link[spatstat]{pcf3est}
 #' @export
 pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
-                      simulate=NULL, savefuns=TRUE) {
+                      simulate=NULL) {
   # Should the ability to specify a subset of marks be added?
+  savefuns <- TRUE
   pNsim <- rle(cut(seq_len(nsim), length(cl), labels = FALSE))$lengths
   env <- parLapply(cl, pNsim, function(n) {
     envelope(X, fun=fun, nsim=n, nrank=1,
