@@ -10,7 +10,7 @@
 #' @param start The start of the mass range
 #' @param end The end of the mass range
 #' @return The number of hits falling within the range.
-#' @seealso \code{\link{rngCount}}, \code{\link{rangePOS}}
+#' @seealso \code{\link{rngCount}}
 #' @export
 rangeCount <- function(pos, start, end) {
   n <- with(pos, sum(mass > start & mass < end))
@@ -28,6 +28,7 @@ rangeCount <- function(pos, start, end) {
 #' @param end The end of the mass range
 #' @return A data.frame of the same structure as \code{pos} containing only hits
 #' in the provided range
+#' @seealso \code{\link{rngPOS}}
 #' @export
 rangePOS <- function(pos, start, end) {
   with(pos, pos[mass > start & mass < end,])
@@ -59,8 +60,9 @@ rngCount <- function(pos, rng) {
 #'
 #' @param pos The pos or ato to extract hits
 #' @param rng The ranges to extract
-#' @return A data.frame of the same structure as pos
-#' @seealso \code{\link{rangePOS}}
+#' @return A data.frame of the same structure as pos, with an appended column
+#'   called "mark" that carries the name of the ion
+#' @seealso \code{\link{readRRNG}}, \code{\link{rangePOS}}
 #' @export
 rngPOS <- function(pos, rng) {
   hits <- apply(rng, 1, function (x) {
