@@ -5,7 +5,7 @@
 \title{Create an envelope in parallel}
 \usage{
 pEnvelope(cl, X, fun = K3est, nsim = 99, nrank = 1, ...,
-  simulate = NULL, savefuns = TRUE)
+  simulate = NULL)
 }
 \arguments{
 \item{cl}{A \code{\link[parallel]{cluster}} object}
@@ -21,9 +21,6 @@ will be used.}
 
 \item{...}{Extra arguments passed to fun.}
 
-\item{savefuns}{Logical flag indicating whether to save all the simulated
-function values.}
-
 \item{Number}{of simulated point patterns to be generated when computing the
 envelopes.}
 
@@ -35,6 +32,9 @@ function, then this function will be repeatedly applied to the data pattern
 X to obtain nsim simulated patterns. If simulate is a list of point
 patterns, then the entries in this list will be treated as the simulated
 patterns from which the envelopes are computed.}
+
+\item{savefuns}{Logical flag indicating whether to save all the simulated
+function values.}
 }
 \value{
 A function value table (object of class "fv") which can be plotted
