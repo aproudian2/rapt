@@ -2,18 +2,24 @@
 % Please edit documentation in R/rapt_extend.R
 \name{quadrats.pp3}
 \alias{quadrats.pp3}
-\title{Extension of \code{\link[spatstat]{quadrats}} to \code{\link[spatstat]{pp3}} objects.}
+\title{Extension of \code{\link[spatstat]{quadrats}} to \code{\link[spatstat]{pp3}}
+objects.}
 \usage{
-quadrats.pp3(X, nx = 5, ny = 5, nz = 5)
+quadrats.pp3(X, nx, ny, nz, box.dims = NULL)
 }
 \arguments{
 \item{X}{The \code{\link[spatstat]{pp3}} object to split up.}
 
-\item{nx, ny, nz}{Number of ractangular quadrats in the x, y, and z directions.}
+\item{nx, ny, nz}{Number of ractangular quadrats in the x, y, and z directions,
+if you wish to split up your point patthern by number of boxes.}
+
+\item{box.dims}{Vector containing the dimensions of the subsetted 3D boxxes,
+if you wish to define the individual bopx size. Use either \code{nx, ny,
+nz} or \code{box.dims}, but not both.}
 }
 \value{
 A list containing the split up \code{pp3} objects.
 }
 \description{
-Divides volume into quadrats and returns them..
+Divides volume into quadrats and returns them.
 }
