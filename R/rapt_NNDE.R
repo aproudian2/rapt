@@ -344,7 +344,7 @@ local.den.engine <- function(bdist, nnk, k, dz, par = TRUE, cores = 7){
 
   if(par == TRUE){
     cl <- makePSOCKcluster(cores)
-    clusterExport(cl,"local.den.onevol")
+    clusterEvalQ(cl, library(rapt))
     clusterExport(cl,c("x","y","z","dz","k","r","ind.x","ind.k"), envir = environment())
 
     lambda.est <- parallel::parLapply(cl, ind.k, function(i.k){

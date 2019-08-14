@@ -279,6 +279,64 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   return(data.frame(quad.no = seq(1,ntot), count = counts))
 }
 
+#### quadrats.pp3 ####
+#' Extension of \code{\link[spatstat]{quadrats}} to \code{\link[spatstat]{pp3}} objects.
+#'
+#' Divides volume into quadrats and returns them..
+#'
+#' @param X The \code{\link[spatstat]{pp3}} object to split up.
+#' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions.
+#'
+#' @return A list containing the split up \code{pp3} objects.
+#' @export
+quadrats.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
+  verifyclass(X, "pp3")
+  w <- domain(X)
+
+
+  # create box3objects for each quadrat
+  xlim <- w$xrange
+  ylim <- w$yrange
+  zlim <- w$zrange
+
+  xbreaks <- seq(xlim[1],xlim[2],length.out = (nx+1))
+  ybreaks <- seq(ylim[1],ylim[2],length.out = (ny+1))
+  zbreaks <- seq(zlim[1],zlim[2],length.out = (nz+1))
+
+  ntot <- nx*ny*nz
+  gridvals <- list()
+  cnt <- 1
+
+  for(i in 1:nx){
+    for(j in 1:ny){
+      for(k in 1:nz){
+        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)],
+                                yrange = ybreaks[j:(j+1)],
+                                zrange = zbreaks[k:(k+1)])
+        cnt <- cnt + 1
+      }
+    }
+  }
+
+  #browser()
+  coo <- coords(X)
+  if(!is.null(marks(X))){
+    marks <- marks(X)
+  }
+
+  boxes <- lapply(gridvals, function(x){
+    res.coo <- coo[inside.pp3(X, domain = x),]
+    if(!is.null(marks(X))){
+      res.marks <- marks[inside.pp3(X, domain = x)]
+      return(pp3(res.coo$x, res.coo$y, res.coo$z, x, marks = res.marks))
+    }else{
+      return(pp3(res.coo$x, res.coo$y, res.coo$z, x))
+    }
+  })
+
+  return(boxes)
+}
+
 #### K3cross ####
 # barely works... Needs corrections and inferface streamlining
 K3multi <- function(X, I, J, r, breaks,
