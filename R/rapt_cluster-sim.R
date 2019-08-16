@@ -712,6 +712,7 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 #' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
+#' @export
 
 morph_lamellar <- function(lambda,
                            frac,
@@ -804,6 +805,7 @@ morph_lamellar <- function(lambda,
 #' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
+#' @export
 
 morph_rods <- function(lambda,
                        frac,
@@ -951,6 +953,7 @@ morph_rods <- function(lambda,
 #' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
+#' @export
 
 morph_gyroid <- function(lambda,
                          frac,
@@ -1012,6 +1015,7 @@ morph_gyroid <- function(lambda,
 #' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
+#' @export
 
 morph_gb <- function(lambda,
                      frac,
