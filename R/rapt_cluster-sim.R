@@ -1040,12 +1040,12 @@ morph_gb <- function(lambda,
   xdist <- diff(win$xrange)
   ydist <- diff(win$yrange)
   zdist <- diff(win$zrange)
-
+  browser()
   offset <- c(runif(1, -1, 1), runif(1, -1, 1), runif(1, -1, 1))
 
-  win.select <- box3(c(xmu - xdist/2 - rcp.rad - 1 + offset[1], xmu + xdist/2 + rcp.rad) + 1 + offset[1],
-                     c(ymu - ydist/2 - rcp.rad - 1 + offset[2], ymu + ydist/2 + rcp.rad) + 1 + offset[2],
-                     c(zmu - zdist/2 - rcp.rad - 1 + offset[3], zmu + zdist/2 + rcp.rad) + 1 + offset[3])
+  win.select <- box3(c(xmu - xdist/2 - rcp.rad - 1 + offset[1], xmu + xdist/2 + rcp.rad + 1 + offset[1]),
+                     c(ymu - ydist/2 - rcp.rad - 1 + offset[2], ymu + ydist/2 + rcp.rad + 1 + offset[2]),
+                     c(zmu - zdist/2 - rcp.rad - 1 + offset[3], zmu + zdist/2 + rcp.rad + 1 + offset[3]))
   rcp.xyz <- coords(rcp[inside.boxx(rcp, w = win.select)])
   rcp.xyz$x <- rcp.xyz$x - xmu + xdist/2 - offset[1]
   rcp.xyz$y <- rcp.xyz$y - ymu + ydist/2 - offset[2]
@@ -1081,7 +1081,6 @@ morph_gb <- function(lambda,
 
   return(p.selected)
 }
-
 
 #########################################
 # Helper functions
