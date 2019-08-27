@@ -1041,7 +1041,6 @@ morph_gb <- function(lambda,
   xdist <- diff(win$xrange)
   ydist <- diff(win$yrange)
   zdist <- diff(win$zrange)
-  browser()
   offset <- c(runif(1, -1, 1), runif(1, -1, 1), runif(1, -1, 1))
 
   win.select <- box3(c(xmu - xdist/2 - rcp.rad - 1 + offset[1], xmu + xdist/2 + rcp.rad + 1 + offset[1]),
