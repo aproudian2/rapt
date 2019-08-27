@@ -939,7 +939,7 @@ morph_rods <- function(lambda,
 
 
 #### Gyroid ####
-#' Simulate morphology of guest molecules on a grain boundary
+#' Simulate morphology of guest molecules in gyroid pattern
 #'
 #' @param lambda Intensity for the background Poisson process.
 #' @param frac Fraction of points to select as guest points. Between zero and
@@ -975,7 +975,8 @@ morph_gyroid <- function(lambda,
 
   coo.gyr <- gyr(coo$x, coo$y, coo$z, gyroid.scale)
   nkeep <- round(frac*npoints(bgnd))
-  gbwhich <- order(abs(coo.gyr))[1:nkeep]
+
+  gbwhich <- tail(order(coo.gyr), n = nkeep)
 
   if(point.den != 1){
     nin <- round(point.den*length(gbwhich))

@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_cluster-sim.R
 \name{morph_gyroid}
 \alias{morph_gyroid}
-\title{Simulate morphology of guest molecules on a grain boundary}
+\title{Simulate morphology of guest molecules in gyroid pattern}
 \usage{
 morph_gyroid(lambda, frac, gyroid.scale, point.den = 1, toplot = FALSE,
   win = box3(c(0, 1), c(0, 1), c(0, 1)))
@@ -28,5 +28,5 @@ A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
   underlying point pattern.
 }
 \description{
-Simulate morphology of guest molecules on a grain boundary
+Simulate morphology of guest molecules in gyroid pattern
 }
