@@ -279,6 +279,75 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   return(data.frame(quad.no = seq(1,ntot), count = counts))
 }
 
+#### quadrats.pp3 ####
+#' Extension of \code{\link[spatstat]{quadrats}} to \code{\link[spatstat]{pp3}}
+#' objects.
+#'
+#' Divides volume into quadrats and returns them.
+#'
+#' @param X The \code{\link[spatstat]{pp3}} object to split up.
+#' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions,
+#'   if you wish to split up your point patthern by number of boxes.
+#' @param box.dims Vector containing the dimensions of the subsetted 3D boxxes,
+#'   if you wish to define the individual bopx size. Use either \code{nx, ny,
+#'   nz} or \code{box.dims}, but not both.
+#'
+#' @return A list containing the split up \code{pp3} objects.
+#' @export
+quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
+  verifyclass(X, "pp3")
+  w <- domain(X)
+  xlim <- w$xrange
+  ylim <- w$yrange
+  zlim <- w$zrange
+
+  # create box3objects for each quadrat
+  if(is.null(box.dims)){
+    xbreaks <- seq(xlim[1],xlim[2],length.out = (nx+1))
+    ybreaks <- seq(ylim[1],ylim[2],length.out = (ny+1))
+    zbreaks <- seq(zlim[1],zlim[2],length.out = (nz+1))
+
+    ntot <- nx*ny*nz
+  } else {
+    xbreaks <- seq(xlim[1],xlim[2],by = box.dims[1])
+    ybreaks <- seq(ylim[1],ylim[2],by = box.dims[2])
+    zbreaks <- seq(zlim[1],zlim[2],by = box.dims[3])
+  }
+
+
+  gridvals <- list()
+  cnt <- 1
+
+  for(i in 1:(length(xbreaks)-1)){
+    for(j in 1:(length(ybreaks)-1)){
+      for(k in 1:(length(zbreaks)-1)){
+        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)],
+                                yrange = ybreaks[j:(j+1)],
+                                zrange = zbreaks[k:(k+1)])
+        cnt <- cnt + 1
+      }
+    }
+  }
+
+  #browser()
+  coo <- coords(X)
+  if(!is.null(marks(X))){
+    marks <- marks(X)
+  }
+
+  boxes <- lapply(gridvals, function(x){
+    res.coo <- coo[inside.pp3(X, domain = x),]
+    if(!is.null(marks(X))){
+      res.marks <- marks[inside.pp3(X, domain = x)]
+      return(pp3(res.coo$x, res.coo$y, res.coo$z, x, marks = res.marks))
+    }else{
+      return(pp3(res.coo$x, res.coo$y, res.coo$z, x))
+    }
+  })
+
+  return(boxes)
+}
+
 #### K3cross ####
 # barely works... Needs corrections and inferface streamlining
 K3multi <- function(X, I, J, r, breaks,

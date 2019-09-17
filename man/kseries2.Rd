@@ -5,7 +5,7 @@
 \title{Helper function to allow for parallelization of metric extraction from
 cluster simulations}
 \usage{
-kseries2(j, p, tot, maxr, nr, toSub,
+kseries2(j, p, tot, maxr, nr, toSub, pcp = 0.06,
   rcp_path = "~/Research/point_patterns/Final", verbose = FALSE,
   junk_path = "~/Research/junk/", s = NULL)
 }
@@ -23,6 +23,8 @@ vectors containing \code{c(r, den, rb, gbp)} OR \code{c(r, den, gbp)}.}
 
 \item{toSub}{A vector of values to substitute for the \code{\link{anomK3est}}
 function.}
+
+\item{pcp}{See \code{pcp} argument for \code{\link{makecluster}} function.}
 
 \item{rcp_path}{String holding the file path to the directory holding the RCP
 'FinalConfig' and 'system' files.}

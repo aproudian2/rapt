@@ -20,7 +20,7 @@
 #' @seealso \code{\link{anomK3est}}
 #' @export
 
-k3metrics <- function(rvals.new, tvals.new, toplot) {
+k3metrics <- function(rvals.new, tvals.new, toplot, ...) {
   if(any(is.infinite(tvals.new))){
     return(list(NA, NA, NA, NA, NA))
   }
@@ -61,7 +61,7 @@ k3metrics <- function(rvals.new, tvals.new, toplot) {
   # stuff if you want to plot
   #browser()
   if(toplot == TRUE) {
-    plot(rvals.new, tvals.new, type = "n")
+    plot(rvals.new, tvals.new, type = "n", ...)
 
     lines(rvals.new, peak.info$y.hat)
     points(peak.info$x, tvals.new[peak.info$i], pch = 6, cex = 2, col="red")
@@ -148,6 +148,7 @@ localk3metrics <- function(kl, start, nsamp = NULL){
 #' @param nr Number of r values to evaluate K-function at.
 #' @param toSub A vector of values to substitute for the \code{\link{anomK3est}}
 #'   function.
+#' @param pcp See \code{pcp} argument for \code{\link{makecluster}} function.
 #' @param rcp_path String holding the file path to the directory holding the RCP
 #'   'FinalConfig' and 'system' files.
 #' @param s Random seed.
@@ -155,7 +156,7 @@ localk3metrics <- function(kl, start, nsamp = NULL){
 #' @return Vector containing 5 metrics.
 #' @export
 
-kseries <- function(j, params, maxr, nr, toSub,
+kseries <- function(j, params, maxr, nr, toSub, pcp = 0.06,
                     rcp_path = '~/Research/point_patterns/Final',
                     s = NULL){
   #upload
@@ -178,6 +179,7 @@ kseries <- function(j, params, maxr, nr, toSub,
 
   if(length(params) == 4){
     cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                           pcp = pcp,
                            cr=params[1],
                            den = params[2],
                            rb = TRUE, rbp = params[1]*params[3],
@@ -185,6 +187,7 @@ kseries <- function(j, params, maxr, nr, toSub,
                            s = s)
   }else{
     cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                           pcp = pcp,
                            cr=params[1],
                            den = params[2],
                            gb = TRUE, gbp = c(0, params[3]),
@@ -231,6 +234,7 @@ kseries <- function(j, params, maxr, nr, toSub,
 #' @param nr Number of r values to evaluate k function at.
 #' @param toSub A vector of values to substitute for the \code{\link{anomK3est}}
 #'   function.
+#' @param pcp See \code{pcp} argument for \code{\link{makecluster}} function.
 #' @param rcp_path String holding the file path to the directory holding the RCP
 #'   'FinalConfig' and 'system' files.
 #' @param verbose \code{TRUE} or \code{FALSE}. Whether to output update files to
@@ -243,7 +247,7 @@ kseries <- function(j, params, maxr, nr, toSub,
 #'   the \code{tot} list.
 #' @export
 
-kseries2 <- function(j, p ,tot, maxr, nr, toSub,
+kseries2 <- function(j, p ,tot, maxr, nr, toSub, pcp = 0.06,
                      rcp_path = '~/Research/point_patterns/Final',
                      verbose = FALSE,
                      junk_path = '~/Research/junk/',
@@ -276,6 +280,7 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub,
     #print(i)
     if(length(tot[[1]]) == 4){
       cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                             pcp = pcp,
                              cr=tot[[i]][1],
                              den = tot[[i]][2],
                              rb = TRUE, rbp = tot[[i]][1]*tot[[i]][3],
@@ -283,6 +288,7 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub,
                              s = cnt[i])
     }else{
       cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                             pcp = pcp,
                              cr=tot[[i]][1],
                              den = tot[[i]][2],
                              gb = TRUE, gbp = c(0, tot[[i]][3]),
