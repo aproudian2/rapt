@@ -5,7 +5,7 @@
 \title{Simulate a clustered point pattern and extract the K-function metrics from
 it.}
 \usage{
-kseries(j, params, maxr, nr, toSub,
+kseries(j, params, maxr, nr, toSub, pcp = 0.06,
   rcp_path = "~/Research/point_patterns/Final", s = NULL)
 }
 \arguments{
@@ -20,6 +20,8 @@ or \code{c(r, den, rb, gbp)}.}
 
 \item{toSub}{A vector of values to substitute for the \code{\link{anomK3est}}
 function.}
+
+\item{pcp}{See \code{pcp} argument for \code{\link{makecluster}} function.}
 
 \item{rcp_path}{String holding the file path to the directory holding the RCP
 'FinalConfig' and 'system' files.}

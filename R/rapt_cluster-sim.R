@@ -134,7 +134,7 @@
 #'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] number of points put in or
 #'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
-#'   center to center) from each cluster.}
+#'   center to center) from each cluster}
 #'   \subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
 #'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
 #'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
@@ -502,6 +502,12 @@ makecluster <- function(under,over,radius1,radius2,
       cluster.xyz <- na.omit(cluster.xyz)
       cluster <- createSpat(cluster.xyz, win = domain(under))
 
+      c.marks <- rep(NA, npoints(under))
+      c.marks[cluster.ind] <- 'A'
+      c.marks[-cluster.ind] <- 'B'
+
+      marks(under) <- c.marks
+
       over.scaledf.coo <- coords(over.scaledf)
       over.scaledf <- createSpat(over.scaledf.coo - cr, win = domain(under))
 
@@ -516,9 +522,9 @@ makecluster <- function(under,over,radius1,radius2,
       }
 
       if(rb == TRUE){
-        return(list(cluster,over.scaledf,more,cluster.nn,crrand))
+        return(list(cluster,over.scaledf,more,cluster.nn,crrand,under))
       }else{
-        return(list(cluster,over.scaledf,more,cluster.nn))
+        return(list(cluster,over.scaledf,more,cluster.nn,under))
       }
     }
     else{

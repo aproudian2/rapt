@@ -102,7 +102,7 @@ Returns are different based on \code{type}.
   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] number of points put in or
   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
-  center to center) from each cluster.}
+  center to center) from each cluster}
   \subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the

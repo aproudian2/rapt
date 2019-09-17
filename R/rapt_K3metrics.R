@@ -148,6 +148,7 @@ localk3metrics <- function(kl, start, nsamp = NULL){
 #' @param nr Number of r values to evaluate K-function at.
 #' @param toSub A vector of values to substitute for the \code{\link{anomK3est}}
 #'   function.
+#' @param pcp See \code{pcp} argument for \code{\link{makecluster}} function.
 #' @param rcp_path String holding the file path to the directory holding the RCP
 #'   'FinalConfig' and 'system' files.
 #' @param s Random seed.
@@ -155,7 +156,7 @@ localk3metrics <- function(kl, start, nsamp = NULL){
 #' @return Vector containing 5 metrics.
 #' @export
 
-kseries <- function(j, params, maxr, nr, toSub,
+kseries <- function(j, params, maxr, nr, toSub, pcp = 0.06,
                     rcp_path = '~/Research/point_patterns/Final',
                     s = NULL){
   #upload
@@ -178,6 +179,7 @@ kseries <- function(j, params, maxr, nr, toSub,
 
   if(length(params) == 4){
     cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                           pcp = pcp,
                            cr=params[1],
                            den = params[2],
                            rb = TRUE, rbp = params[1]*params[3],
@@ -185,6 +187,7 @@ kseries <- function(j, params, maxr, nr, toSub,
                            s = s)
   }else{
     cluster <- makecluster(under.big,over.big,0.5,0.5,type="cr",speed="superfast",
+                           pcp = pcp,
                            cr=params[1],
                            den = params[2],
                            gb = TRUE, gbp = c(0, params[3]),
