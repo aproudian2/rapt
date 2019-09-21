@@ -847,10 +847,11 @@ pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
                       simulate=NULL) {
   # Should the ability to specify a subset of marks be added?
   savefuns <- TRUE
-  pNsim <- rle(cut(seq_len(nsim), length(cl), labels = FALSE))$lengths
-  env <- parLapply(cl, pNsim, function(n) {
-    envelope(X, fun=fun, nsim=n, nrank=1,
-             simulate=simulate[[n]], savefuns=savefuns, verbose=FALSE)
+  n.cut <- cut(seq_len(nsim), length(cl), labels = FALSE)
+  pSim <- split(simulate, n.cut) # this doesn't handle the NULL simulate case
+  env <- parLapply(cl, pSim, function(s) {
+    envelope(X, fun=fun, nsim=length(s), nrank=1, ...=...,
+             simulate=s, savefuns=savefuns, verbose=FALSE)
   })
   po <- do.call(pool, c(env, savefuns=savefuns))
   dat <- envelope(po, nrank=nrank, savefuns=savefuns)
