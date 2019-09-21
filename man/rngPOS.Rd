@@ -12,12 +12,13 @@ rngPOS(pos, rng)
 \item{rng}{The ranges to extract}
 }
 \value{
-A data.frame of the same structure as pos
+A data.frame of the same structure as pos, with an appended column
+  called "mark" that carries the name of the ion
 }
 \description{
 rngPOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
 is within the ranges of the provided \code{RRNG}.
 }
 \seealso{
-\code{\link{rangePOS}}
+\code{\link{readRRNG}}, \code{\link{rangePOS}}
 }

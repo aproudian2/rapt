@@ -20,5 +20,5 @@ The number of hits falling within the range.
 To get the hit information within a mass range, use \code{\link{rangePOS}}
 }
 \seealso{
-\code{\link{rngCount}}, \code{\link{rangePOS}}
+\code{\link{rngCount}}
 }

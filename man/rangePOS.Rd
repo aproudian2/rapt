@@ -21,3 +21,6 @@ in the provided range
 rangePOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
 is within the provided range.
 }
+\seealso{
+\code{\link{rngPOS}}
+}
