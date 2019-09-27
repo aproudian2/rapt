@@ -87,3 +87,20 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
              rep(lengths == max(lengths[values]) & values, lengths))
   range(m.clip[wh])
 }
+
+#### fitIons ####
+# Fit MassSpectrum peaks for known ions
+fitIons <- function(ms, ions, rel = NULL) {
+  if (is.null(rel)) {
+    rel <- rep(1, length(ions))
+  }
+  ms.df <- data.frame(mass = ms@mass, intensity = ms@intensity)
+  data('isotopes', package = 'enviPat', envir = environment())
+
+}
+
+#### fitGMM ####
+# Fit a GMM to a region of a MassSpectrum
+fitGMM <- function(ms, start, stop) {
+
+}
