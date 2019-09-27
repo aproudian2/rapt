@@ -74,8 +74,16 @@ rngPOS <- function(pos, rng) {
   return(dat)
 }
 
-#### autoRange ####
+#### rangeMassSpectrum ####
 # Range peaks at a specified level
-autoRange <- function(pos, rng, width = 10) {
-
+rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
+  m <- ms@mass
+  m.in <- m >= start & m <= end
+  m.clip <- m[m.in]
+  int <- ms@intensity[m.in]
+  int.max <- max(int)
+  wh.all <- int >= threshold * int.max
+  wh <- with(rle(wh.all), # this method is not right: range must include max!
+             rep(lengths == max(lengths[values]) & values, lengths))
+  range(m.clip[wh])
 }
