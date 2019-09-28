@@ -88,15 +88,51 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
   range(m.clip[wh])
 }
 
+#### rangeMassPeaks ####
+
 #### fitIons ####
 # Fit MassSpectrum peaks for known ions
-fitIons <- function(ms, ions, rel = NULL) {
+fitIons <- function(ms, ions, sd = 0.5, rel = NULL,
+                    charge = NULL, threshold = 10) {
   if (is.null(rel)) {
     rel <- rep(1, length(ions))
+  } else {
+
+  }
+  if (is.null(charge)) {
+    charge <- rep(1, length(ions))
+  } else {
+
   }
   ms.df <- data.frame(mass = ms@mass, intensity = ms@intensity)
-  data('isotopes', package = 'enviPat', envir = environment())
+  ion.form <- ionFormula(ions, charge = charge, threshold = threshold)
 
+}
+
+#### ionFormula ####
+# Helper function for fitIons
+ionFormula <- function(ions, charge = 1, threshold = 10) {
+  data('isotopes', package = 'enviPat', envir = environment())
+  iso <- enviPat::isopattern(isotopes, ions,
+                             charge = charge, threshold = threshold,
+                             verbose = FALSE)
+  ion.init <- mapply(function(X,s) {
+    data.frame(
+      lambda = c((X[,2]/100)),
+      mu = c(X[,1])
+    )
+  }, iso, SIMPLIFY = FALSE)
+  n.ions <- seq_along(ions)
+  fs <- mapply(function(n, I, chg) {
+    paste(paste0("a", n, " * ", I$lambda,
+           " * exp(-(mass - ", I$mu, " - m0)**2 /",
+           " (2 * (s0/", chg, ")**2))",
+           collapse = " + "))
+  }, n.ions, ion.init, charge, SIMPLIFY = FALSE)
+  f.noise <- "n0"
+  fs <- paste(paste(fs, collapse = ' + '), f.noise, sep = " + ")
+  f.full <- paste("intensity ~", fs)
+  return(f.full)
 }
 
 #### fitGMM ####
