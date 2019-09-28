@@ -93,7 +93,7 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #### fitIonInit ####
 # Create initialization for nls fitting of MassSpectrum peaks based on ions
 fitIonInit <- function(ms, ions, sd = 0.5, rel = NULL,
-                       mass.shift = 0, noise = 0, peak.intensity = NULL,
+                       mass.shift = 0, noise = 0,
                        charge = NULL, threshold = 10) {
   if (is.null(rel)) {
     rel <- rep(1, length(ions))
@@ -105,17 +105,13 @@ fitIonInit <- function(ms, ions, sd = 0.5, rel = NULL,
   } else {
     stopifnot(length(charge) == length(ions))
   }
-  if (is.null(peak.intensity)) {
-    peak.intensity <- max(ms@intensity)
-  }
   ion.form <- ionFormula(ions, charge = charge, threshold = threshold)
   names(sd) <- "s0"
   names(rel) <- paste0("a", seq_along(ions))
   names(mass.shift) <- "m0"
   names(noise) <- "n0"
-  names(peak.intensity) <- "a0"
   ion.start <- c(as.list(sd), as.list(rel),
-                 as.list(mass.shift), as.list(noise), as.list(peak.intensity))
+                 as.list(mass.shift), as.list(noise))
   ion.init <- list(formula = ion.form, start = ion.start)
   return(ion.init)
 }
@@ -142,7 +138,7 @@ ionFormula <- function(ions, charge = 1, threshold = 10) {
   }, n.ions, ion.init, charge, SIMPLIFY = FALSE)
   f.noise <- "n0"
   fs <- paste(paste(fs, collapse = ' + '), f.noise, sep = " + ")
-  f.full <- paste("intensity ~ a0 * (", fs, ")")
+  f.full <- paste("intensity ~", fs)
   return(f.full)
 }
 
