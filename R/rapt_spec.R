@@ -130,12 +130,12 @@ ionFormula <- function(ions, charge = 1, threshold = 10) {
     )
   }, iso, SIMPLIFY = FALSE)
   n.ions <- seq_along(ions)
-  fs <- mapply(function(n, I, chg) {
+  fs <- mapply(function(n, I) {
     paste(paste0("a", n, " * ", I$lambda,
            " * exp(-(mass - ", I$mu, " - m0)**2 /",
-           " (2 * (s0/", chg, ")**2))",
+           " (2 * s0**2))",
            collapse = " + "))
-  }, n.ions, ion.init, charge, SIMPLIFY = FALSE)
+  }, n.ions, ion.init, SIMPLIFY = FALSE)
   f.noise <- "n0"
   fs <- paste(paste(fs, collapse = ' + '), f.noise, sep = " + ")
   f.full <- paste("intensity ~", fs)
