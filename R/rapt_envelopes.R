@@ -850,7 +850,7 @@ pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
   n.cut <- cut(seq_len(nsim), length(cl), labels = FALSE)
   pSim <- split(simulate, n.cut) # this doesn't handle the NULL simulate case
   env <- parLapply(cl, pSim, function(s) {
-    envelope(X, fun=fun, nsim=length(s), nrank=1,
+    envelope(X, fun=fun, nsim=length(s), nrank=1, ...=...,
              simulate=s, savefuns=savefuns, verbose=FALSE)
   })
   po <- do.call(pool, c(env, savefuns=savefuns))
