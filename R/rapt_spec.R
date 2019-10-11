@@ -92,8 +92,9 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 
 #### fitIonInit ####
 # Create initialization for nls fitting of MassSpectrum peaks based on ions
-fitIonInit <- function(ms, ions, sd = 0.5, rel = NULL,
-                       mass.shift = 0, noise = 0,
+# Add lower and upper limits for port algorithm fitting
+fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
+                       mass.shift = 0, noise = 0, tau = 0.1,
                        charge = NULL, threshold = 10) {
   if (is.null(rel)) {
     rel <- rep(1, length(ions))
@@ -105,20 +106,29 @@ fitIonInit <- function(ms, ions, sd = 0.5, rel = NULL,
   } else {
     stopifnot(length(charge) == length(ions))
   }
-  ion.form <- ionFormula(ions, charge = charge, threshold = threshold)
+  stopifnot(tau > 0)
+  ion.form <- ionFormula(ions, charge = charge, threshold = threshold,
+                         peak = peak)
   names(sd) <- "s0"
   names(rel) <- paste0("a", seq_along(ions))
   names(mass.shift) <- "m0"
   names(noise) <- "n0"
+  names(tau) <- "t0"
   ion.start <- c(as.list(sd), as.list(rel),
                  as.list(mass.shift), as.list(noise))
-  ion.init <- list(formula = ion.form, start = ion.start)
+  if (peak == 'emg') {
+    ion.start <- c(ion.start, as.list(tau))
+  }
+  ion.lower <- rep_len(0, length(ion.start))
+  ion.lower[names(ion.start) == "m0"] <- -1
+  ion.lower[names(ion.start) == "t0"] <- 1e-6
+  ion.init <- list(formula = ion.form, start = ion.start, lower = ion.lower)
   return(ion.init)
 }
 
 #### ionFormula ####
 # Helper function for fitIons
-ionFormula <- function(ions, charge = 1, threshold = 10) {
+ionFormula <- function(ions, charge = 1, threshold = 10, peak = 'gaussian') {
   data('isotopes', package = 'enviPat', envir = environment())
   iso <- enviPat::isopattern(isotopes, ions,
                              charge = charge, threshold = threshold,
@@ -130,17 +140,37 @@ ionFormula <- function(ions, charge = 1, threshold = 10) {
     )
   }, iso, SIMPLIFY = FALSE)
   n.ions <- seq_along(ions)
-  fs <- mapply(function(n, I) {
-    paste(paste0("a", n, " * ", I$lambda,
-           " * exp(-(mass - ", I$mu, " - m0)**2 /",
-           " (2 * s0**2))",
-           collapse = " + "))
-  }, n.ions, ion.init, SIMPLIFY = FALSE)
+  if (is.null(peak) | peak == 'gaussian') {
+    fs <- mapply(function(n, I) {
+      paste(paste0("a", n, " * ", I$lambda,
+                   " * exp(-(mass - ", I$mu, " - m0)**2 /",
+                   " (2 * s0**2))",
+                   collapse = " + "))
+    }, n.ions, ion.init, SIMPLIFY = FALSE)
+  } else if (peak == 'emg') {
+    fs <- mapply(function(n, I) {
+      paste(paste0("emg(mass, a", n, "*", I$lambda,", ",
+                   I$mu, "-m0, s0, t0)", collapse = " + "))
+    }, n.ions, ion.init, SIMPLIFY = FALSE)
+  } else {
+    stop('Peak shape must be one of "gaussian" or "emg."')
+  }
   f.noise <- "n0"
   fs <- paste(paste(fs, collapse = ' + '), f.noise, sep = " + ")
   f.full <- paste("intensity ~", fs)
   return(f.full)
 }
+
+#### erfc ####
+# Complementary error function
+erfc <- function(x) 2 * pnorm(x * sqrt(2), lower = FALSE)
+
+#### emg ####
+# Exponentially modified gaussian function
+emg <- function(x,h,m,s,t) {
+  (h*s/t)*sqrt(pi/2)*exp(1/2*(s/t)^2-(x-m)/t)*erfc(sqrt(1/2)*(s/t-(x-m)/s))
+}
+
 
 #### fitGMM ####
 # Fit a GMM to a region of a MassSpectrum
