@@ -103,6 +103,8 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
   }
   if (is.null(charge)) {
     charge <- rep(1, length(ions))
+  } else if (length(charge) == 1) {
+    charge <- rep(charge, length(ions))
   } else {
     stopifnot(length(charge) == length(ions))
   }
@@ -123,6 +125,7 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
   ion.lower[names(ion.start) == "m0"] <- -1
   ion.lower[names(ion.start) == "t0"] <- 1e-6
   ion.init <- list(formula = ion.form, start = ion.start, lower = ion.lower)
+  attr(ion.init, 'isotopes') <- attr(ion.form, 'isotopes')
   return(ion.init)
 }
 
@@ -158,6 +161,7 @@ ionFormula <- function(ions, charge = 1, threshold = 10, peak = 'gaussian') {
   f.noise <- "n0"
   fs <- paste(paste(fs, collapse = ' + '), f.noise, sep = " + ")
   f.full <- paste("intensity ~", fs)
+  attr(f.full, 'isotopes') <- iso
   return(f.full)
 }
 
