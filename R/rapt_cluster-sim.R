@@ -65,7 +65,7 @@ clustersim <- function(under, over, rcp_rad,
   # Check volume in clusters - optimize to target volume
   sf.optim <- optim(par = 1, fn = check_vol, gr = NULL,
                     over.scaledcut.coo, vc, domain(under), cr.rand,
-                    method = "L-BFGS-B", lower = 0.5, upper = 1.5)
+                    method = "L-BFGS-B", lower = 0.5, upper = 3)
   over.scaled2 <- pp3_scale(over.scaledcut, sf.optim$par)
 
   # shift points to remove overlaps
@@ -76,7 +76,7 @@ clustersim <- function(under, over, rcp_rad,
   # Re-check once for volume correctness
   sf.optim2 <- optim(par = 1, fn = check_vol, gr = NULL,
                      over.nolap.coo, vc, domain(under), cr.rand,
-                     method = "L-BFGS-B", lower = 0.5, upper = 1.5)
+                     method = "L-BFGS-B", lower = 0.5, upper = 3)
   over.scaled3 <- pp3_scale(over.nolap, sf.optim2$par)
   over.final <- over_cut(over.scaled3, rep(sidelength, 3), cr.rand)
 
