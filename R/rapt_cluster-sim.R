@@ -12,6 +12,7 @@ clustersim <- function(under, over, rcp_rad,
                        rho1, rho2,
                        rb = 0.1, # Radius blur (AS A PERCENT OF CR)
                        pb = 0.1, # Position blur (AS A PERCENT OF AVERAGE CLUSTER SEPARATION)
+                       tol = 0.005,
                        s = 103,
                        toplot = F){
   set.seed(s)
@@ -116,6 +117,10 @@ clustersim <- function(under, over, rcp_rad,
   }
 
   pcp.real <- (length(bgnd.inds) + length(cluster.inds))/npoints(under)
+  if(pcp.real < (pcp - tol) | pcp.real > (pcp + tol)){
+    print('Pcp outside of tolerance range')
+    return(-1)
+  }
   #print(pcp.real)
   return(list(just.cluster.points, under, cr.rand.final, pcp.real))
 }
