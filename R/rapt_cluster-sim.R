@@ -85,6 +85,12 @@ clustersim <- function(under, over, rcp_rad,
   cr.rand.final <- marks(over.final)
   cluster.inds.all <- list()
 
+  if(!(is.numeric(rmax) && length(rmax) == 1L && rmax >= 0)){
+    print('Error with cr.rand.final')
+    return(-1)
+  }
+
+
   nnR <- crosspairs.pp3(over.final, under, rmax = max(cr.rand.final), what = 'ijd', neat = TRUE, distinct = TRUE, twice = FALSE)
   nnR.split <- list()
   nnR.split$d <- split(nnR$d, nnR$i, drop=FALSE)
