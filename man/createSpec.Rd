@@ -10,11 +10,12 @@ createSpec(pos, res = 0.001, snip = NULL)
 \arguments{
 \item{pos}{A POS or ATO data frame.}
 
-\item{res}{The desired \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} resolution.}
+\item{res}{The desired
+\code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} resolution.}
 }
 \value{
-A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the \code{mass} field
-  of the POS or ATO, with the resolution set by \code{res}.
+A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the
+  \code{mass} field of the POS or ATO, with the resolution set by \code{res}.
 }
 \description{
 Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS or ATO
