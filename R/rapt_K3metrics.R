@@ -368,7 +368,7 @@ kseries2 <- function(j, p ,tot, maxr, nr, toSub, pcp = 0.06,
 #'   the \code{tot} list.
 #' @export
 
-kseries3 <- function(j, p ,tot, maxr, nr, toSub, pcp = 0.1,
+kseries3 <- function(j, p ,tot, maxr, nr, toSub, pcp = 0.1, tol = 0.005,
                      rcp_path = '~/Research/point_patterns/Final',
                      verbose = FALSE,
                      junk_path = '~/Research/junk/',
@@ -405,6 +405,7 @@ kseries3 <- function(j, p ,tot, maxr, nr, toSub, pcp = 0.1,
                            rho2 = tot[[i]][3],
                            rb = tot[[i]][4],
                            pb = tot[[i]][5],
+                           tol = tol,
                            s = cnt[i])
     if(is.numeric(cluster)){
       outtemp[i,] <- c(NA, NA, NA, NA, NA)

@@ -85,7 +85,7 @@ clustersim <- function(under, over, rcp_rad,
   cr.rand.final <- marks(over.final)
   cluster.inds.all <- list()
 
-  if(!(is.numeric(rmax) && length(rmax) == 1L && rmax >= 0)){
+  if(!(is.numeric(max(cr.rand.final)) && length(max(cr.rand.final)) == 1L && max(cr.rand.final) >= 0)){
     print('Error with cr.rand.final')
     return(-1)
   }

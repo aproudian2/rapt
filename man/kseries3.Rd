@@ -5,7 +5,7 @@
 \title{Helper function to allow for parallelization of metric extraction from
 cluster simulations (the newest ones)}
 \usage{
-kseries3(j, p, tot, maxr, nr, toSub, pcp = 0.1,
+kseries3(j, p, tot, maxr, nr, toSub, pcp = 0.1, tol = 0.005,
   rcp_path = "~/Research/point_patterns/Final", verbose = FALSE,
   junk_path = "~/Research/junk/", s = NULL)
 }
