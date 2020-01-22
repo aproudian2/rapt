@@ -451,6 +451,8 @@ kseries3 <- function(j, p ,tot, maxr, nr, toSub, pcp = 0.1, tol = 0.005,
 
   return(outtemp)
 }
+
+
 #### finite_deriv ####
 #' Find the numerical derivative of a finite set of points.
 #'

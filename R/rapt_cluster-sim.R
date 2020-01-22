@@ -90,8 +90,11 @@ clustersim <- function(under, over, rcp_rad,
     return(-1)
   }
 
-
   nnR <- crosspairs.pp3(over.final, under, rmax = max(cr.rand.final), what = 'ijd', neat = TRUE, distinct = TRUE, twice = FALSE)
+  if(is.empty(nnR$i)){
+    print('No cluster centers in domain.')
+    return(-1)
+  }
   nnR.split <- list()
   nnR.split$d <- split(nnR$d, nnR$i, drop=FALSE)
   nnR.split$j <- split(nnR$j, nnR$i, drop=FALSE)
