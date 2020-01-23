@@ -2,6 +2,139 @@
 # This file contains functions pertaining to the simulation of clustered point patterns,
 #
 
+#### clustersim ####
+#' Simulate clusters on an RCP lattice
+#'
+#' @export
+clustersim <- function(under, over, rcp_rad,
+                       pcp = 0.1,
+                       cr,
+                       rho1, rho2,
+                       rb = 0.1, # Radius blur (AS A PERCENT OF CR)
+                       pb = 0.1, # Position blur (AS A PERCENT OF AVERAGE CLUSTER SEPARATION)
+                       tol = 0.005,
+                       s = 103,
+                       toplot = F){
+  set.seed(s)
+  # Total volume
+  sidelength <- diff(domain(under)$xrange)
+  vt <- sidelength^3
+
+  # Calculate volume needed in clusters
+  if(rho2 >= pcp){
+    print('Can not have background density (rho2) be larger than or equal to cluster point concentration (pcp).')
+    return(-1)
+  }
+  vc <- vt*(pcp - rho2)/(rho1-rho2)
+
+  # Calculate sigma (radius blur sd)
+  sigma <- cr*rb
+
+  # Calculate guess RCP concentration
+  alpha <- 1
+  rcp.conc <- vc/(4/3 * pi * cr*(cr^2 + 3*sigma^2) * vt * alpha)
+
+  # Scale over RCP pattern to match this concentration
+  over.vol <- volume(domain(over)) # Original volume
+  over.vol.new <- npoints(over)/rcp.conc # New volume
+  over.sf <- over.vol.new^(1/3)/over.vol^(1/3) # Scale factor to get to new volume
+  over.scaled <- pp3_scale(over, over.sf)
+
+  # Generate and add position blur
+  over.sub <- over_cut(over.scaled, rep(sidelength, 3), cr)
+  nnd <- nndist.pp3(over.sub)
+  avg.sep <- mean(nnd)
+  pb.sig <- avg.sep*pb
+
+  pb.shifts <- pb_gen(npoints(over.scaled), mean = 0, sd = pb.sig)
+  over.coo <- coords(over.scaled)
+  over.coo.pb <- over.coo + pb.shifts
+  over.scaled.pb <- pp3(x = over.coo.pb$x,
+                        y = over.coo.pb$y,
+                        z = over.coo.pb$z,
+                        domain(over.scaled))
+
+  # Re-size and shift the over point pattern so that it lines up with the under point pattern with buffers
+  over.scaledcut <- over_cut(over.scaled.pb, rep(sidelength, 3), 2.5*cr)
+  over.scaledcut.coo <- coords(over.scaledcut)
+
+  # Generate normal distributed radii for cluster centers
+  cr.rand <- rnorm(npoints(over.scaledcut), mean = cr, sd = sigma)
+  cr.rand[cr.rand < 0] <- 0
+  marks(over.scaledcut) <- cr.rand
+
+  # Check volume in clusters - optimize to target volume
+  sf.optim <- optim(par = 1, fn = check_vol, gr = NULL,
+                    over.scaledcut.coo, vc, domain(under), cr.rand,
+                    method = "L-BFGS-B", lower = 0.5, upper = 3)
+  over.scaled2 <- pp3_scale(over.scaledcut, sf.optim$par)
+
+  # shift points to remove overlaps
+  over.nolap <- overlap_fix(over.scaled2, cr.rand)
+  if(is.numeric(over.nolap)){return(-1)}
+  over.nolap.coo <- coords(over.nolap)
+
+  # Re-check once for volume correctness
+  sf.optim2 <- optim(par = 1, fn = check_vol, gr = NULL,
+                     over.nolap.coo, vc, domain(under), cr.rand,
+                     method = "L-BFGS-B", lower = 0.5, upper = 3)
+  over.scaled3 <- pp3_scale(over.nolap, sf.optim2$par)
+  over.final <- over_cut(over.scaled3, rep(sidelength, 3), cr.rand)
+
+  # Select points that fall within the correct radius of each cluster center
+  cr.rand.final <- marks(over.final)
+  cluster.inds.all <- list()
+
+  if(!(is.numeric(max(cr.rand.final)) && length(max(cr.rand.final)) == 1L && max(cr.rand.final) >= 0)){
+    print('Error with cr.rand.final')
+    return(-1)
+  }
+
+  nnR <- crosspairs.pp3(over.final, under, rmax = max(cr.rand.final), what = 'ijd', neat = TRUE, distinct = TRUE, twice = FALSE)
+  if(is.empty(nnR$i)){
+    print('No cluster centers in domain.')
+    return(-1)
+  }
+  nnR.split <- list()
+  nnR.split$d <- split(nnR$d, nnR$i, drop=FALSE)
+  nnR.split$j <- split(nnR$j, nnR$i, drop=FALSE)
+  nnR.split$i <- as.numeric(attr(nnR.split$d, 'name'))
+
+  cluster.inds.all <- lapply(1:length(nnR.split$i), function(k){nnR.split$j[[k]][nnR.split$d[[k]] < cr.rand.final[nnR.split$i[[k]]]]})
+
+  cluster.inds.thinned <- lapply(cluster.inds.all, function(x){sample(x, round(rho1*length(x)))})
+
+  cluster.inds <- unlist(cluster.inds.thinned)
+  attr(cluster.inds, 'names') <- NULL
+
+  # Select background points
+  inds.all <- 1:npoints(under)
+  bgnd.inds.all <- inds.all[!(inds.all %in% unlist(cluster.inds.all))]
+  bgnd.inds <-  sample(bgnd.inds.all, round(rho2*length(bgnd.inds.all)))
+
+  # Create final pp3
+  c.marks <- rep(NA, npoints(under))
+  c.marks[cluster.inds] <- 'A'
+  c.marks[bgnd.inds] <- 'B'
+  c.marks[-(c(cluster.inds, bgnd.inds))] <- 'C'
+
+  marks(under) <- c.marks
+  just.cluster.points <- under[marks(under) == 'A' | marks(under) == 'B']
+
+  if(toplot == TRUE){
+    plot3d.pp3(just.cluster.points)
+  }
+
+  pcp.real <- (length(bgnd.inds) + length(cluster.inds))/npoints(under)
+  if(pcp.real < (pcp - tol) | pcp.real > (pcp + tol)){
+    print('Pcp outside of tolerance range')
+    return(-1)
+  }
+  #print(pcp.real)
+  return(list(just.cluster.points, under, cr.rand.final, pcp.real))
+}
+
+
 #### makecluster ####
 #' Simulate point clustering in an RCP matrix
 #'
@@ -142,7 +275,6 @@
 #'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
 #'   center to center) from each cluster. [[5]] A vector contining the radius of
 #'   each cluster.}
-#' @export
 
 makecluster <- function(under,over,radius1,radius2,
                         type = "cr",
@@ -1090,7 +1222,7 @@ morph_gb <- function(lambda,
 
 #########################################
 # Helper functions
-
+#### Pre 1/21/2020 helpers: ####
 #### bcc.gen ####
 #' Generate body centerd cubic (BCC) lattice of points in 3D.
 #'
@@ -1172,7 +1304,6 @@ hcp.gen <- function(r, win){
   colnames(xyzdf) <- c("x","y","z")
   return(xyzdf)
 }
-
 
 #### subSample ####
 #' Helper for \code{\link{makecluster}} to cut \code{\link[spatstat]{pp3}} object to size.
@@ -1532,4 +1663,154 @@ rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1){
     z <- rnorm(n, mean, sd)
     return(as.data.frame(cbind(x,y,z)))
   }
+}
+
+
+#### Post 1/21/2020 helpers: ####
+#### pp3_scale ####
+# Scale pp3 pattern according to scale factor
+pp3_scale <- function(X, sf){
+  mks <- marks(X)
+  X.d <- domain(X)
+  X.d.new <- box3(X.d$xrange*sf, X.d$yrange*sf, X.d$zrange*sf)
+  X.coo.new <- coords(X)*sf
+  X.new <- pp3(X.coo.new$x, X.coo.new$y, X.coo.new$z, X.d.new)
+  marks(X.new) <- mks
+  return(X.new)
+}
+
+#### over_cut ####
+# Get correctly sized (size win) and positioned over rcp
+# win is the dimensions of the under point pattern
+over_cut <- function(X, win, cr.rand){
+  win.full <- win + 2*max(cr.rand)
+  add <- max(cr.rand)
+  X.cut <- subSquare(X, win.full)
+  mks <- marks(X.cut)
+  X.shift.coo <- coords(X.cut) - add
+  X.shift.win <- box3(c(-add, win[1] + add), c(-add, win[2] + add), c(-add, win[3] + add))
+  X.fin <- pp3(X.shift.coo$x, X.shift.coo$y, X.shift.coo$z, X.shift.win)
+  marks(X.fin) <- mks
+  return(X.fin)
+}
+
+#### bdist.complex ####
+# Return distance to closest edge of window, and whether it is inside (+) or outside (-) that window
+bdist.complex <- function(X.df, win){
+
+  x <- X.df$x
+  y <- X.df$y
+  z <- X.df$z
+
+  xmin <- min(win$xrange)
+  xmax <- max(win$xrange)
+  ymin <- min(win$yrange)
+  ymax <- max(win$yrange)
+  zmin <- min(win$zrange)
+  zmax <- max(win$zrange)
+
+  result <- data.frame(x = pmin.int(x - xmin, xmax - x), y =  pmin.int(y - ymin, ymax - y), z = pmin.int(z - zmin, zmax - z))
+
+  return(result)
+}
+
+#### pb_gen ####
+# Generate random position shifts
+pb_gen <- function(n, mean, sd){
+  r <- abs(rnorm(n,mean,sd))
+  theta <- runif(n,0,2*pi)
+  phi <- acos(runif(n,-1,1))
+  x <- r*sin(phi)*cos(theta)
+  y <- r*sin(phi)*sin(theta)
+  z <- r*cos(phi)
+  return(as.data.frame(cbind(x,y,z)))
+}
+
+#### overlap_fix ####
+# Shift points so none of the clusters overlap after a position blur
+overlap_fix <- function(X, cr.rand){
+  nnd <- nndist(X)
+  nnw <- nnwhich(X)
+
+  check <- which(nnd < (cr.rand + cr.rand[nnw]))
+  #print(check)
+
+  t1 <- Sys.time()
+  while(!is.empty(check)){
+    ind <- check[1]
+    minsep <- cr.rand[ind] + cr.rand[nnw[ind]]
+    direction <- (coords(X)[nnw[ind],]-coords(X)[ind,])/nnd[ind]
+    coords(X)[ind,] <- coords(X)[ind,]+(nnd[ind]-(minsep+0.00001))*direction
+    nnd <- nndist.pp3(X)
+    nnw <- nnwhich.pp3(X)
+    check <- which(nnd < (cr.rand + cr.rand[nnw]))
+    t2 <- Sys.time()
+    if((as.numeric(t2) - as.numeric(t1)) > 15){
+      print('Impossible to find no-overlap solution.')
+      return(-1)
+    }
+  }
+  return(X)
+}
+
+#### check_vol ####
+# Function to check volume in clusters and optimize
+check_vol <- function(sf, coo, vol.target, under.domain, cr.rand){
+  coo.scaled <- coo*sf
+
+  bdist <- bdist.complex(coo.scaled, under.domain)
+  io <- as.numeric(inside.boxx(coo.scaled$x, coo.scaled$y, coo.scaled$z, w = under.domain))
+
+  fullin <- apply(bdist > cr.rand, 1, all) & io == 1
+
+  partin.face <- !apply(bdist > cr.rand, 1, all) & apply(bdist < cr.rand , 1, sum) == 1 & io == 1
+  partin.edge <- !apply(bdist > cr.rand, 1, all) & apply(bdist < cr.rand , 1, sum) == 2 & io == 1
+  partin.corner <- !apply(bdist > cr.rand, 1, all) & apply(bdist < cr.rand , 1, sum) == 3 & io == 1
+  partin.face.h <- cr.rand[partin.face] - apply(bdist[partin.face,], 1, min)
+  partin.edge.h <- cr.rand[partin.edge] - t(apply(bdist[partin.edge,], 1, function(x){sort(x)[1:2]}))
+  partin.corner.h <- cr.rand[partin.corner] - t(apply(bdist[partin.corner,], 1, function(x){sort(x)}))
+
+  fullout <- apply(bdist < -cr.rand, 1, any) & io == 0
+
+  partout.face <- !apply(bdist < -cr.rand, 1, any) & apply(bdist < 0 , 1, sum) == 1 & io == 0
+  partout.edge <- !apply(bdist < -cr.rand, 1, any) & apply(bdist < 0 , 1, sum) == 2 & io == 0
+  partout.corner <- !apply(bdist < -cr.rand, 1, any) & apply(bdist < 0 , 1, sum) == 3 & io == 0
+  partout.face.h <- cr.rand[partout.face] + apply(bdist[partout.face,], 1, min)
+  partout.edge.h <- cr.rand[partout.edge] + apply(bdist[partout.edge,], 1, min)
+  partout.corner.h <- cr.rand[partout.corner] + apply(bdist[partout.corner,], 1, min)
+
+  #fullin volume
+  vol.fullin <- 4/3*pi*cr.rand[fullin]^3
+
+  #partin volume
+  vol.partin.face <- 4/3*pi*cr.rand[partin.face]^3 - 1/3*pi*partin.face.h^2*(3*cr.rand[partin.face] - partin.face.h)
+  if(sum(partin.edge) > 0){
+    vol.partin.edge <- 4/3*pi*cr.rand[partin.edge]^3 -
+      1/3*pi*partin.edge.h[,1]^2*(3*cr.rand[partin.edge] - partin.edge.h[,1]) -
+      1/3*pi*partin.edge.h[,2]^2*(3*cr.rand[partin.edge] - partin.edge.h[,2])
+  }else{
+    vol.partin.edge <- c(0)
+  }
+  if(sum(partin.corner) > 0){
+    vol.partin.corner <- 4/3*pi*cr.rand[partin.corner]^3 -
+      1/3*pi*partin.corner.h[,1]^2*(3*cr.rand[partin.corner] - partin.corner.h[,1]) -
+      1/3*pi*partin.corner.h[,2]^2*(3*cr.rand[partin.corner] - partin.corner.h[,2]) -
+      1/3*pi*partin.corner.h[,3]^2*(3*cr.rand[partin.corner] - partin.corner.h[,3])
+  }else{
+    vol.partin.corner <- c(0)
+  }
+
+  #partout volume
+  vol.partout.face <- 1/3*pi*partout.face.h^2*(3*cr.rand[partout.face] - partout.face.h)
+  vol.partout.edge <- 0.5*(1/3*pi*partout.edge.h^2*(3*cr.rand[partout.edge] - partout.edge.h))
+  vol.partout.corner <- 0.25*(1/3*pi*partout.corner.h^2*(3*cr.rand[partout.corner] - partout.corner.h))
+
+  #fullout volume = zero
+
+  # add to get total volume
+  vols.total <- sum(vol.fullin) +
+    sum(vol.partin.face) + sum(vol.partin.edge) + sum(vol.partin.corner) +
+    sum(vol.partout.face) + sum(vol.partout.edge) + sum(vol.partout.corner)
+
+  return(abs(vol.target - vols.total))
 }
