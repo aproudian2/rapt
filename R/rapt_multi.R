@@ -134,5 +134,5 @@ dissocTrack <- function(v, m, mp){
 #### houghClean ####
 # Stub for Hough Transform cleaning of multiple hit noise
 houghClean <- function(sax) {
-  dat <- PET::hough(sax$z)
+
 }
