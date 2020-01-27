@@ -4,8 +4,16 @@
 \alias{prettyPlot}
 \title{Plot a pretty \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}.}
 \usage{
-prettyPlot(ms, rng = NA, xlim = NULL, ylim = NULL, lwd = 1,
-  main = NULL, hold.par = F, ...)
+prettyPlot(
+  ms,
+  rng = NA,
+  xlim = NULL,
+  ylim = NULL,
+  lwd = 1,
+  main = NULL,
+  hold.par = F,
+  ...
+)
 }
 \description{
 \code{prettyPlot}

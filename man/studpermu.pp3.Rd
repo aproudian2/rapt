@@ -5,9 +5,19 @@
 \title{Extends split to pp3
 Extends studpermu.test to pp3}
 \usage{
-studpermu.pp3(X, formula, summaryfunction = G3est, ...,
-  rinterval = NULL, nperm = 999, use.Tbar = FALSE, minpoints = 20,
-  rsteps = 128, r = NULL, arguments.in.data = FALSE)
+studpermu.pp3(
+  X,
+  formula,
+  summaryfunction = G3est,
+  ...,
+  rinterval = NULL,
+  nperm = 999,
+  use.Tbar = FALSE,
+  minpoints = 20,
+  rsteps = 128,
+  r = NULL,
+  arguments.in.data = FALSE
+)
 }
 \description{
 This function is still experimental. It needs full testing and validation.

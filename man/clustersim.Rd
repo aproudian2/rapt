@@ -4,8 +4,20 @@
 \alias{clustersim}
 \title{Simulate clusters on an RCP lattice}
 \usage{
-clustersim(under, over, rcp_rad, pcp = 0.1, cr, rho1, rho2, rb = 0.1,
-  pb = 0.1, tol = 0.005, s = 103, toplot = F)
+clustersim(
+  under,
+  over,
+  rcp_rad,
+  pcp = 0.1,
+  cr,
+  rho1,
+  rho2,
+  rb = 0.1,
+  pb = 0.1,
+  tol = 0.005,
+  s = 103,
+  toplot = F
+)
 }
 \description{
 Simulate clusters on an RCP lattice
