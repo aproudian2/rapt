@@ -4,10 +4,17 @@
 \alias{morph_rods}
 \title{Simulate morphology of guest rods in a two-phase system}
 \usage{
-morph_rods(lambda, frac, rod.norm = "z", rod.den, rod.spacing = "grid",
+morph_rods(
+  lambda,
+  frac,
+  rod.norm = "z",
+  rod.den,
+  rod.spacing = "grid",
   rcp.path = "C:/Users/galen/Documents/Research/point_patterns/2D/Final",
-  point.den = 1, toplot = FALSE, win = box3(c(0, 1), c(0, 1), c(0,
-  1)))
+  point.den = 1,
+  toplot = FALSE,
+  win = box3(c(0, 1), c(0, 1), c(0, 1))
+)
 }
 \arguments{
 \item{lambda}{Intensity for the background Poisson process.}

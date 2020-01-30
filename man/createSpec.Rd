@@ -18,8 +18,10 @@ A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the
   \code{mass} field of the POS or ATO, with the resolution set by \code{res}.
 }
 \description{
-Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS or ATO
-data frame.
+\code{createSpec} generates a
+\code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} object with a
+specified resolution from an ATO or POS data frame (like that created by
+\code{\link{readPOS}}).
 }
 \details{
 The input POS or ATO is binned by mass values; the resolution parameter sets

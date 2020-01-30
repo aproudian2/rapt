@@ -5,8 +5,15 @@
 \title{Extends \code{\link[spatstat]{rPoissonCluster}} to
 \code{\link[spatstat]{pp3}}.}
 \usage{
-rPoissonCluster3(kappa, expand, rcluster, win = box3(), ..., nsim = 1,
-  drop = T)
+rPoissonCluster3(
+  kappa,
+  expand,
+  rcluster,
+  win = box3(),
+  ...,
+  nsim = 1,
+  drop = T
+)
 }
 \description{
 Extends \code{\link[spatstat]{rPoissonCluster}} to

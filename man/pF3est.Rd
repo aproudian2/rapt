@@ -4,8 +4,17 @@
 \alias{pF3est}
 \title{Perform F3est on random relabelings in parallel}
 \usage{
-pF3est(perc, pattern, nEvals, rmax = NULL, nrval = 128,
-  correction = "rs", anom = FALSE, toSub = NULL, cores = NULL)
+pF3est(
+  perc,
+  pattern,
+  nEvals,
+  rmax = NULL,
+  nrval = 128,
+  correction = "rs",
+  anom = FALSE,
+  toSub = NULL,
+  cores = NULL
+)
 }
 \arguments{
 \item{perc}{The fraction of points to select randomly each time out of the

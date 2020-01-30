@@ -192,7 +192,7 @@ createDet <- function(ato, win = NULL, marks = NULL) {
 #' \code{createSpec} generates a
 #' \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} object with a
 #' specified resolution from an ATO or POS data frame (like that created by
-#' \code{\link{readPOS}).
+#' \code{\link{readPOS}}).
 #'
 #' @param pos A POS or ATO data frame.
 #' @param res The desired

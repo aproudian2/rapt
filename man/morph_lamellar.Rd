@@ -4,9 +4,15 @@
 \alias{morph_lamellar}
 \title{Simulate lamellar morphology for mixed guest-host system.}
 \usage{
-morph_lamellar(lambda, frac, plane.norm = c(1, 0, 0), plane.den,
-  point.den = 1, toplot = FALSE, win = box3(c(0, 1), c(0, 1), c(0,
-  1)))
+morph_lamellar(
+  lambda,
+  frac,
+  plane.norm = c(1, 0, 0),
+  plane.den,
+  point.den = 1,
+  toplot = FALSE,
+  win = box3(c(0, 1), c(0, 1), c(0, 1))
+)
 }
 \arguments{
 \item{lambda}{Intensity for the background Poisson process.}

@@ -4,8 +4,17 @@
 \alias{pG3est}
 \title{Perform G3est on random relabelings in parallel}
 \usage{
-pG3est(perc, pattern, nEvals, rmax = NULL, nrval = 128,
-  correction = "rs", anom = FALSE, toSub = NULL, cores = NULL)
+pG3est(
+  perc,
+  pattern,
+  nEvals,
+  rmax = NULL,
+  nrval = 128,
+  correction = "rs",
+  anom = FALSE,
+  toSub = NULL,
+  cores = NULL
+)
 }
 \arguments{
 \item{perc}{The fraction of points to select randomly each time out of the

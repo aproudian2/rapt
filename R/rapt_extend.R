@@ -107,7 +107,7 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 }
 
 #### inside.pp3 ####
-#' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]pp3}}.
+#' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]{pp3}}.
 #'
 #' @seealso \code{\link[spatstat]{inside}}
 #' @export

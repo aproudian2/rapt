@@ -4,8 +4,7 @@
 \alias{pEnvelope}
 \title{Create an envelope in parallel}
 \usage{
-pEnvelope(cl, X, fun = K3est, nsim = 99, nrank = 1, ...,
-  simulate = NULL)
+pEnvelope(cl, X, fun = K3est, nsim = 99, nrank = 1, ..., simulate = NULL)
 }
 \arguments{
 \item{cl}{A \code{\link[parallel]{cluster}} object}
