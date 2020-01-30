@@ -145,7 +145,6 @@ read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5) {
   return(temp)
 }
 
-## Add ability to specify marks
 #### Condition Data ####
 #' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
 #'
@@ -155,12 +154,12 @@ read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5) {
 #'   the supplied POS or ATO.
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}}
 #' @export
-createSpat <- function(pos, win = NULL) {
+createSpat <- function(pos, win = NULL, marks = NULL) {
   pp3.box <- win;
   if(is.null(win)) {
     pp3.box <- sapply(pos[1:3], range);
   }
-  pp3.dat <- pp3(pos$x, pos$y, pos$z, pp3.box);
+  pp3.dat <- pp3(pos$x, pos$y, pos$z, pp3.box, marks = marks);
   attr(pp3.dat, "metaData") <- attr(pos, "metaData");
   pp3.dat <- pp3.dat[inside.boxx(pp3.dat, w = pp3.box)];
   return(pp3.dat);
@@ -180,10 +179,10 @@ createSpat <- function(pos, win = NULL) {
 #' @seealso \code{\link{readATO}}, \code{\link[spatstat]{ppp}},
 #'   \code{\link[spatstat]{ripras}}
 #' @export
-createDet <- function(ato, win = NULL) {
+createDet <- function(ato, win = NULL, marks = NULL) {
   if(is.null(win))
     win <- ripras(ato$dx, ato$dy)
-  det.dat <- ppp(ato$dx, ato$dy, window = win)
+  det.dat <- ppp(ato$dx, ato$dy, window = win, marks = marks)
   return(det.dat)
 }
 
