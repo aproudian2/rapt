@@ -4,10 +4,16 @@
 \alias{morph_gb}
 \title{Simulate morphology of guest molecules on a grain boundary}
 \usage{
-morph_gb(lambda, frac, point.den = 1, rcp.rad,
+morph_gb(
+  lambda,
+  frac,
+  point.den = 1,
+  rcp.rad,
   rcp.path = "C:/Users/galen/Documents/Research/point_patterns/Final",
-  rcp.number = 1, toplot = FALSE, win = box3(c(0, 1), c(0, 1), c(0,
-  1)))
+  rcp.number = 1,
+  toplot = FALSE,
+  win = box3(c(0, 1), c(0, 1), c(0, 1))
+)
 }
 \arguments{
 \item{lambda}{Intensity for the background Poisson process.}

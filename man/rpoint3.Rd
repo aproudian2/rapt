@@ -4,8 +4,17 @@
 \alias{rpoint3}
 \title{Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.}
 \usage{
-rpoint3(n, f, fmax = 1, win = box3(), ..., giveup = 1000,
-  verbose = FALSE, nsim = 1, drop = TRUE)
+rpoint3(
+  n,
+  f,
+  fmax = 1,
+  win = box3(),
+  ...,
+  giveup = 1000,
+  verbose = FALSE,
+  nsim = 1,
+  drop = TRUE
+)
 }
 \description{
 Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.

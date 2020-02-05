@@ -7,7 +7,7 @@
 rangePOS(pos, start, end)
 }
 \arguments{
-\item{pos}{A data.frame. The pos to be ranged}
+\item{pos}{A data.frame. The \code{POS} or \code{ATO} to be ranged}
 
 \item{start}{The start of the mass range}
 

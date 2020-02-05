@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_envelopes.R
 \name{anomG3est}
 \alias{anomG3est}
-\title{Perfrom anomaly G3est on a \code{\link[spatstat]{pp3}} object.}
+\title{Perform anomaly G3est on a \code{\link[spatstat]{pp3}} object.}
 \usage{
 anomG3est(pattern, toSub, rmax, nrval, correction = "rs")
 }
