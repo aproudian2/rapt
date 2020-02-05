@@ -5,16 +5,8 @@
 \title{Simulate a clustered point pattern and extract the K-function metrics from
 it.}
 \usage{
-kseries(
-  j,
-  params,
-  maxr,
-  nr,
-  toSub,
-  pcp = 0.06,
-  rcp_path = "~/Research/point_patterns/Final",
-  s = NULL
-)
+kseries(j, params, maxr, nr, toSub, pcp = 0.06,
+  rcp_path = "~/Research/point_patterns/Final", s = NULL)
 }
 \arguments{
 \item{j}{The index of the RCP pattern to run.}

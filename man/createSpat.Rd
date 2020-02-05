@@ -4,7 +4,7 @@
 \alias{createSpat}
 \title{Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.}
 \usage{
-createSpat(pos, win = NULL)
+createSpat(pos, win = NULL, marks = NULL)
 }
 \arguments{
 \item{pos}{A POS or ATO data frame.}

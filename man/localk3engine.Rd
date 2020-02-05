@@ -4,7 +4,8 @@
 \alias{localk3engine}
 \title{Wrapper function for the C code under \code{\link{localK3est}}.}
 \usage{
-localk3engine(x, y, z, box = c(0, 1, 0, 1, 0, 1), rmax = 1, nrval = 100)
+localk3engine(x, y, z, box = c(0, 1, 0, 1, 0, 1), rmax = 1,
+  nrval = 100)
 }
 \description{
 Wrapper function for the C code under \code{\link{localK3est}}.

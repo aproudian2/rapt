@@ -4,17 +4,10 @@
 \alias{envPlot}
 \title{Plot envelopes of K3est test}
 \usage{
-envPlot(
-  tests,
-  percentiles = c(0.999, 0.99, 0.97),
-  ylim = c(-3, 3),
-  xlim = c(0, ceiling(max(tests[, 1]))),
-  ylab = expression(sqrt("K"[3] * "(r)") * "  Anomaly"),
-  xlab = "r",
-  leg = TRUE,
-  colors = c("lightskyblue", "mediumpurple", "lightpink"),
-  ...
-)
+envPlot(tests, percentiles = c(0.999, 0.99, 0.97), ylim = c(-3, 3),
+  xlim = c(0, ceiling(max(tests[, 1]))), ylab = expression(sqrt("K"[3]
+  * "(r)") * "  Anomaly"), xlab = "r", leg = TRUE,
+  colors = c("lightskyblue", "mediumpurple", "lightpink"), ...)
 }
 \arguments{
 \item{tests}{The return file from \code{p(K/G/F)3est} or the first, [[1]],

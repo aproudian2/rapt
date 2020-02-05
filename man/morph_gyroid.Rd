@@ -4,14 +4,8 @@
 \alias{morph_gyroid}
 \title{Simulate morphology of guest molecules in gyroid pattern}
 \usage{
-morph_gyroid(
-  lambda,
-  frac,
-  gyroid.scale,
-  point.den = 1,
-  toplot = FALSE,
-  win = box3(c(0, 1), c(0, 1), c(0, 1))
-)
+morph_gyroid(lambda, frac, gyroid.scale, point.den = 1, toplot = FALSE,
+  win = box3(c(0, 1), c(0, 1), c(0, 1)))
 }
 \arguments{
 \item{lambda}{Intensity for the background Poisson process.}

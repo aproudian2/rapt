@@ -4,18 +4,9 @@
 \alias{pK3est}
 \title{Perform K3est on random relabelings in parallel}
 \usage{
-pK3est(
-  perc,
-  pattern,
-  nEvals,
-  rmax = NULL,
-  nrval = 128,
-  correction = "trans",
-  anom = FALSE,
-  toSub = NULL,
-  sorted = TRUE,
-  cores = NULL
-)
+pK3est(perc, pattern, nEvals, rmax = NULL, nrval = 128,
+  correction = "trans", anom = FALSE, toSub = NULL, sorted = TRUE,
+  cores = NULL)
 }
 \arguments{
 \item{perc}{The fraction of points to select randomly each time out of the

@@ -4,29 +4,11 @@
 \alias{makecluster}
 \title{Simulate point clustering in an RCP matrix}
 \usage{
-makecluster(
-  under,
-  over,
-  radius1,
-  radius2,
-  type = "cr",
-  ppc = NULL,
-  cr = NULL,
-  speed = "superfast",
-  d = NULL,
-  pic = 1,
-  pcp = 0.06,
-  den = 1,
-  gb = FALSE,
-  gbp = c(0, 1),
-  gbmethod = 1,
-  rb = FALSE,
-  rbp = 1,
-  rbmethod = 1,
-  s = 100,
-  toPlot = FALSE,
-  showOverPts = FALSE
-)
+makecluster(under, over, radius1, radius2, type = "cr", ppc = NULL,
+  cr = NULL, speed = "superfast", d = NULL, pic = 1, pcp = 0.06,
+  den = 1, gb = FALSE, gbp = c(0, 1), gbmethod = 1, rb = FALSE,
+  rbp = 1, rbmethod = 1, s = 100, toPlot = FALSE,
+  showOverPts = FALSE)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}

@@ -4,7 +4,7 @@
 \alias{createDet}
 \title{Create a \code{\link[spatstat]{ppp}} from an ATO.}
 \usage{
-createDet(ato, win = NULL)
+createDet(ato, win = NULL, marks = NULL)
 }
 \arguments{
 \item{ato}{An ATO data frame.}

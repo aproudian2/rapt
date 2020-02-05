@@ -5,19 +5,9 @@
 \title{Helper function to allow for parallelization of metric extraction from
 cluster simulations}
 \usage{
-kseries2(
-  j,
-  p,
-  tot,
-  maxr,
-  nr,
-  toSub,
-  pcp = 0.06,
-  rcp_path = "~/Research/point_patterns/Final",
-  verbose = FALSE,
-  junk_path = "~/Research/junk/",
-  s = NULL
-)
+kseries2(j, p, tot, maxr, nr, toSub, pcp = 0.06,
+  rcp_path = "~/Research/point_patterns/Final", verbose = FALSE,
+  junk_path = "~/Research/junk/", s = NULL)
 }
 \arguments{
 \item{j}{The index of the RCP pattern to run.}
