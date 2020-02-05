@@ -469,7 +469,7 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 }
 
 #### anomG3est ####
-#' Perfrom anomaly G3est on a \code{\link[spatstat]{pp3}} object.
+#' Perform anomaly G3est on a \code{\link[spatstat]{pp3}} object.
 #'
 #' See \code{\link[spatstat]{G3est}}. Performs the anomaly G3est on a set of
 #' point cloud data. This means subtracting the 50th percentile from the
@@ -849,11 +849,11 @@ pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
   savefuns <- TRUE
   n.cut <- cut(seq_len(nsim), length(cl), labels = FALSE)
   pSim <- split(simulate, n.cut) # this doesn't handle the NULL simulate case
-  env <- parLapply(cl, pSim, function(s) {
-    envelope(X, fun=fun, nsim=length(s), nrank=1, ...=...,
-             simulate=s, savefuns=savefuns, verbose=FALSE)
+  env <- parallel::parLapply(cl, pSim, function(s) {
+    spatstat::envelope(X, fun=fun, nsim=length(s), nrank=1, ...=...,
+                       simulate=s, savefuns=savefuns, verbose=FALSE)
   })
-  po <- do.call(pool, c(env, savefuns=savefuns))
-  dat <- envelope(po, nrank=nrank, savefuns=savefuns)
+  po <- do.call(spatstat::pool, c(env, savefuns=savefuns))
+  dat <- spatstat::envelope(po, nrank=nrank, savefuns=savefuns)
   return(dat)
 }

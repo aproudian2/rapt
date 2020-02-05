@@ -23,7 +23,7 @@ rangeCount <- function(pos, start, end) {
 #' rangePOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
 #' is within the provided range.
 #'
-#' @param pos A data.frame. The pos to be ranged
+#' @param pos A data.frame. The \code{POS} or \code{ATO} to be ranged
 #' @param start The start of the mass range
 #' @param end The end of the mass range
 #' @return A data.frame of the same structure as \code{pos} containing only hits
@@ -91,8 +91,33 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #### rangeMassPeaks ####
 
 #### fitIonInit ####
-# Create initialization for nls fitting of MassSpectrum peaks based on ions
-# Add lower and upper limits for port algorithm fitting
+#' Create initialization for nls fitting of MassSpectrum peaks based on ions
+#'
+#' fitIonInit creates the formula and starting values for fitting mass spectra
+#' using \code{nls} based on molecular formulae.
+#'
+#' @param ions Character. A character vector of molecular formulae sutable to be
+#'   passed to enviPat::isopattern.
+#' @param sd Numeric. The estimated standard deviation (or equivalent for
+#' peak = "emg") of the fitted peak.
+#' @param rel Numeric. A numeric vector of relative heights for each ion to
+#'   initialize the starting values of the peak magnitudes.
+#' @param peak Character. A string specifying what sort of peak shape to fit.
+#'   Acceptable values are "gaussian" (the default) and "emg". See details.
+#' @param mass.shift Numeric. The estimated mass shift of the measured mass
+#'   spectrum relative to the absolute mass position of the ions.
+#' @param noise Numeric. The estimated value of the constant noise floor of the
+#'   mass spectrum.
+#' @param tau Numeric. The estimated value of the skewness parameter for
+#'   peak = "emg". Ignored for peak = "gaussian".
+#' @param charge Numeric.
+#' @param threshold Numeric.
+#' @return A list containing elements of the fitting formula, the starting fit
+#'   values, and the lower limits for each parameter.
+#' @seealso \code{\link{nls}}, \code{\link[enviPat]{isopattern}}
+#'
+# Add upper limits for port algorithm fitting
+# Add ion specific sd / tau option
 fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
                        mass.shift = 0, noise = 0, tau = 0.1,
                        charge = NULL, threshold = 10) {
