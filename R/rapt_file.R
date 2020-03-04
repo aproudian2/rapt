@@ -9,7 +9,7 @@
 #' \code{readPOS} reads a POS file (from IVAS) into a data frame.
 #'
 #' @param filepath A string. The file path to the POS file.
-#' @return A dataframe with columns corresponding to the x, y, and z positions
+#' @return A data.frame with columns corresponding to the x, y, and z positions
 #'   of the reconstruction and the mass-to-charge ratio.
 #' @references Local Electrode Atom Probe Tomography: A User's Guide
 #' @seealso \code{\link{readATO}}
@@ -99,7 +99,8 @@ readRRNG <- function(filepath) {
     })
     mass.name <- na.omit(mass.name)
     mass.name <- paste0(mass.name, collapse = '')
-    form.warn <- enviPat::check_chemform(rapt:::isotopes, mass.name)[,1]
+    data('isotopes', package = 'enviPat', envir = environment())
+    form.warn <- enviPat::check_chemform(isotopes, mass.name)[,1]
     mass.formula <- mapply(function(name, warn) {
       if(warn){NA} else{name}
     }, mass.name, form.warn)
@@ -180,14 +181,15 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
 #'   \code{\link[spatstat]{ripras}}
 #' @export
 createDet <- function(ato, win = NULL, marks = NULL) {
-  if(is.null(win))
+  if(is.null(win)) {
     win <- ripras(ato$dx, ato$dy)
+  }
   det.dat <- ppp(ato$dx, ato$dy, window = win, marks = marks)
   return(det.dat)
 }
 
-#' Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS or ATO
-#' data frame.
+#' Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS
+#' or ATO data frame.
 #'
 #' \code{createSpec} generates a
 #' \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} object with a
@@ -242,4 +244,19 @@ createTOF <- function(pos, res = 0.001) {
 }
 
 #### Write Data ####
-# Export methods?
+#' Write a POS file.
+#'
+#' \code{writePOS} writes a POS data.frame into a POS file
+#'
+#' @param pos A data.frame with columns of x, y, z, and mass, following the
+#'   structure of the data.frame returned by \code{\link{readPOS}}.
+#' @param filepath A string. The file path to the POS file.
+#' @return NULL
+#' @references Local Electrode Atom Probe Tomography: A User's Guide
+#' @seealso \code{\link{readPOS}}
+#' @export
+writePOS <- function(pos, filepath) {
+  p.mat <- as.matrix(pos)
+  p.vec <- as.numeric(t(p.mat))
+  writeBin(p.vec, filepath, size = 4, endian = 'big')
+}
