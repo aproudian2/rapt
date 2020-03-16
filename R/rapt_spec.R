@@ -200,7 +200,6 @@ emg <- function(x,h,m,s,t) {
   (h*s/t)*sqrt(pi/2)*exp(1/2*(s/t)^2-(x-m)/t)*erfc(sqrt(1/2)*(s/t-(x-m)/s))
 }
 
-
 #### fitGMM ####
 # Fit a GMM to a region of a MassSpectrum
 fitGMM <- function(ms, start, stop) {
