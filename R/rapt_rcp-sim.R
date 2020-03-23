@@ -57,7 +57,7 @@ scaleRCP <- function(pp3file, newRadius = .5, oldRadius = NULL, win = NULL){
 #' @param pp3file A \code{\link[spatstat]{pp3}} object containing the RCP
 #'   generated 3D point positions.
 #' @param win A \code{\link[spatstat]{box3}} object indicating the size of the
-#'   original rcp generation. Can leave blank if these are integer value.
+#'   original rcp generation. Can leave blank.
 #' @param boxSize A numeric vector of the dimensions that you want in the final
 #'   \code{\link[spatstat]{pp3}} object: c(xmax,ymax,zmax). Assumes that
 #'   (xmin,ymin,zmin) = (0,0,0).
