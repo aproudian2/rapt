@@ -4,7 +4,7 @@
 \alias{plot3d.pp3}
 \title{Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.}
 \usage{
-\method{plot3d}{pp3}(X, ...)
+plot3d.pp3(X, ...)
 }
 \arguments{
 \item{X}{A \code{pp3}. The point pattern to visualize}

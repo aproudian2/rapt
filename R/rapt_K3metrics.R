@@ -90,6 +90,8 @@ k3metrics <- function(rvals.new, tvals.new, toplot, ...) {
               -peak.info$derivsm$y.hat[peak.info$derivsm$i[1]])) #Kdm
 }
 
+
+
 #### finite_deriv ####
 #' Find the numerical derivative of a finite set of points.
 #'

@@ -10,7 +10,7 @@ readPOS(filepath)
 \item{filepath}{A string. The file path to the POS file.}
 }
 \value{
-A dataframe with columns corresponding to the x, y, and z positions
+A data.frame with columns corresponding to the x, y, and z positions
   of the reconstruction and the mass-to-charge ratio.
 }
 \description{
