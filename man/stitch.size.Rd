@@ -11,7 +11,7 @@ stitch.size(pp3file, win = NULL, boxSize)
 generated 3D point positions.}
 
 \item{win}{A \code{\link[spatstat]{box3}} object indicating the size of the
-original rcp generation. Can leave blank if these are integer value.}
+original rcp generation. Can leave blank.}
 
 \item{boxSize}{A numeric vector of the dimensions that you want in the final
 \code{\link[spatstat]{pp3}} object: c(xmax,ymax,zmax). Assumes that

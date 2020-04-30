@@ -3,8 +3,47 @@
 #
 
 #### clustersim ####
-#' Simulate clusters on an RCP lattice
+#' Simulate clusters of marks on an RCP background point pattern.
 #'
+#' The \code{clustersim} function simulates point clusters using two RCP point
+#' clouds. The first point cloud is the "underlaying" pattern. This is the set
+#' of points that will be used as actual cluster point locations in the final
+#' product. The second point cloud is the "overlaying" pattern. This is the set
+#' of points that will be scaled to determine the positions of the cluster
+#' centroids within the underlying point pattern.
+#'
+#' @param under The underlying RCP point pattern (UPP). A
+#'   \code{\link[spatstat]{pp3}} object containing points at the centers of RCP
+#'   spheres.
+#' @param over The overlying RCP pattern. A \code{\link[spatstat]{pp3}} object
+#'   containing points at the centers of RCP spheres. Scaled equal to the
+#'   underlying point pattern.
+#' @param rcp_rad The radius of the spheres within the underlying and overlying
+#'   RCP patterns.
+#' @param pcp The fraction of type-A (clustering) points within the UPP. A
+#'   decimal value between 0 and 1.
+#' @param cr Mean cluster radius. Any value larger than zero.
+#' @param rho1 Intra-cluster type-A point concentration. A decimal value between
+#'   0 and 1.
+#' @param rho2 Background type-A point concentration. A decimal value between 0
+#'   and the value of \code{pcp}.
+#' @param rb Radius blur. A decimal value between 0 and 1.
+#' @param pb Position blur. A decimal value between 0 and 1.
+#' @param tol Tolerance value for \code{pcp}. The tru fraction of type-A points
+#'   in the pattern will be within this tolerance of the value specified by the
+#'   \code{pcp} parameter. If not, function will return a null value.
+#' @param s Random seed for the simulation.
+#' @param toplot Show a 3D plot of the cluster points once generation is done?
+#'   \code{TRUE} or \code{FALSE}.
+#'
+#' @return List of: [[1]] A \code{\link[spatstat]{pp3}} object containing the
+#'   final locations of only type-A points within the final marked point
+#'   pattern. [[2]] A \code{\link[spatstat]{pp3}} object containing the full
+#'   marked underlying point pattern with points marked as either type A (cluser
+#'   type point in a cluster), B (cluster type point not in a cluster) or C
+#'   (non-cluster type point). [[3]] A vector containing the simulated radius of
+#'   each cluster in the final point pattern. [[4]] A single value containing
+#'   the true fraction of type-A points in the final simulated pattern.
 #' @export
 clustersim <- function(under, over, rcp_rad,
                        pcp = 0.1,
@@ -33,7 +72,6 @@ clustersim <- function(under, over, rcp_rad,
   # Calculate guess RCP concentration
   alpha <- 1
   rcp.conc <- vc/(4/3 * pi * cr*(cr^2 + 3*sigma^2) * vt * alpha)
-
   # Scale over RCP pattern to match this concentration
   over.vol <- volume(domain(over)) # Original volume
   over.vol.new <- npoints(over)/rcp.conc # New volume

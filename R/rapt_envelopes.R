@@ -65,9 +65,9 @@ envPlot <- function(
   toplt <- data.frame(rvals,tvals[,1])
   plot(toplt, type = "n",
        ylab = ylab, xlab = xlab,
-       ylim = ylim, xlim = xlim, xaxt = "n", ...)
-  axis(1, at = 0:xlim[2], labels=FALSE)
-  axis(1, at = seq(0,xlim[2],by=xlim[2]/10), ...)
+       ylim = ylim, xlim = xlim, ...)
+  #axis(1, at = 0:xlim[2], labels=FALSE)
+  #axis(1, at = seq(0,xlim[2],by=xlim[2]/10), ...)
   a <- c(rvals, rev(rvals))
   for(i in 1:length(percentiles)) {
     polygon(a, c(toPlotBigs[,i], rev(toPlotSmalls[,i])), col = color[i])
