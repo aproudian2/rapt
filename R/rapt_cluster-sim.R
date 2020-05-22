@@ -1,5 +1,6 @@
 #
-# This file contains functions pertaining to the simulation of clustered point patterns,
+# This file contains functions pertaining to the simulation of clustered point
+# patterns.
 #
 
 #### clustersim ####
@@ -123,12 +124,15 @@ clustersim <- function(under, over, rcp_rad,
   cr.rand.final <- marks(over.final)
   cluster.inds.all <- list()
 
-  if(!(is.numeric(max(cr.rand.final)) && length(max(cr.rand.final)) == 1L && max(cr.rand.final) >= 0)){
+  if(!(is.numeric(max(cr.rand.final)) && length(max(cr.rand.final)) == 1L &&
+       max(cr.rand.final) >= 0)){
     print('Error with cr.rand.final')
     return(-1)
   }
 
-  nnR <- crosspairs.pp3(over.final, under, rmax = max(cr.rand.final), what = 'ijd', neat = TRUE, distinct = TRUE, twice = FALSE)
+  nnR <- crosspairs.pp3(over.final, under, rmax = max(cr.rand.final),
+                        what = 'ijd', neat = TRUE, distinct = TRUE,
+                        twice = FALSE)
   if(is.empty(nnR$i)){
     print('No cluster centers in domain.')
     return(-1)
@@ -138,9 +142,13 @@ clustersim <- function(under, over, rcp_rad,
   nnR.split$j <- split(nnR$j, nnR$i, drop=FALSE)
   nnR.split$i <- as.numeric(attr(nnR.split$d, 'name'))
 
-  cluster.inds.all <- lapply(1:length(nnR.split$i), function(k){nnR.split$j[[k]][nnR.split$d[[k]] < cr.rand.final[nnR.split$i[[k]]]]})
+  cluster.inds.all <- lapply(1:length(nnR.split$i), function(k){
+    nnR.split$j[[k]][nnR.split$d[[k]] < cr.rand.final[nnR.split$i[[k]]]]
+  })
 
-  cluster.inds.thinned <- lapply(cluster.inds.all, function(x){sample(x, round(rho1*length(x)))})
+  cluster.inds.thinned <- lapply(cluster.inds.all, function(x){
+    sample(x, round(rho1*length(x)))
+  })
 
   cluster.inds <- unlist(cluster.inds.thinned)
   attr(cluster.inds, 'names') <- NULL
@@ -169,7 +177,12 @@ clustersim <- function(under, over, rcp_rad,
     return(-1)
   }
   #print(pcp.real)
-  return(list(just.cluster.points, under, cr.rand.final, pcp.real))
+  dat <- list(clusters = just.cluster.points,
+              all = under,
+              radii = cr.rand.final,
+              perc = pcp.real,
+              centers = over.final)
+  return(dat)
 }
 
 
@@ -343,7 +356,8 @@ makecluster <- function(under,over,radius1,radius2,
     under.r <- radius1
     over.r <- radius2
     over.rf <- under.r*(ppc/rcp)^(1/3)
-    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
+    over.scaled <- scaleRCP(over, newRadius = over.rf, oldRadius = over.r,
+                            win = domain(over))
     over.scaledf <- subSample(under,over.scaled)
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
@@ -419,7 +433,8 @@ makecluster <- function(under,over,radius1,radius2,
 
       over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
 
-      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
+      over.scaled <- scaleRCP(over, newRadius = over.rf, oldRadius = over.r,
+                              win = domain(over))
       over.scaledf <- subSample(under,over.scaled)
 
       cluster.nnR <- nncrossR(over.scaledf,under,cr)
@@ -464,16 +479,19 @@ makecluster <- function(under,over,radius1,radius2,
 
       over.rf <- under.r*cr*((4*pi*npoints(under))/(3*under.vol*rcp))^(1/3)
 
-      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
+      over.scaled <- scaleRCP(over, newRadius = over.rf, oldRadius = over.r,
+                              win = domain(over))
       over.scaledf <- subSample(under,over.scaled)
 
-      cluster.nnR.new <- crosspairs.pp3(over.scaledf,under,cr,what="indices",twice=FALSE,distinct=TRUE,neat=TRUE)
+      cluster.nnR.new <- crosspairs.pp3(over.scaledf, under, cr, what="indices",
+                                        twice=FALSE, distinct=TRUE, neat=TRUE)
 
       cluster.ind <- cluster.nnR.new[[2]]
       cluster.info <- factor(cluster.nnR.new[[1]])
       diff <- round(rcp*npoints(under)-length(cluster.ind))
 
-      cluster.adj <- crAdjust.new(cluster.ind,cluster.info,diff,over.scaledf,under)
+      cluster.adj <- crAdjust.new(cluster.ind, cluster.info, diff, over.scaledf,
+                                  under)
       cluster.ind <- cluster.adj[[1]]
       cluster.info <- as.numeric(cluster.adj[[2]])
 
@@ -492,7 +510,8 @@ makecluster <- function(under,over,radius1,radius2,
       if(more==0){
 
       }else{
-        cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s,cluster.ind.split)
+        cluster.ind <- randomInsert(cluster.ind, more, npoints(under), s,
+                                    cluster.ind.split)
       }
 
       cluster.xyz <- coords(under)[cluster.ind,]
@@ -538,7 +557,8 @@ makecluster <- function(under,over,radius1,radius2,
       # There's some hairy math here that took me a while to figure out. Come see me if you need it explained,
       # or see my reseatch notebook.
       if(rb == TRUE){
-        z63 <- (((4/3)*pi*over.r^3)*npoints(over)*0.75 + ((4/3)*pi*(over.r*1.20)^3)*npoints(over)*0.25)/over.vol
+        z63 <- (((4/3)*pi*over.r^3)*npoints(over)*0.75 +
+                  ((4/3)*pi*(over.r*1.20)^3)*npoints(over)*0.25) / over.vol
         under.xdim <- domain(under)$xrange[2]
         under.ydim <- domain(under)$yrange[2]
         under.zdim <- domain(under)$zrange[2]
@@ -549,7 +569,9 @@ makecluster <- function(under,over,radius1,radius2,
 
         volfactor <- ((innervol/outervol) + (middlevol/outervol)*(5/12))
 
-        over.rf <- cr*((under.xdim + 2*cr)*(under.ydim + 2*cr)*(under.zdim + 2*cr)*z63*volfactor/(under.vol * rcp * 1.182))^(1/3)
+        over.rf <- cr * ((under.xdim + 2*cr) * (under.ydim + 2*cr) *
+                           (under.zdim + 2*cr) * z63 * volfactor /
+                           (under.vol * rcp * 1.182))^(1/3)
 
         if(rbmethod == 1){
           sdfactor <- (rbp/cr)*0.37
@@ -1037,7 +1059,9 @@ morph_rods <- function(lambda,
     scaling.factor <- sqrt(rcp.den/(rod.den[1]*rod.den[2]))
 
     rcp.upload.scaled <- coords(rcp)*scaling.factor
-    rcp.scaled <- ppp(rcp.upload.scaled$x, rcp.upload.scaled$y, window = owin(c(0,max(rcp.upload.scaled$x)), c(0,max(rcp.upload.scaled$y))))
+    rcp.scaled <- ppp(rcp.upload.scaled$x, rcp.upload.scaled$y,
+                      window = owin(c(0,max(rcp.upload.scaled$x)),
+                                    c(0,max(rcp.upload.scaled$y))))
 
     xmu <- mean(rcp.scaled$window$xrange)
     ymu <- mean(rcp.scaled$window$xrange)
@@ -1057,7 +1081,9 @@ morph_rods <- function(lambda,
     hex.scaled.coo <- coords(hex)*scaling.factor
     offset <- c(runif(1, 0, 1), runif(1, 0, 1))
 
-    hex.scaled <- ppp(hex.scaled.coo$x + offset[1], hex.scaled.coo$y + offset[2], window = owin(c(0,max(hex.scaled.coo$x + offset[1])), c(0,max(hex.scaled.coo$y + offset[2]))))
+    hex.scaled <- ppp(hex.scaled.coo$x + offset[1], hex.scaled.coo$y + offset[2],
+                      window = owin(c(0,max(hex.scaled.coo$x + offset[1])),
+                                    c(0,max(hex.scaled.coo$y + offset[2]))))
 
     xmu <- mean(hex.scaled$window$xrange)
     ymu <- mean(hex.scaled$window$xrange)
@@ -1219,9 +1245,12 @@ morph_gb <- function(lambda,
   zdist <- diff(win$zrange)
   offset <- c(runif(1, -1, 1), runif(1, -1, 1), runif(1, -1, 1))
 
-  win.select <- box3(c(xmu - xdist/2 - rcp.rad - 1 + offset[1], xmu + xdist/2 + rcp.rad + 1 + offset[1]),
-                     c(ymu - ydist/2 - rcp.rad - 1 + offset[2], ymu + ydist/2 + rcp.rad + 1 + offset[2]),
-                     c(zmu - zdist/2 - rcp.rad - 1 + offset[3], zmu + zdist/2 + rcp.rad + 1 + offset[3]))
+  win.select <- box3(c(xmu - xdist/2 - rcp.rad - 1 + offset[1],
+                       xmu + xdist/2 + rcp.rad + 1 + offset[1]),
+                     c(ymu - ydist/2 - rcp.rad - 1 + offset[2],
+                       ymu + ydist/2 + rcp.rad + 1 + offset[2]),
+                     c(zmu - zdist/2 - rcp.rad - 1 + offset[3],
+                       zmu + zdist/2 + rcp.rad + 1 + offset[3]))
   rcp.xyz <- coords(rcp[inside.boxx(rcp, w = win.select)])
   rcp.xyz$x <- rcp.xyz$x - xmu + xdist/2 - offset[1]
   rcp.xyz$y <- rcp.xyz$y - ymu + ydist/2 - offset[2]
@@ -1675,7 +1704,8 @@ randomTakeAway <- function(cluster.indices, n, N, s){
 #' @param mean Mean of the regular normal distribution for radius.
 #' @param sd Standard deviation for the normal distribution for radius.
 #' @param coords Return comand. Either "rec" or "sph". See below for more.
-#' @param method 1 for uniformly distributing direction and normally distributing r, 2 for normally distributing x y and z
+#' @param method 1 for uniformly distributing direction and normally
+#' distributing r, 2 for normally distributing x y and z
 #'
 #' @return If \code{coords = "rec"}, returns a vector of cartesian coordinates.
 #'   If \code{coords = "sph"}, returns a vector of spherical coordinates.
@@ -1733,7 +1763,8 @@ over_cut <- function(X, win, cr.rand){
 }
 
 #### bdist.complex ####
-# Return distance to closest edge of window, and whether it is inside (+) or outside (-) that window
+# Return distance to closest edge of window, and whether it is inside (+) or
+# outside (-) that window
 bdist.complex <- function(X.df, win){
 
   x <- X.df$x
@@ -1747,7 +1778,9 @@ bdist.complex <- function(X.df, win){
   zmin <- min(win$zrange)
   zmax <- max(win$zrange)
 
-  result <- data.frame(x = pmin.int(x - xmin, xmax - x), y =  pmin.int(y - ymin, ymax - y), z = pmin.int(z - zmin, zmax - z))
+  result <- data.frame(x = pmin.int(x - xmin, xmax - x),
+                       y = pmin.int(y - ymin, ymax - y),
+                       z = pmin.int(z - zmin, zmax - z))
 
   return(result)
 }
@@ -1801,18 +1834,24 @@ check_vol <- function(sf, coo, vol.target, under.domain, cr.rand){
 
   fullin <- apply(bdist > cr.rand, 1, all) & io == 1
 
-  partin.face <- !apply(bdist > cr.rand, 1, all) & apply(bdist < cr.rand , 1, sum) == 1 & io == 1
-  partin.edge <- !apply(bdist > cr.rand, 1, all) & apply(bdist < cr.rand , 1, sum) == 2 & io == 1
-  partin.corner <- !apply(bdist > cr.rand, 1, all) & apply(bdist < cr.rand , 1, sum) == 3 & io == 1
+  partin.face <- !apply(bdist > cr.rand, 1, all) &
+    apply(bdist < cr.rand , 1, sum) == 1 & io == 1
+  partin.edge <- !apply(bdist > cr.rand, 1, all) &
+    apply(bdist < cr.rand , 1, sum) == 2 & io == 1
+  partin.corner <- !apply(bdist > cr.rand, 1, all) &
+    apply(bdist < cr.rand , 1, sum) == 3 & io == 1
   partin.face.h <- cr.rand[partin.face] - apply(bdist[partin.face,], 1, min)
   partin.edge.h <- cr.rand[partin.edge] - t(apply(bdist[partin.edge,], 1, function(x){sort(x)[1:2]}))
   partin.corner.h <- cr.rand[partin.corner] - t(apply(bdist[partin.corner,], 1, function(x){sort(x)}))
 
   fullout <- apply(bdist < -cr.rand, 1, any) & io == 0
 
-  partout.face <- !apply(bdist < -cr.rand, 1, any) & apply(bdist < 0 , 1, sum) == 1 & io == 0
-  partout.edge <- !apply(bdist < -cr.rand, 1, any) & apply(bdist < 0 , 1, sum) == 2 & io == 0
-  partout.corner <- !apply(bdist < -cr.rand, 1, any) & apply(bdist < 0 , 1, sum) == 3 & io == 0
+  partout.face <- !apply(bdist < -cr.rand, 1, any) &
+    apply(bdist < 0 , 1, sum) == 1 & io == 0
+  partout.edge <- !apply(bdist < -cr.rand, 1, any) &
+    apply(bdist < 0 , 1, sum) == 2 & io == 0
+  partout.corner <- !apply(bdist < -cr.rand, 1, any) &
+    apply(bdist < 0 , 1, sum) == 3 & io == 0
   partout.face.h <- cr.rand[partout.face] + apply(bdist[partout.face,], 1, min)
   partout.edge.h <- cr.rand[partout.edge] + apply(bdist[partout.edge,], 1, min)
   partout.corner.h <- cr.rand[partout.corner] + apply(bdist[partout.corner,], 1, min)

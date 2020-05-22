@@ -174,7 +174,8 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   lat.xrange <- round(domain$xrange / a)
   lat.yrange <- round(domain$yrange / a)
   lat.zrange <- round(domain$zrange / a)
-  lat.expand <- max(sapply(list(lat.xrange,lat.yrange,lat.zrange),diff, simplify = T))
+  lat.expand <- max(sapply(list(lat.xrange,lat.yrange,lat.zrange),
+                           diff, simplify = T))
   lat.x <- seq(lat.xrange[1] - lat.expand, lat.xrange[2] + lat.expand)
   lat.y <- seq(lat.yrange[1] - lat.expand, lat.yrange[2] + lat.expand)
   lat.z <- seq(lat.zrange[1] - lat.expand, lat.zrange[2] + lat.expand)
