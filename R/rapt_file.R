@@ -15,7 +15,6 @@
 #'   of the reconstruction and the mass-to-charge ratio.
 #' @references Local Electrode Atom Probe Tomography: A User's Guide
 #' @seealso \code{\link{readATO}}
-#' @example X <- readPOS("R45_00001-v01.pos")
 #' @export
 readPOS <- function(filepath) {
   pos.len <- file.info(filepath)['size'] / 4
@@ -43,7 +42,6 @@ readPOS <- function(filepath) {
 #' @return A dataframe.
 #' @references Local Electrode Atom Probe Tomography: A User's Guide
 #' @seealso \code{\link{readPOS}}
-#' @example X <- readATO("R45_00001-v01.ato")
 #' @export
 readATO <- function(filepath) {
   ato.len <- file.info(filepath)['size'] / 4
@@ -75,7 +73,6 @@ readATO <- function(filepath) {
 #'
 #' @param filepath A string. A filepath to the RRNG file.
 #' @return A dataframe.
-#' @example X <- readRRNG("R45_00001-v01.rrng")
 #' @export
 readRRNG <- function(filepath) {
   `%>%` <- magrittr::`%>%`
