@@ -3,8 +3,14 @@ Type: Package
 Title: Atom Probe Tomography Analysis
 Version: 0.1.7
 Date: 2020-06-01
-Authors@R: as.person(c("Andrew P. Proudian <aproudia@mines.edu> [aut, cre]","Galen Vincent <galenvincent@mines.edu> [aut]"))
-Description: Tools for analyzing atom probe tomography (APT) data in R. It provides methods for both spatial and mass spectral analysis, along with simulation tools.
+Authors@R: c(
+    person("Andrew P.", "Proudian",
+           email = "aproudia@mines.edu", role = c("aut", "cre")),
+    person("Galen", "Vincent",
+           email = "galenvincent@mines.edu", role = "aut"))
+Description: Tools for analyzing atom probe tomography (APT) data in R. It
+    provides methods for both spatial and mass spectral analysis, along with
+    simulation tools.
 License: CC-BY-SA-4.0
 LazyData: TRUE
 SystemRequirements: C++11
