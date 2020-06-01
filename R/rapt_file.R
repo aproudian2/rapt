@@ -159,6 +159,8 @@ readRCP <- function(fpath_config, fpath_sys,
 }
 
 #### Condition Data ####
+
+### createSpat ###
 #' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
 #'
 #' @param pos A POS or ATO data frame.
@@ -178,6 +180,7 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
   return(pp3.dat);
 }
 
+### createDet ###
 #' Create a \code{\link[spatstat]{ppp}} from an ATO.
 #'
 #' \code{createDet} generates a \code{\link[spatstat]{ppp}} of detector hits
@@ -200,6 +203,7 @@ createDet <- function(ato, win = NULL, marks = NULL) {
   return(det.dat)
 }
 
+### createSpec ###
 #' Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS
 #' or ATO data frame.
 #'
@@ -256,7 +260,9 @@ createTOF <- function(pos, res = 0.001) {
 }
 
 #### Write Data ####
-#' Write a POS file.
+
+### writePOS ###
+#' Write a POS File
 #'
 #' \code{writePOS} writes a POS data.frame into a POS file
 #'

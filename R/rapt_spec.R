@@ -2,7 +2,9 @@
 # This file contains methods for working with the mass spectrum of APT data
 #
 
-#### rangeCount ####
+#### Spectral Ranging ####
+
+### rangeCount ###
 #' Count the hits within a mass range
 #'
 #' To get the hit information within a mass range, use \code{\link{rangePOS}}
@@ -17,7 +19,7 @@ rangeCount <- function(pos, start, end) {
   return(n)
 }
 
-#### rangePOS ####
+### rangePOS ###
 #' Extract hits within a given mass range.
 #'
 #' rangePOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
@@ -34,7 +36,7 @@ rangePOS <- function(pos, start, end) {
   with(pos, pos[mass > start & mass < end,])
 }
 
-#### rngCount ####
+### rngCount ###
 #' Count the number of hits for each entry within a \code{RNG} object
 #'
 #' @param pos The pos to range
@@ -52,7 +54,7 @@ rngCount <- function(pos, rng) {
   return(dat)
 }
 
-#### rngPOS ####
+### rngPOS ###
 #' Extract hits according to a RNG and create a new pos
 #'
 #' rngPOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
@@ -74,7 +76,7 @@ rngPOS <- function(pos, rng) {
   return(dat)
 }
 
-#### rangeMassSpectrum ####
+### rangeMassSpectrum ###
 # Range peaks at a specified level
 rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
   m <- ms@mass
@@ -88,9 +90,11 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
   range(m.clip[wh])
 }
 
-#### rangeMassPeaks ####
+### rangeMassPeaks ###
 
-#### fitIonInit ####
+#### Spectral Fitting ####
+
+### fitIonInit ###
 #' Create initialization for nls fitting of MassSpectrum peaks based on ions
 #'
 #' fitIonInit creates the formula and starting values for fitting mass spectra
@@ -112,8 +116,13 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #'   peak = "emg". Ignored for peak = "gaussian".
 #' @param charge Numeric.
 #' @param threshold Numeric.
+#'
 #' @return A list containing elements of the fitting formula, the starting fit
 #'   values, and the lower limits for each parameter.
+#'
+#' @details Fitting peak shape is either a gaussian (peak = "gaussian") or
+#' exponentially modified gaussian (peak = "emg").
+#'
 #' @seealso \code{\link[stats]{nls}}, \code{\link[enviPat]{isopattern}}
 #'
 # Add upper limits for port algorithm fitting
@@ -154,7 +163,7 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
   return(ion.init)
 }
 
-#### ionFormula ####
+### ionFormula ###
 # Helper function for fitIons
 ionFormula <- function(ions, charge = 1, threshold = 10, peak = 'gaussian') {
   data('isotopes', package = 'enviPat', envir = environment())
@@ -190,11 +199,11 @@ ionFormula <- function(ions, charge = 1, threshold = 10, peak = 'gaussian') {
   return(f.full)
 }
 
-#### erfc ####
+### erfc ###
 # Complementary error function
 erfc <- function(x) 2 * pnorm(x * sqrt(2), lower = FALSE)
 
-#### emg ####
+### emg ###
 # Exponentially modified gaussian function
 emg <- function(x,h,m,s,t) {
   (h*s/t)*sqrt(pi/2)*exp(1/2*(s/t)^2-(x-m)/t)*erfc(sqrt(1/2)*(s/t-(x-m)/s))
