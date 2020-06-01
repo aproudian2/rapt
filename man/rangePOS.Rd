@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_spec.R
 \name{rangePOS}
 \alias{rangePOS}
-\title{Extract hits within a given mass range.}
+\title{Extract Hits in Range}
 \usage{
 rangePOS(pos, start, end)
 }
@@ -18,9 +18,14 @@ A data.frame of the same structure as \code{pos} containing only hits
 in the provided range
 }
 \description{
-rangePOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
-is within the provided range.
+\code{rangePOS} extracts the rows of a \code{POS} or \code{ATO} object whose
+mass is within the provided range. To count the number of hits within a mass
+range, use \code{\link{rangeCount}}.
 }
 \seealso{
-\code{\link{rngPOS}}
+Other ranging functions: 
+\code{\link{rangeCount}()},
+\code{\link{rngCount}()},
+\code{\link{rngPOS}()}
 }
+\concept{ranging functions}

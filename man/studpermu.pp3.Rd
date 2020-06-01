@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_extend.R
 \name{studpermu.pp3}
 \alias{studpermu.pp3}
-\title{Extends split to pp3
-Extends studpermu.test to pp3}
+\title{Extends studpermu.test to pp3}
 \usage{
 studpermu.pp3(
   X,

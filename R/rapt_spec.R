@@ -5,14 +5,20 @@
 #### Spectral Ranging ####
 
 ### rangeCount ###
-#' Count the hits within a mass range
+#' Count Hits in Range
 #'
-#' To get the hit information within a mass range, use \code{\link{rangePOS}}
+#' \code{rangeCount} counts the number of hits in the \code{POS} or \code{ATO}
+#' that fall within the provided mass range. To get the hit information within a
+#' mass range, use \code{\link{rangePOS}}.
+#'
 #' @param pos A data.frame. The pos to be ranged
 #' @param start The start of the mass range
 #' @param end The end of the mass range
+#'
 #' @return The number of hits falling within the range.
-#' @seealso \code{\link{rngCount}}
+#'
+#' @family ranging functions
+#'
 #' @export
 rangeCount <- function(pos, start, end) {
   n <- sum(pos$mass > start & pos$mass < end)
@@ -20,30 +26,41 @@ rangeCount <- function(pos, start, end) {
 }
 
 ### rangePOS ###
-#' Extract hits within a given mass range.
+#' Extract Hits in Range
 #'
-#' rangePOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
-#' is within the provided range.
+#' \code{rangePOS} extracts the rows of a \code{POS} or \code{ATO} object whose
+#' mass is within the provided range. To count the number of hits within a mass
+#' range, use \code{\link{rangeCount}}.
 #'
 #' @param pos A data.frame. The \code{POS} or \code{ATO} to be ranged
 #' @param start The start of the mass range
 #' @param end The end of the mass range
+#'
 #' @return A data.frame of the same structure as \code{pos} containing only hits
 #' in the provided range
-#' @seealso \code{\link{rngPOS}}
+#'
+#' @family ranging functions
+#'
 #' @export
 rangePOS <- function(pos, start, end) {
   pos[pos$mass > start & pos$mass < end,]
 }
 
 ### rngCount ###
-#' Count the number of hits for each entry within a \code{RNG} object
+#' Count Hits in RRNG
+#'
+#' \code{rngCount} counts the number of hits for each entry within a \code{RRNG}
+#' object. To get hit information within a \code{RRNG}, use
+#' \code{\link{rngPOS}}.
 #'
 #' @param pos The pos to range
 #' @param rng The ranges
+#'
 #' @return A data.frame containing the name of each range, the number of counts
 #' and fraction of the total ranged counts.
-#' @seealso \code{\link{readRRNG}}, \code{\link{rangeCount}}
+#'
+#' @family ranging functions
+#'
 #' @export
 rngCount <- function(pos, rng) {
   cts <- apply(rng, 1, function (x) {
@@ -55,16 +72,20 @@ rngCount <- function(pos, rng) {
 }
 
 ### rngPOS ###
-#' Extract hits according to a RNG and create a new pos
+#' Extract Hits in RRNG
 #'
-#' rngPOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
-#' is within the ranges of the provided \code{RRNG}.
+#' \code{rngPOS} extracts the rows of a \code{POS} or \code{ATO} object whose
+#' mass is within the ranges of the provided \code{RRNG}. To count the hits
+#' within a \code{RRNG}, use \code{\link{rngCount}}
 #'
 #' @param pos The pos or ato from which to extract hits
 #' @param rng The ranges to extract
+#'
 #' @return A data.frame of the same structure as pos, with an appended column
 #'   called "mark" that carries the name of the ion
-#' @seealso \code{\link{readRRNG}}, \code{\link{rangePOS}}
+#'
+#' @family ranging functions
+#'
 #' @export
 rngPOS <- function(pos, rng) {
   hits <- apply(rng, 1, function (x) {
@@ -164,7 +185,23 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
 }
 
 ### ionFormula ###
-# Helper function for fitIons
+#' Helper Function for \code{\link{fitIonInit}}
+#'
+#' Creates the formulae that get passed to \code{\link[stats]{nls}}
+#'
+#' @param ions Character. Molecular formula formatted in a way that is
+#'   acceptable to \code{\link[enviPat]{isopattern}}
+#' @param charge Numeric. Charge of ion.
+#' @param threshold Numeric. Percentage threshold of isotope.
+#' @param peak Character. One of "gaussian" or "emg". See Details.
+#'
+#' @return A character string that concatinates all the formulae for the ions
+#'   and their respetive isotopes, along with a constant noise term.
+#'
+#' @details The base peak shape of the formula is either a gaussian
+#'   (peak = "gaussian") or an exponentially modified gaussian (peak = "emg").
+#'
+#' @seealso \code{\link[enviPat]{fitIonInit}}, \code{\link[enviPat]{isopattern}}
 ionFormula <- function(ions, charge = 1, threshold = 10, peak = 'gaussian') {
   data('isotopes', package = 'enviPat', envir = environment())
   iso <- enviPat::isopattern(isotopes, ions,
