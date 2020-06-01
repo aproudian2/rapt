@@ -16,7 +16,7 @@ LazyData: TRUE
 SystemRequirements: C++11
 Depends:
   MALDIquant (>= 1.15),
-  spatstat (>= 1.49)
+  spatstat (>= 1.63)
 Imports:
   enviPat (>= 2.0),
   pracma (>= 1.8),
