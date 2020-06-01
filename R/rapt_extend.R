@@ -126,30 +126,6 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
   return(Y)
 }
 
-#### inside.pp3 ####
-#' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]{pp3}}.
-#'
-#' @seealso \code{\link[spatstat]{inside.boxx}}
-#' @export
-inside.pp3 <- function(points, domain = NULL) {
-  if(is.null(domain)) {
-    domain <- points$domain
-  }
-  if (length(points) == 0)
-    return(logical(0))
-  xr <- domain$xrange
-  yr <- domain$yrange
-  zr <- domain$zrange
-  x <- points$data$x
-  y <- points$data$y
-  z <- points$data$z
-  eps <- sqrt(.Machine$double.eps)
-  frameok <- (x >= xr[1] - eps) & (x <= xr[2] + eps) &
-    (y >= yr[1] - eps) & (y <= yr[2] + eps) &
-    (z >= zr[1] - eps) & (z <= zr[2] + eps)
-  return(frameok)
-}
-
 #### sample.ppp ####
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
 #'
