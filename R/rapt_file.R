@@ -139,6 +139,10 @@ readRRNG <- function(filepath) {
 #'   \url{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}.
 #'
 #' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
+#' @references Desmond & Weeks,
+#'   "Random Close Packing of Disks and Spheres in Confined Geometries",
+#'   \emph{Physical Review E} \strong{80} (5), 051305 (2009):
+#'   \url{https://doi.org/10.1103/PhysRevE.80.051305}
 #' @seealso
 #' \href{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}{RCP
 #' Generator Algorithm}
