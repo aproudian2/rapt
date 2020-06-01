@@ -424,9 +424,6 @@ K3multi <- function(X, I, J, r, breaks,
   return(K)
 }
 
-#### split.pp3 ####
-#' Extends split to pp3
-
 #### studpermu.pp3 ####
 #' Extends studpermu.test to pp3
 #'
