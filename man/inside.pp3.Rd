@@ -10,5 +10,5 @@ inside.pp3(points, domain = NULL)
 Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]{pp3}}.
 }
 \seealso{
-\code{\link[spatstat]{inside}}
+\code{\link[spatstat]{inside.boxx}}
 }

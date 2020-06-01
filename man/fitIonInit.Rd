@@ -18,7 +18,7 @@ fitIonInit(
 }
 \arguments{
 \item{ions}{Character. A character vector of molecular formulae sutable to be
-passed to enviPat::isopattern.}
+passed to \code{\link[enviPat]{isopattern}}.}
 
 \item{sd}{Numeric. The estimated standard deviation (or equivalent for
 peak = "emg") of the fitted peak.}
@@ -48,8 +48,8 @@ A list containing elements of the fitting formula, the starting fit
 }
 \description{
 fitIonInit creates the formula and starting values for fitting mass spectra
-using \code{nls} based on molecular formulae.
+using \code{\link[stats]{nls}} based on molecular formulae.
 }
 \seealso{
-\code{\link{nls}}, \code{\link[enviPat]{isopattern}}
+\code{\link[stats]{nls}}, \code{\link[enviPat]{isopattern}}
 }

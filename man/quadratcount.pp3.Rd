@@ -12,7 +12,8 @@
 \item{nx, ny, nz}{Number of ractangular quadrats in the x, y, and z directions.}
 }
 \value{
-A \code{data.frame} object containing the number of counts in each quadrat.
+A \code{data.frame} object containing the number of counts in each
+  quadrat.
 }
 \description{
 Divides volume into quadrats and counts the number of points in each quadrat.

@@ -9,7 +9,7 @@ morph_gb(
   frac,
   point.den = 1,
   rcp.rad,
-  rcp.path = "C:/Users/galen/Documents/Research/point_patterns/Final",
+  rcp.path = NULL,
   rcp.number = 1,
   toplot = FALSE,
   win = box3(c(0, 1), c(0, 1), c(0, 1))

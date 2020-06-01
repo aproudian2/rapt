@@ -7,7 +7,7 @@
 rngPOS(pos, rng)
 }
 \arguments{
-\item{pos}{The pos or ato to extract hits}
+\item{pos}{The pos or ato from which to extract hits}
 
 \item{rng}{The ranges to extract}
 }

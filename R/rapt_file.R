@@ -143,7 +143,8 @@ readRRNG <- function(filepath) {
 #'
 #' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
 #' @seealso
-#'   \href{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}{RCP Generator Algorithm}
+#' \href{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}{RCP
+#' Generator Algorithm}
 #' @export
 read.rcp <- function(fpath_config, fpath_sys,
                      scaleUp = FALSE, newRadius=0.5) {
