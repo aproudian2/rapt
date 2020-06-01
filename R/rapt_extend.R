@@ -1,5 +1,5 @@
 #
-# This file contains 3D extensions to the spatstat package.
+# This file contains extensions to the spatstat package.
 #
 
 #### marktable ####
@@ -129,7 +129,7 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 #### inside.pp3 ####
 #' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]{pp3}}.
 #'
-#' @seealso \code{\link[spatstat]{inside}}
+#' @seealso \code{\link[spatstat]{inside.boxx}}
 #' @export
 inside.pp3 <- function(points, domain = NULL) {
   if(is.null(domain)) {
@@ -263,7 +263,8 @@ plot3d.pp3 <- function(X, ...) {
 #' @param X The \code{\link[spatstat]{pp3}} object to split up.
 #' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions.
 #'
-#' @return A \code{data.frame} object containing the number of counts in each quadrat.
+#' @return A \code{data.frame} object containing the number of counts in each
+#'   quadrat.
 #' @export
 quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   verifyclass(X, "pp3")
@@ -658,7 +659,9 @@ bdist.points3 <- function (X) {
   ymax <- max(d$yrange)
   zmin <- min(d$zrange)
   zmax <- max(d$zrange)
-  result <- pmin.int(x - xmin, xmax - x, y - ymin, ymax - y , z - zmin , zmax - z)
+  result <- pmin.int(x - xmin, xmax - x,
+                     y - ymin, ymax - y ,
+                     z - zmin , zmax - z)
 
   return(result)
 }
@@ -689,7 +692,9 @@ bdist.points3.multi <- function (X){
   zmin <- min(d$zrange)
   zmax <- max(d$zrange)
 
-  result <- data.frame(x = pmin.int(x - xmin, xmax - x), y =  pmin.int(y - ymin, ymax - y), z = pmin.int(z - zmin, zmax - z))
+  result <- data.frame(x = pmin.int(x - xmin, xmax - x),
+                       y = pmin.int(y - ymin, ymax - y),
+                       z = pmin.int(z - zmin, zmax - z))
 
   return(result)
 }

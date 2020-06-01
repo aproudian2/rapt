@@ -62,7 +62,8 @@ clustersim <- function(under, over, rcp_rad,
 
   # Calculate volume needed in clusters
   if(rho2 >= pcp){
-    print('Can not have background density (rho2) be larger than or equal to cluster point concentration (pcp).')
+    print('Background density (rho2) cannot be larger than or equal to',
+    'cluster point concentration (pcp).')
     return(-1)
   }
   vc <- vt*(pcp - rho2)/(rho1-rho2)
@@ -93,7 +94,8 @@ clustersim <- function(under, over, rcp_rad,
                         z = over.coo.pb$z,
                         domain(over.scaled))
 
-  # Re-size and shift the over point pattern so that it lines up with the under point pattern with buffers
+  # Re-size and shift the over point pattern so that it lines up with
+  # the under point pattern with buffers
   over.scaledcut <- over_cut(over.scaled.pb, rep(sidelength, 3), 2.5*cr)
   over.scaledcut.coo <- coords(over.scaledcut)
 
@@ -343,7 +345,7 @@ makecluster <- function(under,over,radius1,radius2,
                         rbmethod = 1,
                         s = 100,
                         toPlot=FALSE,showOverPts=FALSE){
-  ############################################################################################
+  #############################################################################
   # POINTS PER CLUSTER METHOD
   if(type == "ppc"){
     #real cluster percent
@@ -387,7 +389,7 @@ makecluster <- function(under,over,radius1,radius2,
         cluster.ind <- c(cluster.ind,as.numeric(cluster.inddf2[i,]))
       }
     }else{
-      cluster.ind1 <- nncross(over.scaledf,under,what="which",k=1:ppc)
+      cluster.ind1 <- nncross(over.scaledf, under, what = "which", k = 1:ppc)
       cluster.ind <- NULL
       for(i in 1:npoints(over.scaledf)){
         cluster.ind <- c(cluster.ind,as.numeric(cluster.ind1[i,]))
@@ -398,7 +400,7 @@ makecluster <- function(under,over,radius1,radius2,
     if(more==0){
 
     }else{
-      cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s)
+      cluster.ind <- randomInsert(cluster.ind, more, npoints(under), s)
     }
 
     cluster.xyz <- coords(under)[cluster.ind,]
@@ -651,10 +653,14 @@ makecluster <- function(under,over,radius1,radius2,
         cluster.nnR.ind1 <- list()
         cluster.nnR.ind2 <- list()
         #t1 <- Sys.time()
-        cluster.nnR.full <- crosspairs.pp3(over.scaledf,under.new,max(crrand),what="all",twice=FALSE,distinct=TRUE,neat=TRUE)
+        cluster.nnR.full <- crosspairs.pp3(over.scaledf, under.new, max(crrand),
+                                           what = "all", twice = FALSE,
+                                           distinct = TRUE, neat = TRUE)
         cluster.nnR.split <- list()
-        cluster.nnR.split$d <- split(cluster.nnR.full$d,cluster.nnR.full$i,drop=FALSE)
-        cluster.nnR.split$j <- split(cluster.nnR.full$j,cluster.nnR.full$i,drop=FALSE)
+        cluster.nnR.split$d <- split(cluster.nnR.full$d, cluster.nnR.full$i,
+                                     drop = FALSE)
+        cluster.nnR.split$j <- split(cluster.nnR.full$j, cluster.nnR.full$i,
+                                     drop = FALSE)
         split.vals <- sort(unique(cluster.nnR.full$i))
         for(i in 1:length(split.vals)){
           cluster.nnR.ind2[[i]] <- cluster.nnR.split$j[[i]][cluster.nnR.split$d[[i]] < crrand[split.vals[i]]]
@@ -666,12 +672,15 @@ makecluster <- function(under,over,radius1,radius2,
         cluster.nnR.new[[1]] <- unlist(cluster.nnR.ind1)
         cluster.nnR.new[[2]] <- unlist(cluster.nnR.ind2)
       }else{
-        cluster.nnR.new <- crosspairs.pp3(over.scaledf,under.new,cr,what="indices",twice=FALSE,distinct=TRUE,neat=TRUE)
+        cluster.nnR.new <- crosspairs.pp3(over.scaledf, under.new, cr,
+                                          what = "indices", twice = FALSE,
+                                          distinct = TRUE, neat = TRUE)
       }
 
 
       if(den < 1 & den >= 0){
-        cluster.ind.split <- split(cluster.nnR.new[[2]],cluster.nnR.new[[1]],drop=FALSE)
+        cluster.ind.split <- split(cluster.nnR.new[[2]], cluster.nnR.new[[1]],
+                                   drop = FALSE)
         cluster.ind.thinned <- lapply(cluster.ind.split,function(x){
           return(sample(x,round(den*length(x)),replace=FALSE))})
         cluster.ind <- unlist(cluster.ind.thinned)
@@ -720,7 +729,7 @@ makecluster <- function(under,over,radius1,radius2,
       }
     }
     else{
-      print('Instert speed for cluster radius method. slow, fast, or superfast.')
+      print('Insert speed for cluster radius method. slow, fast, or superfast.')
     }
   }
 
@@ -830,7 +839,7 @@ makecluster <- function(under,over,radius1,radius2,
     return()
   }
 }
-########################################################################################
+################################################################################
 
 #### hcpcluster ####
 #' Generate spherical clusters with hexagonal close packed spacing.
@@ -876,11 +885,11 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
     outside.pp3 <- percentSelect(sigma2, inside.pp32)
   }
 
-  nnr <- crosspairs.pp3(hcp.pp3,inside.pp3,rmax = R,what ="indices")
+  nnr <- crosspairs.pp3(hcp.pp3, inside.pp3, rmax = R, what ="indices")
   cluster.pts <- inside.pp3[nnr[[2]]]
 
   #Generate background points ouside the clusters
-  nnr2 <- crosspairs.pp3(hcp.pp3,outside.pp3,rmax = R,what ="indices")
+  nnr2 <- crosspairs.pp3(hcp.pp3, outside.pp3, rmax = R, what ="indices")
   bg.pts <- outside.pp3[-nnr2[[2]]]
 
   full.coo <- rbind(coords(cluster.pts),coords(bg.pts))
@@ -890,9 +899,6 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 
   return(list(full.pp3,sigma3))
 }
-
-
-
 
 #### planes ####
 #' Simulate lamellar morphology for mixed guest-host system.
@@ -1139,7 +1145,6 @@ morph_rods <- function(lambda,
   return(p.selected)
 }
 
-
 #### Gyroid ####
 #' Simulate morphology of guest molecules in gyroid pattern
 #'
@@ -1224,7 +1229,7 @@ morph_gb <- function(lambda,
                      frac,
                      point.den = 1,
                      rcp.rad,
-                     rcp.path = 'C:/Users/galen/Documents/Research/point_patterns/Final',
+                     rcp.path = NULL,
                      rcp.number = 1,
                      toplot = FALSE,
                      win = box3(c(0,1), c(0,1), c(0,1))){
@@ -1332,13 +1337,15 @@ bcc.gen <- function(npoint, win){
 #### hcp.gen ####
 #' Helper for \code{\link{hcpcluster}} which generates a HCP lattice with the correct spacing.
 #'
-#' Generates a hexagonal close packed (HCP) structure based on spheres with specified radius
-#' within a window of specified size.
+#' Generates a hexagonal close packed (HCP) structure based on spheres with
+#' specified radius within a window of specified size.
 #'
 #' @param r The radius of the spheres for the HCP structure.
-#' @param win A \code{\link[spatstat]{box3}} object defining the window for the generation.
+#' @param win A \code{\link[spatstat]{box3}} object defining the window for the
+#'   generation.
 #'
-#' @return A data frame object containing xyz coordinates of the HCP lattice centers.
+#' @return A data frame object containing xyz coordinates of the HCP lattice
+#'   centers.
 #' @seealso \code{\link{hcpcluster}}
 
 hcp.gen <- function(r, win){
@@ -1830,7 +1837,8 @@ check_vol <- function(sf, coo, vol.target, under.domain, cr.rand){
   coo.scaled <- coo*sf
 
   bdist <- bdist.complex(coo.scaled, under.domain)
-  io <- as.numeric(inside.boxx(coo.scaled$x, coo.scaled$y, coo.scaled$z, w = under.domain))
+  io <- as.numeric(inside.boxx(coo.scaled$x, coo.scaled$y, coo.scaled$z,
+                               w = under.domain))
 
   fullin <- apply(bdist > cr.rand, 1, all) & io == 1
 
