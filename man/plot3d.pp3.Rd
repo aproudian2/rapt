@@ -7,7 +7,7 @@
 plot3d.pp3(X, ...)
 }
 \arguments{
-\item{X}{A \code{pp3}. The point pattern to visualize}
+\item{X}{\code{pp3}. The point pattern to visualize}
 
 \item{...}{Other arguments to pass to \code{plot3d} from the \code{rgl}
 library.}

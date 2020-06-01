@@ -2,10 +2,10 @@
 % Please edit documentation in R/rapt_sim.R
 \name{lattice}
 \alias{lattice}
-\title{Creates a spatial region filled with lattice points of the specified type}
+\title{Generate Spatial Lattice}
 \usage{
 lattice(domain = box3(), a = 1, lattice = "sc")
 }
 \description{
-Creates a spatial region filled with lattice points of the specified type
+\code{lattice} creates a spatial region filled with lattice points of the specified type
 }

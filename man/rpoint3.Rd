@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_sim.R
 \name{rpoint3}
 \alias{rpoint3}
-\title{Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.}
+\title{Generate N Random Points}
 \usage{
 rpoint3(
   n,
@@ -17,5 +17,9 @@ rpoint3(
 )
 }
 \description{
-Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.
+\code{rpoint3} extends \code{\link[spatstat]{rpoint}} to
+\code{\link[spatstat]{pp3}}.
+}
+\seealso{
+\code{\link[spatstat]{rpoint}}
 }

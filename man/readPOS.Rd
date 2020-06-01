@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_file.R
 \name{readPOS}
 \alias{readPOS}
-\title{Read a POS file.}
+\title{Read a POS File}
 \usage{
 readPOS(filepath)
 }

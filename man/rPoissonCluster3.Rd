@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_sim.R
 \name{rPoissonCluster3}
 \alias{rPoissonCluster3}
-\title{Extends \code{\link[spatstat]{rPoissonCluster}} to
-\code{\link[spatstat]{pp3}}.}
+\title{Simulate 3D Poisson Cluster Process}
 \usage{
 rPoissonCluster3(
   kappa,
@@ -16,6 +15,9 @@ rPoissonCluster3(
 )
 }
 \description{
-Extends \code{\link[spatstat]{rPoissonCluster}} to
+\code{rPoissonCluster3} extends \code{\link[spatstat]{rPoissonCluster}} to
 \code{\link[spatstat]{pp3}}.
+}
+\seealso{
+\code{\link[spatstat]{rpoint}}
 }

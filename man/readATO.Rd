@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_file.R
 \name{readATO}
 \alias{readATO}
-\title{Read an ATO file.}
+\title{Read an ATO File}
 \usage{
 readATO(filepath)
 }

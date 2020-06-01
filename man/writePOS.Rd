@@ -16,7 +16,8 @@ structure of the data.frame returned by \code{\link{readPOS}}.}
 \code{writePOS} writes a POS data.frame into a POS file
 }
 \references{
-Local Electrode Atom Probe Tomography: A User's Guide
+Larson \emph{et al.},
+  \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
 \code{\link{readPOS}}

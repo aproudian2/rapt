@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_file.R
 \name{read.rcp}
 \alias{read.rcp}
-\title{Read in an RCP Simulation}
+\title{Read an RCP Simulation}
 \usage{
 read.rcp(fpath_config, fpath_sys, scaleUp = FALSE, newRadius = 0.5)
 }

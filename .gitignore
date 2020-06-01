@@ -4,3 +4,5 @@
 .DS_Store
 rapt-development.Rproj
 inst/doc
+tests/testthat/example-pos.pos
+tests/testthat/example-ato.ato
