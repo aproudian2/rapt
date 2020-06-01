@@ -13,14 +13,14 @@
 #' @export
 marktable <- function(X, ...) UseMethod("marktable")
 
-#### marktable.ppp ####
+### marktable.ppp ###
 #' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 #'
 #' @seealso \code{\link[spatstat]{marktable}}
 #' @export
 marktable.ppp <- spatstat::marktable
 
-#### marktable.pp3 ####
+### marktable.pp3 ###
 #' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 #'
 #' @description Visit each point in a point pattern, find the neighbouring
@@ -75,6 +75,51 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
   return(mat)
 }
 
+#### rjitter ####
+#' Random Perturbation of a Point Pattern
+#'
+#' @description This is an S3 generic that extends the use of
+#'   \code{\link[spatstat]{rjitter}} beyond \code{ppp} objects.
+#'
+#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}},
+#'   \code{\link{rjitter.pp3}}
+#' @export
+marktable <- function(X, ...) UseMethod("marktable")
+
+### rjitter.ppp ###
+#' Random Perturbation of a Point Pattern
+#'
+#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.pp3}}
+#' @export
+rjitter.ppp <- spatstat::rjitter
+
+### rjitter3 ###
+#' Random Perturbation of a Point Pattern
+#'
+#' Applies independent random displacements to each point in a point pattern.
+#' Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
+#'
+#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}}
+#' @export
+rjitter.pp3 <- function(X, domain = box3()) {
+  verifyclass(X, "pp3")
+  nX <- npoints(X)
+  if (nX == 0)
+    return(X)
+  W <- X$domain
+  D <- runifpoint3(nX, domain = domain)
+  xnew <- X$data$x + D$data$x
+  ynew <- X$data$y + D$data$y
+  znew <- X$data$z + D$data$z
+  new <- pp3(xnew, ynew, znew, W)
+  ok <- subset(new, subset =
+                 (x > W$xrange[1] & x < W$xrange[2]) &
+                 (y > W$yrange[1] & y < W$yrange[2]) &
+                 (z > W$zrange[1] & z < W$zrange[2])
+  )
+  return(ok)
+}
+
 #### superimpose.pp3 ####
 #' Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
 #'
@@ -126,7 +171,8 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
   return(Y)
 }
 
-#### sample.ppp ####
+#### sample ####
+### sample.ppp ###
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
 #'
 #' @param X A \code{ppp}. The point pattern from which to sample.
@@ -142,7 +188,7 @@ sample.ppp <- function(X, size) {
   return(sam.dat)
 }
 
-#### sample.pp3 ####
+### sample.pp3 ###
 #' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
 #'
 #' @param X A \code{pp3}. The point pattern from which to sample.
@@ -210,8 +256,8 @@ intensity.pp3 <- function(X, weights = NULL) {
 #### rownames.pp3 ####
 #' Extends \code{\link[base:row+colnames]{rownames}} to \code{\link[spatstat]{pp3}}.
 #'
-#' @param pat A \code{pp3}. The point pattern from which to extract rownames.
-#' @return A string vector. The rownames of the point pattern.
+#' @param pat \code{pp3}. The point pattern from which to extract rownames.
+#' @return Character vector. The rownames of the point pattern.
 #' @seealso \code{\link[base:row+colnames]{rownames}}
 rownames.pp3 <- function(pat) {
   dat <- rownames(as.data.frame(pat))
@@ -222,7 +268,7 @@ rownames.pp3 <- function(pat) {
 #' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
 #'
 #' (requires the rgl library)
-#' @param X A \code{pp3}. The point pattern to visualize
+#' @param X \code{pp3}. The point pattern to visualize
 #' @param ... Other arguments to pass to \code{plot3d} from the \code{rgl}
 #' library.
 #' @seealso \code{\link[rgl]{plot3d}}
@@ -251,9 +297,9 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   ylim <- w$yrange
   zlim <- w$zrange
 
-  xbreaks <- seq(xlim[1],xlim[2],length.out = (nx+1))
-  ybreaks <- seq(ylim[1],ylim[2],length.out = (ny+1))
-  zbreaks <- seq(zlim[1],zlim[2],length.out = (nz+1))
+  xbreaks <- seq(xlim[1], xlim[2],length.out = (nx+1))
+  ybreaks <- seq(ylim[1], ylim[2],length.out = (ny+1))
+  zbreaks <- seq(zlim[1], zlim[2],length.out = (nz+1))
 
   ntot <- nx*ny*nz
   gridvals <- list()
@@ -333,9 +379,9 @@ quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
   }
 
   boxes <- lapply(gridvals, function(x){
-    res.coo <- coo[inside.pp3(X, domain = x),]
+    res.coo <- coo[inside.boxx(X, domain = x),]
     if(!is.null(marks(X))){
-      res.marks <- marks[inside.pp3(X, domain = x)]
+      res.marks <- marks[inside.boxx(X, domain = x)]
       return(pp3(res.coo$x, res.coo$y, res.coo$z, x, marks = res.marks))
     }else{
       return(pp3(res.coo$x, res.coo$y, res.coo$z, x))

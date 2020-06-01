@@ -3,7 +3,11 @@
 #
 
 #### rpoint3 ####
-#' Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.
+#' Generate N Random Points
+#'
+#' \code{rpoint3} extends \code{\link[spatstat]{rpoint}} to
+#' \code{\link[spatstat]{pp3}}.
+#' @seealso \code{\link[spatstat]{rpoint}}
 #' @export
 rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
@@ -11,7 +15,7 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
   if (missing(f) || (is.numeric(f) && length(f) == 1))
     return(runifpoint3(n, domain = win, nsim = nsim, drop = drop))
   if (!is.function(f) && !is.im(f))
-    stop(paste(sQuote("f"), "must be  a function"))
+    stop(paste(sQuote("f"), "must be a function"))
   verifyclass(win, "box3")
   if (n == 0) {
     emp <- pp3(numeric(0), numeric(0), numeric(0), window = win)
@@ -64,8 +68,11 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
   return(as.anylist(result))
 }
 #### rPoissonCluster3 ####
-#' Extends \code{\link[spatstat]{rPoissonCluster}} to
+#' Simulate 3D Poisson Cluster Process
+#'
+#' \code{rPoissonCluster3} extends \code{\link[spatstat]{rPoissonCluster}} to
 #' \code{\link[spatstat]{pp3}}.
+#' @seealso \code{\link[spatstat]{rpoint}}
 #' @export
 rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
                              nsim = 1, drop = T)
@@ -168,7 +175,9 @@ latticeVectors <- function(indices, a = 1, lattice = "sc") {
   return(lat.dat)
 }
 #### lattice ####
-#' Creates a spatial region filled with lattice points of the specified type
+#' Generate Spatial Lattice
+#'
+#' \code{lattice} creates a spatial region filled with lattice points of the specified type
 #' @export
 lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   lat.xrange <- round(domain$xrange / a)
@@ -187,27 +196,7 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   lat.pp3 <- lat.pp3[ok]
   return(lat.pp3)
 }
-#### rjitter3 ####
-#' Extends the \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
-#' @export
-rjitter3 <- function(X, domain = box3()) {
-  verifyclass(X, "pp3")
-  nX <- npoints(X)
-  if (nX == 0)
-    return(X)
-  W <- X$domain
-  D <- runifpoint3(nX, domain = domain)
-  xnew <- X$data$x + D$data$x
-  ynew <- X$data$y + D$data$y
-  znew <- X$data$z + D$data$z
-  new <- pp3(xnew, ynew, znew, W)
-  ok <- subset(new, subset =
-                 (x > W$xrange[1] & x < W$xrange[2]) &
-                 (y > W$yrange[1] & y < W$yrange[2]) &
-                 (z > W$zrange[1] & z < W$zrange[2])
-  )
-  return(ok)
-}
+
 #### nmers ####
 #' Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
 #' sampled point pattern from its parent distribution.
