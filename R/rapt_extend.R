@@ -2,11 +2,31 @@
 # This file contains 3D extensions to the spatstat package.
 #
 
-#### marktable.pp3 ####
-#' Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.
+#### marktable ####
+#' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 #'
-#' \code{marktable.pp3}
+#' @description This is an S3 generic that extends the use of
+#'   \code{\link[spatstat]{marktable}} beyond \code{ppp} objects.
+#'
+#' @seealso \code{\link[spatstat]{marktable}}, \code{\link{marktable.ppp}},
+#'   \code{\link{marktable.pp3}}
+#' @export
+marktable <- function(X, ...) UseMethod("marktable")
+
+#### marktable.ppp ####
+#' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
+#'
 #' @seealso \code{\link[spatstat]{marktable}}
+#' @export
+marktable.ppp <- spatstat::marktable
+
+#### marktable.pp3 ####
+#' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
+#'
+#' @description Visit each point in a point pattern, find the neighbouring
+#'   points, and compile a frequency table of the marks of these neighbour
+#'   points.
+#'
 #' @export
 marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
   verifyclass(X, "pp3")

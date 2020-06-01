@@ -2,13 +2,12 @@
 % Please edit documentation in R/rapt_extend.R
 \name{marktable.pp3}
 \alias{marktable.pp3}
-\title{Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.}
+\title{Tabulate Marks in Neighbourhood of Every Point in a Point Pattern}
 \usage{
-marktable.pp3(X, R, N, exclude = TRUE, collapse = FALSE)
+\method{marktable}{pp3}(X, R, N, exclude = TRUE, collapse = FALSE)
 }
 \description{
-\code{marktable.pp3}
-}
-\seealso{
-\code{\link[spatstat]{marktable}}
+Visit each point in a point pattern, find the neighbouring
+  points, and compile a frequency table of the marks of these neighbour
+  points.
 }
