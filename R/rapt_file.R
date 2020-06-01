@@ -3,6 +3,8 @@
 #
 
 #### Load Data ####
+
+### readPOS ###
 # Create generic for .ato and .pos
 #' Read a POS file.
 #'
@@ -32,6 +34,7 @@ readPOS <- function(filepath) {
   return(pos.dat);
 }
 
+### readATO ###
 #' Read an ATO file.
 #'
 #' \code{readATO} reads an ATO file (from IVAS) into a data frame.
@@ -63,6 +66,7 @@ readATO <- function(filepath) {
   return(ato.dat)
 }
 
+### readRRNG ###
 #' Read an RRNG file (from IVAS) into a dataframe
 #'
 #' \code{readRRNG} reads an RRNG file from IVAS into an RNG object for ranging
@@ -118,7 +122,7 @@ readRRNG <- function(filepath) {
   return(dat)
 }
 
-### read.rcp ####
+### read.rcp ###
 #' Read in an RCP simulation.
 #'
 #' Function to read in an RCP code output file into R as a pp3 object.
@@ -131,6 +135,11 @@ readRRNG <- function(filepath) {
 #'   RCP particles will be scaled to. Default is 0.5.
 #'
 #' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
+#' @seealso
+#'   \url[RCP Generator Paper]
+#'     {https://link.aps.org/doi/10.1103/PhysRevE.80.051305},
+#'   \url[RCP Generator Download]
+#'     {http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}
 #' @export
 read.rcp <- function(fpath_config, fpath_sys, scaleUp, newRadius=0.5) {
   temp_upload <- read.table(fpath_config,

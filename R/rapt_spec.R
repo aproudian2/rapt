@@ -58,7 +58,7 @@ rngCount <- function(pos, rng) {
 #' rngPOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
 #' is within the ranges of the provided \code{RRNG}.
 #'
-#' @param pos The pos or ato to extract hits
+#' @param pos The pos or ato from which to extract hits
 #' @param rng The ranges to extract
 #' @return A data.frame of the same structure as pos, with an appended column
 #'   called "mark" that carries the name of the ion
@@ -94,10 +94,10 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #' Create initialization for nls fitting of MassSpectrum peaks based on ions
 #'
 #' fitIonInit creates the formula and starting values for fitting mass spectra
-#' using \code{nls} based on molecular formulae.
+#' using \code{\link[stats]{nls}} based on molecular formulae.
 #'
 #' @param ions Character. A character vector of molecular formulae sutable to be
-#'   passed to enviPat::isopattern.
+#'   passed to \code{\link[enviPat]{isopattern}}.
 #' @param sd Numeric. The estimated standard deviation (or equivalent for
 #' peak = "emg") of the fitted peak.
 #' @param rel Numeric. A numeric vector of relative heights for each ion to
@@ -114,7 +114,7 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #' @param threshold Numeric.
 #' @return A list containing elements of the fitting formula, the starting fit
 #'   values, and the lower limits for each parameter.
-#' @seealso \code{\link{nls}}, \code{\link[enviPat]{isopattern}}
+#' @seealso \code{\link[stats]{nls}}, \code{\link[enviPat]{isopattern}}
 #'
 # Add upper limits for port algorithm fitting
 # Add ion specific sd / tau option
