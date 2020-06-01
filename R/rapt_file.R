@@ -155,17 +155,15 @@ readRRNG <- function(filepath) {
 #' @export
 read.rcp <- function(fpath_config, fpath_sys,
                      scaleUp = FALSE, newRadius = 0.5) {
-  temp_upload <- read.table(fpath_config,
-                            sep = " ", col.names = c("x", "y", "z", "type"))
-  if(scaleUp == TRUE){
+  rcp <- read.table(fpath_config,
+                    sep = " ", col.names = c("x", "y", "z", "type"))
+  pp <- createSpat(rcp[,c("x","y","z")])
+  if (scaleUp == TRUE) {
     a <- read.table(fpath_sys)
     r <- as.numeric(levels(a$V1)[2])
-    temp <- scaleRCP(createSpat(temp_upload[,c("x","y","z")]),
-                     newRadius = newRadius, oldRadius = r)
-    return(temp)
+    pp <- scaleRCP(pp, newRadius = newRadius, oldRadius = r)
   }
-  temp <- createSpat(temp_upload[,c("x","y","z")])
-  return(temp)
+  return(pp)
 }
 
 #### Condition Data ####
