@@ -50,6 +50,10 @@ A list containing elements of the fitting formula, the starting fit
 fitIonInit creates the formula and starting values for fitting mass spectra
 using \code{\link[stats]{nls}} based on molecular formulae.
 }
+\details{
+Fitting peak shape is either a gaussian (peak = "gaussian") or
+exponentially modified gaussian (peak = "emg").
+}
 \seealso{
 \code{\link[stats]{nls}}, \code{\link[enviPat]{isopattern}}
 }

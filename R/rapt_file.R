@@ -13,7 +13,8 @@
 #' @param filepath A string. The file path to the POS file.
 #' @return A data.frame with columns corresponding to the x, y, and z positions
 #'   of the reconstruction and the mass-to-charge ratio.
-#' @references Local Electrode Atom Probe Tomography: A User's Guide
+#' @references Larson \emph{et al.},
+#'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 #' @seealso \code{\link{readATO}}
 #' @export
 readPOS <- function(filepath) {
@@ -40,7 +41,8 @@ readPOS <- function(filepath) {
 #'
 #' @param filepath A string. The file path to the ATO file.
 #' @return A dataframe.
-#' @references Local Electrode Atom Probe Tomography: A User's Guide
+#' @references Larson \emph{et al.},
+#'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 #' @seealso \code{\link{readPOS}}
 #' @export
 readATO <- function(filepath) {
@@ -73,6 +75,9 @@ readATO <- function(filepath) {
 #'
 #' @param filepath A string. A filepath to the RRNG file.
 #' @return A dataframe.
+#'
+#' @references Larson \emph{et al.},
+#'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 #' @export
 readRRNG <- function(filepath) {
   `%>%` <- magrittr::`%>%`
@@ -133,7 +138,7 @@ readRRNG <- function(filepath) {
 #'
 #' @details The RCP generation is described in Desmond & Weeks,
 #'   "Random Close Packing of Disks and Spheres in Confined Geometries",
-#'   \emph{Physical Review E} \strong{80} (5), 051305 (2009):
+#'   \emph{Physical Review E}, \strong{80} (5), 051305 (2009):
 #'   \url{https://doi.org/10.1103/PhysRevE.80.051305}; the algorithm can be
 #'   downloaded at
 #'   \url{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}.
@@ -141,7 +146,7 @@ readRRNG <- function(filepath) {
 #' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
 #' @references Desmond & Weeks,
 #'   "Random Close Packing of Disks and Spheres in Confined Geometries",
-#'   \emph{Physical Review E} \strong{80} (5), 051305 (2009):
+#'   \emph{Physical Review E}, \strong{80} (5), 051305 (2009):
 #'   \url{https://doi.org/10.1103/PhysRevE.80.051305}
 #' @seealso
 #' \href{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}{RCP

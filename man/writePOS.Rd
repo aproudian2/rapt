@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_file.R
 \name{writePOS}
 \alias{writePOS}
-\title{Write a POS file.}
+\title{Write a POS File}
 \usage{
 writePOS(pos, filepath)
 }

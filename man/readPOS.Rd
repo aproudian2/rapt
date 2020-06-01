@@ -17,7 +17,8 @@ A data.frame with columns corresponding to the x, y, and z positions
 \code{readPOS} reads a POS file (from IVAS) into a data frame.
 }
 \references{
-Local Electrode Atom Probe Tomography: A User's Guide
+Larson \emph{et al.},
+  \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
 \code{\link{readATO}}

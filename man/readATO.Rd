@@ -16,7 +16,8 @@ A dataframe.
 \code{readATO} reads an ATO file (from IVAS) into a data frame.
 }
 \references{
-Local Electrode Atom Probe Tomography: A User's Guide
+Larson \emph{et al.},
+  \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
 \code{\link{readPOS}}
