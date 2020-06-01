@@ -169,7 +169,10 @@ read.rcp <- function(fpath_config, fpath_sys,
 #### Condition Data ####
 
 ### createSpat ###
-#' Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
+#' Create a pp3 from a POS or ATO
+#'
+#' \code{createSpat} creates a \code{\link[spatstat]{pp3}} from a POS or ATO
+#' data frame.
 #'
 #' @param pos A POS or ATO data frame.
 #' @param win The domain of the data.
@@ -213,7 +216,7 @@ createDet <- function(ato, win = NULL, marks = NULL) {
 
 ### createSpec ###
 #' Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS
-#' or ATO data frame.
+#' or ATO
 #'
 #' \code{createSpec} generates a
 #' \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} object with a

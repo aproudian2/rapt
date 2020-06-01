@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_spec.R
 \name{fitIonInit}
 \alias{fitIonInit}
-\title{Create initialization for nls fitting of MassSpectrum peaks based on ions}
+\title{Initialize \code{\link[spats]{nls}} Fitting Using Ions}
 \usage{
 fitIonInit(
   ions,
@@ -47,8 +47,9 @@ A list containing elements of the fitting formula, the starting fit
   values, and the lower limits for each parameter.
 }
 \description{
-fitIonInit creates the formula and starting values for fitting mass spectra
-using \code{\link[stats]{nls}} based on molecular formulae.
+\code{fitIonInit} creates the formula and starting values for fitting mass
+spectra using \code{\link[stats]{nls}} based on molecular formulae. The
+isotopic signatures are generated using \code{\link[enviPat]{isopattern}}.
 }
 \details{
 Fitting peak shape is either a gaussian (peak = "gaussian") or

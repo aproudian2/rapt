@@ -3,7 +3,7 @@
 \name{createSpec}
 \alias{createSpec}
 \title{Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS
-or ATO data frame.}
+or ATO}
 \usage{
 createSpec(pos, res = 0.001, snip = NULL)
 }

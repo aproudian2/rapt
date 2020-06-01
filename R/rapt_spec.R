@@ -116,10 +116,11 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #### Spectral Fitting ####
 
 ### fitIonInit ###
-#' Create initialization for nls fitting of MassSpectrum peaks based on ions
+#' Initialize \code{\link[spats]{nls}} Fitting Using Ions
 #'
-#' fitIonInit creates the formula and starting values for fitting mass spectra
-#' using \code{\link[stats]{nls}} based on molecular formulae.
+#' \code{fitIonInit} creates the formula and starting values for fitting mass
+#' spectra using \code{\link[stats]{nls}} based on molecular formulae. The
+#' isotopic signatures are generated using \code{\link[enviPat]{isopattern}}.
 #'
 #' @param ions Character. A character vector of molecular formulae sutable to be
 #'   passed to \code{\link[enviPat]{isopattern}}.
