@@ -15,7 +15,7 @@
 #' @seealso \code{\link{rngCount}}
 #' @export
 rangeCount <- function(pos, start, end) {
-  n <- with(pos, sum(mass > start & mass < end))
+  n <- sum(pos$mass > start & pos$mass < end)
   return(n)
 }
 
@@ -33,7 +33,7 @@ rangeCount <- function(pos, start, end) {
 #' @seealso \code{\link{rngPOS}}
 #' @export
 rangePOS <- function(pos, start, end) {
-  with(pos, pos[mass > start & mass < end,])
+  pos[pos$mass > start & pos$mass < end,]
 }
 
 ### rngCount ###
