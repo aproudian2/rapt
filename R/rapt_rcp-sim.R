@@ -45,7 +45,7 @@ read.rcp <- function(fpath_config, fpath_sys,
 }
 
 #### scaleRCP ####
-#' Scale RCP data to a desired radius
+#' Scale RCP Data
 #'
 #' Given an original raw RCP output file, scale the 3D point cloud as if the
 #' spheres have a specific radius.

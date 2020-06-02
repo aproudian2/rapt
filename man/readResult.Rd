@@ -2,21 +2,22 @@
 % Please edit documentation in R/rapt_tapsim.R
 \name{readResult}
 \alias{readResult}
-\title{Read a TAPSim results file}
+\title{Read TAPSim Results}
 \usage{
 readResult(fp, type = "ASCII")
 }
 \arguments{
-\item{fp}{The filepath}
+\item{fp}{Character. The filepath}
 
-\item{type}{The file type to be read. Currently, only ASCII is implemented.}
+\item{type}{Character. The file type to be read. Currently, only ASCII is
+implemented.}
 }
 \value{
-A data.frame
+A data.frame with the structure of the TAPSim output.
 }
 \description{
-Given a filepath, read in a TAPSim results file. Currently only implemented
-for ASCII results files.
+Given a filepath, read in a TAPSim results file.
+\emph{Currently only implemented for ASCII results files.}
 }
 \seealso{
 \url{
@@ -24,4 +25,9 @@ for ASCII results files.
 }
 
 \url{https://d-nb.info/1138282715/34}
+
+Other TAPSim functions: 
+\code{\link{resultToDet}()},
+\code{\link{resultToPOS}()}
 }
+\concept{TAPSim functions}

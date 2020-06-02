@@ -2,22 +2,29 @@
 % Please edit documentation in R/rapt_tapsim.R
 \name{resultToPOS}
 \alias{resultToPOS}
-\title{Convert a TAPSim results file to a POS}
+\title{Convert TAPSim Results to POS}
 \usage{
 resultToPOS(res, clip.radius = NULL)
 }
 \arguments{
-\item{res}{The results data.frame}
+\item{res}{data.frame. The results \code{data.frame} as returned by
+\code{\link{readResult}}}
 
-\item{clip.radius}{The detector radius at which to clip the points}
+\item{clip.radius}{Numeric. The detector radius at which to clip the points}
 }
 \value{
-A data.frame containing the (x,y,z) position and "mass' (id) of the
-  point in the stame structure of a POS as created by \code{\link{readPOS}}.
+A \code{data.frame} containing the (x,y,z) position and "mass" (id)
+  of the point in the stame structure of a POS as created by
+  \code{\link{readPOS}}.
 }
 \description{
-Convert a TAPSim results file to a POS
+Convert TAPSim Results to POS
 }
 \seealso{
-\code{\link{readPOS}}, \code{\link{readResult}}
+\code{\link{readPOS}}
+
+Other TAPSim functions: 
+\code{\link{readResult}()},
+\code{\link{resultToDet}()}
 }
+\concept{TAPSim functions}

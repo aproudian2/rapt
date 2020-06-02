@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_file.R
 \name{readRRNG}
 \alias{readRRNG}
-\title{Read an RRNG file (from IVAS) into a dataframe}
+\title{Read an RRNG File}
 \usage{
 readRRNG(filepath)
 }

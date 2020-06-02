@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_rcp-sim.R
 \name{scaleRCP}
 \alias{scaleRCP}
-\title{Scale RCP data to a desired radius}
+\title{Scale RCP Data}
 \usage{
 scaleRCP(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL)
 }
