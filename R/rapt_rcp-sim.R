@@ -2,6 +2,48 @@
 # This file contains functions relating to dealing with RCP patterns.
 #
 
+### read.rcp ###
+#' Read an RCP Simulation
+#'
+#' Reads in a RCP Generator output file as a \code{\link[spatstat]{pp3}} object.
+#'
+#' @param fpath_config The file path to the RCP FinalConfig file.
+#' @param fpath_sys The file path to the associated RCP system file.
+#' @param scaleUP Boolean. If \code{TRUE}, scales RCP so particles have new
+#'   radius. If \code{FALSE}, RCP stays as generated.
+#' @param newRadius Numeric. If \code{scaleUP = TRUE}, this is the new radius
+#' that the RCP particles will be scaled to. Default is 0.5.
+#'
+#' @details The RCP generation is described in Desmond & Weeks,
+#'   "Random Close Packing of Disks and Spheres in Confined Geometries",
+#'   \emph{Physical Review E}, \strong{80} (5), 051305 (2009):
+#'   \url{https://doi.org/10.1103/PhysRevE.80.051305}; the algorithm can be
+#'   downloaded at
+#'   \url{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}.
+#'
+#' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
+#'
+#' @references Desmond & Weeks,
+#'   "Random Close Packing of Disks and Spheres in Confined Geometries",
+#'   \emph{Physical Review E}, \strong{80} (5), 051305 (2009):
+#'   \url{https://doi.org/10.1103/PhysRevE.80.051305}
+#' @seealso
+#' \href{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}{RCP
+#' Generator Algorithm}
+#' @export
+read.rcp <- function(fpath_config, fpath_sys,
+                     scaleUp = FALSE, newRadius = 0.5) {
+  rcp <- read.table(fpath_config,
+                    sep = " ", col.names = c("x", "y", "z", "type"))
+  pp <- createSpat(rcp[,c("x","y","z")])
+  if (scaleUp == TRUE) {
+    a <- read.table(fpath_sys)
+    r <- as.numeric(levels(a$V1)[2])
+    pp <- scaleRCP(pp, newRadius = newRadius, oldRadius = r)
+  }
+  return(pp)
+}
+
 #### scaleRCP ####
 #' Scale RCP data to a desired radius
 #'
