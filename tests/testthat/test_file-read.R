@@ -8,7 +8,7 @@ test_that("POS reads correctly", {
   expect_s3_class(pos, "data.frame")
   pos.meta <- attr(pos, "metaData")
   expect_named(pos.meta, "name")
-  expect_identical(pos.meta$name, "example.pos")
+  expect_identical(pos.meta$name, "example-pos")
 })
 
 #### readATO ####
@@ -20,7 +20,7 @@ test_that("ATO reads correctly", {
   expect_s3_class(ato, "data.frame")
   ato.meta <- attr(ato, "metaData")
   expect_named(ato.meta, "name")
-  expect_identical(ato.meta$name, "example.ato")
+  expect_identical(ato.meta$name, "example-ato")
 })
 
 #### readRRNG ####
@@ -35,6 +35,9 @@ test_that("RRNG reads correctly", {
   expect_type(rng$name, "character")
   expect_type(rng$formula, "character")
   expect_match(rng$color, "^#[[:xdigit:]]{6}$")
+  rng.meta <- attr(rng, "metaData")
+  expect_named(rng.meta, "name")
+  expect_identical(rng.meta$name, "example-rrng")
 })
 
 #### read.rcp ####

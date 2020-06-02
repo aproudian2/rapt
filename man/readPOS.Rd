@@ -7,7 +7,7 @@
 readPOS(filepath)
 }
 \arguments{
-\item{filepath}{A string. The file path to the POS file.}
+\item{filepath}{Character. The file path to the POS file.}
 }
 \value{
 A data.frame with columns corresponding to the x, y, and z positions

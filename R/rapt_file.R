@@ -10,9 +10,10 @@
 #'
 #' \code{readPOS} reads a POS file (from IVAS) into a data frame.
 #'
-#' @param filepath A string. The file path to the POS file.
+#' @param filepath Character. The file path to the POS file.
 #' @return A data.frame with columns corresponding to the x, y, and z positions
 #'   of the reconstruction and the mass-to-charge ratio.
+#'
 #' @references Larson \emph{et al.},
 #'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 #' @seealso \code{\link{readATO}}
@@ -27,7 +28,7 @@ readPOS <- function(filepath) {
   pos.mat <- matrix(pos.raw, ncol = 4, byrow = T)
   pos.dat <- as.data.frame(pos.mat)
   names(pos.dat) <- c("x", "y", "z", "mass")
-  pos.name <- sub(".pos", "", basename(filepath))
+  pos.name <- sub("\\.pos$", "", basename(filepath), ignore.case = TRUE)
   attr(pos.dat, "metaData") <- list(
     name = pos.name
   )
@@ -39,8 +40,10 @@ readPOS <- function(filepath) {
 #'
 #' \code{readATO} reads an ATO file (from IVAS) into a data frame.
 #'
-#' @param filepath A string. The file path to the ATO file.
-#' @return A dataframe.
+#' @param filepath Character. The file path to the ATO file.
+#' @return A data.frame with columns corresponding to the ATO structure
+#'   definition.
+#'
 #' @references Larson \emph{et al.},
 #'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 #' @seealso \code{\link{readPOS}}
@@ -58,7 +61,7 @@ readATO <- function(filepath) {
   ato.dat <- as.data.frame(ato.mat)
   names(ato.dat) <- c("x", "y", "z", "mass", "clusID", "pIndex", "Vdc",
                       "TOF", "dx", "dy", "Vp", "shank", "FouR", "FouI")
-  ato.name <- sub(".ato", "", basename(filepath))
+  ato.name <- sub("\\.ato$", "", basename(filepath), ignore.case = TRUE)
   attr(ato.dat, "metaData") <- list(
     name = ato.name
   )
@@ -121,6 +124,10 @@ readRRNG <- function(filepath) {
   })
   dat <- do.call(rbind, dat)
   rownames(dat) <- NULL
+  rng.name <- sub("\\.rrng$", "", basename(filepath), ignore.case = TRUE)
+  attr(dat, "metaData") <- list(
+    name = rng.name
+  )
   return(dat)
 }
 

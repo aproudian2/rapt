@@ -7,10 +7,11 @@
 readATO(filepath)
 }
 \arguments{
-\item{filepath}{A string. The file path to the ATO file.}
+\item{filepath}{Character. The file path to the ATO file.}
 }
 \value{
-A dataframe.
+A data.frame with columns corresponding to the ATO structure
+  definition.
 }
 \description{
 \code{readATO} reads an ATO file (from IVAS) into a data frame.
