@@ -36,3 +36,16 @@ test_that("RRNG reads correctly", {
   expect_type(rng$formula, "character")
   expect_match(rng$color, "^#[[:xdigit:]]{6}$")
 })
+
+#### read.rcp ####
+# scaleUp = TRUE should be tested with scaleRCP function
+test_that("read.rcp reads correctly", {
+  rcp <- read.rcp("FinalConfig1", "system1")
+  expect_type(rcp, "list")
+  expect_s3_class(rcp, "ppx")
+  expect_s3_class(rcp, "pp3")
+  expect_equal(signif(min(nndist(rcp)), digits = 2), 0.05)
+  expect_equal(round(rcp$domain$xrange), c(0,1))
+  expect_equal(round(rcp$domain$yrange), c(0,1))
+  expect_equal(round(rcp$domain$zrange), c(0,1))
+})
