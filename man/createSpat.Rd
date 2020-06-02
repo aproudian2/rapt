@@ -20,5 +20,6 @@ A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
 data frame.
 }
 \seealso{
-\code{\link{readPOS}}, \code{\link{readATO}}
+\code{\link{readPOS}}, \code{\link{readATO}},
+  \code{\link[spatstat]{pp3}}
 }

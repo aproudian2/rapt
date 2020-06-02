@@ -21,5 +21,8 @@ Larson \emph{et al.},
   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
-\code{\link{readATO}}
+Other APT import functions: 
+\code{\link{readATO}()},
+\code{\link{readRRNG}()}
 }
+\concept{APT import functions}

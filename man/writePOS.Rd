@@ -8,7 +8,7 @@ writePOS(pos, filepath)
 }
 \arguments{
 \item{pos}{A data.frame with columns of x, y, z, and mass, following the
-structure of the data.frame returned by \code{\link{readPOS}}.}
+structure of the \code{data.frame} returned by \code{\link{readPOS}}.}
 
 \item{filepath}{A string. The file path to the POS file.}
 }

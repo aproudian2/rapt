@@ -2,10 +2,15 @@
 % Please edit documentation in R/rapt_file.R
 \name{createTOF}
 \alias{createTOF}
-\title{Create a TOF spectrum from an ATO data frame}
+\title{Create a TOF Spectrum from an ATO}
 \usage{
 createTOF(pos, res = 0.001)
 }
 \description{
-Create a TOF spectrum from an ATO data frame
+\code{createTOF} generates a TOF spectrum (using
+\code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}) from an ATO
+\code{data.frame}.
+}
+\seealso{
+\code{\link{createSpec}}
 }
