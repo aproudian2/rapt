@@ -88,19 +88,19 @@ readATO <- function(filepath) {
 #'
 #' @export
 readRRNG <- function(filepath) {
-  `%>%` <- magrittr::`%>%`
   text <- readLines(filepath, warn = FALSE)
-  n <- grep('Number=', text, value = TRUE) %>%
-    strsplit('=') %>% sapply(function(n){n[2] %>% as.numeric()})
-  elem <- strsplit(text[1:n[1]+2], '=') %>%
-    sapply(function(n){n[2]})
+  n <- grep('Number=', text, value = TRUE)
+  n <- strsplit(n, '=')
+  n <- sapply(n, function(m){as.numeric(m[2])})
+  elem <- strsplit(text[1:n[1]+2], '=')
+  elem <- sapply(elem, function(m){m[2]})
   r.pos <- grep('[Ranges]', text, fixed = TRUE)
-  entries <- sub('^Range[[:digit:]]+=', '', text[-(1:(r.pos+1))]) %>%
-    strsplit(' ')
+  entries <- sub('^Range[[:digit:]]+=', '', text[-(1:(r.pos+1))])
+  entries <- strsplit(entries, ' ')
   dat <- lapply(entries, function(X) {
     mass.start <- as.numeric(X[1])
     mass.end <- as.numeric(X[2])
-    mass.volume <- sub('Vol:', '', X[3]) %>% as.numeric()
+    mass.volume <- as.numeric(sub('Vol:', '', X[3]) )
     mass.name <- sapply(elem, function(el) {
       m <- paste0(el,':')
       w <- grepl(m, X)
