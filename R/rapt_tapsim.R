@@ -97,3 +97,31 @@ resultToDet <- function(res, clip.radius = NULL) {
     }
     return(det)
 }
+
+#### Write Data ####
+
+### writeNode ###
+#' Write a Node File
+#'
+#' \code{writeNode} writes a node file to the TAPSim format for creating a mesh
+#' file for TAPSim.
+#'
+#' @param node data.frame A \code{data.frame} with columns correponding to the
+#' x, y, z, and id of each point in order
+#' @param fp Character. The file to which to write the data.
+#' @return None.
+#'
+#' @seealso \url{
+#'   http://www.uni-stuttgart.de/imw/mp/forschung/atom_probe_RD_center/howto.pdf
+#' }
+#' @seealso \url{https://d-nb.info/1138282715/34}
+#'
+#' @export
+writeNode <- function(node, fp) {
+    cat('ASCII', nrow(node), 0, 0, fill = TRUE,
+        file = fp)
+    write.table(format(node, digits = 6), file = fp,
+                quote = FALSE, sep = '\t', eol = '\n', append = TRUE,
+                row.names = FALSE, col.names = FALSE)
+}
+
