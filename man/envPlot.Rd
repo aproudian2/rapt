@@ -33,7 +33,7 @@ on the plot.}
 
 \item{xlab}{X axis label.}
 
-\item{leg}{True or falsel whether to show the automatically generated legend.}
+\item{leg}{True or false whether to show the automatically generated legend.}
 
 \item{colors}{List of color names to make the envelopes.}
 
@@ -46,7 +46,4 @@ Nothing, just produces a plot.
 Plot the results of envelope calculations from the \code{\link{pK3est}},
 \code{\link{pG3est}}, or \code{\link{pF3est}} functions, with the ability to
 choose the percentiles for plotting.
-}
-\seealso{
-\code{\link{pK3est}}, \code{\link{pG3est}}, \code{\link{pF3est}}
 }

@@ -20,11 +20,11 @@
 #'   on the plot.
 #' @param ylab Y axis label.
 #' @param xlab X axis label.
-#' @param leg True or falsel whether to show the automatically generated legend.
+#' @param leg True or false whether to show the automatically generated legend.
 #' @param colors List of color names to make the envelopes.
 #' @param ... Arguments to be passed into \code{plot()}.
 #' @return Nothing, just produces a plot.
-#' @seealso \code{\link{pK3est}}, \code{\link{pG3est}}, \code{\link{pF3est}}
+#'
 #' @export
 
 envPlot <- function(
@@ -147,11 +147,23 @@ envPlot <- function(
 #' that were subtracted from the results at each r value. Can be used to
 #' subtract from another set of envelopes for comparison. [[3]] rmax used in the
 #' calculation. [[4]] nrval used in the calculation.}
+#'
+#'
+#' @name pK3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{pK3est}:
+#'   For \code{pK3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
                    correction="trans",anom=FALSE,toSub=NULL, sorted=TRUE,
                    cores = NULL){
+  .Deprecated("pEnvelope")
+
   #find cores and initialize the cluster
   if(is.null(cores)){
     cores2use <- detectCores()
@@ -274,9 +286,18 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
 #' @return Returns data fram containing r values and associated anomaly K3est
 #'   values.
 #'
+#' @name anomK3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{anomK3est}:
+#'   For \code{anomK3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
+  .Deprecated("pEnvelope")
 
   if(correction == "iso"){
     a <- K3est(pattern,rmax=rmax,nrval=nrval,correction="isotropic")
@@ -374,11 +395,20 @@ anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
 #'
+#' @name pG3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{pG3est}:
+#'   For \code{pG3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
                    correction="rs", anom=FALSE, toSub=NULL,
                    cores=NULL){
+  .Deprecated("pEnvelope")
 
   #find cores and initialize the cluster
   if(is.null(cores)){
@@ -489,9 +519,18 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 #' @return Returns data fram containing r values and associated anomaly G3est
 #'   values.
 #'
+#' @name anomG3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{anomG3est}:
+#'   For \code{anomG3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
+  .Deprecated("pEnvelope")
 
   if(correction == "rs"){
     a <- G3est(pattern,rmax=rmax,nrval=nrval,correction="rs")
@@ -589,11 +628,20 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #' subtract from another set of envelopes for comparison. [[3]] rmax used in the
 #' calculation. [[4]] nrval used in the calculation.}
 #'
+#' @name pF3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{pF3est}:
+#'   For \code{pF3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
                    correction="rs", anom=FALSE, toSub=NULL,
                    cores=NULL){
+  .Deprecated("pEnvelope")
 
   #find cores and initialize the cluster
   if(is.null(cores)){
@@ -703,9 +751,18 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 #' @return Returns data fram containing r values and associated anomaly F3est
 #'   values.
 #'
+#' @name anomF3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{anomF3est}:
+#'   For \code{anomF3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
+  .Deprecated("pEnvelope")
 
   if(correction == "rs"){
     a <- F3est(pattern,rmax=rmax,nrval=nrval,correction="rs")
