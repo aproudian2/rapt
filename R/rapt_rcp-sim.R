@@ -23,6 +23,7 @@
 #'
 #' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
 #'
+#' @family simulation functions
 #' @references Desmond & Weeks,
 #'   "Random Close Packing of Disks and Spheres in Confined Geometries",
 #'   \emph{Physical Review E}, \strong{80} (5), 051305 (2009):
@@ -65,6 +66,8 @@ read.rcp <- function(fpath_config, fpath_sys,
 #'   original rcp generation. Can leave blank if these are integer value.
 #' @return Will return a \code{\link[spatstat]{pp3}} object with the scaled
 #'   point positions.
+#'
+#' @family simulation functions
 #'
 #' @export
 
@@ -109,6 +112,8 @@ scaleRCP <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
 #'   \code{\link[spatstat]{pp3}} object: c(xmax,ymax,zmax). Assumes that
 #'   (xmin,ymin,zmin) = (0,0,0).
 #' @return A \code{\link[spatstat]{pp3}} object.
+#'
+#' @family simulation functions
 #'
 #' @export
 

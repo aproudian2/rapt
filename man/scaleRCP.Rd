@@ -33,3 +33,9 @@ generation, and the new desired radius, \code{scaleRCP} will scale the RCP
 point cloud as if the original generation hapened with spheres of radius that
 you desire.
 }
+\seealso{
+Other simulation functions: 
+\code{\link{read.rcp}()},
+\code{\link{stitch.size}()}
+}
+\concept{simulation functions}

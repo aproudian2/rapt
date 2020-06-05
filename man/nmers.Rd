@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_sim.R
 \name{nmers}
 \alias{nmers}
-\title{Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
-sampled point pattern from its parent distribution.}
+\title{Select n-mer Clusters}
 \usage{
 nmers(sam, parent, n = 2)
 }

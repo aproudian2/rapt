@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_sim.R
 \name{latticeVectors}
 \alias{latticeVectors}
-\title{Transform a matrix of integer indices to spatial coordinates for a specified
-lattice type}
+\title{Generate Lattice Vectors}
 \usage{
 latticeVectors(indices, a = 1, lattice = "sc")
 }

@@ -26,3 +26,9 @@ repetitions in each dimension, \code{stitch.size} allows you to specify the
 domain size that you want to return, even if it is not an integer multiple of
 the original dimensions.
 }
+\seealso{
+Other simulation functions: 
+\code{\link{read.rcp}()},
+\code{\link{scaleRCP}()}
+}
+\concept{simulation functions}

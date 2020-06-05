@@ -142,9 +142,10 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
   return(as.anylist(resultlist))
 }
 #### latticeVectors ####
+#' Generate Lattice Vectors
+#'
 #' Transform a matrix of integer indices to spatial coordinates for a specified
 #' lattice type
-#' @export
 latticeVectors <- function(indices, a = 1, lattice = "sc") {
   indices <- as.matrix(indices)
   if (lattice == "sc") {
@@ -198,6 +199,8 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
 }
 
 #### nmers ####
+#' Select n-mer Clusters
+#'
 #' Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
 #' sampled point pattern from its parent distribution.
 nmers <- function(sam, parent, n = 2) {

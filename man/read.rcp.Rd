@@ -40,4 +40,9 @@ Desmond & Weeks,
 \seealso{
 \href{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}{RCP
 Generator Algorithm}
+
+Other simulation functions: 
+\code{\link{scaleRCP}()},
+\code{\link{stitch.size}()}
 }
+\concept{simulation functions}
