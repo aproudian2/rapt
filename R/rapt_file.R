@@ -199,7 +199,8 @@ createDet <- function(ato, win = NULL, marks = NULL) {
 #' \code{\link{readPOS}}).
 #'
 #' @param pos A POS or ATO data frame.
-#' @param res The desired
+#' @param res Numeric. The bin width of the mass spectrum.
+#' @param snip Ignored.
 #' \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} resolution.
 #' @return A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the
 #'   \code{mass} field of the POS or ATO, with the resolution set by \code{res}.
@@ -215,7 +216,7 @@ createDet <- function(ato, win = NULL, marks = NULL) {
 #'   \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
 #'
 #' @export
-createSpec <- function(pos, res = 0.001, snip = NULL) {
+createSpec <- function(pos, res = 0.05, snip = NULL) {
   ms.max <- max(pos[,"mass"])
   ms.max <- ms.max + res
   ms.min <- min(pos[,"mass"])
@@ -259,7 +260,7 @@ createTOF <- function(pos, res = 0.001) {
 ### writePOS ###
 #' Write a POS File
 #'
-#' \code{writePOS} writes a POS data.frame into a POS file
+#' \code{writePOS} writes a POS \code{data.frame} into a POS file
 #'
 #' @param pos A data.frame with columns of x, y, z, and mass, following the
 #'   structure of the \code{data.frame} returned by \code{\link{readPOS}}.
