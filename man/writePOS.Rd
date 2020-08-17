@@ -13,7 +13,7 @@ structure of the \code{data.frame} returned by \code{\link{readPOS}}.}
 \item{filepath}{A string. The file path to the POS file.}
 }
 \description{
-\code{writePOS} writes a POS data.frame into a POS file
+\code{writePOS} writes a POS \code{data.frame} into a POS file
 }
 \references{
 Larson \emph{et al.},

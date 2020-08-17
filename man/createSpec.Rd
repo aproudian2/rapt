@@ -5,12 +5,14 @@
 \title{Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS
 or ATO}
 \usage{
-createSpec(pos, res = 0.001, snip = NULL)
+createSpec(pos, res = 0.05, snip = NULL)
 }
 \arguments{
 \item{pos}{A POS or ATO data frame.}
 
-\item{res}{The desired
+\item{res}{Numeric. The bin width of the mass spectrum.}
+
+\item{snip}{Ignored.
 \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} resolution.}
 }
 \value{

@@ -4,7 +4,7 @@
 \alias{rngCount}
 \title{Count Hits in RRNG}
 \usage{
-rngCount(pos, rng)
+rngCount(pos, rng, simplify = FALSE)
 }
 \arguments{
 \item{pos}{The pos to range}

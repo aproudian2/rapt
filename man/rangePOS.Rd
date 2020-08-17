@@ -12,6 +12,8 @@ rangePOS(pos, start, end)
 \item{start}{The start of the mass range}
 
 \item{end}{The end of the mass range}
+
+\item{simplify}{Whether to simplify the counts by ion name}
 }
 \value{
 A data.frame of the same structure as \code{pos} containing only hits
