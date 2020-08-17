@@ -35,6 +35,7 @@ rangeCount <- function(pos, start, end) {
 #' @param pos A data.frame. The \code{POS} or \code{ATO} to be ranged
 #' @param start The start of the mass range
 #' @param end The end of the mass range
+#' @param simplify Whether to simplify the counts by ion name
 #'
 #' @return A data.frame of the same structure as \code{pos} containing only hits
 #' in the provided range
@@ -62,12 +63,16 @@ rangePOS <- function(pos, start, end) {
 #' @family ranging functions
 #'
 #' @export
-rngCount <- function(pos, rng) {
+rngCount <- function(pos, rng, simplify = FALSE) {
   cts <- apply(rng, 1, function (x) {
     rangeCount(pos, as.numeric(x['start']), as.numeric(x['end']))
   })
   tot <- sum(cts)
   dat <- data.frame(name = rng$name, counts = cts, fraction = cts/tot)
+  if(simplify) {
+    dat <- aggregate(dat[,-1], by = list(name = dat$name), FUN = sum)
+    dat <- dat[order(dat$counts, decreasing = TRUE),]
+  }
   return(dat)
 }
 
@@ -147,6 +152,7 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #'
 #' @seealso \code{\link[stats]{nls}}, \code{\link[enviPat]{isopattern}}
 #'
+#' @export
 # Add upper limits for port algorithm fitting
 # Add ion specific sd / tau option
 fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
@@ -224,7 +230,7 @@ ionFormula <- function(ions, charge = 1, threshold = 10, peak = 'gaussian') {
     }, n.ions, ion.init, SIMPLIFY = FALSE)
   } else if (peak == 'emg') {
     fs <- mapply(function(n, I) {
-      paste(paste0("emg(mass, a", n, "*", I$lambda,", ",
+      paste(paste0("rapt:::emg(mass, a", n, "*", I$lambda,", ",
                    I$mu, "-m0, s0, t0)", collapse = " + "))
     }, n.ions, ion.init, SIMPLIFY = FALSE)
   } else {
