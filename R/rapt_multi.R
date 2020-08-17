@@ -103,7 +103,7 @@ saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
     image(ash$x, ash$y, log(ash$z),
           breaks = seq(floor(min(log(ash$z[ash$z > 0]))),
                        floor(max(log(ash$z))),
-                       length.out = 256), col = rainbow(255),
+                       length.out = 256), col = hcl.colors(255),
           xlab = '', ylab = '', xaxt = 'n', yaxt = 'n'
     )
     axis(1, tck = -0.015, labels = FALSE)
