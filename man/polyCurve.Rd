@@ -2,12 +2,12 @@
 % Please edit documentation in R/rapt_vis.R
 \name{polyCurve}
 \alias{polyCurve}
-\title{Shade regions under a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}.}
+\title{Shade regions under a curve}
 \usage{
 polyCurve(x, y, from, to, n = 50, miny, col = "red", border = NA)
 }
 \description{
-Shade regions under a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}.
+Shade regions under a curve
 }
 \seealso{
 \url{www.fromthebottomoftheheap.net/2013/01/11/shading-regions-under-a-curve}
