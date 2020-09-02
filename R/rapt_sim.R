@@ -67,6 +67,7 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
   names(result) <- paste("Simulation", 1:nsim)
   return(as.anylist(result))
 }
+
 #### rPoissonCluster3 ####
 #' Simulate 3D Poisson Cluster Process
 #'

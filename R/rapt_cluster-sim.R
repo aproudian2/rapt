@@ -49,9 +49,12 @@
 clustersim <- function(under, over, rcp_rad,
                        pcp = 0.1,
                        cr,
-                       rho1, rho2,
-                       rb = 0.1, # Radius blur (AS A PERCENT OF CR)
-                       pb = 0.1, # Position blur (AS A PERCENT OF AVERAGE CLUSTER SEPARATION)
+                       rho1,
+                       rho2,
+                       # Radius blur (AS A PERCENT OF CR)
+                       rb = 0.1,
+                       # Position blur (AS A PERCENT OF AVG. CLUSTER SEPARATION)
+                       pb = 0.1,
                        tol = 0.005,
                        s = 103,
                        toplot = F){
@@ -76,8 +79,8 @@ clustersim <- function(under, over, rcp_rad,
   rcp.conc <- vc/(4/3 * pi * cr*(cr^2 + 3*sigma^2) * vt * alpha)
   # Scale over RCP pattern to match this concentration
   over.vol <- volume(domain(over)) # Original volume
-  over.vol.new <- npoints(over)/rcp.conc # New volume
-  over.sf <- over.vol.new^(1/3)/over.vol^(1/3) # Scale factor to get to new volume
+  over.vol.new <- npoints(over) / rcp.conc # New volume
+  over.sf <- over.vol.new^(1/3) / over.vol^(1/3) # Scale factor for new volume
   over.scaled <- pp3_scale(over, over.sf)
 
   # Generate and add position blur
@@ -135,13 +138,13 @@ clustersim <- function(under, over, rcp_rad,
   nnR <- crosspairs.pp3(over.final, under, rmax = max(cr.rand.final),
                         what = 'ijd', neat = TRUE, distinct = TRUE,
                         twice = FALSE)
-  if(is.empty(nnR$i)){
+  if(is.empty(nnR$i)) {
     print('No cluster centers in domain.')
     return(-1)
   }
   nnR.split <- list()
-  nnR.split$d <- split(nnR$d, nnR$i, drop=FALSE)
-  nnR.split$j <- split(nnR$j, nnR$i, drop=FALSE)
+  nnR.split$d <- split(nnR$d, nnR$i, drop = FALSE)
+  nnR.split$j <- split(nnR$j, nnR$i, drop = FALSE)
   nnR.split$i <- as.numeric(attr(nnR.split$d, 'name'))
 
   cluster.inds.all <- lapply(1:length(nnR.split$i), function(k){
@@ -315,9 +318,9 @@ clustersim <- function(under, over, rcp_rad,
 #'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] factor containing the number of
 #'   points in each cluster.}
-#'   \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of: [[1]]
-#'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
-#'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of:
+#'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
+#'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] number of points put in or
 #'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
 #'   center to center) from each cluster}
@@ -347,10 +350,12 @@ makecluster <- function(under,over,radius1,radius2,
                         toPlot=FALSE,showOverPts=FALSE){
   #############################################################################
   # POINTS PER CLUSTER METHOD
-  if(type == "ppc"){
+  if(type == "ppc") {
     #real cluster percent
-    if(gb == TRUE){
-      print("ERROR - Gaussian blur only implemented for type = cr, speed = superfast.")
+    if(gb == TRUE) {
+      print(paste("ERROR -",
+                  "Gaussian blur only implemented for",
+                  "type = cr, speed = superfast."))
       return()
     }
     rcp <- pcp*pic
@@ -414,16 +419,19 @@ makecluster <- function(under,over,radius1,radius2,
       }
     }
 
-    return(list(cluster,over.scaledf,c(ppc,npoints(over.scaledf)-diff,ppc+1,diff)))
+    return(list(cluster, over.scaledf,
+                c(ppc, npoints(over.scaledf) - diff, ppc+1, diff)))
 
   }
 
-  ########################################################################################
+  ############################################################################
   # CHOOSE RADIUS METHOD
   else if(type == "cr"){
     if (speed == "slow"){
       if(gb == TRUE){
-        print("ERROR - Gaussian blur only implemented for type = cr, speed = superfast.")
+        print(paste("ERROR -",
+                    "Gaussian blur only implemented for",
+                    "type = cr, speed = superfast."))
         return()
       }
       #real cluster percent
@@ -447,10 +455,10 @@ makecluster <- function(under,over,radius1,radius2,
       cluster.ind <- crAdjust(cluster.matrix,diff,over.scaledf,under)
 
       more <- npoints(under)*pcp-npoints(under)*rcp
-      if(more==0){
+      if(more==0) {
 
       }else{
-        cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s)
+        cluster.ind <- randomInsert(cluster.ind, more, npoints(under), s)
       }
 
       cluster.xyz <- coords(under)[cluster.ind,]
@@ -460,16 +468,19 @@ makecluster <- function(under,over,radius1,radius2,
       if(toPlot==TRUE){
         plot3d.pp3(cluster,col="black",size=5)
         #plot3d.pp3(under,col="lightgray",add=TRUE)
-        if(showOverPts==TRUE){
-          plot3d.pp3(over.scaledf,size= 6,col="red",add=TRUE)
+        if(showOverPts == TRUE){
+          plot3d.pp3(over.scaledf, size = 6,col = "red", add = TRUE)
         }
       }
 
-      return(list(cluster,over.scaledf,c(npoints(over.scaledf),npoints(cluster)-more)))
+      return(list(cluster, over.scaledf, c(npoints(over.scaledf),
+                                           npoints(cluster)-more)))
     }
     else if (speed == "fast"){
       if(gb == TRUE){
-        print("ERROR - Gaussian blur only implemented for type = cr, speed = superfast.")
+        print(paste("ERROR -",
+                    "Gaussian blur only implemented for",
+                    "type = cr, speed = superfast."))
         return()
       }
       #real cluster percent
@@ -532,7 +543,8 @@ makecluster <- function(under,over,radius1,radius2,
     }
     else if (speed == "superfast"){
       #browser()
-      # If rb is true, we need to set a new cr to deal with spacing - Added 2/4/19
+      # If rb is true, we need to set a new cr to deal with spacing
+      # - Added 2/4/19
       if(rb == TRUE){
         if(rbmethod == 1){
           #scale cr to average *volume*
@@ -556,8 +568,8 @@ makecluster <- function(under,over,radius1,radius2,
       # Calculate scaling factor for over point pattern
       # Added 2/4/19
       ####
-      # There's some hairy math here that took me a while to figure out. Come see me if you need it explained,
-      # or see my reseatch notebook.
+      # There's some hairy math here that took me a while to figure out. Come
+      # see me if you need it explained, or see my reseatch notebook.
       if(rb == TRUE){
         z63 <- (((4/3)*pi*over.r^3)*npoints(over)*0.75 +
                   ((4/3)*pi*(over.r*1.20)^3)*npoints(over)*0.25) / over.vol
@@ -596,8 +608,9 @@ makecluster <- function(under,over,radius1,radius2,
         over.scaled.new <- over.scaled
       }
 
-      # new addition as of 11/8/2018 - use cluster centers that can fall outside of the under pattern domain. This reduces
-      # number of cluster points error significantly
+      # new addition as of 11/8/2018 - use cluster centers that can fall outside
+      # of the under pattern domain. This reduces number of cluster points error
+      # significantly
       under.coo <- coords(under)
       under.new <- createSpat(under.coo + cr)
       over.scaled.domain <- c(domain(under)$xrange[2]+2*cr,domain(under)$yrange[2]+2*cr,domain(under)$zrange[2]+2*cr)
@@ -694,7 +707,8 @@ makecluster <- function(under,over,radius1,radius2,
       if(more==0){
 
       }else if(more > 0){
-        cluster.ind <- randomInsert(cluster.ind,more,npoints(under.new),s,cluster.ind.split)
+        cluster.ind <- randomInsert(cluster.ind, more, npoints(under.new), s,
+                                    cluster.ind.split)
       }else if(more < 0){
         cluster.ind <- randomTakeAway(cluster.ind,-1*more,npoints(under.new),s)
       }
@@ -733,11 +747,13 @@ makecluster <- function(under,over,radius1,radius2,
     }
   }
 
-  ###########################################################################################
+  ############################################################################
   # CHOOSE DISTANCE BETWEEN CLUSTERS METHOD
   else if(type == "dist"){
     if(gb == TRUE){
-      print("ERROR - Gaussian blur only implemented for type = cr, speed = superfast.")
+      print(paste("ERROR -",
+                  "Gaussian blur only implemented for",
+                  "type = cr, speed = superfast."))
       return()
     }
     #real cluster percent
@@ -749,7 +765,8 @@ makecluster <- function(under,over,radius1,radius2,
 
     over.rf <- d/2
 
-    over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r, win = domain(over))
+    over.scaled <- scaleRCP(over, newRadius = over.rf, oldRadius = over.r,
+                            win = domain(over))
     over.scaledf <- subSample(under,over.scaled)
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
@@ -766,7 +783,9 @@ makecluster <- function(under,over,radius1,radius2,
 
       cluster.inddf1 <- nncross(over.split[[1]],under,what="which",k=1:ppc)
       cluster.inddf2 <- nncross(over.split[[2]],under,what="which",k=1:(ppc+1))
-      cluster.ind <- vector("numeric",ppc*npoints(over.split[[1]])+(ppc+1)*npoints(over.split[[2]]))
+      cluster.ind <- vector("numeric",
+                            ppc * npoints(over.split[[1]]) +
+                              (ppc+1) * npoints(over.split[[2]]))
       cnt <- 1
       for(i in 1:npoints(over.split[[1]])){
         if(ppc==1){
@@ -805,7 +824,7 @@ makecluster <- function(under,over,radius1,radius2,
       }
 
       set.seed(s)
-      cluster.ind.split <- split(cluster.ind,cluster.ind.info,drop=FALSE)
+      cluster.ind.split <- split(cluster.ind, cluster.ind.info, drop = FALSE)
       cluster.ind.thinned <- lapply(cluster.ind.split,function(x){
         return(sample(x,round(den*length(x)),replace=FALSE))})
       cluster.ind <- unlist(cluster.ind.thinned)
@@ -815,9 +834,10 @@ makecluster <- function(under,over,radius1,radius2,
     more <- round(npoints(under)*pcp)-length(cluster.ind)
     if(more==0){
     }else if(more > 0){
-      cluster.ind <- randomInsert(cluster.ind,more,npoints(under),s,cluster.ind.split)
+      cluster.ind <- randomInsert(cluster.ind, more, npoints(under), s,
+                                  cluster.ind.split)
     }else if(more < 0){
-      cluster.ind <- randomTakeAway(cluster.ind,-1*more,npoints(under),s)
+      cluster.ind <- randomTakeAway(cluster.ind, -1*more, npoints(under), s)
     }
 
     cluster.xyz <- coords(under)[cluster.ind,]
@@ -831,7 +851,8 @@ makecluster <- function(under,over,radius1,radius2,
       }
     }
 
-    return(list(cluster,over.scaledf,c(ppc,npoints(over.scaledf)-diff,ppc+1,diff)))
+    return(list(cluster, over.scaledf,
+                c(ppc, npoints(over.scaledf)-diff, ppc+1, diff)))
 
   }
   else{
@@ -982,7 +1003,10 @@ morph_lamellar <- function(lambda,
   p.selected <- bgnd[total.inds]
 
   if(toplot == TRUE){
-    plot3d.pp3(p.selected, col = 'red', xlim = bgnd$domain$xrange, ylim = bgnd$domain$yrange, zlim = bgnd$domain$zrange)
+    plot3d.pp3(p.selected, col = "red",
+               xlim = bgnd$domain$xrange,
+               ylim = bgnd$domain$yrange,
+               zlim = bgnd$domain$zrange)
   }
 
   return(p.selected)
@@ -1048,13 +1072,17 @@ morph_rods <- function(lambda,
   buffer <- max(comp.points)*0.1
 
   if(rod.spacing == 'grid'){
-    rod.x <- seq(min(comp.points[,1]) - 1 - buffer, max(comp.points[,1]) + 1 + buffer, by = 1/rod.den[1])
-    rod.y <- seq(min(comp.points[,2]) - 1 - buffer, max(comp.points[,2]) + 1 + buffer, by = 1/rod.den[2])
+    rod.x <- seq(min(comp.points[,1]) - 1 - buffer,
+                 max(comp.points[,1]) + 1 + buffer, by = 1/rod.den[1])
+    rod.y <- seq(min(comp.points[,2]) - 1 - buffer,
+                 max(comp.points[,2]) + 1 + buffer, by = 1/rod.den[2])
     offset <- c(runif(1,-1, 1), runif(1,-1,1))
     rod.x <- rod.x + offset[1]
     rod.y <- rod.y + offset[2]
-    rod.x <- rod.x[rod.x > (min(comp.points[,1]) - buffer) & rod.x < (max(comp.points[,1]) + buffer)]
-    rod.y <- rod.y[rod.y > (min(comp.points[,2]) - buffer) & rod.y < (max(comp.points[,2]) + buffer)]
+    rod.x <- rod.x[rod.x > (min(comp.points[,1]) - buffer) &
+                     rod.x < (max(comp.points[,1]) + buffer)]
+    rod.y <- rod.y[rod.y > (min(comp.points[,2]) - buffer) &
+                     rod.y < (max(comp.points[,2]) + buffer)]
     rod.xy <- expand.grid(rod.x, rod.y)
   }
   else if (rod.spacing == 'rcp') {
@@ -1074,7 +1102,8 @@ morph_rods <- function(lambda,
 
     win.select <- owin(c(xmu - xdist/2 - buffer, xmu + xdist/2 + buffer),
                        c(ymu - ydist/2 - buffer, ymu + ydist/2 + buffer))
-    rod.xy <- coords(rcp.scaled[inside.owin(rcp.scaled$x, rcp.scaled$y, win.select)])
+    rod.xy <- coords(rcp.scaled[inside.owin(rcp.scaled$x, rcp.scaled$y,
+                                            win.select)])
     rod.xy$x <- rod.xy$x - xmu + xdist/2
     rod.xy$y <- rod.xy$y - ymu + ydist/2
   }
@@ -1087,7 +1116,8 @@ morph_rods <- function(lambda,
     hex.scaled.coo <- coords(hex)*scaling.factor
     offset <- c(runif(1, 0, 1), runif(1, 0, 1))
 
-    hex.scaled <- ppp(hex.scaled.coo$x + offset[1], hex.scaled.coo$y + offset[2],
+    hex.scaled <- ppp(hex.scaled.coo$x + offset[1],
+                      hex.scaled.coo$y + offset[2],
                       window = owin(c(0,max(hex.scaled.coo$x + offset[1])),
                                     c(0,max(hex.scaled.coo$y + offset[2]))))
 
@@ -1096,7 +1126,8 @@ morph_rods <- function(lambda,
 
     win.select <- owin(c(xmu - xdist/2 - buffer, xmu + xdist/2 + buffer),
                        c(ymu - ydist/2 - buffer, ymu + ydist/2 + buffer))
-    rod.xy <- coords(hex.scaled[inside.owin(hex.scaled$x, hex.scaled$y, win.select)])
+    rod.xy <- coords(hex.scaled[inside.owin(hex.scaled$x, hex.scaled$y,
+                                            win.select)])
     rod.xy$x <- rod.xy$x - xmu + xdist/2
     rod.xy$y <- rod.xy$y - ymu + ydist/2
   }
@@ -1117,7 +1148,8 @@ morph_rods <- function(lambda,
 
   distmat <- matrix(FALSE, npoints(bgnd), nrow(rod.xy))
   for(i in 1:nrow(rod.xy)){
-    distmat[,i] <- sqrt((comp.points[,1] - rod.xy[i,1])^2 + (comp.points[,2] - rod.xy[i,2])^2)
+    distmat[,i] <- sqrt((comp.points[,1] - rod.xy[i,1])^2 +
+                          (comp.points[,2] - rod.xy[i,2])^2)
   }
 
   nkeep <- round(frac*npoints(bgnd))
@@ -1238,7 +1270,8 @@ morph_gb <- function(lambda,
     rcp.number <- sample(1, 1:523)
   }
   bgnd <- rpoispp3(lambda, domain = win)
-  rcp <- read.rcp(paste(rcp.path, '/FinalConfig', toString(rcp.number), sep = ''),
+  rcp <- read.rcp(paste(rcp.path, '/FinalConfig', toString(rcp.number),
+                        sep = ''),
                   paste(rcp.path, '/system', toString(rcp.number), sep = ''),
                   scaleUp = TRUE, newRadius = rcp.rad)
   xmu <- mean(rcp$domain$xrange)
@@ -1461,7 +1494,7 @@ splitpp3 <- function(overPattern, num){
 #'
 #' @return Updated mat matrix containing the correct number of cluster points.
 
-crAdjust <- function(mat, diff, X, Y){
+crAdjust <- function(mat, diff, X, Y) {
   # mat is the matrix filled with points and associated cluster index values
   # diff is the difference between the number of values needed and the number in mat
   # X is the over point pattern
@@ -1575,12 +1608,13 @@ crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
       for(i in 1:over.n){
         n <- nPoints[i]
 
-        cluster.ind <- c(cluster.ind,as.numeric(d[i,(n-minn+1):(n-minn+a)]))
-        cluster.info <- c(cluster.info,rep(i,length(as.numeric(d[i,(n-minn+1):(n-minn+a)]))))
+        cluster.ind <- c(cluster.ind, as.numeric(d[i,(n-minn+1):(n-minn+a)]))
+        cluster.info <- c(cluster.info,
+                          rep(i,length(as.numeric(d[i,(n-minn+1):(n-minn+a)]))))
       }
       cluster.info <- factor(cluster.info)
     }
-    if(b > 0){
+    if(b > 0) {
       nPoints <- as.numeric(summary(cluster.info))[1:b]
       maxn <- max(nPoints)
       minn <- min(nPoints)
@@ -1662,7 +1696,8 @@ crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
 #'   want the function to insert points to.
 #' @return New indices vector containing new cluster points randomly placed.
 
-randomInsert <- function(cluster.indices, n, N,s, points.avoid = cluster.indices){
+randomInsert <- function(cluster.indices, n, N,s,
+                         points.avoid = cluster.indices) {
   #cluster.Indices is a vector containig the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
@@ -1725,7 +1760,7 @@ randomTakeAway <- function(cluster.indices, n, N, s){
 #' @return If \code{coords = "rec"}, returns a vector of cartesian coordinates.
 #'   If \code{coords = "sph"}, returns a vector of spherical coordinates.
 
-rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1){
+rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1) {
 
   if(method == 1){
     r <- abs(rnorm(n,mean,sd))
