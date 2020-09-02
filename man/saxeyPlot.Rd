@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_multi.R
 \name{saxeyPlot}
 \alias{saxeyPlot}
-\title{Creates a 2D correlation histogram of mass spectra and, optionally, plots it.}
+\title{Create a 2D correlation histogram}
 \usage{
 saxeyPlot(ind, ato, begin, end, res = 0.25, plot.it = T)
 }
@@ -30,6 +30,11 @@ The output is the same as that of \code{\link[ash]{ash2}}.
 index of the first hit of an ATO data frame. The optional plot also shows the
 corresponding mass spectrum on each axis for easier identification of high
 intensity areas of the histogram.
+}
+\references{
+Saxey, D. W. (2011). Correlated ion analysis and the
+interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
+\url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
 }
 \seealso{
 \code{\link{indexMultiples}}, \code{\link[ash]{ash2}}

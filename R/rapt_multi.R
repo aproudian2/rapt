@@ -4,8 +4,7 @@
 #
 
 #### indexMultiples ####
-#' Returns a list of indicies where the position in the list is the hit
-#' multiplicity and the index is of the first hit in the multiple hit event.
+#' Index multiple hits
 #'
 #' \code{indexMultiples} extracts the indicies of the \emph{first} hit for every
 #' multiplicity in the ATO file. The indicies are sorted into a list that is
@@ -41,8 +40,7 @@ indexMultiples <- function(ato, cl.n = 3) {
   return(mu.ls)
 }
 #### multiples ####
-#' Provides a vector of multiplicity orders; this may be attached to the ATO
-#' for further processing.
+#' Generate a vector of multiplicity orders
 #'
 #' \code{multiples} takes the output list of first hit indicies returned by
 #' \code{indexMultiples} and creates a single vector of the multiplicity of each
@@ -65,8 +63,9 @@ multiples <- function(mind) {
                                     times = unlist(lapply(full, length)))
   return(multi)
 }
+
 #### saxeyPlot ####
-#' Creates a 2D correlation histogram of mass spectra and, optionally, plots it.
+#' Create a 2D correlation histogram
 #'
 #' \code{saxeyPlot} creates a 2D correlation histogram of mass spectra using the
 #' index of the first hit of an ATO data frame. The optional plot also shows the
@@ -83,7 +82,11 @@ multiples <- function(mind) {
 #' @param res A numeric. The bin width of the correlation histogram.
 #' @param plot.it A logical scalar. Should the result be plotted?
 #' @return The output is the same as that of \code{\link[ash]{ash2}}.
+#'
 #' @seealso \code{\link{indexMultiples}}, \code{\link[ash]{ash2}}
+#' @references Saxey, D. W. (2011). Correlated ion analysis and the
+#' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
+#' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
 #' @export
 saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
   rng <- end - begin
@@ -127,12 +130,21 @@ saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
   }
   return(ash)
 }
+
 #### dissocTrack ####
+#' Parameterized dissociation track on a multiple hit
+#'
+#' \code{dissocTrack}
+#'
+#' @references Saxey, D. W. (2011). Correlated ion analysis and the
+#' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
+#' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
+#' @seealso \code{\link{saxeyPlot}}
 dissocTrack <- function(v, m, mp){
   m*(1-v*(1-m/mp))^-1
 }
 #### houghClean ####
 # Stub for Hough Transform cleaning of multiple hit noise
-houghClean <- function(sax) {
-
-}
+# houghClean <- function(sax) {
+#
+# }

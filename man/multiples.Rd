@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_multi.R
 \name{multiples}
 \alias{multiples}
-\title{Provides a vector of multiplicity orders; this may be attached to the ATO
-for further processing.}
+\title{Generate a vector of multiplicity orders}
 \usage{
 multiples(mind)
 }
