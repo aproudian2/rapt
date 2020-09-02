@@ -149,7 +149,7 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
 #' specified type. Currently, only simple cubic ("sc"), body-centered cubic
 #' ("bcc"), and face-centered cubic ("fcc") are implemented.
 #'
-#' @param domain. A \code{\link[spatstat]{box3}}. The domain in which to
+#' @param domain A \code{\link[spatstat]{box3}}. The domain in which to
 #' generate the lattice
 #' @param lattice Character. The lattice to generate (one of "sc", "bcc", or
 #' "fcc").

@@ -1306,8 +1306,16 @@ morph_gb <- function(lambda,
 #'   the final pattern.
 #'
 #' @return A \code{\link[spatstat]{pp3}} object with the lattice points.
+#'
+#' @name bcc.gen-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{bcc.gen}:
+#'   For \code{bcc.gen}, use \code{\link{lattice}}
+#'
 #' @export
-
 bcc.gen <- function(npoint, win){
   vol <- volume(win)
   n.units <- npoint/2
