@@ -141,61 +141,55 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
   names(resultlist) <- paste("Simulation", 1:nsim)
   return(as.anylist(resultlist))
 }
-#### latticeVectors ####
-#' Generate Lattice Vectors
+
+#### lattice ####
+#' Generate a spatial lattice
 #'
-#' Transform a matrix of integer indices to spatial coordinates for a specified
-#' lattice type
-latticeVectors <- function(indices, a = 1, lattice = "sc") {
-  indices <- as.matrix(indices)
+#' \code{lattice} creates a spatial region filled with lattice points of the
+#' specified type. Currently, only simple cubic ("sc"), body-centered cubic
+#' ("bcc"), and face-centered cubic ("fcc") are implemented.
+#'
+#' @param domain. A \code{\link[spatstat]{box3}}. The domain in which to
+#' generate the lattice
+#' @param lattice Character. The lattice to generate (one of "sc", "bcc", or
+#' "fcc").
+#' @return A pp3 with points at the lattice positions
+#'
+#' @seealso \code{\link[spatstat]{pp3()}}
+#'
+#' @export
+lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   if (lattice == "sc") {
-    lat.dat <- apply(indices, 1, function(vec) {
-      x <- a * vec[1]
-      y <- a * vec[2]
-      z <- a * vec[3]
-      return(c(x, y, z))
-    })
+    x <- seq(domain$xrange[1], domain$xrange[2], a)
+    y <- seq(domain$yrange[1], domain$yrange[2], a)
+    z <- seq(domain$zrange[1], domain$zrange[2], a)
+    p <- expand.grid(x = x, y = y, z = x)
+    pp3(p$x, p$y, p$z, domain)
   } else if (lattice == "bcc") {
-    lat.dat <- apply(indices, 1, function(vec) {
-      x <- a/2 * (-vec[1] + vec[2] + vec[3])
-      y <- a/2 * (vec[1] - vec[2] + vec[3])
-      z <- a/2 * (vec[1] + vec[2] - vec[3])
-      return(c(x, y, z))
-    })
+    x <- seq(domain$xrange[1], domain$xrange[2], a)
+    y <- seq(domain$yrange[1], domain$yrange[2], a)
+    z <- seq(domain$zrange[1], domain$zrange[2], a)
+    g1 <- expand.grid(x = x, y = y, z = x)
+    x2 <- x + a/2
+    x2 <- x2[x2 <= domain$xrange[2]]
+    y2 <- y + a/2
+    y2 <- y2[y2 <= domain$yrange[2]]
+    z2 <- z + a/2
+    z2 <- z2[z2 <= domain$zrange[2]]
+    g2 <- expand.grid(x = x2, y = y2, z = z2)
+    p <- rbind(g1, g2)
+    pp3(p$x, p$y, p$z, domain)
   } else if (lattice == "fcc") {
-    lat.dat <- apply(indices, 1, function(vec) {
-      x <- a/2 * (vec[2] + vec[3])
-      y <- a/2 * (vec[1] + vec[3])
-      z <- a/2 * (vec[1] + vec[2])
-      return(c(x, y, z))
-    })
+    x <- seq(domain$xrange[1], domain$xrange[2], a/2)
+    y <- seq(domain$yrange[1], domain$yrange[2], a/2)
+    z <- seq(domain$zrange[1], domain$zrange[2], a/2)
+    g <- expand.grid(x = x, y = y, z = x)
+    ind <- expand.grid(i = seq_along(x), j = seq_along(y), k = seq_along(z)) - 1
+    p <- g[(ind$i + ind$j + ind$k) %% 2 == 0,]
+    pp3(p$x, p$y, p$z, domain)
   } else {
     warning("Unrecognized lattice")
   }
-  lat.dat <- t(lat.dat)
-  return(lat.dat)
-}
-#### lattice ####
-#' Generate Spatial Lattice
-#'
-#' \code{lattice} creates a spatial region filled with lattice points of the specified type
-#' @export
-lattice <- function(domain = box3(), a = 1, lattice = "sc") {
-  lat.xrange <- round(domain$xrange / a)
-  lat.yrange <- round(domain$yrange / a)
-  lat.zrange <- round(domain$zrange / a)
-  lat.expand <- max(sapply(list(lat.xrange,lat.yrange,lat.zrange),
-                           diff, simplify = T))
-  lat.x <- seq(lat.xrange[1] - lat.expand, lat.xrange[2] + lat.expand)
-  lat.y <- seq(lat.yrange[1] - lat.expand, lat.yrange[2] + lat.expand)
-  lat.z <- seq(lat.zrange[1] - lat.expand, lat.zrange[2] + lat.expand)
-  lat.index <- expand.grid(lat.x, lat.y, lat.z)
-  names(lat.index) <- NULL
-  lat.dat <- latticeVectors(lat.index, a = a, lattice = lattice)
-  lat.pp3 <- pp3(x = lat.dat[,1], y = lat.dat[,2], z = lat.dat[,3], domain)
-  ok <- inside.pp3(lat.pp3)
-  lat.pp3 <- lat.pp3[ok]
-  return(lat.pp3)
 }
 
 #### nmers ####

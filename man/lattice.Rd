@@ -2,10 +2,25 @@
 % Please edit documentation in R/rapt_sim.R
 \name{lattice}
 \alias{lattice}
-\title{Generate Spatial Lattice}
+\title{Generate a spatial lattice}
 \usage{
 lattice(domain = box3(), a = 1, lattice = "sc")
 }
+\arguments{
+\item{lattice}{Character. The lattice to generate (one of "sc", "bcc", or
+"fcc").}
+
+\item{domain.}{A \code{\link[spatstat]{box3}}. The domain in which to
+generate the lattice}
+}
+\value{
+A pp3 with points at the lattice positions
+}
 \description{
-\code{lattice} creates a spatial region filled with lattice points of the specified type
+\code{lattice} creates a spatial region filled with lattice points of the
+specified type. Currently, only simple cubic ("sc"), body-centered cubic
+("bcc"), and face-centered cubic ("fcc") are implemented.
+}
+\seealso{
+\code{\link[spatstat]{pp3()}}
 }
