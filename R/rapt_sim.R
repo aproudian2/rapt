@@ -7,7 +7,10 @@
 #'
 #' \code{rpoint3} extends \code{\link[spatstat]{rpoint}} to
 #' \code{\link[spatstat]{pp3}}.
+#'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{rpoint}}
+#'
 #' @export
 rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
@@ -73,7 +76,11 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
 #'
 #' \code{rPoissonCluster3} extends \code{\link[spatstat]{rPoissonCluster}} to
 #' \code{\link[spatstat]{pp3}}.
+#'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{rpoint}}
+#'
+#'
 #' @export
 rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
                              nsim = 1, drop = T)
@@ -156,7 +163,8 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
 #' "fcc").
 #' @return A pp3 with points at the lattice positions
 #'
-#' @seealso \code{\link[spatstat]{pp3()}}
+#' @family simulation functions
+#' @seealso \code{\link{hcp.gen()}}, \code{\link[spatstat]{pp3()}}
 #'
 #' @export
 lattice <- function(domain = box3(), a = 1, lattice = "sc") {
@@ -198,8 +206,28 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
 #'
 #' Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
 #' sampled point pattern from its parent distribution.
-nmers <- function(sam, parent, n = 2) {
+#'
+#' @param sam pp3. The seed points for the n-mers
+#' @param parent pp3. The point pattern from which to draw the n-mers
+#' @param n numeric. The number of points in the n-mer. Default is 2
+#' @param full logical. Return a marked pattern with both n-mers and
+#'   "background" points? Default is FALSE
+#'
+#' @return A pp3 with the n-mers. If \code{full = FALSE} (the default) this is
+#'   an unmarked pattern with only the positions of the n-mers. If
+#'   \code{full = TRUE}, this is a marked pattern with marks "nmers" and "bkgd".
+#'
+#' @family simulation functions
+#' @seealso \code{\link{clustersim}}
+nmers <- function(sam, parent, n = 2, full = FALSE) {
   nmer.ind <- nncross(sam, parent, what = "which", k = 1:n)
-  nmer.dat <- parent[unlist(nmer.ind)]
+  nmer.ind <- unlist(nmer.ind)
+  if (full == FALSE) {
+    nmer.dat <- parent[nmer.ind]
+  } else {
+    nmer.dat <- parent
+    marks(nmer.dat) <- "bkgd"
+    marks(nmer.dat)[nmer.ind] <- "nmer"
+  }
   return(nmer.dat)
 }
