@@ -12,4 +12,16 @@ Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
 }
 \seealso{
 \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}}
+
+Other spatstat extensions: 
+\code{\link{marktable}()},
+\code{\link{quadratcount.pp3}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rpoint3}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()},
+\code{\link{superimpose.pp3}()}
 }
+\concept{spatstat extensions}

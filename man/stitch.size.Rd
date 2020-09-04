@@ -28,6 +28,12 @@ the original dimensions.
 }
 \seealso{
 Other simulation functions: 
+\code{\link{clustersim}()},
+\code{\link{lattice}()},
+\code{\link{makecluster}()},
+\code{\link{morph_lamellar}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
 \code{\link{read.rcp}()},
 \code{\link{scaleRCP}()}
 }

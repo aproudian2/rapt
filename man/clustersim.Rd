@@ -73,3 +73,15 @@ product. The second point cloud is the "overlaying" pattern. This is the set
 of points that will be scaled to determine the positions of the cluster
 centroids within the underlying point pattern.
 }
+\seealso{
+Other simulation functions: 
+\code{\link{lattice}()},
+\code{\link{makecluster}()},
+\code{\link{morph_lamellar}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
+\code{\link{read.rcp}()},
+\code{\link{scaleRCP}()},
+\code{\link{stitch.size}()}
+}
+\concept{simulation functions}

@@ -42,6 +42,12 @@ Desmond & Weeks,
 Generator Algorithm}
 
 Other simulation functions: 
+\code{\link{clustersim}()},
+\code{\link{lattice}()},
+\code{\link{makecluster}()},
+\code{\link{morph_lamellar}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
 \code{\link{scaleRCP}()},
 \code{\link{stitch.size}()}
 }

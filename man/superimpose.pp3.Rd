@@ -11,4 +11,16 @@
 }
 \seealso{
 \code{\link[spatstat]{superimpose}}
+
+Other spatstat extensions: 
+\code{\link{marktable}()},
+\code{\link{quadratcount.pp3}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.pp3}()},
+\code{\link{rpoint3}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()}
 }
+\concept{spatstat extensions}

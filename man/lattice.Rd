@@ -7,11 +7,11 @@
 lattice(domain = box3(), a = 1, lattice = "sc")
 }
 \arguments{
+\item{domain}{A \code{\link[spatstat]{box3}}. The domain in which to
+generate the lattice}
+
 \item{lattice}{Character. The lattice to generate (one of "sc", "bcc", or
 "fcc").}
-
-\item{domain.}{A \code{\link[spatstat]{box3}}. The domain in which to
-generate the lattice}
 }
 \value{
 A pp3 with points at the lattice positions
@@ -22,5 +22,16 @@ specified type. Currently, only simple cubic ("sc"), body-centered cubic
 ("bcc"), and face-centered cubic ("fcc") are implemented.
 }
 \seealso{
-\code{\link[spatstat]{pp3()}}
+\code{\link{hcp.gen()}}, \code{\link[spatstat]{pp3()}}
+
+Other simulation functions: 
+\code{\link{clustersim}()},
+\code{\link{makecluster}()},
+\code{\link{morph_lamellar}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
+\code{\link{read.rcp}()},
+\code{\link{scaleRCP}()},
+\code{\link{stitch.size}()}
 }
+\concept{simulation functions}

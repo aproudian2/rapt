@@ -18,3 +18,4 @@ library.}
 \seealso{
 \code{\link[rgl]{plot3d}}
 }
+\concept{visualization functions}

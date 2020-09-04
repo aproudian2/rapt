@@ -115,9 +115,9 @@ Returns are different based on \code{type}.
   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] factor containing the number of
   points in each cluster.}
-  \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of: [[1]]
-  \code{\link[spatstat]{pp3}} object containing the cluster marked point
-  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+  \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of:
+  [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
+  point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] number of points put in or
   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
   center to center) from each cluster}
@@ -191,3 +191,15 @@ Galen Vincent, know if you need some upgrades sooner. Thanks!
   through the remaining non-cluster-marked points.}
 }
 
+\seealso{
+Other simulation functions: 
+\code{\link{clustersim}()},
+\code{\link{lattice}()},
+\code{\link{morph_lamellar}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
+\code{\link{read.rcp}()},
+\code{\link{scaleRCP}()},
+\code{\link{stitch.size}()}
+}
+\concept{simulation functions}

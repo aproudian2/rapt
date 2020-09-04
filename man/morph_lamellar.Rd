@@ -39,3 +39,19 @@ A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
 \description{
 Simulate lamellar morphology for mixed guest-host system.
 }
+\seealso{
+Other simulation functions: 
+\code{\link{clustersim}()},
+\code{\link{lattice}()},
+\code{\link{makecluster}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
+\code{\link{read.rcp}()},
+\code{\link{scaleRCP}()},
+\code{\link{stitch.size}()}
+
+Other morphology generators: 
+\code{\link{morph_rods}()}
+}
+\concept{morphology generators}
+\concept{simulation functions}

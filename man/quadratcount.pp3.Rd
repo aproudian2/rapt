@@ -18,3 +18,16 @@ A \code{data.frame} object containing the number of counts in each
 \description{
 Divides volume into quadrats and counts the number of points in each quadrat.
 }
+\seealso{
+Other spatstat extensions: 
+\code{\link{marktable}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.pp3}()},
+\code{\link{rpoint3}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()},
+\code{\link{superimpose.pp3}()}
+}
+\concept{spatstat extensions}

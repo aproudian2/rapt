@@ -70,7 +70,6 @@ read.rcp <- function(fpath_config, fpath_sys,
 #' @family simulation functions
 #'
 #' @export
-
 scaleRCP <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
 
   if(is.null(oldRadius)) {
@@ -116,9 +115,7 @@ scaleRCP <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
 #' @family simulation functions
 #'
 #' @export
-
 stitch.size <- function(pp3file, win = NULL, boxSize) {
-
   if(is.null(win)) {
     pp3.domain <- domain(pp3file)
     pp3.domain <- box3(xrange = pp3.domain$xrange,

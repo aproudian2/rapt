@@ -45,6 +45,9 @@
 #'   (non-cluster type point). [[3]] A vector containing the simulated radius of
 #'   each cluster in the final point pattern. [[4]] A single value containing
 #'   the true fraction of type-A points in the final simulated pattern.
+#'
+#' @family simulation functions
+#'
 #' @export
 clustersim <- function(under, over, rcp_rad,
                        pcp = 0.1,
@@ -331,7 +334,8 @@ clustersim <- function(under, over, rcp_rad,
 #'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
 #'   center to center) from each cluster. [[5]] A vector contining the radius of
 #'   each cluster.}
-
+#'
+#' @family simulation functions
 makecluster <- function(under,over,radius1,radius2,
                         type = "cr",
                         ppc=NULL,
@@ -937,8 +941,11 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 #' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
+#'
+#' @family simulation functions
+#' @family morphology generators
+#'
 #' @export
-
 morph_lamellar <- function(lambda,
                            frac,
                            plane.norm = c(1, 0, 0),
@@ -1033,6 +1040,10 @@ morph_lamellar <- function(lambda,
 #' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
+#'
+#' @family simulation functions
+#' @family morphology generators
+#'
 #' @export
 
 morph_rods <- function(lambda,
@@ -1388,7 +1399,6 @@ bcc.gen <- function(npoint, win){
 #' @return A data frame object containing xyz coordinates of the HCP lattice
 #'   centers.
 #' @seealso \code{\link{hcpcluster}}
-
 hcp.gen <- function(r, win){
   xyz <- list()
   i <- 0
@@ -1433,7 +1443,6 @@ hcp.gen <- function(r, win){
 #'   that you wish to cut down to the volume of \code{underPattern}.
 #' @return A \code{\link[spatstat]{pp3}} object containing \code{overPattern}
 #'   cut down to the volume of \code{underPattern}.
-
 subSample <- function(underPattern, overPattern){
 
   xr <- domain(underPattern)$xrange
@@ -1465,7 +1474,6 @@ subSample <- function(underPattern, overPattern){
 #' @return List containing the two \code{\link[spatstat]{pp3}} patterns. If
 #'   these two patterns were combined, they would create the original
 #'   \code{overPattern} object.
-
 splitpp3 <- function(overPattern, num){
   pat.xyz <- coords(overPattern)
 
@@ -1586,7 +1594,6 @@ crAdjust <- function(mat, diff, X, Y) {
 #'
 #' @return A list of [[1]] The updated cluster.ind vector and [[2]] the updated
 #'   cluster.info factor.
-
 crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
   # mat is the matrix filled with points and associated cluster index values
   # diff is the difference between the number of values needed and the number in mat
@@ -1695,7 +1702,6 @@ crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
 #' @param points.avoid A vector containing the indices of the points you don't
 #'   want the function to insert points to.
 #' @return New indices vector containing new cluster points randomly placed.
-
 randomInsert <- function(cluster.indices, n, N,s,
                          points.avoid = cluster.indices) {
   #cluster.Indices is a vector containig the indices of the current cluster points
@@ -1726,7 +1732,6 @@ randomInsert <- function(cluster.indices, n, N,s,
 #' @param N The number of points in the entire underlaying pattern.
 #' @param s The random seed for the random selection of points to take away.
 #' @return New indices vector containing new cluster points randomly placed.
-
 randomTakeAway <- function(cluster.indices, n, N, s){
   #cluster.Indices is a vector containig the indices of the current cluster points
   #n is the number of points that need to be placed randomly
@@ -1759,7 +1764,6 @@ randomTakeAway <- function(cluster.indices, n, N, s){
 #'
 #' @return If \code{coords = "rec"}, returns a vector of cartesian coordinates.
 #'   If \code{coords = "sph"}, returns a vector of spherical coordinates.
-
 rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1) {
 
   if(method == 1){

@@ -81,8 +81,10 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
 #' @description This is an S3 generic that extends the use of
 #'   \code{\link[spatstat]{rjitter}} beyond \code{ppp} objects.
 #'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}},
 #'   \code{\link{rjitter.pp3}}
+#'
 #' @export
 marktable <- function(X, ...) UseMethod("marktable")
 
@@ -99,7 +101,9 @@ rjitter.ppp <- spatstat::rjitter
 #' Applies independent random displacements to each point in a point pattern.
 #' Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
 #'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}}
+#'
 #' @export
 rjitter.pp3 <- function(X, domain = box3()) {
   verifyclass(X, "pp3")
@@ -124,6 +128,8 @@ rjitter.pp3 <- function(X, domain = box3()) {
 #' Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
 #'
 #' \code{superimpose.pp3}
+#'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{superimpose}}
 #' @export
 superimpose.pp3 <- function(..., W = NULL, check = F) {
@@ -139,7 +145,9 @@ superimpose.pp3 <- function(..., W = NULL, check = F) {
 #### shift.pp3 ####
 #' Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
 #'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{shift}}
+#'
 #' @export
 shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 {
@@ -179,7 +187,9 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 #' @param size A numeric. The number of points to sample.
 #' @return A \code{ppp}. The sampled point pattern.
 #'
+#' @family spatstat extensions
 #' @seealso \code{\link[base]{sample}}
+#'
 #' @export
 sample.ppp <- function(X, size) {
   sam.n <- npoints(X)
@@ -195,7 +205,9 @@ sample.ppp <- function(X, size) {
 #' @param size A numeric. The number of points to sample.
 #' @return A \code{pp3}. The sampled point pattern.
 #'
+#' @family spatstat extensions
 #' @seealso \code{\link[base]{sample}}
+#'
 #' @export
 sample.pp3 <- function(X, size) {
   sam.lab <- rownames(as.data.frame(X$data))
@@ -236,7 +248,14 @@ findClusters.pp3 <- function(X, mark, k = 1) {
 #### intensity.pp3 ####
 #' Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
 #'
-#' @seealso \code{\link[spatstat]{intensity}}
+#' @name intensity.pp3-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{intensity.pp3}:
+#'   For \code{intensity.pp3}, use \code{\link[spatstat]{intensity.ppx}}
+#'
 #' @export
 intensity.pp3 <- function(X, weights = NULL) {
   n <- npoints(X)
@@ -271,7 +290,10 @@ rownames.pp3 <- function(pat) {
 #' @param X \code{pp3}. The point pattern to visualize
 #' @param ... Other arguments to pass to \code{plot3d} from the \code{rgl}
 #' library.
+#'
+#' @family visualization functions
 #' @seealso \code{\link[rgl]{plot3d}}
+#'
 #' @export
 plot3d.pp3 <- function(X, ...) {
   rgl::plot3d(as.data.frame(X$data), ...)
@@ -287,6 +309,9 @@ plot3d.pp3 <- function(X, ...) {
 #'
 #' @return A \code{data.frame} object containing the number of counts in each
 #'   quadrat.
+#'
+#' @family spatstat extensions
+#'
 #' @export
 quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   verifyclass(X, "pp3")
@@ -336,6 +361,9 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
 #'   nz} or \code{box.dims}, but not both.
 #'
 #' @return A list containing the split up \code{pp3} objects.
+#'
+#' @family spatstat extensions
+#'
 #' @export
 quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
   verifyclass(X, "pp3")
