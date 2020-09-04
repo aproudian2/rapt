@@ -3,6 +3,7 @@ library(rapt)
 #### readPOS ####
 test_that("POS reads correctly", {
   pos <- readPOS("example-pos.pos")
+
   expect_named(pos, c("x", "y", "z", "mass"))
   expect_type(pos, "list")
   expect_s3_class(pos, "data.frame")
@@ -14,6 +15,7 @@ test_that("POS reads correctly", {
 #### readATO ####
 test_that("ATO reads correctly", {
   ato <- readATO("example-ato.ato")
+
   expect_named(ato, c("x", "y", "z", "mass", "clusID", "pIndex", "Vdc",
                       "TOF", "dx", "dy", "Vp", "shank", "FouR", "FouI"))
   expect_type(ato, "list")
@@ -26,6 +28,7 @@ test_that("ATO reads correctly", {
 #### readRRNG ####
 test_that("RRNG reads correctly", {
   rng <- readRRNG("example-rrng.rrng")
+
   expect_named(rng, c("start", "end", "volume", "name", "formula", "color"))
   expect_type(rng, "list")
   expect_s3_class(rng, "data.frame")
@@ -44,6 +47,7 @@ test_that("RRNG reads correctly", {
 # scaleUp = TRUE should be tested with scaleRCP function
 test_that("read.rcp reads correctly", {
   rcp <- read.rcp("FinalConfig1", "system1")
+
   expect_type(rcp, "list")
   expect_s3_class(rcp, "ppx")
   expect_s3_class(rcp, "pp3")
@@ -51,4 +55,27 @@ test_that("read.rcp reads correctly", {
   expect_equal(round(rcp$domain$xrange), c(0,1))
   expect_equal(round(rcp$domain$yrange), c(0,1))
   expect_equal(round(rcp$domain$zrange), c(0,1))
+})
+
+#### createSpat ####
+test_that("createSpat converts POS and ATO data.frames to pp3",{
+  pos <- readPOS("example-pos.pos")
+  pp.pos <- createSpat(pos)
+
+  expect_type(pp.pos, "list")
+  expect_s3_class(pp.pos, "ppx")
+  expect_s3_class(pp.pos, "pp3")
+  expect_equal(round(pp.pos$domain$xrange), c(-20,20))
+  expect_equal(round(pp.pos$domain$yrange), c(-20,20))
+  expect_equal(round(pp.pos$domain$zrange), c(0,51))
+
+  ato <- readATO("example-ato.ato")
+  pp.ato <- createSpat(ato)
+
+  expect_type(pp.ato, "list")
+  expect_s3_class(pp.ato, "ppx")
+  expect_s3_class(pp.ato, "pp3")
+  expect_equal(round(pp.ato$domain$xrange), c(-202,204))
+  expect_equal(round(pp.ato$domain$yrange), c(-204,205))
+  expect_equal(round(pp.ato$domain$zrange), c(0,507))
 })
