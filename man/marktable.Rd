@@ -5,32 +5,12 @@
 \title{Tabulate Marks in Neighbourhood of Every Point in a Point Pattern}
 \usage{
 marktable(X, ...)
-
-marktable(X, ...)
 }
 \description{
 This is an S3 generic that extends the use of
   \code{\link[spatstat]{marktable}} beyond \code{ppp} objects.
-
-This is an S3 generic that extends the use of
-  \code{\link[spatstat]{rjitter}} beyond \code{ppp} objects.
 }
 \seealso{
 \code{\link[spatstat]{marktable}}, \code{\link{marktable.ppp}},
   \code{\link{marktable.pp3}}
-
-\code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}},
-  \code{\link{rjitter.pp3}}
-
-Other spatstat extensions: 
-\code{\link{quadratcount.pp3}()},
-\code{\link{quadrats.pp3}()},
-\code{\link{rPoissonCluster3}()},
-\code{\link{rjitter.pp3}()},
-\code{\link{rpoint3}()},
-\code{\link{sample.pp3}()},
-\code{\link{sample.ppp}()},
-\code{\link{shift.pp3}()},
-\code{\link{superimpose.pp3}()}
 }
-\concept{spatstat extensions}

@@ -154,14 +154,14 @@ readRRNG <- function(filepath) {
 #'
 #' @export
 createSpat <- function(pos, win = NULL, marks = NULL) {
-  pp3.box <- win;
+  pp3.box <- win
   if(is.null(win)) {
-    pp3.box <- sapply(pos[1:3], range);
+    pp3.box <- sapply(pos[1:3], range)
   }
-  pp3.dat <- pp3(pos$x, pos$y, pos$z, pp3.box, marks = marks);
-  attr(pp3.dat, "metaData") <- attr(pos, "metaData");
-  pp3.dat <- pp3.dat[inside.boxx(pp3.dat, w = pp3.box)];
-  return(pp3.dat);
+  pp3.dat <- spatstat::pp3(pos$x, pos$y, pos$z, pp3.box, marks = marks)
+  attr(pp3.dat, "metaData") <- attr(pos, "metaData")
+  pp3.dat <- pp3.dat[spatstat::inside.boxx(pp3.dat, w = pp3.box)]
+  return(pp3.dat)
 }
 
 ### createDet ###
@@ -183,9 +183,9 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
 #' @export
 createDet <- function(ato, win = NULL, marks = NULL) {
   if(is.null(win)) {
-    win <- ripras(ato$dx, ato$dy)
+    win <- spatstat::ripras(ato$dx, ato$dy)
   }
-  det.dat <- ppp(ato$dx, ato$dy, window = win, marks = marks)
+  det.dat <- spatstat::ppp(ato$dx, ato$dy, window = win, marks = marks)
   return(det.dat)
 }
 
@@ -226,7 +226,7 @@ createSpec <- function(pos, res = 0.05, snip = NULL) {
   }
   ms.breaks <- seq(ms.min, ms.max, res)
   ms.hist <- hist(pos[,"mass"], ms.breaks, plot = F)
-  ms.dat <- createMassSpectrum(
+  ms.dat <- MALDIquant::createMassSpectrum(
     ms.hist$mids[-1], ms.hist$counts[-1],
     metaData = attr(pos, "metaData")
   )
@@ -248,7 +248,7 @@ createTOF <- function(pos, res = 0.001) {
   ms.min <- ms.min - res
   ms.breaks <- seq(ms.min, ms.max, res)
   ms.hist <- hist(pos[,"TOF"], ms.breaks, plot = F)
-  ms.dat <- createMassSpectrum(
+  ms.dat <- MALDIquant::createMassSpectrum(
     ms.hist$mids, ms.hist$counts,
     metaData = attr(pos, "metaData")
   )

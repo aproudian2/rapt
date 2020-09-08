@@ -78,7 +78,7 @@ envPlot <- function(
     legend(0, ylim[2], legend = c(paste(toString(percentiles[1]*100), "% AI"),
                                   paste(toString(percentiles[2]*100), "% AI"),
                                   paste(toString(percentiles[3]*100), "% AI")),
-           col=c(color[1], color[2], color[3]),
+           col = c(color[1], color[2], color[3]),
            lty = c(1,1,1), lwd = c(10,10,10))
   }
 }
@@ -895,8 +895,10 @@ bK3est <- function(X, rmax=NULL, nrval=128){
 #'   applied to the data pattern X to obtain nsim simulated patterns. If
 #'   simulate is a list of point patterns, then the entries in this list will be
 #'   treated as the simulated patterns from which the envelopes are computed.
+#'
 #' @return A function value table (object of class "fv") which can be plotted
 #'   directly. See \code{\link[spatstat]{envelope}} for further details.
+#'
 #' @seealso \link[spatstat]{envelope}, \link[spatstat]{K3est},
 #'   \link[spatstat]{G3est}, \link[spatstat]{F3est}, \link[spatstat]{pcf3est}
 #' @export

@@ -63,14 +63,13 @@ clustersim <- function(under, over, rcp_rad,
                        toplot = F){
   set.seed(s)
   # Total volume
-  sidelength <- diff(domain(under)$xrange)
+  sidelength <- diff(spatstat::domain(under)$xrange)
   vt <- sidelength^3
 
   # Calculate volume needed in clusters
-  if(rho2 >= pcp){
-    print('Background density (rho2) cannot be larger than or equal to',
+  if(rho2 >= pcp) {
+    stop('Background density (rho2) cannot be larger than or equal to',
     'cluster point concentration (pcp).')
-    return(-1)
   }
   vc <- vt*(pcp - rho2)/(rho1-rho2)
 
@@ -81,45 +80,45 @@ clustersim <- function(under, over, rcp_rad,
   alpha <- 1
   rcp.conc <- vc/(4/3 * pi * cr*(cr^2 + 3*sigma^2) * vt * alpha)
   # Scale over RCP pattern to match this concentration
-  over.vol <- volume(domain(over)) # Original volume
-  over.vol.new <- npoints(over) / rcp.conc # New volume
+  over.vol <- spatstat::volume(spatstat::domain(over)) # Original volume
+  over.vol.new <- spatstat::npoints(over) / rcp.conc # New volume
   over.sf <- over.vol.new^(1/3) / over.vol^(1/3) # Scale factor for new volume
   over.scaled <- pp3_scale(over, over.sf)
 
   # Generate and add position blur
   over.sub <- over_cut(over.scaled, rep(sidelength, 3), cr)
-  nnd <- nndist.pp3(over.sub)
+  nnd <- spatstat::nndist(over.sub)
   avg.sep <- mean(nnd)
   pb.sig <- avg.sep*pb
 
-  pb.shifts <- pb_gen(npoints(over.scaled), mean = 0, sd = pb.sig)
-  over.coo <- coords(over.scaled)
+  pb.shifts <- pb_gen(spatstat::npoints(over.scaled), mean = 0, sd = pb.sig)
+  over.coo <- spatstat::coords(over.scaled)
   over.coo.pb <- over.coo + pb.shifts
-  over.scaled.pb <- pp3(x = over.coo.pb$x,
+  over.scaled.pb <- spatstat::pp3(x = over.coo.pb$x,
                         y = over.coo.pb$y,
                         z = over.coo.pb$z,
-                        domain(over.scaled))
+                        spatstat::domain(over.scaled))
 
   # Re-size and shift the over point pattern so that it lines up with
   # the under point pattern with buffers
   over.scaledcut <- over_cut(over.scaled.pb, rep(sidelength, 3), 2.5*cr)
-  over.scaledcut.coo <- coords(over.scaledcut)
+  over.scaledcut.coo <- spatstat::coords(over.scaledcut)
 
   # Generate normal distributed radii for cluster centers
-  cr.rand <- rnorm(npoints(over.scaledcut), mean = cr, sd = sigma)
+  cr.rand <- rnorm(spatstat::npoints(over.scaledcut), mean = cr, sd = sigma)
   cr.rand[cr.rand < 0] <- 0
-  marks(over.scaledcut) <- cr.rand
+  spatstat::marks(over.scaledcut) <- cr.rand
 
   # Check volume in clusters - optimize to target volume
   sf.optim <- optim(par = 1, fn = check_vol, gr = NULL,
-                    over.scaledcut.coo, vc, domain(under), cr.rand,
+                    over.scaledcut.coo, vc, spatstat::domain(under), cr.rand,
                     method = "L-BFGS-B", lower = 0.5, upper = 3)
   over.scaled2 <- pp3_scale(over.scaledcut, sf.optim$par)
 
   # shift points to remove overlaps
   over.nolap <- overlap_fix(over.scaled2, cr.rand)
   if(is.numeric(over.nolap)){return(-1)}
-  over.nolap.coo <- coords(over.nolap)
+  over.nolap.coo <- spatstat::coords(over.nolap)
 
   # Re-check once for volume correctness
   sf.optim2 <- optim(par = 1, fn = check_vol, gr = NULL,
@@ -129,21 +128,19 @@ clustersim <- function(under, over, rcp_rad,
   over.final <- over_cut(over.scaled3, rep(sidelength, 3), cr.rand)
 
   # Select points that fall within the correct radius of each cluster center
-  cr.rand.final <- marks(over.final)
+  cr.rand.final <- spatstat::marks(over.final)
   cluster.inds.all <- list()
 
   if(!(is.numeric(max(cr.rand.final)) && length(max(cr.rand.final)) == 1L &&
        max(cr.rand.final) >= 0)){
-    print('Error with cr.rand.final')
-    return(-1)
+    stop("Error with cr.rand.final")
   }
 
-  nnR <- crosspairs.pp3(over.final, under, rmax = max(cr.rand.final),
+  nnR <- spatstat::crosspairs.pp3(over.final, under, rmax = max(cr.rand.final),
                         what = 'ijd', neat = TRUE, distinct = TRUE,
                         twice = FALSE)
   if(is.empty(nnR$i)) {
-    print('No cluster centers in domain.')
-    return(-1)
+    stop("No cluster centers in domain.")
   }
   nnR.split <- list()
   nnR.split$d <- split(nnR$d, nnR$i, drop = FALSE)
@@ -172,8 +169,9 @@ clustersim <- function(under, over, rcp_rad,
   c.marks[bgnd.inds] <- 'B'
   c.marks[-(c(cluster.inds, bgnd.inds))] <- 'C'
 
-  marks(under) <- c.marks
-  just.cluster.points <- under[marks(under) == 'A' | marks(under) == 'B']
+  spatstat::marks(under) <- c.marks
+  just.cluster.points <- under[spatstat::marks(under) == 'A' |
+                               spatstat::marks(under) == 'B']
 
   if(toplot == TRUE){
     plot3d.pp3(just.cluster.points)
@@ -181,8 +179,7 @@ clustersim <- function(under, over, rcp_rad,
 
   pcp.real <- (length(bgnd.inds) + length(cluster.inds))/npoints(under)
   if(pcp.real < (pcp - tol) | pcp.real > (pcp + tol)){
-    print('Pcp outside of tolerance range')
-    return(-1)
+    stop('Pcp outside of tolerance range')
   }
   #print(pcp.real)
   dat <- list(clusters = just.cluster.points,
@@ -192,7 +189,6 @@ clustersim <- function(under, over, rcp_rad,
               centers = over.final)
   return(dat)
 }
-
 
 #### makecluster ####
 #' Simulate point clustering in an RCP matrix
@@ -336,11 +332,11 @@ clustersim <- function(under, over, rcp_rad,
 #'   each cluster.}
 #'
 #' @family simulation functions
-makecluster <- function(under,over,radius1,radius2,
+makecluster <- function(under, over, radius1, radius2,
                         type = "cr",
-                        ppc=NULL,
-                        cr=NULL,speed = "superfast",
-                        d=NULL,
+                        ppc = NULL,
+                        cr = NULL, speed = "superfast",
+                        d = NULL,
                         pic = 1,
                         pcp = 0.06,
                         den = 1,
@@ -351,16 +347,15 @@ makecluster <- function(under,over,radius1,radius2,
                         rbp = 1,
                         rbmethod = 1,
                         s = 100,
-                        toPlot=FALSE,showOverPts=FALSE){
+                        toPlot = FALSE, showOverPts = FALSE){
   #############################################################################
   # POINTS PER CLUSTER METHOD
   if(type == "ppc") {
     #real cluster percent
     if(gb == TRUE) {
-      print(paste("ERROR -",
-                  "Gaussian blur only implemented for",
-                  "type = cr, speed = superfast."))
-      return()
+      stop("ERROR - ",
+           "Gaussian blur only implemented for ",
+           "type = cr, speed = superfast.")
     }
     rcp <- pcp*pic
 
@@ -368,19 +363,18 @@ makecluster <- function(under,over,radius1,radius2,
     over.r <- radius2
     over.rf <- under.r*(ppc/rcp)^(1/3)
     over.scaled <- scaleRCP(over, newRadius = over.rf, oldRadius = over.r,
-                            win = domain(over))
-    over.scaledf <- subSample(under,over.scaled)
+                            win = spatstat::domain(over))
+    over.scaledf <- subSample(under, over.scaled)
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
 
-    if(ppc == 0){
-      print("Points per cluster is too small.")
-      return(NULL)
+    if(ppc == 0) {
+      stop("Points per cluster is too small.")
     }
 
     diff <- npoints(under)*rcp-ppc*npoints(over.scaledf)
 
-    if(diff > 0){
+    if(diff > 0) {
       over.split <- splitpp3(over.scaledf,diff)
 
       cluster.inddf1 <- nncross(over.split[[1]],under,what="which",k=1:ppc)
@@ -430,13 +424,12 @@ makecluster <- function(under,over,radius1,radius2,
 
   ############################################################################
   # CHOOSE RADIUS METHOD
-  else if(type == "cr"){
-    if (speed == "slow"){
-      if(gb == TRUE){
-        print(paste("ERROR -",
-                    "Gaussian blur only implemented for",
-                    "type = cr, speed = superfast."))
-        return()
+  else if(type == "cr") {
+    if (speed == "slow") {
+      if(gb == TRUE) {
+        stop("ERROR - ",
+             "Gaussian blur only implemented for ",
+             "type = cr, speed = superfast.")
       }
       #real cluster percent
       rcp <- pcp*pic
@@ -459,9 +452,9 @@ makecluster <- function(under,over,radius1,radius2,
       cluster.ind <- crAdjust(cluster.matrix,diff,over.scaledf,under)
 
       more <- npoints(under)*pcp-npoints(under)*rcp
-      if(more==0) {
+      if(more == 0) {
 
-      }else{
+      } else {
         cluster.ind <- randomInsert(cluster.ind, more, npoints(under), s)
       }
 
@@ -469,7 +462,7 @@ makecluster <- function(under,over,radius1,radius2,
       cluster.xyz <- na.omit(cluster.xyz)
       cluster <- createSpat(cluster.xyz)
 
-      if(toPlot==TRUE){
+      if(toPlot == TRUE) {
         plot3d.pp3(cluster,col="black",size=5)
         #plot3d.pp3(under,col="lightgray",add=TRUE)
         if(showOverPts == TRUE){
@@ -482,9 +475,9 @@ makecluster <- function(under,over,radius1,radius2,
     }
     else if (speed == "fast"){
       if(gb == TRUE){
-        print(paste("ERROR -",
-                    "Gaussian blur only implemented for",
-                    "type = cr, speed = superfast."))
+        stop("ERROR - ",
+              "Gaussian blur only implemented for ",
+              "type = cr, speed = superfast.")
         return()
       }
       #real cluster percent
@@ -753,11 +746,11 @@ makecluster <- function(under,over,radius1,radius2,
 
   ############################################################################
   # CHOOSE DISTANCE BETWEEN CLUSTERS METHOD
-  else if(type == "dist"){
-    if(gb == TRUE){
-      print(paste("ERROR -",
-                  "Gaussian blur only implemented for",
-                  "type = cr, speed = superfast."))
+  else if(type == "dist") {
+    if(gb == TRUE) {
+      stop("ERROR - ",
+            "Gaussian blur only implemented for ",
+            "type = cr, speed = superfast.")
       return()
     }
     #real cluster percent
@@ -775,9 +768,8 @@ makecluster <- function(under,over,radius1,radius2,
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
 
-    if(ppc == 0){
-      print("Distance between clusters is too small")
-      return(NULL)
+    if(ppc == 0) {
+      stop("Distance between clusters is too small")
     }
 
     diff <- npoints(under)*rcp-ppc*npoints(over.scaledf)
@@ -859,9 +851,8 @@ makecluster <- function(under,over,radius1,radius2,
                 c(ppc, npoints(over.scaledf)-diff, ppc+1, diff)))
 
   }
-  else{
-    print("Please input a valid type")
-    return()
+  else {
+    stop("Please input a valid type")
   }
 }
 ################################################################################
@@ -1076,7 +1067,7 @@ morph_rods <- function(lambda,
     ydist <- diff(win$zrange)
   }
   else {
-    print('Please input one of \'x\', \'y\', or \'z\' for rod.norm')
+    stop("Please input one of 'x', 'y', or 'z' for rod.norm")
   }
 
   # create rod spacing
@@ -1866,13 +1857,12 @@ overlap_fix <- function(X, cr.rand){
     minsep <- cr.rand[ind] + cr.rand[nnw[ind]]
     direction <- (coords(X)[nnw[ind],]-coords(X)[ind,])/nnd[ind]
     coords(X)[ind,] <- coords(X)[ind,]+(nnd[ind]-(minsep+0.00001))*direction
-    nnd <- nndist.pp3(X)
-    nnw <- nnwhich.pp3(X)
+    nnd <- spatstat::nndist(X)
+    nnw <- spatstat::nnwhich.pp3(X)
     check <- which(nnd < (cr.rand + cr.rand[nnw]))
     t2 <- Sys.time()
-    if((as.numeric(t2) - as.numeric(t1)) > 15){
-      print('Impossible to find no-overlap solution.')
-      return(-1)
+    if((as.numeric(t2) - as.numeric(t1)) > 15) {
+      stop("Impossible to find no-overlap solution.")
     }
   }
   return(X)

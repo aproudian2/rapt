@@ -4,7 +4,7 @@
 \alias{rjitter.pp3}
 \title{Random Perturbation of a Point Pattern}
 \usage{
-rjitter.pp3(X, domain = box3())
+\method{rjitter}{pp3}(X, domain = box3())
 }
 \description{
 Applies independent random displacements to each point in a point pattern.
@@ -14,10 +14,10 @@ Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
 \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}}
 
 Other spatstat extensions: 
-\code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
+\code{\link{rjitter}()},
 \code{\link{rpoint3}()},
 \code{\link{sample.pp3}()},
 \code{\link{sample.ppp}()},

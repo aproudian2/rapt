@@ -21,11 +21,11 @@ Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
 \code{\link[base]{sample}}
 
 Other spatstat extensions: 
-\code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
 \code{\link{rjitter.pp3}()},
+\code{\link{rjitter}()},
 \code{\link{rpoint3}()},
 \code{\link{sample.pp3}()},
 \code{\link{shift.pp3}()},

@@ -4,15 +4,7 @@
 \alias{rjitter.ppp}
 \title{Random Perturbation of a Point Pattern}
 \usage{
-rjitter.ppp(
-  X,
-  radius,
-  retry = TRUE,
-  giveup = 10000,
-  ...,
-  nsim = 1,
-  drop = TRUE
-)
+\method{rjitter}{ppp}(X, radius, retry = TRUE, giveup = 10000, ..., nsim = 1, drop = TRUE)
 }
 \description{
 Random Perturbation of a Point Pattern

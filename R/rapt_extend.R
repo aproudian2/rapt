@@ -29,32 +29,32 @@ marktable.ppp <- spatstat::marktable
 #'
 #' @export
 marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
-  verifyclass(X, "pp3")
-  if (!is.marked(X, dfok = FALSE))
+  spatstat::verifyclass(X, "pp3")
+  if (!spatstat::is.marked(X, dfok = FALSE))
     stop("point pattern has no marks")
   gotR <- !missing(R) && !is.null(R)
   gotN <- !missing(N) && !is.null(N)
   if (gotN == gotR)
     stop("Exactly one of the arguments N and R should be given")
   stopifnot(is.logical(exclude) && length(exclude) == 1)
-  m <- marks(X)
+  m <- spatstat::marks(X)
   if (!is.factor(m))
     stop("marks must be a factor")
   if (gotR) {
     stopifnot(is.numeric(R) && length(R) == 1 && R > 0)
-    p <- closepairs(X, R, what = "indices")
+    p <- spatstat::closepairs(X, R, what = "indices")
     pi <- p$i
     pj <- p$j
     if (!exclude) {
-      n <- npoints(X)
+      n <- spatstat::npoints(X)
       pi <- c(pi, 1:n)
       pj <- c(pj, 1:n)
     }
   }
   else {
     stopifnot(is.numeric(N) && length(N) == 1)
-    ii <- seq_len(npoints(X))
-    nn <- nnwhich(X, k = 1:N)
+    ii <- seq_len(spatstat::npoints(X))
+    nn <- spatstat::nnwhich(X, k = 1:N)
     if (N == 1)
       nn <- matrix(nn, ncol = 1)
     if (!exclude)
@@ -63,7 +63,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
     pj <- as.vector(nn)
   }
   if (!collapse) {
-    i <- factor(pi, levels = seq_len(npoints(X)))
+    i <- factor(pi, levels = seq_len(spatstat::npoints(X)))
     mj <- m[pj]
     mat <- table(point = i, mark = mj)
   }
@@ -86,7 +86,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
 #'   \code{\link{rjitter.pp3}}
 #'
 #' @export
-marktable <- function(X, ...) UseMethod("marktable")
+rjitter <- function(X, ...) UseMethod("rjitter")
 
 ### rjitter.ppp ###
 #' Random Perturbation of a Point Pattern
@@ -106,12 +106,12 @@ rjitter.ppp <- spatstat::rjitter
 #'
 #' @export
 rjitter.pp3 <- function(X, domain = box3()) {
-  verifyclass(X, "pp3")
-  nX <- npoints(X)
+  spatstat::verifyclass(X, "pp3")
+  nX <- spatstat::npoints(X)
   if (nX == 0)
     return(X)
   W <- X$domain
-  D <- runifpoint3(nX, domain = domain)
+  D <- spatstat::runifpoint3(nX, domain = domain)
   xnew <- X$data$x + D$data$x
   ynew <- X$data$y + D$data$y
   znew <- X$data$z + D$data$z
@@ -131,14 +131,15 @@ rjitter.pp3 <- function(X, domain = box3()) {
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{superimpose}}
+#'
 #' @export
 superimpose.pp3 <- function(..., W = NULL, check = F) {
   input.list <- list(...)
-  m <- unlist(sapply(input.list, marks))
+  m <- unlist(sapply(input.list, spatstat::marks))
   df.list <- lapply(input.list, as.data.frame)
   df.comb <- Reduce(rbind, df.list)
   out.pp3 <-  createSpat(df.comb, win = W)
-  marks(out.pp3) <- m
+  spatstat::marks(out.pp3) <- m
   return(out.pp3)
 }
 
@@ -151,15 +152,14 @@ superimpose.pp3 <- function(..., W = NULL, check = F) {
 #' @export
 shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 {
-  verifyclass(X, "pp3")
+  spatstat::verifyclass(X, "pp3")
   if (!is.null(origin)) {
     if (!missing(vec))
       warning("argument vec ignored; overruled by argument origin")
     if (is.numeric(origin)) {
       locn <- origin
-    }
-    else if (is.character(origin)) {
-      origin <- pickoption("origin", origin,
+    } else if (is.character(origin)) {
+      origin <- spatstat::pickoption("origin", origin,
                            c(midpoint = "midpoint", bottomleft = "bottomleft"))
       W <- X$domain
       locn <- switch(origin, midpoint = {
@@ -167,11 +167,12 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
       }, bottomleft = {
         c(W$domain$xrange[1], W$domain$yrange[1], W$domain$zrange[1])
       })
+    } else {
+      stop("origin must be a character string or a numeric vector")
     }
-    else stop("origin must be a character string or a numeric vector")
     vec <- -locn
   }
-  Y <- pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
+  Y <- spatstat::pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
            xrange = X$domain$xrange + vec[1],
            yrange = X$domain$yrange + vec[2],
            zrange = X$domain$zrange + vec[3])
@@ -192,8 +193,8 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 #'
 #' @export
 sample.ppp <- function(X, size) {
-  sam.n <- npoints(X)
-  sam.pts <- sample(1:sam.n, size)
+  sam.n <- spatstat::npoints(X)
+  sam.pts <- sample(1:sam.n, size, replace = FALSE)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
@@ -211,13 +212,13 @@ sample.ppp <- function(X, size) {
 #' @export
 sample.pp3 <- function(X, size) {
   sam.lab <- rownames(as.data.frame(X$data))
-  sam.pts <- sample(sam.lab, size)
+  sam.pts <- sample(sam.lab, size, replace = FALSE)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
 
 #### findClusters.pp3 ####
-#' Finds clusters by NN adjacency marks.
+#' Find Clusters by NN Adjacency Marks
 findClusters.pp3 <- function(X, mark, k = 1) {
   if(!(mark %in% marks(X)))
     stop('The specified mark does not exist in the pattern')
@@ -258,11 +259,11 @@ NULL
 #'
 #' @export
 intensity.pp3 <- function(X, weights = NULL) {
-  n <- npoints(X)
-  a <- volume(domain(X))
+  n <- spatstat::npoints(X)
+  a <- spatstat::volume(domain(X))
   if (is.null(weights)) {
-    if (is.multitype(X)) {
-      mks <- marks(X)
+    if (spatstat::is.multitype(X)) {
+      mks <- spatstat::marks(X)
       answer <- as.vector(table(mks))/a
       names(answer) <- levels(mks)
     }
@@ -281,6 +282,16 @@ intensity.pp3 <- function(X, weights = NULL) {
 rownames.pp3 <- function(pat) {
   dat <- rownames(as.data.frame(pat))
   return(dat)
+}
+#### rownames.pp3<- ####
+#' Extends \code{\link[base:row+colnames]{rownames}} to \code{\link[spatstat]{pp3}}.
+#'
+#' @param pat \code{pp3}. The point pattern to assign rownames.
+#' @param lab character. The new rownames.
+#' @seealso \code{\link[base:row+colnames]{rownames}}
+"rownames.pp3<-" <- function(pat,lab) {
+  rownames(as.data.frame(pat)) <- lab
+  return(pat)
 }
 
 #### plot3d.pp3 ####
