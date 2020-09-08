@@ -7,9 +7,10 @@
 rngCount(pos, rng, simplify = FALSE)
 }
 \arguments{
-\item{pos}{The pos to range}
+\item{pos}{data.frame. The \code{POS} or \code{ATO} to be ranged}
 
-\item{rng}{The ranges}
+\item{rng}{data.frame. The \code{RRNG} ranges to apply
+#' @param simplify logical. Whether to simplify the counts by ion name}
 }
 \value{
 A data.frame containing the name of each range, the number of counts

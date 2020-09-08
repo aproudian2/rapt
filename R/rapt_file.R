@@ -32,7 +32,7 @@ readPOS <- function(filepath) {
   attr(pos.dat, "metaData") <- list(
     name = pos.name
   )
-  return(pos.dat);
+  return(pos.dat)
 }
 
 ### readATO ###
@@ -159,8 +159,8 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
     pp3.box <- sapply(pos[1:3], range)
   }
   pp3.dat <- spatstat::pp3(pos$x, pos$y, pos$z, pp3.box, marks = marks)
-  attr(pp3.dat, "metaData") <- attr(pos, "metaData")
   pp3.dat <- pp3.dat[spatstat::inside.boxx(pp3.dat, w = pp3.box)]
+  attr(pp3.dat, "metaData") <- attr(pos, "metaData")
   return(pp3.dat)
 }
 
@@ -186,6 +186,7 @@ createDet <- function(ato, win = NULL, marks = NULL) {
     win <- spatstat::ripras(ato$dx, ato$dy)
   }
   det.dat <- spatstat::ppp(ato$dx, ato$dy, window = win, marks = marks)
+  attr(det.dat, "metaData") <- attr(ato, "metaData")
   return(det.dat)
 }
 

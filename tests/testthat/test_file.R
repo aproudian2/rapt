@@ -58,13 +58,16 @@ test_that("read.rcp reads correctly", {
 })
 
 #### createSpat ####
-test_that("createSpat converts POS and ATO data.frames to pp3",{
+test_that("createSpat converts POS and ATO data.frames to pp3", {
   pos <- readPOS("example-pos.pos")
   pp.pos <- createSpat(pos)
 
   expect_type(pp.pos, "list")
   expect_s3_class(pp.pos, "ppx")
   expect_s3_class(pp.pos, "pp3")
+  pos.meta <- attr(pp.pos, "metaData")
+  expect_named(pos.meta, "name")
+  expect_identical(pos.meta$name, "example-pos")
   expect_equal(round(pp.pos$domain$xrange), c(-20,20))
   expect_equal(round(pp.pos$domain$yrange), c(-20,20))
   expect_equal(round(pp.pos$domain$zrange), c(0,51))
@@ -75,6 +78,9 @@ test_that("createSpat converts POS and ATO data.frames to pp3",{
   expect_type(pp.ato, "list")
   expect_s3_class(pp.ato, "ppx")
   expect_s3_class(pp.ato, "pp3")
+  ato.meta <- attr(pp.ato, "metaData")
+  expect_named(ato.meta, "name")
+  expect_identical(ato.meta$name, "example-ato")
   expect_equal(round(pp.ato$domain$xrange), c(-202,204))
   expect_equal(round(pp.ato$domain$yrange), c(-204,205))
   expect_equal(round(pp.ato$domain$zrange), c(0,507))

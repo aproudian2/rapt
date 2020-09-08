@@ -7,13 +7,11 @@
 rangePOS(pos, start, end)
 }
 \arguments{
-\item{pos}{A data.frame. The \code{POS} or \code{ATO} to be ranged}
+\item{pos}{data.frame. The \code{POS} or \code{ATO} to be ranged}
 
-\item{start}{The start of the mass range}
+\item{start}{numeric. The start of the mass range}
 
-\item{end}{The end of the mass range}
-
-\item{simplify}{Whether to simplify the counts by ion name}
+\item{end}{numeric. The end of the mass range}
 }
 \value{
 A data.frame of the same structure as \code{pos} containing only hits

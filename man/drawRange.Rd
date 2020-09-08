@@ -6,9 +6,19 @@
 \usage{
 drawRange(ms, start, end, col = "red")
 }
+\arguments{
+\item{ms}{data.frame or
+\code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}. The data on
+on which the ranges should be drawn}
+
+\item{start}{numeric. The start of the range.}
+
+\item{end}{numeric. The end of the range}
+
+\item{col}{The color of the range.}
+}
 \description{
-\code{drawRange} draws a colored range fon a plot of a
-\code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
+\code{drawRange} draws a colored range on a plot
 }
 \seealso{
 \code{\link{drawRNG}}

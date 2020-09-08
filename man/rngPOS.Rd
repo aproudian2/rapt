@@ -7,13 +7,14 @@
 rngPOS(pos, rng)
 }
 \arguments{
-\item{pos}{The pos or ato from which to extract hits}
+\item{pos}{data.frame. The \code{POS} or \code{ATO} from which to extract
+hits}
 
-\item{rng}{The ranges to extract}
+\item{rng}{data.frame. The \code{RRNG} ranges to apply}
 }
 \value{
-A data.frame of the same structure as pos, with an appended column
-  called "mark" that carries the name of the ion
+A data.frame of the same structure as \code{pos}, with an appended
+  column called "mark" that carries the name of the ion
 }
 \description{
 \code{rngPOS} extracts the rows of a \code{POS} or \code{ATO} object whose

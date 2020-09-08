@@ -4,6 +4,7 @@
 \name{rapt-deprecated}
 \alias{rapt-deprecated}
 \alias{bcc.gen}
+\alias{splitpp3}
 \alias{pK3est}
 \alias{anomK3est}
 \alias{pG3est}
@@ -14,6 +15,8 @@
 \title{Deprecated functions in package \pkg{rapt}.}
 \usage{
 bcc.gen(npoint, win)
+
+splitpp3(overPattern, num)
 
 pK3est(
   perc,
@@ -69,6 +72,11 @@ The functions listed below are deprecated and will be defunct in
 \section{\code{bcc.gen}}{
 
   For \code{bcc.gen}, use \code{\link{lattice}}
+}
+
+\section{\code{splitpp3}}{
+
+  For \code{splitpp3}, use \code{\link[spatstat]{split.ppx}}
 }
 
 \section{\code{pK3est}}{
