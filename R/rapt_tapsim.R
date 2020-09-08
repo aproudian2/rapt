@@ -91,9 +91,9 @@ resultToPOS <- function(res, clip.radius = NULL) {
 resultToDet <- function(res, clip.radius = NULL) {
     det.df <- data.frame(dx = res$stopX, dy = res$stopY, mass = res$id)
     det <- createDet(det.df)
-    marks(det) = det.df$mass
+    spatstat::marks(det) = det.df$mass
     if (!is.null(clip.radius)) {
-        Window(det) <- disc(radius = clip.radius)
+        spatstat::Window(det) <- spatstat::disc(radius = clip.radius)
     }
     return(det)
 }

@@ -756,3 +756,8 @@ bdist.points3.multi <- function (X){
 
   return(result)
 }
+
+#### as.data.frame.MassSpectrum ####
+as.data.frame.MassSpectrum <- function(M) {
+  data.frame(mass = M@mass, intensity = M@intensity)
+}

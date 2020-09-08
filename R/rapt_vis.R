@@ -34,13 +34,22 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
 #### drawRange ####
 #' Color ranges on a MassSpectrum
 #'
-#' \code{drawRange} draws a colored range fon a plot of a
-#' \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
+#' \code{drawRange} draws a colored range on a plot
+#'
+#' @param ms data.frame or
+#'   \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}. The data on
+#'   on which the ranges should be drawn
+#' @param start numeric. The start of the range.
+#' @param end numeric. The end of the range
+#' @param col The color of the range.
 #'
 #' @seealso \code{\link{drawRNG}}
 #' @export
 drawRange <- function(ms, start, end, col = "red") {
-  polyCurve(ms@mass, ms@intensity, start, end, col = col)
+  if(isMassSpectrum(ms)) {
+    ms <- as.data.frame(ms)
+  }
+  polyCurve(ms$mass, ms$intensity, start, end, col = col)
   invisible()
 }
 
@@ -54,7 +63,10 @@ drawRange <- function(ms, start, end, col = "red") {
 #' @seealso \code{\link{drawRange}}
 #' @export
 drawRNG <- function(ms, rng) {
-  polyCurve(ms@mass, ms@intensity, rng$start, rng$end, col = rng$color)
+  if(isMassSpectrum(ms)) {
+    ms <- as.data.frame(ms)
+  }
+  polyCurve(ms$mass, ms$intensity, rng$start, rng$end, col = rng$color)
   invisible()
 }
 

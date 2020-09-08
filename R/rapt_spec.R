@@ -32,10 +32,9 @@ rangeCount <- function(pos, start, end) {
 #' mass is within the provided range. To count the number of hits within a mass
 #' range, use \code{\link{rangeCount}}.
 #'
-#' @param pos A data.frame. The \code{POS} or \code{ATO} to be ranged
-#' @param start The start of the mass range
-#' @param end The end of the mass range
-#' @param simplify Whether to simplify the counts by ion name
+#' @param pos data.frame. The \code{POS} or \code{ATO} to be ranged
+#' @param start numeric. The start of the mass range
+#' @param end numeric. The end of the mass range
 #'
 #' @return A data.frame of the same structure as \code{pos} containing only hits
 #' in the provided range
@@ -54,8 +53,9 @@ rangePOS <- function(pos, start, end) {
 #' object. To get hit information within a \code{RRNG}, use
 #' \code{\link{rngPOS}}.
 #'
-#' @param pos The pos to range
-#' @param rng The ranges
+#' @param pos data.frame. The \code{POS} or \code{ATO} to be ranged
+#' @param rng data.frame. The \code{RRNG} ranges to apply
+#' #' @param simplify logical. Whether to simplify the counts by ion name
 #'
 #' @return A data.frame containing the name of each range, the number of counts
 #' and fraction of the total ranged counts.
@@ -83,11 +83,12 @@ rngCount <- function(pos, rng, simplify = FALSE) {
 #' mass is within the ranges of the provided \code{RRNG}. To count the hits
 #' within a \code{RRNG}, use \code{\link{rngCount}}
 #'
-#' @param pos The pos or ato from which to extract hits
-#' @param rng The ranges to extract
+#' @param pos data.frame. The \code{POS} or \code{ATO} from which to extract
+#'   hits
+#' @param rng data.frame. The \code{RRNG} ranges to apply
 #'
-#' @return A data.frame of the same structure as pos, with an appended column
-#'   called "mark" that carries the name of the ion
+#' @return A data.frame of the same structure as \code{pos}, with an appended
+#'   column called "mark" that carries the name of the ion
 #'
 #' @family ranging functions
 #'
@@ -105,6 +106,7 @@ rngPOS <- function(pos, rng) {
 ### rangeMassSpectrum ###
 # Range peaks at a specified level
 rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
+  spatstat::verifyclass(ms, 'MassSpectrum')
   m <- ms@mass
   m.in <- m >= start & m <= end
   m.clip <- m[m.in]
