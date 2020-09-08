@@ -193,8 +193,8 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 #'
 #' @export
 sample.ppp <- function(X, size) {
-  sam.n <- spatstat::npoints(X)
-  sam.pts <- sample(1:sam.n, size, replace = FALSE)
+  sam.n <- seq_len(spatstat::npoints(X))
+  sam.pts <- sample(sam.n, size, replace = FALSE)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
@@ -211,8 +211,8 @@ sample.ppp <- function(X, size) {
 #'
 #' @export
 sample.pp3 <- function(X, size) {
-  sam.lab <- rownames(as.data.frame(X$data))
-  sam.pts <- sample(sam.lab, size, replace = FALSE)
+  sam.n <- seq_len(spatstat::npoints(X))
+  sam.pts <- sample(sam.n, size, replace = FALSE)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
@@ -307,7 +307,7 @@ rownames.pp3 <- function(pat) {
 #'
 #' @export
 plot3d.pp3 <- function(X, ...) {
-  rgl::plot3d(as.data.frame(X$data), ...)
+  rgl::plot3d(coords(X), ...)
 }
 
 #### quadratcount.pp3 ####
