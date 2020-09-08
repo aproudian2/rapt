@@ -372,23 +372,27 @@ makecluster <- function(under, over, radius1, radius2,
       stop("Points per cluster is too small.")
     }
 
-    diff <- npoints(under)*rcp-ppc*npoints(over.scaledf)
+    diff <- spatstat::npoints(under)*rcp - ppc*spatstat::npoints(over.scaledf)
+    sp.AB <- rep("B", spatstat::npoints(over.scaledf))
+    sp.AB[1:diff] <- "A"
 
     if(diff > 0) {
-      over.split <- splitpp3(over.scaledf,diff)
+      over.split <- spatstat::split.ppx(over.scaledf, sp.AB)
 
-      cluster.inddf1 <- nncross(over.split[[1]],under,what="which",k=1:ppc)
-      cluster.inddf2 <- nncross(over.split[[2]],under,what="which",k=1:(ppc+1))
+      cluster.inddf1 <- spatstat::nncross(over.split$A, under,
+                                          what = "which", k = 1:ppc)
+      cluster.inddf2 <- spatstat::nncross(over.split$B, under,
+                                          what = "which", k = 1:(ppc+1))
       cluster.ind <- NULL
 
-      for(i in 1:npoints(over.split[[1]])){
+      for(i in 1:npoints(over.split$A)){
         if(ppc==1){
           cluster.ind <- c(cluster.ind,cluster.inddf1[i])
         }else{
           cluster.ind <- c(cluster.ind,as.numeric(cluster.inddf1[i,]))
         }
       }
-      for(i in 1:npoints(over.split[[2]])){
+      for(i in 1:npoints(over.split$B)){
         cluster.ind <- c(cluster.ind,as.numeric(cluster.inddf2[i,]))
       }
     }else{
@@ -773,17 +777,21 @@ makecluster <- function(under, over, radius1, radius2,
     }
 
     diff <- npoints(under)*rcp-ppc*npoints(over.scaledf)
+    sp.AB <- rep("B", spatstat::npoints(over.scaledf))
+    sp.AB[1:diff] <- "A"
 
     if(diff > 0){
-      over.split <- splitpp3(over.scaledf,diff)
+      over.split <- spatstat::split.ppx(over.scaledf, sp.AB)
 
-      cluster.inddf1 <- nncross(over.split[[1]],under,what="which",k=1:ppc)
-      cluster.inddf2 <- nncross(over.split[[2]],under,what="which",k=1:(ppc+1))
+      cluster.inddf1 <- spatstat::nncross(over.split$A, under,
+                                          what = "which", k = 1:ppc)
+      cluster.inddf2 <- spatstat::nncross(over.split$B, under,
+                                          what = "which", k = 1:(ppc+1))
       cluster.ind <- vector("numeric",
-                            ppc * npoints(over.split[[1]]) +
-                              (ppc+1) * npoints(over.split[[2]]))
+                            ppc * spatstat::npoints(over.split$A) +
+                              (ppc+1) * spatstat::npoints(over.split$B))
       cnt <- 1
-      for(i in 1:npoints(over.split[[1]])){
+      for(i in 1:npoints(over.split$A)){
         if(ppc==1){
           cluster.ind[cnt] <- cluster.inddf1[i]
           cnt <- cnt + 1
@@ -792,13 +800,13 @@ makecluster <- function(under, over, radius1, radius2,
           cnt <- cnt + ppc
         }
       }
-      for(i in 1:npoints(over.split[[2]])){
+      for(i in 1:npoints(over.split$B)){
         cluster.ind[cnt:(cnt+ppc)] <- as.numeric(cluster.inddf2[i,])
         cnt <- cnt + ppc + 1
       }
     }else{
-      cluster.ind1 <- nncross(over.scaledf,under,what="which",k=1:ppc)
-      cluster.ind <- vector("numeric",ppc*npoints(over.scaledf))
+      cluster.ind1 <- spatstat::nncross(over.scaledf,under,what="which",k=1:ppc)
+      cluster.ind <- vector("numeric",ppc*spatstat::npoints(over.scaledf))
       cnt <- 1
       for(i in 1:npoints(over.scaledf)){
         cluster.ind[cnt:(cnt+ppc-1)] <- as.numeric(cluster.ind1[i,])
@@ -810,11 +818,11 @@ makecluster <- function(under, over, radius1, radius2,
 
       cluster.ind.info <- vector("numeric",length(cluster.ind))
       cnt <- 1
-      for(i in 1:npoints(over.split[[1]])){
+      for(i in 1:npoints(over.split$A)){
         cluster.ind.info[cnt:(cnt + ppc -1)] <- rep(i,ppc)
         cnt <- cnt + ppc
       }
-      for(i in 1:npoints(over.split[[2]])){
+      for(i in 1:npoints(over.split$B)){
         cluster.ind.info[cnt:(cnt + ppc)] <- rep(i,ppc+1)
         cnt <- cnt + ppc + 1
       }
@@ -1465,6 +1473,14 @@ subSample <- function(underPattern, overPattern){
 #' @return List containing the two \code{\link[spatstat]{pp3}} patterns. If
 #'   these two patterns were combined, they would create the original
 #'   \code{overPattern} object.
+#'
+#' @name splitpp3-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{splitpp3}:
+#'   For \code{splitpp3}, use \code{\link[spatstat]{split.ppx}}
 splitpp3 <- function(overPattern, num){
   pat.xyz <- coords(overPattern)
 
