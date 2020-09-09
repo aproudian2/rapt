@@ -5,15 +5,16 @@
 \title{Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS
 or ATO}
 \usage{
-createSpec(pos, res = 0.05, snip = NULL)
+createSpec(pos, res = 0.05, clip = NULL)
 }
 \arguments{
 \item{pos}{A POS or ATO data frame.}
 
-\item{res}{Numeric. The bin width of the mass spectrum.}
+\item{res}{numeric. The bin width of the mass spectrum.}
 
-\item{snip}{Ignored.
-\code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} resolution.}
+\item{clip}{numeric of length two. The minimum and maximum mass values to be
+included in the mass spectrum. If NULL (the default), all values are
+included.}
 }
 \value{
 A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the
@@ -26,11 +27,11 @@ specified resolution from an ATO or POS data frame (like that created by
 \code{\link{readPOS}}).
 }
 \details{
-The input POS or ATO is binned by mass values; the resolution parameter sets
+The input POS or ATO is binned by mass values; the \code{res} parameter sets
 the width of the mass bins used in \code{\link[graphics]{hist}} to create the
 input to the \code{\link[MALDIquant]{createMassSpectrum}} call, and also acts
 as a tolerance around the spectrum minimum and maximum mass. The minimum of
-the mass value is zero.
+the mass value is zero unless \code{clip} is set.
 }
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},

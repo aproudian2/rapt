@@ -200,33 +200,39 @@ createDet <- function(ato, win = NULL, marks = NULL) {
 #' \code{\link{readPOS}}).
 #'
 #' @param pos A POS or ATO data frame.
-#' @param res Numeric. The bin width of the mass spectrum.
-#' @param snip Ignored.
-#' \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} resolution.
+#' @param res numeric. The bin width of the mass spectrum.
+#' @param clip numeric of length two. The minimum and maximum mass values to be
+#'   included in the mass spectrum. If NULL (the default), all values are
+#'   included.
+#'
 #' @return A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the
 #'   \code{mass} field of the POS or ATO, with the resolution set by \code{res}.
 #'
 #' @details
-#' The input POS or ATO is binned by mass values; the resolution parameter sets
+#' The input POS or ATO is binned by mass values; the \code{res} parameter sets
 #' the width of the mass bins used in \code{\link[graphics]{hist}} to create the
 #' input to the \code{\link[MALDIquant]{createMassSpectrum}} call, and also acts
 #' as a tolerance around the spectrum minimum and maximum mass. The minimum of
-#' the mass value is zero.
+#' the mass value is zero unless \code{clip} is set.
 #'
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}},
 #'   \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
 #'
 #' @export
-createSpec <- function(pos, res = 0.05, snip = NULL) {
-  ms.max <- max(pos[,"mass"])
+createSpec <- function(pos, res = 0.05, clip = NULL) {
+  m <- pos$mass
+  if(is.numeric(clip) & length(clip) == 2) {
+    m <- m[m >= clip[1] & m <= clip[2]]
+  }
+  ms.max <- max(m)
   ms.max <- ms.max + res
-  ms.min <- min(pos[,"mass"])
+  ms.min <- min(m)
   ms.min <- ms.min - res
   if(ms.min < 0) {
     ms.min <- 0
   }
   ms.breaks <- seq(ms.min, ms.max, res)
-  ms.hist <- hist(pos[,"mass"], ms.breaks, plot = F)
+  ms.hist <- hist(m, ms.breaks, plot = F)
   ms.dat <- MALDIquant::createMassSpectrum(
     ms.hist$mids[-1], ms.hist$counts[-1],
     metaData = attr(pos, "metaData")
