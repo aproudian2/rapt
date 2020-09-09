@@ -224,13 +224,8 @@ createSpec <- function(pos, res = 0.05, clip = NULL) {
   if(is.numeric(clip) & length(clip) == 2) {
     m <- m[m >= clip[1] & m <= clip[2]]
   }
-  ms.max <- max(m)
-  ms.max <- ms.max + res
-  ms.min <- min(m)
-  ms.min <- ms.min - res
-  if(ms.min < 0) {
-    ms.min <- 0
-  }
+  ms.max <- ceiling(max(m) / res) * res
+  ms.min <- floor(min(m) / res) * res
   ms.breaks <- seq(ms.min, ms.max, res)
   ms.hist <- hist(m, ms.breaks, plot = F)
   ms.dat <- MALDIquant::createMassSpectrum(
