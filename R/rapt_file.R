@@ -235,28 +235,6 @@ createSpec <- function(pos, res = 0.05, clip = NULL) {
   return(ms.dat)
 }
 
-#' Create a TOF Spectrum from an ATO
-#'
-#' \code{createTOF} generates a TOF spectrum (using
-#' \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}) from an ATO
-#' \code{data.frame}.
-#'
-#' @seealso \code{\link{createSpec}}
-#'
-createTOF <- function(pos, res = 0.001) {
-  ms.max <- max(pos[,"TOF"])
-  ms.max <- ms.max + res
-  ms.min <- min(pos[,"TOF"])
-  ms.min <- ms.min - res
-  ms.breaks <- seq(ms.min, ms.max, res)
-  ms.hist <- hist(pos[,"TOF"], ms.breaks, plot = F)
-  ms.dat <- MALDIquant::createMassSpectrum(
-    ms.hist$mids, ms.hist$counts,
-    metaData = attr(pos, "metaData")
-  )
-  return(ms.dat)
-}
-
 #### Write Data ####
 
 ### writePOS ###
