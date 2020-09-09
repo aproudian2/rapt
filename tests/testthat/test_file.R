@@ -11,6 +11,7 @@ test_that("POS reads correctly", {
   expect_named(pos.meta, "name")
   expect_identical(pos.meta$name, "example-pos")
 })
+pos <- readPOS("example-pos.pos")
 
 #### readATO ####
 test_that("ATO reads correctly", {
@@ -24,6 +25,7 @@ test_that("ATO reads correctly", {
   expect_named(ato.meta, "name")
   expect_identical(ato.meta$name, "example-ato")
 })
+ato <- readATO("example-ato.ato")
 
 #### readRRNG ####
 test_that("RRNG reads correctly", {
@@ -59,7 +61,6 @@ test_that("read.rcp reads correctly", {
 
 #### createSpat ####
 test_that("createSpat converts POS and ATO data.frames to pp3", {
-  pos <- readPOS("example-pos.pos")
   pp.pos <- createSpat(pos)
 
   expect_type(pp.pos, "list")
@@ -72,7 +73,10 @@ test_that("createSpat converts POS and ATO data.frames to pp3", {
   expect_equal(round(pp.pos$domain$yrange), c(-20,20))
   expect_equal(round(pp.pos$domain$zrange), c(0,51))
 
-  ato <- readATO("example-ato.ato")
+  pp.clip <- createSpat(pos, win = box3())
+  expect_equal(domain(pp.clip),box3())
+  expect_equal(pp.clip$data, pp.pos[inside.boxx(pp.pos, w = box3())]$data)
+
   pp.ato <- createSpat(ato)
 
   expect_type(pp.ato, "list")
@@ -84,4 +88,33 @@ test_that("createSpat converts POS and ATO data.frames to pp3", {
   expect_equal(round(pp.ato$domain$xrange), c(-202,204))
   expect_equal(round(pp.ato$domain$yrange), c(-204,205))
   expect_equal(round(pp.ato$domain$zrange), c(0,507))
+
+})
+
+#### createSpec ####
+test_that("createSpec converts POS and ATO data.frames to MassSpectrum", {
+  pos.ms <- createSpec(pos)
+  expect_type(pos.ms, "S4")
+  expect_s4_class(pos.ms, "MassSpectrum")
+  pos.meta <- attr(pos.ms, "metaData")
+  expect_named(pos.meta, "name")
+  expect_identical(pos.meta$name, "example-pos")
+
+  pos.ms <- createSpec(pos, clip = c(10,50))
+  expect_type(pos.ms, "S4")
+  expect_s4_class(pos.ms, "MassSpectrum")
+
+  ato.ms <- createSpec(ato)
+  expect_type(ato.ms, "S4")
+  expect_s4_class(ato.ms, "MassSpectrum")
+  ato.meta <- attr(ato.ms, "metaData")
+  expect_named(ato.meta, "name")
+  expect_identical(ato.meta$name, "example-ato")
+
+  ato.ms <- createSpec(ato, clip = c(10,50))
+  expect_type(ato.ms, "S4")
+  expect_s4_class(ato.ms, "MassSpectrum")
+  ato.meta <- attr(ato.ms, "metaData")
+  expect_named(ato.meta, "name")
+  expect_identical(ato.meta$name, "example-ato")
 })

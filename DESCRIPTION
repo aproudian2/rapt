@@ -2,7 +2,7 @@ Package: rapt
 Type: Package
 Title: Atom Probe Tomography Analysis
 Version: 0.2.0
-Date: 2020-09-08
+Date: 2020-09-09
 Authors@R: c(
     person("Andrew P.", "Proudian",
            email = "aproudia@mines.edu", role = c("aut", "cre")),
