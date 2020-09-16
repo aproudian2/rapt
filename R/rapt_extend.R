@@ -133,13 +133,14 @@ rjitter.pp3 <- function(X, domain = box3()) {
 #' @seealso \code{\link[spatstat]{superimpose}}
 #'
 #' @export
-superimpose.pp3 <- function(..., W = NULL, check = F) {
+superimpose.pp3 <- function(..., W = NULL, check = FALSE) {
   input.list <- list(...)
-  m <- unlist(sapply(input.list, spatstat::marks))
   df.list <- lapply(input.list, as.data.frame)
-  df.comb <- Reduce(rbind, df.list)
+  df.comb <- do.call(rbind, df.list)
   out.pp3 <-  createSpat(df.comb, win = W)
-  spatstat::marks(out.pp3) <- m
+  if(!is.null(df.comb$marks)) {
+    spatstat::marks(out.pp3) <- df.comb$marks
+  }
   return(out.pp3)
 }
 
@@ -175,7 +176,8 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
   Y <- spatstat::pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
            xrange = X$domain$xrange + vec[1],
            yrange = X$domain$yrange + vec[2],
-           zrange = X$domain$zrange + vec[3])
+           zrange = X$domain$zrange + vec[3],
+           marks = marks(X))
   attr(Y, "lastshift") <- vec
   return(Y)
 }

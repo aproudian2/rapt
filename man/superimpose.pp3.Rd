@@ -4,7 +4,7 @@
 \alias{superimpose.pp3}
 \title{Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.}
 \usage{
-\method{superimpose}{pp3}(..., W = NULL, check = F)
+\method{superimpose}{pp3}(..., W = NULL, check = FALSE)
 }
 \description{
 \code{superimpose.pp3}
