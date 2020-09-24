@@ -364,8 +364,7 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
 }
 
 #### quadrats.pp3 ####
-#' Extension of \code{\link[spatstat]{quadrats}} to \code{\link[spatstat]{pp3}}
-#' objects.
+#' Extension of quadrats to pp3 objects.
 #'
 #' Divides volume into quadrats and returns them.
 #'
@@ -523,11 +522,14 @@ K3multi <- function(X, I, J, r, breaks,
 #' This function is not yet functional - many subfunctions must also be extended
 #' to pp3.
 #'
-#' @param use.Tbar Not implemented: leave FALSE.
+#' @param use.Tbar Logical value indicating choice of test statistic. If TRUE,
+#'   use the alternative test statistic, which is appropriate for summary
+#'   functions with roughly constant variance, such as K(r)/r or L(r).
 #'
 #' @family spatstat extensions
 #'
 #' @seealso \code{\link[spatstat]{studpermu.test}}
+# Add ability to supply a summary function directly...
 studpermu.test.pp3 <- function (X, formula,
                                 summaryfunction = K3est, ...,
                                 nperm = 999, use.Tbar = FALSE,
@@ -638,10 +640,11 @@ studpermu.test.pp3 <- function (X, formula,
     warning("Don't expect exact results - group sizes are too small")
   if (is.null(rmax)) {
     rmax <- sapply(pp, function(P) {
-      diameter(P$domain)/2
+      spatstat::diameter(P$domain)/2
     })
     rmax <- min(rmax)
   }
+  rinterval <- c(0, rmax)
   rr <- seq(0, rmax, length.out = nrval)
   needcorx <- "correction" %in% names(formals(summaryfunction))
   gavecorx <- "correction" %in% names(list(...))
@@ -672,25 +675,26 @@ studpermu.test.pp3 <- function (X, formula,
   combs <- combn(lev, 2)
   predigested <- list(lev = lev, foar = foar, m = m, combs = combs,
                       rrr = rr, ranger = rmax)
-  # limit of update - need Tstat.pp3
-  if (use.Tbar) { # not implemented (locate Tbarstat...)
-    Tobs <- Tbarstat(groupi, predigested)
-    Tsim <- replicate(nperm, Tbarstat(sample(groupi), predigested))
+  if (use.Tbar) {
+    Tobs <- T.barstat(groupi, predigested)
+    Tsim <- replicate(nperm, T.barstat(sample(groupi), predigested))
   }
   else {
-    Tobs <- Tstat(groupi, predigested)
-    Tsim <- replicate(nperm, Tstat(sample(groupi), predigested))
+    Tobs <- T.stat(groupi, predigested)
+    Tsim <- replicate(nperm, T.stat(sample(groupi), predigested))
   }
   names(Tobs) <- if (use.Tbar)
     "Tbar"
   else "T"
   pval <- (1 + sum(Tobs < Tsim))/(1 + nperm)
   method <- c("Studentized permutation test for grouped point patterns",
-              if (is.hyperframe(X)) pasteFormula(formula) else NULL,
-              choptext(ngroups, "groups:", paste(levels(data$group),
-                collapse = ", ")), choptext("summary function:",
-                  paste0(fooname, ","), "evaluated on r in", prange(rinterval)),
-              choptext("test statistic:", if (use.Tbar) "Tbar," else "T,",
+              ifelse(is.hyperframe(X),
+                     spatstat.utils::pasteFormula(formula), NULL),
+              spatstat.utils::choptext(ngroups, "groups:", paste(levels(data$group),
+                collapse = ", ")), spatstat.utils::choptext("summary function:",
+                  paste0(fooname, ","), "evaluated on r in",
+                  spatstat.utils::prange(rinterval)),
+              spatstat.utils::choptext("test statistic:", ifelse(use.Tbar, "Tbar,", "T,"),
                        nperm, "random permutations"))
   fooshort <- switch(fooname, pcf = "pair correlation ",
                      Kinhom = "inhomogeneous K-",
@@ -707,7 +711,7 @@ studpermu.test.pp3 <- function (X, formula,
   fvs <- lapply(fvs, "attr<-", which = "alim", value = rinterval)
   testerg$curves <- hyperframe(fvs = fvs, groups = data$group)
   fvtheo <- fvlist[[1]]
-  fvnames(fvtheo, ".y") <- "theo"
+  spatstat::fvnames(fvtheo, ".y") <- "theo"
   attr(fvtheo, "alim") <- rinterval
   testerg$curvtheo <- fvtheo[, c(argu, "theo")]
   grmn <- lapply(lev, splitmean, ind = groupi, f = foar)
@@ -716,65 +720,167 @@ studpermu.test.pp3 <- function (X, formula,
   return(testerg)
 }
 
+# These helpers are undocumented, but located at
+# https://rdrr.io/github/spatstat/spatstat.core/src/R/studpermutest.R
+
+splitmean <- function(l, ind, f) {
+  apply(f[ , ind == l], 1, mean)
+}
+splitvarn <- function(l, ind, f, m) {
+  apply(f[ , ind == l], 1, var) / m[l]
+}
+studentstat <- function(i, grmean, grvar) {
+  (grmean[, i[1]] - grmean[, i[2]])^2 / (grvar[i[1],] + grvar[i[2], ])
+}
+
+T.stat <- function (ind = groupi, predigested) {
+  # predigested should be a list with entries lev, foar, m, combs, rrr
+  with(predigested, {
+    grmean <- sapply(lev, splitmean, ind=ind, f=foar)
+    grvar <- t(sapply(lev, splitvarn, ind=ind, f=foar, m=m))
+    y <- apply(combs, 2, studentstat, grmean=grmean, grvar=grvar)
+    sum(apply(y, 2, trapint, x = rrr))
+  })
+}
+
+intstudent <- function(i, rrr, grmean, meangrvar) {
+  trapint(rrr, (grmean[, i[1]] - grmean[, i[2]])^2 /
+            (meangrvar[i[1]] + meangrvar[i[2]]))
+}
+
+T.barstat <- function (ind = groupi, predigested) {
+  # predigested should be a list
+  # with entries lev, foar, m, combs, rrr, ranger
+  with(predigested, {
+    grmean <- sapply(lev, splitmean, ind=ind, f=foar)
+    grvar <- t(sapply(lev, splitvarn, ind=ind, f=foar, m=m))
+    meangrvar <- apply(grvar, 1, trapint, x = rrr)/ranger
+    sum(apply(combs, 2, intstudent,
+              rrr=rrr, grmean=grmean, meangrvar=meangrvar))
+    # trapint(rr[taker], grvar[i[1],] + grvar[i[2], ]))))
+  })
+}
+
+makefv <- function(yvals, xvals, template) {
+  fdf <- data.frame(r = xvals, y = yvals)
+  argu <- fvnames(template, ".x")
+  valu <- fvnames(template, ".y")
+  names(fdf) <- c(argu,valu)
+  fv(fdf, argu = argu, ylab = attr(template, "ylab"), valu = valu,
+     fmla = attr(template,"fmla"), alim = attr(template, "alim"))
+}
+
+# Trapezoidal rule approximation to integral
+trapint <- function(x, y) {
+  nonan <- !is.na(y)
+  nn <- sum(nonan)
+  if(nn < 2L) return(0)
+  Y <- y[nonan]
+  X <- x[nonan]
+  0.5 * sum( (Y[-1] + Y[-nn]) * diff(X))
+}
+
+# call foo(x, further arguments) repeatedly
+# further arguments are taken from hyperframe H and ...
+multicall <- function(foo, x, H, ...){
+  stopifnot(is.hyperframe(H))
+  if (is.hyperframe(x)) {
+    x <- as.list(x)[[1]]
+  } else if(!is.list(x))
+    stop("in multicall: x should be a hyperframe or list", call.=FALSE)
+
+  # check if same length
+  nrows <- dim(H)[1]
+  if (length(x) != nrows)
+    stop(paste("in multicall: x and H need to have",
+               "the same number of rows or list elements"),
+         call.=FALSE)
+  dotargs <- list(...)
+  hnames <- names(H)
+  argnames <- names(formals(foo))#' always assume first argument is given
+
+  ppname <- argnames[1]
+  argnames <- argnames[-1]
+  dotmatch <- pmatch(names(dotargs), argnames)
+  dotmatched <- dotmatch[!is.na(dotmatch)]
+  dotuseargs <- dotargs[!is.na(dotmatch)]
+  restargs <- if(length(dotmatched) >0) argnames[-dotmatched] else argnames
+  hmatch <- pmatch(hnames, restargs)
+  huse <- !is.na(hmatch)
+  lapply(seq_len(nrows), function (i)
+    do.call(foo, c(list(x[[i]]),
+                   as.list(H[i, huse, drop=TRUE, strip=FALSE]),
+                   dotargs)))
+}
+
 #### Tstat.pp3 ####
 #' Extends Tstat to pp3
 #'
+#' Tstat.pp3 extends the third-order summary statistic
+#' \code{\link[spatstat]{Tstat}} to pp3
+#'
+#' @param correction One of "none" or "isotropic." "translation" correction is
+#'   planned but not yet implemented.
+#'
 #' @family spatstat extensions
-Tstat.pp3 <- function (X, ..., rmax = NULL,
-                       correction = c("translation","isotropic"),
+#'
+#' @seealso \code{\link[spatstat]{Tstat}}, Schladitz, K. and Baddeley, A. (2000)
+#' A third order point process characteristic.
+#' Scandinavian Journal of Statistics 27 (2000) 657-671.
+Tstat.pp3 <- function (X, ..., rmax = NULL, nrval = 128,
+                       correction = "border",
                        ratio = FALSE, verbose = TRUE) {
-  verifyclass(X, "pp3")
-  npts <- npoints(X)
-  W <- domain(X)
-  areaW <- volume(W)
+  spatstat::verifyclass(X, "pp3")
+  npts <- spatstat::npoints(X)
+  W <- spatstat::domain(X)
+  areaW <- spatstat::volume(W)
   lambda <- npts/areaW
   lambda2 <- (npts * (npts - 1))/(areaW^2)
   lambda3 <- (npts * (npts - 1) * (npts - 2))/(areaW^3)
-  rmaxdefault <- if (!is.null(rmax))
-    rmax
-  else diameter(W)/2
-  #limit of update
-  breaks <- handle.r.b.args(r, NULL, W, rmaxdefault = rmaxdefault)
-  r <- breaks$r
-  rmax <- breaks$max
+  if (is.null(rmax))
+    rmax <- spatstat::diameter(W)/2
+  r <- seq(0, rmax, length.out = nrval)
+  breaks <- spatstat::breakpts.from.r(r)
   correction.given <- !missing(correction) && !is.null(correction)
   if (!correction.given)
-    correction <- c("border", "bord.modif", "translate")
-  correction <- pickoption(
+    correction <- c("border", "bord.modif") #, "translate") not implemented yet
+  correction <- spatstat::pickoption(
     "correction", correction,
     c(none = "none",
       border = "border", bord.modif = "bord.modif", trans = "translate",
       translate = "translate", translation = "translate", best = "best"),
     multi = TRUE)
-  correction <- implemented.for.T(correction, W$type, correction.given)
-  alim <- c(0, min(rmax, rmaxdefault))
-  TT <- data.frame(r = r, theo = (pi/2) * (pi - 3 * sqrt(3)/4) *
-                     r^4)
+  alim <- c(0, rmax)
+  TT <- data.frame(r = r, theo = 5/12 * pi^2 * r^6)
   desc <- c("distance argument r", "theoretical Poisson %s")
-  TT <- fv(TT, "r", quote(T(r)), "theo", , alim, c("r", "%s[pois](r)"),
-           desc, fname = "T") # blank is in ppp version...
+  TT <- spatstat::fv(TT, "r",
+                     quote(T(r)), "theo", , alim, c("r", "%s[pois](r)"),
+                     desc, fname = "T") # blank is in ppp version...
   if (ratio) {
     denom <- lambda2 * areaW
-    numT <- eval.fv(denom * TT)
-    denT <- eval.fv(denom + TT * 0)
+    numT <- spatstat::eval.fv(denom * TT)
+    denT <- spatstat::eval.fv(denom + TT * 0)
     attributes(numT) <- attributes(denT) <- attributes(TT)
     attr(numT, "desc")[2] <- "numerator for theoretical Poisson %s"
     attr(denT, "desc")[2] <- "denominator for theoretical Poisson %s"
   }
-  rmax <- max(r)
-  close <- closepairs(X, rmax, what = "ijd", twice = FALSE,
-                      neat = FALSE)
+  close <- spatstat::closepairs(X, rmax, what = "ijd", twice = FALSE,
+                                neat = FALSE)
   I <- close$i
   J <- close$j
   DIJ <- close$d
   nI <- length(I)
+  continue <- TRUE
   if (verbose) {
     nTmax <- nI * (nI - 1)/2
     esttime <- exp(1.25 * log(nTmax) - 21.5)
     message(paste("Searching", nTmax, "potential triangles;",
-                  "estimated time", codetime(esttime)))
+                  "estimated time", spatstat::codetime(esttime)))
+    if(esttime > 60)
+      continue <- askYesNo("Estimated time greater than one minute. Continue?")
   }
-  tri <- trianglediameters(I, J, DIJ, nvert = npts)
+  if (!continue) return(NULL)
+  tri <- spatstat::trianglediameters(I, J, DIJ, nvert = npts)
   stopifnot(identical(colnames(tri), c("i", "j", "k", "diam")))
   II <- with(tri, c(i, j, k))
   DD <- with(tri, rep.int(diam, 3))
@@ -783,90 +889,93 @@ Tstat.pp3 <- function (X, ..., rmax = NULL,
     numTun <- cumsum(wh)
     denTun <- lambda3 * areaW
     Tun <- numTun/denTun
-    TT <- bind.fv(TT, data.frame(un = Tun), "hat(%s)[un](r)",
-                  "uncorrected estimate of %s", "un")
+    TT <- spatstat::bind.fv(TT, data.frame(un = Tun), "hat(%s)[un](r)",
+                            "uncorrected estimate of %s", "un")
     if (ratio) {
-      numT <- bind.fv(numT, data.frame(un = numTun), "hat(%s)[un](r)",
-                      "numerator of uncorrected estimate of %s", "un")
-      denT <- bind.fv(denT, data.frame(un = denTun), "hat(%s)[un](r)",
-                      "denominator of uncorrected estimate of %s",
-                      "un")
+      numT <- spatstat::bind.fv(numT, data.frame(un = numTun), "hat(%s)[un](r)",
+                                "numerator of uncorrected estimate of %s", "un")
+      denT <- spatstat::bind.fv(denT, data.frame(un = denTun), "hat(%s)[un](r)",
+                                "denominator of uncorrected estimate of %s",
+                                "un")
     }
   }
   if (any(correction == "border" | correction == "bord.modif")) {
-    b <- bdist.points(X)
+    b <- bdist.points3(X)
     bI <- b[II]
-    RS <- Kount(DD, bI, b, breaks)
+    RS <- spatstat::Kount(DD, bI, b, breaks)
     if (any(correction == "bord.modif")) {
-      denom.area <- eroded.areas(W, r)
+      denom.area <- eroded.volumes(W, r)
       numTbm <- RS$numerator
       denTbm <- lambda3 * denom.area
       Tbm <- numTbm/denTbm
-      TT <- bind.fv(TT, data.frame(bord.modif = Tbm), "hat(%s)[bordm](r)",
-                    "modified border-corrected estimate of %s", "bord.modif")
+      TT <- spatstat::bind.fv(TT, data.frame(bord.modif = Tbm),
+                              "hat(%s)[bordm](r)",
+                              "modified border-corrected estimate of %s",
+                              "bord.modif")
       if (ratio) {
-        numT <- bind.fv(numT, data.frame(bord.modif = numTbm),
+        numT <- spatstat::bind.fv(numT, data.frame(bord.modif = numTbm),
                         "hat(%s)[bordm](r)",
                         "numerator of modified border-corrected estimate of %s",
                         "bord.modif")
-        denT <- bind.fv(denT, data.frame(bord.modif = denTbm),
-                        "hat(%s)[bordm](r)",
-                        "denominator of modified border-corrected estimate of %s",
-                        "bord.modif")
+        denT <- spatstat::bind.fv(denT, data.frame(bord.modif = denTbm),
+                                  "hat(%s)[bordm](r)",
+                      "denominator of modified border-corrected estimate of %s",
+                      "bord.modif")
       }
     }
     if (any(correction == "border")) {
       numTb <- RS$numerator
       denTb <- lambda2 * RS$denom.count
       Tb <- numTb/denTb
-      TT <- bind.fv(TT, data.frame(border = Tb), "hat(%s)[bord](r)",
+      TT <- spatstat::bind.fv(TT, data.frame(border = Tb), "hat(%s)[bord](r)",
                     "border-corrected estimate of %s", "border")
       if (ratio) {
-        numT <- bind.fv(numT, data.frame(border = numTb),
-                        "hat(%s)[bord](r)",
-                        "numerator of border-corrected estimate of %s",
-                        "border")
-        denT <- bind.fv(denT, data.frame(border = denTb),
-                        "hat(%s)[bord](r)",
-                        "denominator of border-corrected estimate of %s",
-                        "border")
+        numT <- spatstat::bind.fv(numT, data.frame(border = numTb),
+                                  "hat(%s)[bord](r)",
+                                "numerator of border-corrected estimate of %s",
+                                "border")
+        denT <- spatstat::bind.fv(denT, data.frame(border = denTb),
+                                  "hat(%s)[bord](r)",
+                              "denominator of border-corrected estimate of %s",
+                              "border")
       }
     }
   }
   if (any(correction == "translate")) {
+    stop("Translation correction not yet implemented.")
     edgewt <- edgetri.Trans(X, tri[, 1:3])
     wh <- whist(tri$diam, breaks$val, edgewt)
     numTtrans <- 3 * cumsum(wh)
     denTtrans <- lambda3 * areaW
     Ttrans <- numTtrans/denTtrans
-    h <- diameter(W)/2
+    h <- spatstat::diameter(W)/2
     Ttrans[r >= h] <- NA
-    TT <- bind.fv(TT, data.frame(trans = Ttrans), "hat(%s)[trans](r)",
+    TT <- spatstat::bind.fv(TT, data.frame(trans = Ttrans), "hat(%s)[trans](r)",
                   "translation-corrected estimate of %s", "trans")
     if (ratio) {
-      numT <- bind.fv(numT, data.frame(trans = numTtrans),
-                      "hat(%s)[trans](r)",
-                      "numerator of translation-corrected estimate of %s",
-                      "trans")
-      denT <- bind.fv(denT, data.frame(trans = denTtrans),
-                      "hat(%s)[trans](r)",
-                      "denominator of translation-corrected estimate of %s",
-                      "trans")
+      numT <- spatstat::bind.fv(numT, data.frame(trans = numTtrans),
+                                "hat(%s)[trans](r)",
+                            "numerator of translation-corrected estimate of %s",
+                            "trans")
+      denT <- spatstat::bind.fv(denT, data.frame(trans = denTtrans),
+                                "hat(%s)[trans](r)",
+                          "denominator of translation-corrected estimate of %s",
+                          "trans")
     }
   }
   formula(TT) <- . ~ r
-  unitname(TT) <- unitname(X)
+  spatstat::unitname(TT) <- spatstat::unitname(X)
   if (ratio) {
     formula(numT) <- formula(denT) <- . ~ r
-    unitname(numT) <- unitname(denT) <- unitname(TT)
-    TT <- rat(TT, numT, denT, check = FALSE)
+    spatstat::unitname(denT) <- spatstat::unitname(TT)
+    spatstat::unitname(numT) <- spatstat::unitname(TT)
+    TT <- spatstat::rat(TT, numT, denT, check = FALSE)
   }
   return(TT)
 }
 
 #### bdist.points3 ####
-#' Extension of \code{\link[spatstat]{bdist.points}}. Helper function for border
-#' correction \code{\link{bK3est}}.
+#' Extension of \code{\link[spatstat]{bdist.points}}. Helper function for border correction \code{\link{bK3est}}.
 #'
 #' Finds the smallest distance to a boundary for each point in a point pattern.
 #'
@@ -898,8 +1007,7 @@ bdist.points3 <- function (X) {
 }
 
 #### bdist.points3.multi ####
-#' Returns the shortest distances to boundaries in the x, y, and z directions
-#' separately.
+#' Returns the shortest distances to boundaries in the x, y, and z directions separately.
 #'
 #' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
 #'   object.

@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_extend.R
 \name{bdist.points3}
 \alias{bdist.points3}
-\title{Extension of \code{\link[spatstat]{bdist.points}}. Helper function for border
-correction \code{\link{bK3est}}.}
+\title{Extension of \code{\link[spatstat]{bdist.points}}. Helper function for border correction \code{\link{bK3est}}.}
 \usage{
 bdist.points3(X)
 }

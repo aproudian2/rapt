@@ -8,15 +8,25 @@ Tstat.pp3(
   X,
   ...,
   rmax = NULL,
-  correction = c("translation", "isotropic"),
+  nrval = 128,
+  correction = "border",
   ratio = FALSE,
   verbose = TRUE
 )
 }
+\arguments{
+\item{correction}{One of "none" or "isotropic." "translation" correction is
+planned but not yet implemented.}
+}
 \description{
-Extends Tstat to pp3
+Tstat.pp3 extends the third-order summary statistic
+\code{\link[spatstat]{Tstat}} to pp3
 }
 \seealso{
+\code{\link[spatstat]{Tstat}}, Schladitz, K. and Baddeley, A. (2000)
+A third order point process characteristic.
+Scandinavian Journal of Statistics 27 (2000) 657-671.
+
 Other spatstat extensions: 
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},

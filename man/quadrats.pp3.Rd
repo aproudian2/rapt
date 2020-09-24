@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_extend.R
 \name{quadrats.pp3}
 \alias{quadrats.pp3}
-\title{Extension of \code{\link[spatstat]{quadrats}} to \code{\link[spatstat]{pp3}}
-objects.}
+\title{Extension of quadrats to pp3 objects.}
 \usage{
 quadrats.pp3(X, nx, ny, nz, box.dims = NULL)
 }

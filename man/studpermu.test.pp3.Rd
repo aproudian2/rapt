@@ -18,7 +18,9 @@ studpermu.test.pp3(
 )
 }
 \arguments{
-\item{use.Tbar}{Not implemented: leave FALSE.}
+\item{use.Tbar}{Logical value indicating choice of test statistic. If TRUE,
+use the alternative test statistic, which is appropriate for summary
+functions with roughly constant variance, such as K(r)/r or L(r).}
 }
 \description{
 This function is not yet functional - many subfunctions must also be extended
