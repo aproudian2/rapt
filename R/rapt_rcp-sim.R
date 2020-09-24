@@ -38,7 +38,7 @@ read.rcp <- function(fpath_config, fpath_sys,
                     sep = " ", col.names = c("x", "y", "z", "type"))
   pp <- createSpat(rcp[,c("x","y","z")])
   if (scaleUp == TRUE) {
-    a <- read.table(fpath_sys)
+    a <- read.table(fpath_sys) # Change this to scan(); make sys optional
     r <- as.numeric(levels(a$V1)[2])
     pp <- scaleRCP(pp, newRadius = newRadius, oldRadius = r)
   }
@@ -96,6 +96,7 @@ scaleRCP <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
 }
 
 #### stitch.size ###
+# keep marks; add ability to specify by repetitions
 #' Stitches together a RCP point pattern with periodic boundary conditions
 #'
 #' Similar to \code{\link{stitch}}. Instead of only inputting the number of
