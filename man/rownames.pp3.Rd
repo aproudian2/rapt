@@ -2,7 +2,8 @@
 % Please edit documentation in R/rapt_extend.R
 \name{rownames.pp3}
 \alias{rownames.pp3}
-\title{Extends \code{\link[base:row+colnames]{rownames}} to \code{\link[spatstat]{pp3}}.}
+\title{Extends \code{\link[base:row+colnames]{rownames}} to
+\code{\link[spatstat]{pp3}}.}
 \usage{
 rownames.pp3(pat)
 }
@@ -13,7 +14,8 @@ rownames.pp3(pat)
 Character vector. The rownames of the point pattern.
 }
 \description{
-Extends \code{\link[base:row+colnames]{rownames}} to \code{\link[spatstat]{pp3}}.
+Extends \code{\link[base:row+colnames]{rownames}} to
+\code{\link[spatstat]{pp3}}.
 }
 \seealso{
 \code{\link[base:row+colnames]{rownames}}

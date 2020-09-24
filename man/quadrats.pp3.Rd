@@ -10,11 +10,11 @@ quadrats.pp3(X, nx, ny, nz, box.dims = NULL)
 \arguments{
 \item{X}{The \code{\link[spatstat]{pp3}} object to split up.}
 
-\item{nx, ny, nz}{Number of ractangular quadrats in the x, y, and z directions,
+\item{nx, ny, nz}{Number of rectangular quadrats in the x, y, and z directions,
 if you wish to split up your point patthern by number of boxes.}
 
 \item{box.dims}{Vector containing the dimensions of the subsetted 3D boxxes,
-if you wish to define the individual bopx size. Use either \code{nx, ny,
+if you wish to define the individual boxx size. Use either \code{nx, ny,
 nz} or \code{box.dims}, but not both.}
 }
 \value{
@@ -25,6 +25,7 @@ Divides volume into quadrats and returns them.
 }
 \seealso{
 Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{rPoissonCluster3}()},
 \code{\link{rjitter.pp3}()},
@@ -33,6 +34,7 @@ Other spatstat extensions:
 \code{\link{sample.pp3}()},
 \code{\link{sample.ppp}()},
 \code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
 \code{\link{superimpose.pp3}()}
 }
 \concept{spatstat extensions}

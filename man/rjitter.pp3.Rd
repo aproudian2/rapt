@@ -14,6 +14,7 @@ Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
 \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}}
 
 Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
@@ -22,6 +23,7 @@ Other spatstat extensions:
 \code{\link{sample.pp3}()},
 \code{\link{sample.ppp}()},
 \code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
 \code{\link{superimpose.pp3}()}
 }
 \concept{spatstat extensions}

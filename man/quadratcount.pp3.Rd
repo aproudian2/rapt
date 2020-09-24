@@ -2,7 +2,8 @@
 % Please edit documentation in R/rapt_extend.R
 \name{quadratcount.pp3}
 \alias{quadratcount.pp3}
-\title{Extension of \code{\link[spatstat]{quadratcount}} to \code{\link[spatstat]{pp3}} objects.}
+\title{Extension of \code{\link[spatstat]{quadratcount}} to
+\code{\link[spatstat]{pp3}} objects.}
 \usage{
 \method{quadratcount}{pp3}(X, nx = 5, ny = 5, nz = 5)
 }
@@ -20,6 +21,7 @@ Divides volume into quadrats and counts the number of points in each quadrat.
 }
 \seealso{
 Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
 \code{\link{rjitter.pp3}()},
@@ -28,6 +30,7 @@ Other spatstat extensions:
 \code{\link{sample.pp3}()},
 \code{\link{sample.ppp}()},
 \code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
 \code{\link{superimpose.pp3}()}
 }
 \concept{spatstat extensions}

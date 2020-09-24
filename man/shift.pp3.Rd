@@ -13,6 +13,7 @@ Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
 \code{\link[spatstat]{shift}}
 
 Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
@@ -21,6 +22,7 @@ Other spatstat extensions:
 \code{\link{rpoint3}()},
 \code{\link{sample.pp3}()},
 \code{\link{sample.ppp}()},
+\code{\link{studpermu.test.pp3}()},
 \code{\link{superimpose.pp3}()}
 }
 \concept{spatstat extensions}

@@ -21,6 +21,7 @@ Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
 \code{\link[base]{sample}}
 
 Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
@@ -29,6 +30,7 @@ Other spatstat extensions:
 \code{\link{rpoint3}()},
 \code{\link{sample.ppp}()},
 \code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
 \code{\link{superimpose.pp3}()}
 }
 \concept{spatstat extensions}
