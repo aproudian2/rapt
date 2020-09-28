@@ -159,9 +159,17 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
 #'
 #' @param domain A \code{\link[spatstat]{box3}}. The domain in which to
 #' generate the lattice
-#' @param lattice Character. The lattice to generate (one of "sc", "bcc", or
+#' @param a numeric. The lattice parameter of the lattice. For cubic lattices
+#'   (i.e. "sc", "bcc", "fcc"), this is the length of the side of the cube; for
+#'   "hcp", this is the length of the side of the hexagon. See Details.
+#' @param lattice character. The lattice to generate (one of "sc", "bcc", or
 #' "fcc").
 #' @return A pp3 with points at the lattice positions
+#'
+#' @details For a hexagonal close packed (hcp) lattice, there are two dimensions
+#'   that are defined: the side of the hexagon, a, and the height of the
+#'   hexagonal prism, c. For a perfect hcp crystal, the ratio of these two
+#'   dimensions is exactly \eqn{c/a = \sqrt{8/3}}.
 #'
 #' @family simulation functions
 #' @seealso \code{\link{hcp.gen()}}, \code{\link[spatstat]{pp3()}}
@@ -196,6 +204,10 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
     ind <- expand.grid(i = seq_along(x), j = seq_along(y), k = seq_along(z)) - 1
     p <- g[(ind$i + ind$j + ind$k) %% 2 == 0,]
     pp3(p$x, p$y, p$z, domain)
+  } else if (lattice == "hcp") {
+    df <- hcp.gen(a/2, win = domain) #using this function for now; will revise
+    pp3(df$x, df$y, df$z, domain)
+    # x1 <- seq(domain$xrange[1], domain$xrange[2], a)
   } else {
     warning("Unrecognized lattice")
   }

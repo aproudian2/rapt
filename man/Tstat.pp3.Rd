@@ -22,10 +22,12 @@ planned but not yet implemented.}
 Tstat.pp3 extends the third-order summary statistic
 \code{\link[spatstat]{Tstat}} to pp3
 }
+\references{
+Schladitz, K. and Baddeley, A. (2000) A third order point process
+characteristic. Scandinavian Journal of Statistics 27 (2000) 657-671.
+}
 \seealso{
-\code{\link[spatstat]{Tstat}}, Schladitz, K. and Baddeley, A. (2000)
-A third order point process characteristic.
-Scandinavian Journal of Statistics 27 (2000) 657-671.
+\code{\link[spatstat]{Tstat}}
 
 Other spatstat extensions: 
 \code{\link{quadratcount.pp3}()},

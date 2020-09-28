@@ -77,7 +77,6 @@ subSquare <- function(orig, win) {
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
 #' @export
-
 percentSelect <- function(perc, pattern) {
 
   reLabel <- rlabel(pattern,

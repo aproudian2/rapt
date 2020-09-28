@@ -19,7 +19,7 @@ makecluster(
   den = 1,
   gb = FALSE,
   gbp = c(0, 1),
-  gbmethod = 1,
+  gbmethod = "r",
   rb = FALSE,
   rbp = 1,
   rbmethod = 1,

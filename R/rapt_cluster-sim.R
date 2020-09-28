@@ -342,7 +342,7 @@ makecluster <- function(under, over, radius1, radius2,
                         den = 1,
                         gb = FALSE,
                         gbp = c(0,1),
-                        gbmethod = 1,
+                        gbmethod = "r",
                         rb = FALSE,
                         rbp = 1,
                         rbmethod = 1,
@@ -601,7 +601,7 @@ makecluster <- function(under, over, radius1, radius2,
       #browser()
       if(gb == TRUE){
         n <- npoints(over.scaled)
-        gbval <- rgblur(n,gbp[1],gbp[2],coords = "rec", method = gbmethod)
+        gbval <- rgblur(n,gbp[1], gbp[2], coords = "rec", method = gbmethod)
         over.xyz <- coords(over.scaled)
         over.xyz.new <- over.xyz + gbval
         over.scaled.new <- createSpat(over.xyz.new, win = domain(over.scaled))
@@ -1395,7 +1395,7 @@ bcc.gen <- function(npoint, win){
 #' @param win A \code{\link[spatstat]{box3}} object defining the window for the
 #'   generation.
 #'
-#' @return A data frame object containing xyz coordinates of the HCP lattice
+#' @return A data.frame object containing xyz coordinates of the HCP lattice
 #'   centers.
 #' @seealso \code{\link{hcpcluster}}
 hcp.gen <- function(r, win){
@@ -1759,38 +1759,43 @@ randomTakeAway <- function(cluster.indices, n, N, s){
 #' Function which returns a list of coordinates of radial gaussian blurred
 #' points with uniform probability to be sent in any direction. This function
 #' was written to apply a blur in positions of RCP spaced clusters. The radial
-#' distribution is actually "folded normal" due to the fact that r > 0. See
-#' \url{https://en.wikipedia.org/wiki/Folded_normal_distribution}.
+#' distribution is actually "folded normal" due to the fact that r > 0.
 #'
 #' @param n The number of points you want returned
 #' @param mean Mean of the regular normal distribution for radius.
 #' @param sd Standard deviation for the normal distribution for radius.
-#' @param coords Return comand. Either "rec" or "sph". See below for more.
-#' @param method 1 for uniformly distributing direction and normally
-#' distributing r, 2 for normally distributing x y and z
+#' @param coords Return command. Either "rec" or "sph". See below for more.
+#' @param method One of "r" and "xyz". "r" uniformly distributes direction and
+#' normally distributes r, while "xyz" normally distributes x, y and z.
 #'
 #' @return If \code{coords = "rec"}, returns a vector of cartesian coordinates.
 #'   If \code{coords = "sph"}, returns a vector of spherical coordinates.
-rgblur <- function(n = 1,mean = 0,sd = 1, coords = "rec", method = 1) {
-
-  if(method == 1){
+#'
+#' @references \url{https://en.wikipedia.org/wiki/Folded_normal_distribution}
+#' @seealso \code{\link{makecluster}}
+rgblur <- function(n = 1, mean = 0, sd = 1,
+                   coords = "rec", method = "r") {
+  stopifnot(any(method %in% c("r","xyz")), "method must be one of 'r' or 'xyz'")
+  if (method == "r") {
     r <- abs(rnorm(n,mean,sd))
     theta <- runif(n,0,2*pi)
     phi <- acos(runif(n,-1,1))
 
-    if(coords == "sph"){
+    if (coords == "sph") {
       return(as.data.frame(cbind(r,theta,phi)))
-    }else{
+    } else {
       x <- r*sin(phi)*cos(theta)
       y <- r*sin(phi)*sin(theta)
       z <- r*cos(phi)
       return(as.data.frame(cbind(x,y,z)))
     }
-  }else if(method == 2){
+  } else if (method == "xyz") {
     x <- rnorm(n, mean, sd)
     y <- rnorm(n, mean, sd)
     z <- rnorm(n, mean, sd)
     return(as.data.frame(cbind(x,y,z)))
+  } else {
+    stop("Method not recognized")
   }
 }
 

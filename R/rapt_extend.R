@@ -525,6 +525,7 @@ K3multi <- function(X, I, J, r, breaks,
 #' @param use.Tbar Logical value indicating choice of test statistic. If TRUE,
 #'   use the alternative test statistic, which is appropriate for summary
 #'   functions with roughly constant variance, such as K(r)/r or L(r).
+#' @param rinterval mumeric of length 2. Experimental.
 #'
 #' @family spatstat extensions
 #'
@@ -532,7 +533,7 @@ K3multi <- function(X, I, J, r, breaks,
 # Add ability to supply a summary function directly...
 studpermu.test.pp3 <- function (X, formula,
                                 summaryfunction = K3est, ...,
-                                nperm = 999, use.Tbar = FALSE,
+                                nperm = 999, use.Tbar = FALSE, rinterval = NULL,
                                 minpoints = 20, rmax = NULL, nrval = 128,
                                 arguments.in.data = FALSE) {
   if (arguments.in.data & !is.hyperframe(X))
@@ -636,6 +637,8 @@ studpermu.test.pp3 <- function (X, formula,
                spatstat.utils::commasep(m)),
          call. = FALSE)
   npossible <- factorial(sum(m))/prod(factorial(m))/prod(factorial(table(m)))
+  if (is.nan(npossible))
+    npossible <- Inf
   if (npossible < max(100, nperm))
     warning("Don't expect exact results - group sizes are too small")
   if (is.null(rmax)) {
@@ -644,8 +647,11 @@ studpermu.test.pp3 <- function (X, formula,
     })
     rmax <- min(rmax)
   }
-  rinterval <- c(0, rmax)
+  if (is.null(rinterval))
+    rinterval <- c(0, rmax)
+  ranger <- diff(range(rinterval))
   rr <- seq(0, rmax, length.out = nrval)
+  taker <- rr >= rinterval[1] & rr <= rinterval[2]
   needcorx <- "correction" %in% names(formals(summaryfunction))
   gavecorx <- "correction" %in% names(list(...))
   corx <- if (needcorx && !gavecorx)
@@ -668,13 +674,15 @@ studpermu.test.pp3 <- function (X, formula,
       with(data, summaryfunction(pp, rmax = rmax, ..., correction = corx))
     }
   }
+  # can skip most of the previous if summary functions are supplied...
+  # need to extract rmax, nrval from functions
   fvtemplate <- fvlist[[1]]
   valu <- attr(fvtemplate, "valu")
   argu <- attr(fvtemplate, "argu")
-  foar <- sapply(lapply(fvlist, "[[", valu), "[", TRUE)
+  foar <- sapply(lapply(fvlist, "[[", valu), "[", taker)
   combs <- combn(lev, 2)
   predigested <- list(lev = lev, foar = foar, m = m, combs = combs,
-                      rrr = rr, ranger = rmax)
+                      rrr = rr[taker], ranger = ranger)
   if (use.Tbar) {
     Tobs <- T.barstat(groupi, predigested)
     Tsim <- replicate(nperm, T.barstat(sample(groupi), predigested))
@@ -690,11 +698,14 @@ studpermu.test.pp3 <- function (X, formula,
   method <- c("Studentized permutation test for grouped point patterns",
               ifelse(is.hyperframe(X),
                      spatstat.utils::pasteFormula(formula), NULL),
-              spatstat.utils::choptext(ngroups, "groups:", paste(levels(data$group),
-                collapse = ", ")), spatstat.utils::choptext("summary function:",
+              spatstat.utils::choptext(ngroups, "groups:",
+                                       paste(levels(data$group),
+                collapse = ", ")),
+              spatstat.utils::choptext("summary function:",
                   paste0(fooname, ","), "evaluated on r in",
                   spatstat.utils::prange(rinterval)),
-              spatstat.utils::choptext("test statistic:", ifelse(use.Tbar, "Tbar,", "T,"),
+              spatstat.utils::choptext("test statistic:",
+                                       ifelse(use.Tbar, "Tbar,", "T,"),
                        nperm, "random permutations"))
   fooshort <- switch(fooname, pcf = "pair correlation ",
                      Kinhom = "inhomogeneous K-",
@@ -709,13 +720,13 @@ studpermu.test.pp3 <- function (X, formula,
   class(testerg) <- c("studpermutest", "htest")
   fvs <- lapply(fvlist, "[.fv", j = c(argu, valu))
   fvs <- lapply(fvs, "attr<-", which = "alim", value = rinterval)
-  testerg$curves <- hyperframe(fvs = fvs, groups = data$group)
+  testerg$curves <- spatstat::hyperframe(fvs = fvs, groups = data$group)
   fvtheo <- fvlist[[1]]
   spatstat::fvnames(fvtheo, ".y") <- "theo"
   attr(fvtheo, "alim") <- rinterval
   testerg$curvtheo <- fvtheo[, c(argu, "theo")]
   grmn <- lapply(lev, splitmean, ind = groupi, f = foar)
-  testerg$groupmeans <- lapply(grmn, makefv, xvals = rr,
+  testerg$groupmeans <- lapply(grmn, makefv, xvals = rr[taker],
                                template = fvtheo)
   return(testerg)
 }
@@ -824,9 +835,9 @@ multicall <- function(foo, x, H, ...){
 #'
 #' @family spatstat extensions
 #'
-#' @seealso \code{\link[spatstat]{Tstat}}, Schladitz, K. and Baddeley, A. (2000)
-#' A third order point process characteristic.
-#' Scandinavian Journal of Statistics 27 (2000) 657-671.
+#' @seealso \code{\link[spatstat]{Tstat}}
+#' @references Schladitz, K. and Baddeley, A. (2000) A third order point process
+#' characteristic. Scandinavian Journal of Statistics 27 (2000) 657-671.
 Tstat.pp3 <- function (X, ..., rmax = NULL, nrval = 128,
                        correction = "border",
                        ratio = FALSE, verbose = TRUE) {

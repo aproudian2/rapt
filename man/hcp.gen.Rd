@@ -13,7 +13,7 @@ hcp.gen(r, win)
 generation.}
 }
 \value{
-A data frame object containing xyz coordinates of the HCP lattice
+A data.frame object containing xyz coordinates of the HCP lattice
   centers.
 }
 \description{

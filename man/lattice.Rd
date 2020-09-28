@@ -10,7 +10,11 @@ lattice(domain = box3(), a = 1, lattice = "sc")
 \item{domain}{A \code{\link[spatstat]{box3}}. The domain in which to
 generate the lattice}
 
-\item{lattice}{Character. The lattice to generate (one of "sc", "bcc", or
+\item{a}{numeric. The lattice parameter of the lattice. For cubic lattices
+(i.e. "sc", "bcc", "fcc"), this is the length of the side of the cube; for
+"hcp", this is the length of the side of the hexagon. See Details.}
+
+\item{lattice}{character. The lattice to generate (one of "sc", "bcc", or
 "fcc").}
 }
 \value{
@@ -20,6 +24,12 @@ A pp3 with points at the lattice positions
 \code{lattice} creates a spatial region filled with lattice points of the
 specified type. Currently, only simple cubic ("sc"), body-centered cubic
 ("bcc"), and face-centered cubic ("fcc") are implemented.
+}
+\details{
+For a hexagonal close packed (hcp) lattice, there are two dimensions
+  that are defined: the side of the hexagon, a, and the height of the
+  hexagonal prism, c. For a perfect hcp crystal, the ratio of these two
+  dimensions is exactly \eqn{c/a = \sqrt{8/3}}.
 }
 \seealso{
 \code{\link{hcp.gen()}}, \code{\link[spatstat]{pp3()}}

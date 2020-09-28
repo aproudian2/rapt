@@ -11,6 +11,7 @@ studpermu.test.pp3(
   ...,
   nperm = 999,
   use.Tbar = FALSE,
+  rinterval = NULL,
   minpoints = 20,
   rmax = NULL,
   nrval = 128,
@@ -21,6 +22,8 @@ studpermu.test.pp3(
 \item{use.Tbar}{Logical value indicating choice of test statistic. If TRUE,
 use the alternative test statistic, which is appropriate for summary
 functions with roughly constant variance, such as K(r)/r or L(r).}
+
+\item{rinterval}{mumeric of length 2. Experimental.}
 }
 \description{
 This function is not yet functional - many subfunctions must also be extended
