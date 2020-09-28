@@ -21,9 +21,10 @@ studpermu.test.pp3(
 \arguments{
 \item{use.Tbar}{Logical value indicating choice of test statistic. If TRUE,
 use the alternative test statistic, which is appropriate for summary
-functions with roughly constant variance, such as K(r)/r or L(r).}
+functions with roughly constant variance, such as K(r)/r or L(r). Defaults
+to FALSE}
 
-\item{rinterval}{mumeric of length 2. Experimental.}
+\item{rinterval}{Numeric of length 2. Experimental}
 }
 \description{
 This function is not yet functional - many subfunctions must also be extended
@@ -34,10 +35,13 @@ to pp3.
 
 Other spatstat extensions: 
 \code{\link{Tstat.pp3}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
 \code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
 \code{\link{rjitter}()},
 \code{\link{rpoint3}()},
 \code{\link{sample.pp3}()},

@@ -13,4 +13,21 @@ This is an S3 generic that extends the use of
 \seealso{
 \code{\link[spatstat]{marktable}}, \code{\link{marktable.ppp}},
   \code{\link{marktable.pp3}}
+
+Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
+\code{\link{marktable.pp3}()},
+\code{\link{quadratcount.pp3}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
+\code{\link{rjitter}()},
+\code{\link{rpoint3}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
+\code{\link{superimpose.pp3}()}
 }
+\concept{spatstat extensions}

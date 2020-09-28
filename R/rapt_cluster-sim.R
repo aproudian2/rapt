@@ -30,12 +30,12 @@
 #'   and the value of \code{pcp}.
 #' @param rb Radius blur. A decimal value between 0 and 1.
 #' @param pb Position blur. A decimal value between 0 and 1.
-#' @param tol Tolerance value for \code{pcp}. The tru fraction of type-A points
+#' @param tol Tolerance value for \code{pcp}. The true fraction of type-A points
 #'   in the pattern will be within this tolerance of the value specified by the
-#'   \code{pcp} parameter. If not, function will return a null value.
+#'   \code{pcp} parameter. If not, function will return NULL.
 #' @param s Random seed for the simulation.
 #' @param toplot Show a 3D plot of the cluster points once generation is done?
-#'   \code{TRUE} or \code{FALSE}.
+#'   \code{TRUE} or \code{FALSE} (the default).
 #'
 #' @return List of: [[1]] A \code{\link[spatstat]{pp3}} object containing the
 #'   final locations of only type-A points within the final marked point
@@ -60,16 +60,16 @@ clustersim <- function(under, over, rcp_rad,
                        pb = 0.1,
                        tol = 0.005,
                        s = 103,
-                       toplot = F){
+                       toplot = FALSE) {
   set.seed(s)
   # Total volume
   sidelength <- diff(spatstat::domain(under)$xrange)
   vt <- sidelength^3
 
   # Calculate volume needed in clusters
-  if(rho2 >= pcp) {
-    stop('Background density (rho2) cannot be larger than or equal to',
-    'cluster point concentration (pcp).')
+  if (rho2 >= pcp) {
+    stop("Background density (rho2) cannot be larger than or equal to ",
+         "cluster point concentration (pcp).")
   }
   vc <- vt*(pcp - rho2)/(rho1-rho2)
 
@@ -210,7 +210,7 @@ clustersim <- function(under, over, rcp_rad,
 #'
 #' @param under The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
 #'   object containing the correctly scaled RCP pattern point locations. Should
-#'   have used scaleRCP prior to putting hte object into this argument.
+#'   have used scaleRCP prior to putting the object into this argument.
 #' @param over The overlaying RCP pattern. A \code{\link[spatstat]{pp3}} object
 #'   containing the RCP pattern point locations. Scaled equal to the underlaying
 #'   pattern.
@@ -219,7 +219,7 @@ clustersim <- function(under, over, rcp_rad,
 #' @param radius2 The small radius of the overlaying RCP pattern. Can be found
 #'   in the system output file, or as whatever the pattern is scaled to.
 #' @param type How to create the clusters. Either "ppc", "cr", or "dist". See
-#' below for more information on each.
+#'   below for more information on each.
 #' @param ppc Number of points per cluster if type = "ppc", otherwise NULL.
 #' @param cr Cluster radius if type = "cr", otherwise NULL.
 #' @param speed "slow", "fast", or "superfast" for type = "cr".
@@ -1777,7 +1777,9 @@ randomTakeAway <- function(cluster.indices, n, N, s){
 #' @seealso \code{\link{makecluster}}
 rgblur <- function(n = 1, mean = 0, sd = 1,
                    coords = "rec", method = "r") {
-  stopifnot(any(method %in% c("r","xyz")), "method must be one of 'r' or 'xyz'")
+  if (!any(method %in% c("r","xyz"))) {
+    stop("method must be one of 'r' or 'xyz'")
+  }
   if (method == "r") {
     r <- abs(rnorm(n,mean,sd))
     theta <- runif(n,0,2*pi)

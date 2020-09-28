@@ -9,9 +9,9 @@ rangeCount(pos, start, end)
 \arguments{
 \item{pos}{A data.frame. The pos to be ranged}
 
-\item{start}{The start of the mass range}
+\item{start}{Numeric. The start of the mass range}
 
-\item{end}{The end of the mass range}
+\item{end}{Numeric. The end of the mass range}
 }
 \value{
 The number of hits falling within the range.

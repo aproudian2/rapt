@@ -15,9 +15,12 @@ Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
 
 Other spatstat extensions: 
 \code{\link{Tstat.pp3}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.ppp}()},
 \code{\link{rjitter}()},
 \code{\link{rpoint3}()},
 \code{\link{sample.pp3}()},

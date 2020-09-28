@@ -2,6 +2,11 @@
 # This file contains methods for working with the mass spectrum of APT data
 #
 
+#### as.data.frame.MassSpectrum ####
+as.data.frame.MassSpectrum <- function(M) {
+  data.frame(mass = M@mass, intensity = M@intensity)
+}
+
 #### Spectral Ranging ####
 
 ### rangeCount ###
@@ -12,8 +17,8 @@
 #' mass range, use \code{\link{rangePOS}}.
 #'
 #' @param pos A data.frame. The pos to be ranged
-#' @param start The start of the mass range
-#' @param end The end of the mass range
+#' @param start Numeric. The start of the mass range
+#' @param end Numeric. The end of the mass range
 #'
 #' @return The number of hits falling within the range.
 #'
@@ -33,8 +38,8 @@ rangeCount <- function(pos, start, end) {
 #' range, use \code{\link{rangeCount}}.
 #'
 #' @param pos data.frame. The \code{POS} or \code{ATO} to be ranged
-#' @param start numeric. The start of the mass range
-#' @param end numeric. The end of the mass range
+#' @param start Numeric. The start of the mass range
+#' @param end Numeric. The end of the mass range
 #'
 #' @return A data.frame of the same structure as \code{pos} containing only hits
 #' in the provided range
@@ -55,7 +60,8 @@ rangePOS <- function(pos, start, end) {
 #'
 #' @param pos data.frame. The \code{POS} or \code{ATO} to be ranged
 #' @param rng data.frame. The \code{RRNG} ranges to apply
-#' #' @param simplify logical. Whether to simplify the counts by ion name
+#' @param simplify logical. Whether to simplify the counts by ion name;
+#'   default is FALSE
 #'
 #' @return A data.frame containing the name of each range, the number of counts
 #' and fraction of the total ranged counts.
@@ -65,7 +71,7 @@ rangePOS <- function(pos, start, end) {
 #' @export
 rngCount <- function(pos, rng, simplify = FALSE) {
   cts <- apply(rng, 1, function (x) {
-    rangeCount(pos, as.numeric(x['start']), as.numeric(x['end']))
+    rangeCount(pos, as.numeric(x["start"]), as.numeric(x["end"]))
   })
   tot <- sum(cts)
   dat <- data.frame(name = rng$name, counts = cts, fraction = cts/tot)
@@ -95,8 +101,8 @@ rngCount <- function(pos, rng, simplify = FALSE) {
 #' @export
 rngPOS <- function(pos, rng) {
   hits <- apply(rng, 1, function (x) {
-    rows <- rangePOS(pos, as.numeric(x['start']), as.numeric(x['end']))
-    rows$mark <- x['name']
+    rows <- rangePOS(pos, as.numeric(x["start"]), as.numeric(x["end"]))
+    rows$mark <- x["name"]
     return(rows)
   })
   dat <- do.call(rbind, hits)
@@ -106,7 +112,7 @@ rngPOS <- function(pos, rng) {
 ### rangeMassSpectrum ###
 # Range peaks at a specified level
 rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
-  spatstat::verifyclass(ms, 'MassSpectrum')
+  spatstat::verifyclass(ms, "MassSpectrum")
   m <- ms@mass
   m.in <- m >= start & m <= end
   m.clip <- m[m.in]
@@ -123,7 +129,7 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #### Spectral Fitting ####
 
 ### fitIonInit ###
-#' Initialize \code{\link[spats]{nls}} Fitting Using Ions
+#' Initialize nls Fitting Using Ions
 #'
 #' \code{fitIonInit} creates the formula and starting values for fitting mass
 #' spectra using \code{\link[stats]{nls}} based on molecular formulae. The
@@ -136,7 +142,7 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #' @param rel Numeric. A numeric vector of relative heights for each ion to
 #'   initialize the starting values of the peak magnitudes.
 #' @param peak Character. A string specifying what sort of peak shape to fit.
-#'   Acceptable values are "gaussian" (the default) and "emg". See details.
+#'   Acceptable values are "gaussian" (the default) and "emg". See Details.
 #' @param mass.shift Numeric. The estimated mass shift of the measured mass
 #'   spectrum relative to the absolute mass position of the ions.
 #' @param noise Numeric. The estimated value of the constant noise floor of the
@@ -152,12 +158,14 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #' @details Fitting peak shape is either a gaussian (peak = "gaussian") or
 #' exponentially modified gaussian (peak = "emg").
 #'
+#' @family spectral fitting functions
+#'
 #' @seealso \code{\link[stats]{nls}}, \code{\link[enviPat]{isopattern}}
 #'
 #' @export
 # Add upper limits for port algorithm fitting
 # Add ion specific sd / tau option
-fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
+fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = "gaussian",
                        mass.shift = 0, noise = 0, tau = 0.1,
                        charge = NULL, threshold = 10) {
   if (is.null(rel)) {
@@ -182,14 +190,14 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
   names(tau) <- "t0"
   ion.start <- c(as.list(sd), as.list(rel),
                  as.list(mass.shift), as.list(noise))
-  if (peak == 'emg') {
+  if (peak == "emg") {
     ion.start <- c(ion.start, as.list(tau))
   }
   ion.lower <- rep_len(0, length(ion.start))
   ion.lower[names(ion.start) == "m0"] <- -1
   ion.lower[names(ion.start) == "t0"] <- 1e-6
   ion.init <- list(formula = ion.form, start = ion.start, lower = ion.lower)
-  attr(ion.init, 'isotopes') <- attr(ion.form, 'isotopes')
+  attr(ion.init, "isotopes") <- attr(ion.form, "isotopes")
   return(ion.init)
 }
 
@@ -210,9 +218,11 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = 'gaussian',
 #' @details The base peak shape of the formula is either a gaussian
 #'   (peak = "gaussian") or an exponentially modified gaussian (peak = "emg").
 #'
+#' @family spectral fitting functions
+#'
 #' @seealso \code{\link[enviPat]{fitIonInit}}, \code{\link[enviPat]{isopattern}}
-ionFormula <- function(ions, charge = 1, threshold = 10, peak = 'gaussian') {
-  data('isotopes', package = 'enviPat', envir = environment())
+ionFormula <- function(ions, charge = 1, threshold = 10, peak = "gaussian") {
+  data("isotopes", package = "enviPat", envir = environment())
   iso <- enviPat::isopattern(isotopes, ions,
                              charge = charge, threshold = threshold,
                              verbose = FALSE)
@@ -241,7 +251,7 @@ ionFormula <- function(ions, charge = 1, threshold = 10, peak = 'gaussian') {
   f.noise <- "n0"
   fs <- paste(paste(fs, collapse = ' + '), f.noise, sep = " + ")
   f.full <- paste("intensity ~", fs)
-  attr(f.full, 'isotopes') <- iso
+  attr(f.full, "isotopes") <- iso
   return(f.full)
 }
 
@@ -257,6 +267,7 @@ emg <- function(x,h,m,s,t) {
 
 #### fitGMM ####
 # Fit a GMM to a region of a MassSpectrum
+# @family spectral fitting functions
 fitGMM <- function(ms, start, stop) {
 
 }

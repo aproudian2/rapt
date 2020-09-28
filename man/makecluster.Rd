@@ -31,7 +31,7 @@ makecluster(
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
 object containing the correctly scaled RCP pattern point locations. Should
-have used scaleRCP prior to putting hte object into this argument.}
+have used scaleRCP prior to putting the object into this argument.}
 
 \item{over}{The overlaying RCP pattern. A \code{\link[spatstat]{pp3}} object
 containing the RCP pattern point locations. Scaled equal to the underlaying

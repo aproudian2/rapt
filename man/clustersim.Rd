@@ -16,7 +16,7 @@ clustersim(
   pb = 0.1,
   tol = 0.005,
   s = 103,
-  toplot = F
+  toplot = FALSE
 )
 }
 \arguments{
@@ -46,14 +46,14 @@ and the value of \code{pcp}.}
 
 \item{pb}{Position blur. A decimal value between 0 and 1.}
 
-\item{tol}{Tolerance value for \code{pcp}. The tru fraction of type-A points
+\item{tol}{Tolerance value for \code{pcp}. The true fraction of type-A points
 in the pattern will be within this tolerance of the value specified by the
-\code{pcp} parameter. If not, function will return a null value.}
+\code{pcp} parameter. If not, function will return NULL.}
 
 \item{s}{Random seed for the simulation.}
 
 \item{toplot}{Show a 3D plot of the cluster points once generation is done?
-\code{TRUE} or \code{FALSE}.}
+\code{TRUE} or \code{FALSE} (the default).}
 }
 \value{
 List of: [[1]] A \code{\link[spatstat]{pp3}} object containing the

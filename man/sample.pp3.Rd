@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_extend.R
 \name{sample.pp3}
 \alias{sample.pp3}
-\title{Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.}
+\title{Sample A 3D Point Pattern}
 \usage{
 sample.pp3(X, size)
 }
@@ -15,17 +15,20 @@ sample.pp3(X, size)
 A \code{pp3}. The sampled point pattern.
 }
 \description{
-Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
+Sample A 3D Point Pattern
 }
 \seealso{
-\code{\link[base]{sample}}
+\code{\link{sample.ppp}}, \code{\link[base]{sample}}
 
 Other spatstat extensions: 
 \code{\link{Tstat.pp3}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
 \code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
 \code{\link{rjitter}()},
 \code{\link{rpoint3}()},
 \code{\link{sample.ppp}()},

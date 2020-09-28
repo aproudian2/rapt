@@ -9,8 +9,10 @@ rngCount(pos, rng, simplify = FALSE)
 \arguments{
 \item{pos}{data.frame. The \code{POS} or \code{ATO} to be ranged}
 
-\item{rng}{data.frame. The \code{RRNG} ranges to apply
-#' @param simplify logical. Whether to simplify the counts by ion name}
+\item{rng}{data.frame. The \code{RRNG} ranges to apply}
+
+\item{simplify}{logical. Whether to simplify the counts by ion name;
+default is FALSE}
 }
 \value{
 A data.frame containing the name of each range, the number of counts

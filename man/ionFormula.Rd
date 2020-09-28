@@ -29,4 +29,8 @@ The base peak shape of the formula is either a gaussian
 }
 \seealso{
 \code{\link[enviPat]{fitIonInit}}, \code{\link[enviPat]{isopattern}}
+
+Other spectral fitting functions: 
+\code{\link{fitIonInit}()}
 }
+\concept{spectral fitting functions}

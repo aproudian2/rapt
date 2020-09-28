@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_spec.R
 \name{fitIonInit}
 \alias{fitIonInit}
-\title{Initialize \code{\link[spats]{nls}} Fitting Using Ions}
+\title{Initialize nls Fitting Using Ions}
 \usage{
 fitIonInit(
   ions,
@@ -27,7 +27,7 @@ peak = "emg") of the fitted peak.}
 initialize the starting values of the peak magnitudes.}
 
 \item{peak}{Character. A string specifying what sort of peak shape to fit.
-Acceptable values are "gaussian" (the default) and "emg". See details.}
+Acceptable values are "gaussian" (the default) and "emg". See Details.}
 
 \item{mass.shift}{Numeric. The estimated mass shift of the measured mass
 spectrum relative to the absolute mass position of the ions.}
@@ -57,4 +57,8 @@ exponentially modified gaussian (peak = "emg").
 }
 \seealso{
 \code{\link[stats]{nls}}, \code{\link[enviPat]{isopattern}}
+
+Other spectral fitting functions: 
+\code{\link{ionFormula}()}
 }
+\concept{spectral fitting functions}

@@ -2,22 +2,34 @@
 % Please edit documentation in R/rapt_extend.R
 \name{shift.pp3}
 \alias{shift.pp3}
-\title{Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.}
+\title{Apply Vector Translation}
 \usage{
 \method{shift}{pp3}(X, vec = c(0, 0, 0), ..., origin = NULL)
 }
+\arguments{
+\item{X}{Point pattern(object of class"pp3")}
+
+\item{vec}{Numeric. A vector of length 3 specifying the translation}
+
+\item{origin}{Location that will be shifted to the origin. Either a vector of
+length 3 specifying the new origin or one of the character strings
+"midpoint" or "bottomleft" (will be extended)}
+}
 \description{
-Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
+Applies a vector shift to a 3D point pattern
 }
 \seealso{
 \code{\link[spatstat]{shift}}
 
 Other spatstat extensions: 
 \code{\link{Tstat.pp3}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
 \code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
 \code{\link{rjitter}()},
 \code{\link{rpoint3}()},
 \code{\link{sample.pp3}()},

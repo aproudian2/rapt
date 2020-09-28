@@ -30,10 +30,13 @@ characteristic. Scandinavian Journal of Statistics 27 (2000) 657-671.
 \code{\link[spatstat]{Tstat}}
 
 Other spatstat extensions: 
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},
 \code{\link{rPoissonCluster3}()},
 \code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
 \code{\link{rjitter}()},
 \code{\link{rpoint3}()},
 \code{\link{sample.pp3}()},

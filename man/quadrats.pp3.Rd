@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_extend.R
 \name{quadrats.pp3}
 \alias{quadrats.pp3}
-\title{Extension of quadrats to pp3 objects.}
+\title{Divide a 3D Point Pattern into Sub-Volumes}
 \usage{
 quadrats.pp3(X, nx, ny, nz, box.dims = NULL)
 }
@@ -23,11 +23,16 @@ A list containing the split up \code{pp3} objects.
 Divides volume into quadrats and returns them.
 }
 \seealso{
+\code{\link[spatstat]{quadrats}}
+
 Other spatstat extensions: 
 \code{\link{Tstat.pp3}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{rPoissonCluster3}()},
 \code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
 \code{\link{rjitter}()},
 \code{\link{rpoint3}()},
 \code{\link{sample.pp3}()},

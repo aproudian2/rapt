@@ -8,6 +8,7 @@
 #' @description This is an S3 generic that extends the use of
 #'   \code{\link[spatstat]{marktable}} beyond \code{ppp} objects.
 #'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{marktable}}, \code{\link{marktable.ppp}},
 #'   \code{\link{marktable.pp3}}
 #' @export
@@ -26,6 +27,8 @@ marktable.ppp <- spatstat::marktable
 #' @description Visit each point in a point pattern, find the neighbouring
 #'   points, and compile a frequency table of the marks of these neighbour
 #'   points.
+#'
+#' @family spatstat extensions
 #'
 #' @export
 marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
@@ -91,6 +94,7 @@ rjitter <- function(X, ...) UseMethod("rjitter")
 ### rjitter.ppp ###
 #' Random Perturbation of a Point Pattern
 #'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.pp3}}
 #' @export
 rjitter.ppp <- spatstat::rjitter
@@ -125,9 +129,9 @@ rjitter.pp3 <- function(X, domain = box3()) {
 }
 
 #### superimpose.pp3 ####
-#' Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
+#' Superimpose Several Geometric Patterns
 #'
-#' \code{superimpose.pp3}
+#' \code{superimpose.pp3} superimposes any number of 3D point patterns
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{superimpose}}
@@ -145,7 +149,15 @@ superimpose.pp3 <- function(..., W = NULL, check = FALSE) {
 }
 
 #### shift.pp3 ####
-#' Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
+#' Apply Vector Translation
+#'
+#' Applies a vector shift to a 3D point pattern
+#'
+#' @param X Point pattern(object of class"pp3")
+#' @param vec Numeric. A vector of length 3 specifying the translation
+#' @param origin Location that will be shifted to the origin. Either a vector of
+#'   length 3 specifying the new origin or one of the character strings
+#'   "midpoint" or "bottomleft" (will be extended)
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{shift}}
@@ -157,7 +169,7 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
   if (!is.null(origin)) {
     if (!missing(vec))
       warning("argument vec ignored; overruled by argument origin")
-    if (is.numeric(origin)) {
+    if (is.numeric(origin) & length(origin) == 3) {
       locn <- origin
     } else if (is.character(origin)) {
       origin <- spatstat::pickoption("origin", origin,
@@ -184,14 +196,14 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 
 #### sample ####
 ### sample.ppp ###
-#' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
+#' Sample a Planar Point Pattern
 #'
 #' @param X A \code{ppp}. The point pattern from which to sample.
 #' @param size A numeric. The number of points to sample.
 #' @return A \code{ppp}. The sampled point pattern.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[base]{sample}}
+#' @seealso \code{\link{sample.pp3}}, \code{\link[base]{sample}}
 #'
 #' @export
 sample.ppp <- function(X, size) {
@@ -202,14 +214,14 @@ sample.ppp <- function(X, size) {
 }
 
 ### sample.pp3 ###
-#' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
+#' Sample A 3D Point Pattern
 #'
 #' @param X A \code{pp3}. The point pattern from which to sample.
 #' @param size A numeric. The number of points to sample.
 #' @return A \code{pp3}. The sampled point pattern.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[base]{sample}}
+#' @seealso \code{\link{sample.ppp}}, \code{\link[base]{sample}}
 #'
 #' @export
 sample.pp3 <- function(X, size) {
@@ -315,8 +327,7 @@ plot3d.pp3 <- function(X, ...) {
 }
 
 #### quadratcount.pp3 ####
-#' Extension of \code{\link[spatstat]{quadratcount}} to
-#' \code{\link[spatstat]{pp3}} objects.
+#' Count Points in Sub-Volumes of a 3D Point Pattern
 #'
 #' Divides volume into quadrats and counts the number of points in each quadrat.
 #'
@@ -327,6 +338,7 @@ plot3d.pp3 <- function(X, ...) {
 #'   quadrat.
 #'
 #' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{quadratcount}}
 #'
 #' @export
 quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
@@ -364,7 +376,7 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
 }
 
 #### quadrats.pp3 ####
-#' Extension of quadrats to pp3 objects.
+#' Divide a 3D Point Pattern into Sub-Volumes
 #'
 #' Divides volume into quadrats and returns them.
 #'
@@ -378,6 +390,7 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
 #' @return A list containing the split up \code{pp3} objects.
 #'
 #' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{quadrats}}
 #'
 #' @export
 quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
@@ -524,8 +537,9 @@ K3multi <- function(X, I, J, r, breaks,
 #'
 #' @param use.Tbar Logical value indicating choice of test statistic. If TRUE,
 #'   use the alternative test statistic, which is appropriate for summary
-#'   functions with roughly constant variance, such as K(r)/r or L(r).
-#' @param rinterval mumeric of length 2. Experimental.
+#'   functions with roughly constant variance, such as K(r)/r or L(r). Defaults
+#'   to FALSE
+#' @param rinterval Numeric of length 2. Experimental
 #'
 #' @family spatstat extensions
 #'
@@ -808,7 +822,7 @@ multicall <- function(foo, x, H, ...){
          call.=FALSE)
   dotargs <- list(...)
   hnames <- names(H)
-  argnames <- names(formals(foo))#' always assume first argument is given
+  argnames <- names(formals(foo))# always assume first argument is given
 
   ppname <- argnames[1]
   argnames <- argnames[-1]
@@ -1025,7 +1039,6 @@ bdist.points3 <- function (X) {
 #' @return A data.frame containing the shortest distance to the closest three
 #'   boundaries for each point in the pattern X.
 #' @seealso \code{\link{bdist.points3}}
-
 bdist.points3.multi <- function (X){
 
   spatstat::verifyclass(X, "pp3")
@@ -1047,9 +1060,4 @@ bdist.points3.multi <- function (X){
                        z = pmin.int(z - zmin, zmax - z))
 
   return(result)
-}
-
-#### as.data.frame.MassSpectrum ####
-as.data.frame.MassSpectrum <- function(M) {
-  data.frame(mass = M@mass, intensity = M@intensity)
 }
