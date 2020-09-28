@@ -15,15 +15,15 @@ License: CC-BY-SA-4.0
 LazyData: TRUE
 SystemRequirements: C++11
 Depends:
+  R (>= 3.6),
   MALDIquant (>= 1.19),
   spatstat (>= 1.64)
 Imports:
   enviPat (>= 2.4),
   pracma (>= 2.2),
-  parallel (>= 3.6),
   gtools (>= 3.5),
   Hmisc (>= 3.17),
-  ash(>= 1.0),
+  ash (>= 1.0),
   Rcpp (>= 1.0),
   Rcpp11 (>= 3.1),
   glue (>= 1.4)
