@@ -91,7 +91,9 @@ clustersim <- function(under, over, rcp_rad,
   avg.sep <- mean(nnd)
   pb.sig <- avg.sep*pb
 
-  pb.shifts <- pb_gen(spatstat::npoints(over.scaled), mean = 0, sd = pb.sig)
+  pb.shifts <- rgblur(n = spatstat::npoints(over.scaled),
+                      method = "r", coords = "sph",
+                      mean = 0, sd = pb.sig)
   over.coo <- spatstat::coords(over.scaled)
   over.coo.pb <- over.coo + pb.shifts
   over.scaled.pb <- spatstat::pp3(x = over.coo.pb$x,
@@ -1852,8 +1854,16 @@ bdist.complex <- function(X.df, win){
 }
 
 #### pb_gen ####
-# Generate random position shifts
-pb_gen <- function(n, mean, sd){
+#' Generate random position shifts
+#'
+#' @name pb_gen-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{pb_gen}:
+#'   For \code{pb_gen}, use \code{\link{rgblur}}
+pb_gen <- function(n, mean, sd) {
   r <- abs(rnorm(n,mean,sd))
   theta <- runif(n,0,2*pi)
   phi <- acos(runif(n,-1,1))
@@ -1865,7 +1875,7 @@ pb_gen <- function(n, mean, sd){
 
 #### overlap_fix ####
 # Shift points so none of the clusters overlap after a position blur
-overlap_fix <- function(X, cr.rand){
+overlap_fix <- function(X, cr.rand) {
   nnd <- nndist(X)
   nnw <- nnwhich(X)
 

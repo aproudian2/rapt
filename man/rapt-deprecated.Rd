@@ -5,6 +5,7 @@
 \alias{rapt-deprecated}
 \alias{bcc.gen}
 \alias{splitpp3}
+\alias{pb_gen}
 \alias{pK3est}
 \alias{anomK3est}
 \alias{pG3est}
@@ -17,6 +18,8 @@
 bcc.gen(npoint, win)
 
 splitpp3(overPattern, num)
+
+pb_gen(n, mean, sd)
 
 pK3est(
   perc,
@@ -77,6 +80,11 @@ The functions listed below are deprecated and will be defunct in
 \section{\code{splitpp3}}{
 
   For \code{splitpp3}, use \code{\link[spatstat]{split.ppx}}
+}
+
+\section{\code{pb_gen}}{
+
+  For \code{pb_gen}, use \code{\link{rgblur}}
 }
 
 \section{\code{pK3est}}{
