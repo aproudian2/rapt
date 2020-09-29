@@ -562,7 +562,7 @@ studpermu.test.ppp <- spatstat::studpermu.test
 #'   \code{link[spatstat]{K3est}}
 #' @param ... Additional arguments passed to summaryfunction
 #' @param rinterval Numeric of length 2. Experimental
-#' @param nperm Number of random permutations for the test; Defaults to 999
+#' @param nperm Number of random permutations for the test; defaults to 999
 #' @param use.Tbar Logical value indicating choice of test statistic. If TRUE,
 #'   use the alternative test statistic, which is appropriate for summary
 #'   functions with roughly constant variance, such as K(r)/r or L(r). Defaults

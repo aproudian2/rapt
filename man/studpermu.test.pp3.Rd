@@ -29,7 +29,7 @@ identifies the grouping factor}
 
 \item{...}{Additional arguments passed to summaryfunction}
 
-\item{nperm}{Number of random permutations for the test; Defaults to 999}
+\item{nperm}{Number of random permutations for the test; defaults to 999}
 
 \item{use.Tbar}{Logical value indicating choice of test statistic. If TRUE,
 use the alternative test statistic, which is appropriate for summary
