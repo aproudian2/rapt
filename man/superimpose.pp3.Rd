@@ -27,6 +27,7 @@ Other spatstat extensions:
 \code{\link{sample.pp3}()},
 \code{\link{sample.ppp}()},
 \code{\link{shift.pp3}()},
-\code{\link{studpermu.test.pp3}()}
+\code{\link{studpermu.test.pp3}()},
+\code{\link{studpermu.test}()}
 }
 \concept{spatstat extensions}

@@ -2,9 +2,9 @@
 % Please edit documentation in R/rapt_extend.R
 \name{studpermu.test.pp3}
 \alias{studpermu.test.pp3}
-\title{Extends \code{\link[spatstat]{studpermu.test}} to pp3}
+\title{Studentised Permutation Test}
 \usage{
-studpermu.test.pp3(
+\method{studpermu.test}{pp3}(
   X,
   formula,
   summaryfunction = K3est,
@@ -42,7 +42,13 @@ to FALSE}
 inclusion in the test calculation}
 }
 \description{
-Extends \code{\link[spatstat]{studpermu.test}} to pp3
+Perform a studentised permutation test for a difference between groups of
+point patterns
+}
+\references{
+Hahn, U. (2012) A studentized permutation test for the comparison
+  of spatial point patterns.
+  Journal of the American Statistical Association 107 (498), 754-764.
 }
 \seealso{
 \code{\link[spatstat]{studpermu.test}}, \code{link[spatstat]{K3est}}
@@ -62,6 +68,7 @@ Other spatstat extensions:
 \code{\link{sample.pp3}()},
 \code{\link{sample.ppp}()},
 \code{\link{shift.pp3}()},
+\code{\link{studpermu.test}()},
 \code{\link{superimpose.pp3}()}
 }
 \concept{spatstat extensions}

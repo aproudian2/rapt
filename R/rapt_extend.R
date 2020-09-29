@@ -528,8 +528,31 @@ K3multi <- function(X, I, J, r, breaks,
   return(K)
 }
 
-#### studpermu.test.pp3 ####
-#' Extends \code{\link[spatstat]{studpermu.test}} to pp3
+#### studpermu.test ####
+#' Studentised Permutation Test
+#'
+#' @description This is an S3 generic that extends the use of
+#'   \code{\link[spatstat]{studpermu.test}} beyond \code{ppp} objects.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{studpermu.test}},
+#' \code{\link{studpermu.test.pp3}}
+#'
+#' @export
+studpermu.test <- function(X, ...) UseMethod("studpermu.test")
+
+### studpermu.test.ppp ###
+#' Studentised Permutation Test
+#'
+#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @export
+studpermu.test.ppp <- spatstat::studpermu.test
+
+### studpermu.test.pp3 ###
+#' Studentised Permutation Test
+#'
+#' Perform a studentised permutation test for a difference between groups of
+#' point patterns
 #'
 #' @param X A hyperframe containing at least the point patterns and groups
 #' @param formula Formula describing the grouping. The left side of the formula
@@ -549,7 +572,12 @@ K3multi <- function(X, I, J, r, breaks,
 #'
 #' @family spatstat extensions
 #'
+#' @references Hahn, U. (2012) A studentized permutation test for the comparison
+#'   of spatial point patterns.
+#'   Journal of the American Statistical Association 107 (498), 754-764.
 #' @seealso \code{\link[spatstat]{studpermu.test}}, \code{link[spatstat]{K3est}}
+#'
+#' @export
 # Add ability to supply a summary function directly...
 studpermu.test.pp3 <- function (X, formula,
                                 summaryfunction = K3est, ...,
