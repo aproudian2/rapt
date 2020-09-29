@@ -14,6 +14,7 @@ Visit each point in a point pattern, find the neighbouring
 \seealso{
 Other spatstat extensions: 
 \code{\link{Tstat.pp3}()},
+\code{\link{bdist.points}()},
 \code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},

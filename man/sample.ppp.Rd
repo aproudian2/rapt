@@ -22,6 +22,7 @@ Sample a Planar Point Pattern
 
 Other spatstat extensions: 
 \code{\link{Tstat.pp3}()},
+\code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},
 \code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},

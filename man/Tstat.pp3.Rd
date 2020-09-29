@@ -30,6 +30,7 @@ characteristic. Scandinavian Journal of Statistics 27 (2000) 657-671.
 \code{\link[spatstat]{Tstat}}
 
 Other spatstat extensions: 
+\code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},
 \code{\link{marktable}()},
 \code{\link{quadratcount.pp3}()},

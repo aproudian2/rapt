@@ -11,11 +11,11 @@ This is an S3 generic that extends the use of
   \code{\link[spatstat]{marktable}} beyond \code{ppp} objects.
 }
 \seealso{
-\code{\link[spatstat]{marktable}}, \code{\link{marktable.ppp}},
-  \code{\link{marktable.pp3}}
+\code{\link[spatstat]{marktable.ppp}}, \code{\link{marktable.pp3}}
 
 Other spatstat extensions: 
 \code{\link{Tstat.pp3}()},
+\code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},
 \code{\link{quadratcount.pp3}()},
 \code{\link{quadrats.pp3}()},

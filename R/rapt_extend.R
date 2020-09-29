@@ -9,8 +9,7 @@
 #'   \code{\link[spatstat]{marktable}} beyond \code{ppp} objects.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{marktable}}, \code{\link{marktable.ppp}},
-#'   \code{\link{marktable.pp3}}
+#' @seealso \code{\link[spatstat]{marktable.ppp}}, \code{\link{marktable.pp3}}
 #' @export
 marktable <- function(X, ...) UseMethod("marktable")
 
@@ -532,25 +531,31 @@ K3multi <- function(X, I, J, r, breaks,
 #### studpermu.test.pp3 ####
 #' Extends \code{\link[spatstat]{studpermu.test}} to pp3
 #'
-#' This function is not yet functional - many subfunctions must also be extended
-#' to pp3.
-#'
+#' @param X A hyperframe containing at least the point patterns and groups
+#' @param formula Formula describing the grouping. The left side of the formula
+#'   identifies which column of X contains the point patterns. The right side
+#'   identifies the grouping factor
+#' @param summaryfunction Summary function applicable to pp3. Defaults to
+#'   \code{link[spatstat]{K3est}}
+#' @param ... Additional arguments passed to summaryfunction
+#' @param rinterval Numeric of length 2. Experimental
+#' @param nperm Number of random permutations for the test; Defaults to 999
 #' @param use.Tbar Logical value indicating choice of test statistic. If TRUE,
 #'   use the alternative test statistic, which is appropriate for summary
 #'   functions with roughly constant variance, such as K(r)/r or L(r). Defaults
 #'   to FALSE
-#' @param rinterval Numeric of length 2. Experimental
+#' @param minpoints Minimum permissible number of points in a point pattern for
+#'   inclusion in the test calculation
 #'
 #' @family spatstat extensions
 #'
-#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @seealso \code{\link[spatstat]{studpermu.test}}, \code{link[spatstat]{K3est}}
 # Add ability to supply a summary function directly...
 studpermu.test.pp3 <- function (X, formula,
                                 summaryfunction = K3est, ...,
                                 nperm = 999, use.Tbar = FALSE, rinterval = NULL,
-                                minpoints = 20, rmax = NULL, nrval = 128,
-                                arguments.in.data = FALSE) {
-  if (arguments.in.data & !is.hyperframe(X))
+                                minpoints = 20, rmax = NULL, nrval = 128) {
+  if (!is.hyperframe(X))
     stop(paste("X needs to be a hyperframe",
                "if arguments for summary function are to be retrieved"),
          call. = FALSE)
@@ -671,22 +676,12 @@ studpermu.test.pp3 <- function (X, formula,
   corx <- if (needcorx && !gavecorx)
     "translation"
   else NULL
-  fvlist <- if (arguments.in.data) {
-    if (is.null(corx)) {
-      multicall(summaryfunction, pp, data, rmax = rmax, ...)
-    }
-    else {
-      multicall(summaryfunction, pp, data, rmax = rmax, ...,
-                correction = corx)
-    }
-  }
-  else {
+  fvlist <-
     if (is.null(corx)) {
       with(data, summaryfunction(pp, rmax = rmax, ...))
     }
-    else {
-      with(data, summaryfunction(pp, rmax = rmax, ..., correction = corx))
-    }
+  else {
+    with(data, summaryfunction(pp, rmax = rmax, ..., correction = corx))
   }
   # can skip most of the previous if summary functions are supplied...
   # need to extract rmax, nrval from functions
@@ -925,7 +920,7 @@ Tstat.pp3 <- function (X, ..., rmax = NULL, nrval = 128,
     }
   }
   if (any(correction == "border" | correction == "bord.modif")) {
-    b <- bdist.points3(X)
+    b <- bdist.points.pp3(X)
     bI <- b[II]
     RS <- spatstat::Kount(DD, bI, b, breaks)
     if (any(correction == "bord.modif")) {
@@ -999,17 +994,39 @@ Tstat.pp3 <- function (X, ..., rmax = NULL, nrval = 128,
   return(TT)
 }
 
-#### bdist.points3 ####
-#' Extension of \code{\link[spatstat]{bdist.points}}. Helper function for border correction \code{\link{bK3est}}.
+#### bdist.points ####
+#' Distance to Boundary of Domain
+#'
+#' @description This is an S3 generic that extends the use of
+#'   \code{\link[spatstat]{bdist.points}} beyond \code{ppp} objects.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{bdist.points}}, \code{\link{bdist.points.pp3}}
+#'
+#' @export
+bdist.points <- function(X, ...) UseMethod("bdist.points")
+
+### bdist.points.ppp ###
+#' Distance to Boundary of Window
+#'
+#' @seealso \code{\link[spatstat]{bdist.points}}
+#' @export
+bdist.points.ppp <- spatstat::bdist.points
+
+### bdist.points.pp3 ###
+#' Distance to Boundary of Domain
 #'
 #' Finds the smallest distance to a boundary for each point in a point pattern.
 #'
 #' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
 #'   object.
+#'
 #' @return An object containing the shortest distance to the boundary for each
 #'   point in the pattern X.
 #' @seealso \code{\link[spatstat]{bdist.points}}
-bdist.points3 <- function (X) {
+#'
+#' @export
+bdist.points.pp3 <- function (X) {
 
   spatstat::verifyclass(X, "pp3")
 
@@ -1025,20 +1042,23 @@ bdist.points3 <- function (X) {
   zmin <- min(d$zrange)
   zmax <- max(d$zrange)
   result <- pmin.int(x - xmin, xmax - x,
-                     y - ymin, ymax - y ,
-                     z - zmin , zmax - z)
+                     y - ymin, ymax - y,
+                     z - zmin, zmax - z)
 
   return(result)
 }
 
 #### bdist.points3.multi ####
-#' Returns the shortest distances to boundaries in the x, y, and z directions separately.
+#' Cardinal Direction Distances to Boundary of Domain
+#'
+#' Returns the shortest distances to boundaries in the x, y, and z directions
+#' separately.
 #'
 #' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
 #'   object.
 #' @return A data.frame containing the shortest distance to the closest three
 #'   boundaries for each point in the pattern X.
-#' @seealso \code{\link{bdist.points3}}
+#' @seealso \code{\link{bdist.points.pp3}}
 bdist.points3.multi <- function (X){
 
   spatstat::verifyclass(X, "pp3")
