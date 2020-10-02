@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_cluster-sim.R
 \name{hcp.gen}
 \alias{hcp.gen}
-\title{Helper for \code{\link{hcpcluster}} which generates a HCP lattice with the correct spacing.}
+\title{Generate an HCP Lattice}
 \usage{
 hcp.gen(r, win)
 }

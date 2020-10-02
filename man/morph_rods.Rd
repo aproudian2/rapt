@@ -10,7 +10,7 @@ morph_rods(
   rod.norm = "z",
   rod.den,
   rod.spacing = "grid",
-  rcp.path = "C:/Users/galen/Documents/Research/point_patterns/2D/Final",
+  rcp.path = NULL,
   point.den = 1,
   toplot = FALSE,
   win = box3(c(0, 1), c(0, 1), c(0, 1))

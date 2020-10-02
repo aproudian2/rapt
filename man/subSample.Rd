@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_cluster-sim.R
 \name{subSample}
 \alias{subSample}
-\title{Helper for \code{\link{makecluster}} to cut \code{\link[spatstat]{pp3}} object to size.}
+\title{Cut pp3 object to size}
 \usage{
 subSample(underPattern, overPattern)
 }

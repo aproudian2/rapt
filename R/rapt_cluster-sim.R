@@ -580,8 +580,10 @@ makecluster <- function(under, over, radius1, radius2,
         under.ydim <- domain(under)$yrange[2]
         under.zdim <- domain(under)$zrange[2]
 
-        innervol <- (under.xdim - 2 * cr)*(under.ydim - 2 * cr)*(under.zdim - 2 * cr)
-        outervol <- (under.xdim + 2 * cr)*(under.ydim + 2 * cr)*(under.zdim + 2 * cr)
+        innervol <- (under.xdim - 2 * cr) * (under.ydim - 2 * cr) *
+          (under.zdim - 2 * cr)
+        outervol <- (under.xdim + 2 * cr) * (under.ydim + 2 * cr) *
+          (under.zdim + 2 * cr)
         middlevol <- outervol - innervol
 
         volfactor <- ((innervol/outervol) + (middlevol/outervol)*(5/12))
@@ -599,7 +601,8 @@ makecluster <- function(under, over, radius1, radius2,
       }
       #####
       over.sep <- over.rf*2
-      over.scaled <- scaleRCP(over,newRadius = over.rf, oldRadius = over.r,win = domain(over))
+      over.scaled <- scaleRCP(over, newRadius = over.rf, oldRadius = over.r,
+                              win = domain(over))
       #browser()
       if(gb == TRUE){
         n <- npoints(over.scaled)
@@ -616,7 +619,9 @@ makecluster <- function(under, over, radius1, radius2,
       # significantly
       under.coo <- coords(under)
       under.new <- createSpat(under.coo + cr)
-      over.scaled.domain <- c(domain(under)$xrange[2]+2*cr,domain(under)$yrange[2]+2*cr,domain(under)$zrange[2]+2*cr)
+      over.scaled.domain <- c(domain(under)$xrange[2]+2*cr,
+                              domain(under)$yrange[2]+2*cr,
+                              domain(under)$zrange[2]+2*cr)
       over.scaledf <- subSquare(over.scaled.new, over.scaled.domain)
 
       if(rb == TRUE){
@@ -651,8 +656,10 @@ makecluster <- function(under, over, radius1, radius2,
           while(!is.empty(check)) {
             t2 <- Sys.time()
             nnw <- nnwhich.pp3(over.scaledf)
-            direction <- (coords(over.scaledf)[nnw[check[1]],]-coords(over.scaledf)[check[1],])/nnd[check[1]]
-            coords(over.scaledf)[check[1],] <- coords(over.scaledf)[check[1],]+(nnd[check[1]]-(comp+0.00001))*direction
+            direction <- (coords(over.scaledf)[nnw[check[1]],] -
+                            coords(over.scaledf)[check[1],]) / nnd[check[1]]
+            coords(over.scaledf)[check[1],] <- coords(over.scaledf)[check[1],] +
+              (nnd[check[1]]-(comp+0.00001))*direction
             nnd <- nndist.pp3(over.scaledf)
             check <- which(nnd < comp)
             if((as.numeric(t2) - as.numeric(t1)) > 15){
@@ -679,8 +686,11 @@ makecluster <- function(under, over, radius1, radius2,
                                      drop = FALSE)
         split.vals <- sort(unique(cluster.nnR.full$i))
         for(i in 1:length(split.vals)){
-          cluster.nnR.ind2[[i]] <- cluster.nnR.split$j[[i]][cluster.nnR.split$d[[i]] < crrand[split.vals[i]]]
-          cluster.nnR.ind1[[i]] <- rep(split.vals[i],length(cluster.nnR.ind2[[i]]))
+          cluster.nnR.ind2[[i]] <- cluster.nnR.split$j[[i]][
+            cluster.nnR.split$d[[i]] < crrand[split.vals[i]]
+            ]
+          cluster.nnR.ind1[[i]] <- rep(split.vals[i],
+                                       length(cluster.nnR.ind2[[i]]))
         }
         #t2 <- Sys.time()
         #print(t2 - t1)
@@ -905,7 +915,8 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
     outside.pp3 <- rpoispp3(sigma2, domain = win)
   }else if(background == 'rcp'){
     # OR upload rcp pattern from filepath given
-    inside.pp31 <- read.rcp(filepath[1],filepath[2],scaleUp = TRUE,newRadius = 0.50475)
+    inside.pp31 <- read.rcp(filepath[1], filepath[2], scaleUp = TRUE,
+                            newRadius = 0.50475)
     inside.pp32 <- stitch.size(inside.pp31,domain(inside.pp31),c(60,60,60))
     inside.pp3 <- percentSelect(sigma1, inside.pp32)
     outside.pp3 <- percentSelect(sigma2, inside.pp32)
@@ -963,7 +974,8 @@ morph_lamellar <- function(lambda,
   #plane density (planes per unit length)
   p.spacing <- 1/p.den
 
-  #plane orientation (vector holding normal direction for planes, doesn't have to be normalized)
+  # plane orientation (vector holding normal direction for planes,
+  # doesn't have to be normalized)
   p.direc <- p.norm/sqrt(sum(p.norm^2)) * p.spacing
 
   #points on planes:
@@ -980,8 +992,10 @@ morph_lamellar <- function(lambda,
   }
 
   offset <- runif(1, 0, 1)
-  p.points <- lapply(p.points, function(x){x + p.norm/sqrt(sum(p.norm^2)) * offset
-    print(x + p.norm/sqrt(sum(p.norm^2)) * offset)})
+  p.points <- lapply(p.points, function(x){
+    x + p.norm/sqrt(sum(p.norm^2)) * offset
+    print(x + p.norm/sqrt(sum(p.norm^2)) * offset)
+    })
 
   #select points within x distance of planes to be type-A
   distmat <- matrix(FALSE, npoints(bgnd), length(p.points))
@@ -1052,7 +1066,7 @@ morph_rods <- function(lambda,
                        rod.norm = 'z',
                        rod.den,
                        rod.spacing = 'grid',
-                       rcp.path = 'C:/Users/galen/Documents/Research/point_patterns/2D/Final',
+                       rcp.path = NULL,
                        point.den = 1,
                        toplot = FALSE,
                        win = box3(c(0,1), c(0,1), c(0,1))){
@@ -1388,7 +1402,7 @@ bcc.gen <- function(npoint, win){
 }
 
 #### hcp.gen ####
-#' Helper for \code{\link{hcpcluster}} which generates a HCP lattice with the correct spacing.
+#' Generate an HCP Lattice
 #'
 #' Generates a hexagonal close packed (HCP) structure based on spheres with
 #' specified radius within a window of specified size.
@@ -1406,20 +1420,24 @@ hcp.gen <- function(r, win){
   j <- 0
   k <- 0
   count <- 1
-  xyz[[count]] <- r*c(2*i + ((j+k)%%2), sqrt(3)*(j + (1/3)*(k%%2)), (2*sqrt(6)/3)*k)
+  xyz[[count]] <- r*c(2*i + ((j+k)%%2), sqrt(3)*(j + (1/3)*(k%%2)),
+                      (2*sqrt(6)/3)*k)
   count <- count + 1
   i <- -1
   while(xyz[[count-1]][1] < win$xrange[2]){
     j <- 0
-    xyz[[count]] <- r*c(2*i + ((j+k)%%2), sqrt(3)*(j + (1/3)*(k%%2)), (2*sqrt(6)/3)*k)
+    xyz[[count]] <- r*c(2*i + ((j+k)%%2), sqrt(3)*(j + (1/3)*(k%%2)),
+                        (2*sqrt(6)/3)*k)
     count <- count + 1
     while(xyz[[count-1]][2] < win$yrange[2]){
       k <- 0
-      xyz[[count]] <- r*c(2*i + ((j+k)%%2), sqrt(3)*(j + (1/3)*(k%%2)), (2*sqrt(6)/3)*k)
+      xyz[[count]] <- r*c(2*i + ((j+k)%%2), sqrt(3)*(j + (1/3)*(k%%2)),
+                          (2*sqrt(6)/3)*k)
       count <- count + 1
       while(xyz[[count-1]][3] < win$zrange[2]){
         k <- k + 1
-        xyz[[count]] <- r*c(2*i + ((j+k)%%2), sqrt(3)*(j + (1/3)*(k%%2)), (2*sqrt(6)/3)*k)
+        xyz[[count]] <- r*c(2*i + ((j+k)%%2), sqrt(3)*(j + (1/3)*(k%%2)),
+                            (2*sqrt(6)/3)*k)
         count <- count + 1
       }
       j <- j +1
@@ -1432,7 +1450,7 @@ hcp.gen <- function(r, win){
 }
 
 #### subSample ####
-#' Helper for \code{\link{makecluster}} to cut \code{\link[spatstat]{pp3}} object to size.
+#' Cut pp3 object to size
 #'
 #' Takes one \code{\link[spatstat]{pp3}} object, and cuts its volume down to the
 #' size of another \code{\link[spatstat]{pp3}} object. Only keeps the points of
@@ -1513,7 +1531,7 @@ splitpp3 <- function(overPattern, num){
 
 crAdjust <- function(mat, diff, X, Y) {
   # mat is the matrix filled with points and associated cluster index values
-  # diff is the difference between the number of values needed and the number in mat
+  # diff - difference between the number of values needed and the number in mat
   # X is the over point pattern
   # Y is the under point pattern
 
@@ -1605,7 +1623,7 @@ crAdjust <- function(mat, diff, X, Y) {
 #'   cluster.info factor.
 crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
   # mat is the matrix filled with points and associated cluster index values
-  # diff is the difference between the number of values needed and the number in mat
+  # diff - difference between the number of values needed and the number in mat
   # X is the over point pattern
   # Y is the under point pattern
 
@@ -1659,13 +1677,15 @@ crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
     if(a>0){
       nPoints <- as.numeric(summary(cluster.info))
       cluster.info <- as.numeric(cluster.info)
-      for(i in 1:over.n){
+      for(i in 1:over.n) {
         if(i == 1){
           cluster.ind[1:a] <- rep(NaN,a)
           cluster.info[1:a] <- rep(NaN,a)
-        }else{
-          cluster.ind[(sum(nPoints[1:(i-1)])+1):(sum(nPoints[1:(i-1)])+a)] <- rep(NaN,a)
-          cluster.info[(sum(nPoints[1:(i-1)])+1):(sum(nPoints[1:(i-1)])+a)] <- rep(NaN,a)
+        } else {
+          cluster.ind[
+            (sum(nPoints[1:(i-1)])+1):(sum(nPoints[1:(i-1)])+a)] <- rep(NaN,a)
+          cluster.info[
+            (sum(nPoints[1:(i-1)])+1):(sum(nPoints[1:(i-1)])+a)] <- rep(NaN,a)
         }
       }
       cluster.ind <- cluster.ind[!is.nan(cluster.ind)]
@@ -1713,7 +1733,7 @@ crAdjust.new <- function(cluster.ind,cluster.info, diff, X, Y){
 #' @return New indices vector containing new cluster points randomly placed.
 randomInsert <- function(cluster.indices, n, N,s,
                          points.avoid = cluster.indices) {
-  #cluster.Indices is a vector containig the indices of the current cluster points
+  #cluster.Indices - vector of the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
 
@@ -1742,7 +1762,7 @@ randomInsert <- function(cluster.indices, n, N,s,
 #' @param s The random seed for the random selection of points to take away.
 #' @return New indices vector containing new cluster points randomly placed.
 randomTakeAway <- function(cluster.indices, n, N, s){
-  #cluster.Indices is a vector containig the indices of the current cluster points
+  #cluster.Indices - vector of the indices of the current cluster points
   #n is the number of points that need to be placed randomly
   #N is the number of points in the entire underlying pattern
 
@@ -1826,7 +1846,8 @@ over_cut <- function(X, win, cr.rand){
   X.cut <- subSquare(X, win.full)
   mks <- marks(X.cut)
   X.shift.coo <- coords(X.cut) - add
-  X.shift.win <- box3(c(-add, win[1] + add), c(-add, win[2] + add), c(-add, win[3] + add))
+  X.shift.win <- box3(c(-add, win[1] + add), c(-add, win[2] + add),
+                      c(-add, win[3] + add))
   X.fin <- pp3(X.shift.coo$x, X.shift.coo$y, X.shift.coo$z, X.shift.win)
   marks(X.fin) <- mks
   return(X.fin)
@@ -1919,8 +1940,10 @@ check_vol <- function(sf, coo, vol.target, under.domain, cr.rand){
   partin.corner <- !apply(bdist > cr.rand, 1, all) &
     apply(bdist < cr.rand , 1, sum) == 3 & io == 1
   partin.face.h <- cr.rand[partin.face] - apply(bdist[partin.face,], 1, min)
-  partin.edge.h <- cr.rand[partin.edge] - t(apply(bdist[partin.edge,], 1, function(x){sort(x)[1:2]}))
-  partin.corner.h <- cr.rand[partin.corner] - t(apply(bdist[partin.corner,], 1, function(x){sort(x)}))
+  partin.edge.h <- cr.rand[partin.edge] -
+    t(apply(bdist[partin.edge,], 1, function(x){sort(x)[1:2]}))
+  partin.corner.h <- cr.rand[partin.corner] -
+    t(apply(bdist[partin.corner,], 1, function(x){sort(x)}))
 
   fullout <- apply(bdist < -cr.rand, 1, any) & io == 0
 
@@ -1932,13 +1955,15 @@ check_vol <- function(sf, coo, vol.target, under.domain, cr.rand){
     apply(bdist < 0 , 1, sum) == 3 & io == 0
   partout.face.h <- cr.rand[partout.face] + apply(bdist[partout.face,], 1, min)
   partout.edge.h <- cr.rand[partout.edge] + apply(bdist[partout.edge,], 1, min)
-  partout.corner.h <- cr.rand[partout.corner] + apply(bdist[partout.corner,], 1, min)
+  partout.corner.h <- cr.rand[partout.corner] +
+    apply(bdist[partout.corner,], 1, min)
 
   #fullin volume
   vol.fullin <- 4/3*pi*cr.rand[fullin]^3
 
   #partin volume
-  vol.partin.face <- 4/3*pi*cr.rand[partin.face]^3 - 1/3*pi*partin.face.h^2*(3*cr.rand[partin.face] - partin.face.h)
+  vol.partin.face <- 4/3*pi*cr.rand[partin.face]^3 -
+    1/3*pi*partin.face.h^2*(3*cr.rand[partin.face] - partin.face.h)
   if(sum(partin.edge) > 0){
     vol.partin.edge <- 4/3*pi*cr.rand[partin.edge]^3 -
       1/3*pi*partin.edge.h[,1]^2*(3*cr.rand[partin.edge] - partin.edge.h[,1]) -
@@ -1948,17 +1973,23 @@ check_vol <- function(sf, coo, vol.target, under.domain, cr.rand){
   }
   if(sum(partin.corner) > 0){
     vol.partin.corner <- 4/3*pi*cr.rand[partin.corner]^3 -
-      1/3*pi*partin.corner.h[,1]^2*(3*cr.rand[partin.corner] - partin.corner.h[,1]) -
-      1/3*pi*partin.corner.h[,2]^2*(3*cr.rand[partin.corner] - partin.corner.h[,2]) -
-      1/3*pi*partin.corner.h[,3]^2*(3*cr.rand[partin.corner] - partin.corner.h[,3])
+      1/3*pi*partin.corner.h[,1]^2 *
+      (3*cr.rand[partin.corner] - partin.corner.h[,1]) -
+      1/3*pi*partin.corner.h[,2]^2 *
+      (3*cr.rand[partin.corner] - partin.corner.h[,2]) -
+      1/3*pi*partin.corner.h[,3]^2 *
+      (3*cr.rand[partin.corner] - partin.corner.h[,3])
   }else{
     vol.partin.corner <- c(0)
   }
 
   #partout volume
-  vol.partout.face <- 1/3*pi*partout.face.h^2*(3*cr.rand[partout.face] - partout.face.h)
-  vol.partout.edge <- 0.5*(1/3*pi*partout.edge.h^2*(3*cr.rand[partout.edge] - partout.edge.h))
-  vol.partout.corner <- 0.25*(1/3*pi*partout.corner.h^2*(3*cr.rand[partout.corner] - partout.corner.h))
+  vol.partout.face <- 1/3*pi*partout.face.h^2 *
+    (3*cr.rand[partout.face] - partout.face.h)
+  vol.partout.edge <- 0.5*(1/3*pi*partout.edge.h^2 *
+                             (3*cr.rand[partout.edge] - partout.edge.h))
+  vol.partout.corner <- 0.25*(1/3*pi*partout.corner.h^2 *
+                                (3*cr.rand[partout.corner] - partout.corner.h))
 
   #fullout volume = zero
 
