@@ -875,7 +875,7 @@ bK3est <- function(X, rmax=NULL, nrval=128){
 }
 
 #### pEnvelope ####
-#' Create an envelope in parallel
+#' Create an Envelope in Parallel
 #'
 #' @param cl A \code{\link[parallel]{cluster}} object
 #' @param X A point pattern
@@ -915,4 +915,53 @@ pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
   po <- do.call(spatstat::pool, c(env, savefuns=savefuns))
   dat <- spatstat::envelope(po, nrank=nrank, savefuns=savefuns)
   return(dat)
+}
+
+#### pRlabel ####
+#' Relabel a Point Pattern in Parallel
+#'
+#' Randomly allocates marks to a point pattern, or permutes the existing marks,
+#' or resamples from the existing marks.
+#'
+#' @param X Point pattern (object of class "ppp", "lpp", "pp3" or "ppx")
+#'   or line segment pattern (object of class "psp")
+#' @param labels Vector of values from which the new marks will be drawn at
+#'   random. Defaults to the vector of existing marks
+#' @param permute Logical value indicating whether to generate new marks by
+#'   randomly permuting labels or by drawing a random sample with replacement
+#' @param nsim Number of simulated realisations to be generated. Default is 99
+#'
+#' @return A list of marked point patterns, each of the same class of X.
+#'
+#' @seealso \code{\link[spatstat]{rlabel}}
+#'
+#' @export
+pRlabel <- function(cl, X, labels=marks(X), permute=TRUE, nsim=99) {
+  stopifnot(is.ppp(X) || is.lpp(X) || is.pp3(X) || is.ppx(X) ||
+              is.psp(X))
+  if (is.null(labels))
+    stop("labels not given and marks not present")
+  nthings <- nobjects(X)
+  things <- if (is.psp(X))
+    "segments"
+  else "points"
+  if (is.vector(labels) || is.factor(labels)) {
+    nlabels <- length(labels)
+    if (permute && (nlabels != nthings))
+      stop(paste("length of labels vector does not match number of",
+                 things))
+    Y <- parallel::parLapply(cl, seq_len(nsim), function(n) {
+      X %mark% sample(labels, nthings, replace = !permute)
+    })
+  } else if (is.data.frame(labels) || is.hyperframe(labels)) {
+    nlabels <- nrow(labels)
+    if (permute && (nlabels != nthings))
+      stop(paste("number of rows of data frame does not match number of",
+                 things))
+    Y <- parallel::parLapply(cl, seq_len(nsim), function(n) {
+      X %mark% labels[sample(1:nlabels,
+                             nthings, replace = !permute), , drop = FALSE]
+    })
+  } else stop("Format of labels argument is not understood")
+  return(simulationresult(Y, nsim))
 }

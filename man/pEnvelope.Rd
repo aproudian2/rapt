@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_envelopes.R
 \name{pEnvelope}
 \alias{pEnvelope}
-\title{Create an envelope in parallel}
+\title{Create an Envelope in Parallel}
 \usage{
 pEnvelope(cl, X, fun = K3est, nsim = 99, nrank = 1, ..., simulate = NULL)
 }
@@ -37,7 +37,7 @@ A function value table (object of class "fv") which can be plotted
   directly. See \code{\link[spatstat]{envelope}} for further details.
 }
 \description{
-Create an envelope in parallel
+Create an Envelope in Parallel
 }
 \seealso{
 \link[spatstat]{envelope}, \link[spatstat]{K3est},
