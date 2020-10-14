@@ -2,22 +2,31 @@
 % Please edit documentation in R/rapt_spec.R
 \name{rngCount}
 \alias{rngCount}
-\title{Count the number of hits for each entry within a \code{RNG} object}
+\title{Count Hits in RRNG}
 \usage{
-rngCount(pos, rng)
+rngCount(pos, rng, simplify = FALSE)
 }
 \arguments{
-\item{pos}{The pos to range}
+\item{pos}{data.frame. The \code{POS} or \code{ATO} to be ranged}
 
-\item{rng}{The ranges}
+\item{rng}{data.frame. The \code{RRNG} ranges to apply}
+
+\item{simplify}{logical. Whether to simplify the counts by ion name;
+default is FALSE}
 }
 \value{
 A data.frame containing the name of each range, the number of counts
 and fraction of the total ranged counts.
 }
 \description{
-Count the number of hits for each entry within a \code{RNG} object
+\code{rngCount} counts the number of hits for each entry within a \code{RRNG}
+object. To get hit information within a \code{RRNG}, use
+\code{\link{rngPOS}}.
 }
 \seealso{
-\code{\link{readRRNG}}, \code{\link{rangeCount}}
+Other ranging functions: 
+\code{\link{rangeCount}()},
+\code{\link{rangePOS}()},
+\code{\link{rngPOS}()}
 }
+\concept{ranging functions}

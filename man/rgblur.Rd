@@ -4,7 +4,7 @@
 \alias{rgblur}
 \title{Helper for \code{\link{makecluster}} to 3D gaussian blur cluster positions.}
 \usage{
-rgblur(n = 1, mean = 0, sd = 1, coords = "rec", method = 1)
+rgblur(n = 1, mean = 0, sd = 1, coords = "rec", method = "r")
 }
 \arguments{
 \item{n}{The number of points you want returned}
@@ -13,9 +13,10 @@ rgblur(n = 1, mean = 0, sd = 1, coords = "rec", method = 1)
 
 \item{sd}{Standard deviation for the normal distribution for radius.}
 
-\item{coords}{Return comand. Either "rec" or "sph". See below for more.}
+\item{coords}{Return command. Either "rec" or "sph". See below for more.}
 
-\item{method}{1 for uniformly distributing direction and normally distributing r, 2 for normally distributing x y and z}
+\item{method}{One of "r" and "xyz". "r" uniformly distributes direction and
+normally distributes r, while "xyz" normally distributes x, y and z.}
 }
 \value{
 If \code{coords = "rec"}, returns a vector of cartesian coordinates.
@@ -25,6 +26,11 @@ If \code{coords = "rec"}, returns a vector of cartesian coordinates.
 Function which returns a list of coordinates of radial gaussian blurred
 points with uniform probability to be sent in any direction. This function
 was written to apply a blur in positions of RCP spaced clusters. The radial
-distribution is actually "folded normal" due to the fact that r > 0. See
-\url{https://en.wikipedia.org/wiki/Folded_normal_distribution}.
+distribution is actually "folded normal" due to the fact that r > 0.
+}
+\references{
+\url{https://en.wikipedia.org/wiki/Folded_normal_distribution}
+}
+\seealso{
+\code{\link{makecluster}}
 }

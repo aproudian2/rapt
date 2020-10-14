@@ -3,7 +3,14 @@
 #
 
 #### rpoint3 ####
-#' Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.
+#' Generate N Random Points
+#'
+#' \code{rpoint3} extends \code{\link[spatstat]{rpoint}} to
+#' \code{\link[spatstat]{pp3}}.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{rpoint}}
+#'
 #' @export
 rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
@@ -11,7 +18,7 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
   if (missing(f) || (is.numeric(f) && length(f) == 1))
     return(runifpoint3(n, domain = win, nsim = nsim, drop = drop))
   if (!is.function(f) && !is.im(f))
-    stop(paste(sQuote("f"), "must be  a function"))
+    stop(paste(sQuote("f"), "must be a function"))
   verifyclass(win, "box3")
   if (n == 0) {
     emp <- pp3(numeric(0), numeric(0), numeric(0), window = win)
@@ -63,9 +70,17 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
   names(result) <- paste("Simulation", 1:nsim)
   return(as.anylist(result))
 }
+
 #### rPoissonCluster3 ####
-#' Extends \code{\link[spatstat]{rPoissonCluster}} to
+#' Simulate 3D Poisson Cluster Process
+#'
+#' \code{rPoissonCluster3} extends \code{\link[spatstat]{rPoissonCluster}} to
 #' \code{\link[spatstat]{pp3}}.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{rpoint}}
+#'
+#'
 #' @export
 rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
                              nsim = 1, drop = T)
@@ -134,84 +149,97 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
   names(resultlist) <- paste("Simulation", 1:nsim)
   return(as.anylist(resultlist))
 }
-#### latticeVectors ####
-#' Transform a matrix of integer indices to spatial coordinates for a specified
-#' lattice type
+
+#### lattice ####
+#' Generate a spatial lattice
+#'
+#' \code{lattice} creates a spatial region filled with lattice points of the
+#' specified type. Currently, only simple cubic ("sc"), body-centered cubic
+#' ("bcc"), and face-centered cubic ("fcc") are implemented.
+#'
+#' @param domain A \code{\link[spatstat]{box3}}. The domain in which to
+#' generate the lattice
+#' @param a numeric. The lattice parameter of the lattice. For cubic lattices
+#'   (i.e. "sc", "bcc", "fcc"), this is the length of the side of the cube; for
+#'   "hcp", this is the length of the side of the hexagon. See Details.
+#' @param lattice character. The lattice to generate (one of "sc", "bcc", or
+#' "fcc").
+#' @return A pp3 with points at the lattice positions
+#'
+#' @details For a hexagonal close packed (hcp) lattice, there are two dimensions
+#'   that are defined: the side of the hexagon, a, and the height of the
+#'   hexagonal prism, c. For a perfect hcp crystal, the ratio of these two
+#'   dimensions is exactly \eqn{c/a = \sqrt{8/3}}.
+#'
+#' @family simulation functions
+#' @seealso \code{\link{hcp.gen()}}, \code{\link[spatstat]{pp3()}}
+#'
 #' @export
-latticeVectors <- function(indices, a = 1, lattice = "sc") {
-  indices <- as.matrix(indices)
+lattice <- function(domain = box3(), a = 1, lattice = "sc") {
   if (lattice == "sc") {
-    lat.dat <- apply(indices, 1, function(vec) {
-      x <- a * vec[1]
-      y <- a * vec[2]
-      z <- a * vec[3]
-      return(c(x, y, z))
-    })
+    x <- seq(domain$xrange[1], domain$xrange[2], a)
+    y <- seq(domain$yrange[1], domain$yrange[2], a)
+    z <- seq(domain$zrange[1], domain$zrange[2], a)
+    p <- expand.grid(x = x, y = y, z = x)
+    pp3(p$x, p$y, p$z, domain)
   } else if (lattice == "bcc") {
-    lat.dat <- apply(indices, 1, function(vec) {
-      x <- a/2 * (-vec[1] + vec[2] + vec[3])
-      y <- a/2 * (vec[1] - vec[2] + vec[3])
-      z <- a/2 * (vec[1] + vec[2] - vec[3])
-      return(c(x, y, z))
-    })
+    x <- seq(domain$xrange[1], domain$xrange[2], a)
+    y <- seq(domain$yrange[1], domain$yrange[2], a)
+    z <- seq(domain$zrange[1], domain$zrange[2], a)
+    g1 <- expand.grid(x = x, y = y, z = x)
+    x2 <- x + a/2
+    x2 <- x2[x2 <= domain$xrange[2]]
+    y2 <- y + a/2
+    y2 <- y2[y2 <= domain$yrange[2]]
+    z2 <- z + a/2
+    z2 <- z2[z2 <= domain$zrange[2]]
+    g2 <- expand.grid(x = x2, y = y2, z = z2)
+    p <- rbind(g1, g2)
+    pp3(p$x, p$y, p$z, domain)
   } else if (lattice == "fcc") {
-    lat.dat <- apply(indices, 1, function(vec) {
-      x <- a/2 * (vec[2] + vec[3])
-      y <- a/2 * (vec[1] + vec[3])
-      z <- a/2 * (vec[1] + vec[2])
-      return(c(x, y, z))
-    })
+    x <- seq(domain$xrange[1], domain$xrange[2], a/2)
+    y <- seq(domain$yrange[1], domain$yrange[2], a/2)
+    z <- seq(domain$zrange[1], domain$zrange[2], a/2)
+    g <- expand.grid(x = x, y = y, z = x)
+    ind <- expand.grid(i = seq_along(x), j = seq_along(y), k = seq_along(z)) - 1
+    p <- g[(ind$i + ind$j + ind$k) %% 2 == 0,]
+    pp3(p$x, p$y, p$z, domain)
+  } else if (lattice == "hcp") {
+    df <- hcp.gen(a/2, win = domain) #using this function for now; will revise
+    pp3(df$x, df$y, df$z, domain)
+    # x1 <- seq(domain$xrange[1], domain$xrange[2], a)
   } else {
     warning("Unrecognized lattice")
   }
-  lat.dat <- t(lat.dat)
-  return(lat.dat)
 }
-#### lattice ####
-#' Creates a spatial region filled with lattice points of the specified type
-#' @export
-lattice <- function(domain = box3(), a = 1, lattice = "sc") {
-  lat.xrange <- round(domain$xrange / a)
-  lat.yrange <- round(domain$yrange / a)
-  lat.zrange <- round(domain$zrange / a)
-  lat.expand <- max(sapply(list(lat.xrange,lat.yrange,lat.zrange),diff, simplify = T))
-  lat.x <- seq(lat.xrange[1] - lat.expand, lat.xrange[2] + lat.expand)
-  lat.y <- seq(lat.yrange[1] - lat.expand, lat.yrange[2] + lat.expand)
-  lat.z <- seq(lat.zrange[1] - lat.expand, lat.zrange[2] + lat.expand)
-  lat.index <- expand.grid(lat.x, lat.y, lat.z)
-  names(lat.index) <- NULL
-  lat.dat <- latticeVectors(lat.index, a = a, lattice = lattice)
-  lat.pp3 <- pp3(x = lat.dat[,1], y = lat.dat[,2], z = lat.dat[,3], domain)
-  ok <- inside.pp3(lat.pp3)
-  lat.pp3 <- lat.pp3[ok]
-  return(lat.pp3)
-}
-#### rjitter3 ####
-#' Extends the \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
-#' @export
-rjitter3 <- function(X, domain = box3()) {
-  verifyclass(X, "pp3")
-  nX <- npoints(X)
-  if (nX == 0)
-    return(X)
-  W <- X$domain
-  D <- runifpoint3(nX, domain = domain)
-  xnew <- X$data$x + D$data$x
-  ynew <- X$data$y + D$data$y
-  znew <- X$data$z + D$data$z
-  new <- pp3(xnew, ynew, znew, W)
-  ok <- subset(new, subset =
-                 (x > W$xrange[1] & x < W$xrange[2]) &
-                 (y > W$yrange[1] & y < W$yrange[2]) &
-                 (z > W$zrange[1] & z < W$zrange[2])
-  )
-  return(ok)
-}
+
 #### nmers ####
+#' Select n-mer Clusters
+#'
 #' Creates an n-mer point pattern by selecting the n+1 nearest neighbors of a
 #' sampled point pattern from its parent distribution.
-nmers <- function(sam, parent, n = 2) {
+#'
+#' @param sam pp3. The seed points for the n-mers
+#' @param parent pp3. The point pattern from which to draw the n-mers
+#' @param n numeric. The number of points in the n-mer. Default is 2
+#' @param full logical. Return a marked pattern with both n-mers and
+#'   "background" points? Default is FALSE
+#'
+#' @return A pp3 with the n-mers. If \code{full = FALSE} (the default) this is
+#'   an unmarked pattern with only the positions of the n-mers. If
+#'   \code{full = TRUE}, this is a marked pattern with marks "nmers" and "bkgd".
+#'
+#' @family simulation functions
+#' @seealso \code{\link{clustersim}}
+nmers <- function(sam, parent, n = 2, full = FALSE) {
   nmer.ind <- nncross(sam, parent, what = "which", k = 1:n)
-  nmer.dat <- parent[unlist(nmer.ind)]
+  nmer.ind <- unlist(nmer.ind)
+  if (full == FALSE) {
+    nmer.dat <- parent[nmer.ind]
+  } else {
+    nmer.dat <- parent
+    marks(nmer.dat) <- "bkgd"
+    marks(nmer.dat)[nmer.ind] <- "nmer"
+  }
   return(nmer.dat)
 }

@@ -5,8 +5,18 @@
 \title{Similar to \code{\link{nndensity.pp3}}, but specifically for marked patterns
 with a global intensity inhomogeneity.}
 \usage{
-nncrossden.pp3(X, Y, k, nx, ny, nz, at.points = FALSE, nsplit = 1000,
-  cores = 8, os = "linux")
+nncrossden.pp3(
+  X,
+  Y,
+  k,
+  nx,
+  ny,
+  nz,
+  at.points = FALSE,
+  nsplit = 1000,
+  cores = 8,
+  os = "linux"
+)
 }
 \arguments{
 \item{X}{The point pattern to estimate the intensity of.}

@@ -19,6 +19,8 @@
 
 subSquare <- function(orig, win) {
 
+  orig.marks <- marks(orig)
+
   orig.domain <- domain(orig)
   orig.center <- c(mean(orig.domain$xrange),
                    mean(orig.domain$yrange),
@@ -37,6 +39,8 @@ subSquare <- function(orig, win) {
 
   tflist <- inside.boxx(orig, w = sub.box)
 
+  new.marks <- orig.marks[tflist]
+
   sub <- orig[tflist]
 
   xrn <- c(0, xb-xs)
@@ -51,6 +55,8 @@ subSquare <- function(orig, win) {
   coo$z <- coo$z - zs
 
   sub.new <- createSpat(coo,win=sub.box.new)
+
+  marks(sub.new) <- new.marks
 
   return(sub.new)
 }
@@ -71,7 +77,6 @@ subSquare <- function(orig, win) {
 #' @return A \code{\link[spatstat]{pp3}} object containing only the selected
 #'   points.
 #' @export
-
 percentSelect <- function(perc, pattern) {
 
   reLabel <- rlabel(pattern,

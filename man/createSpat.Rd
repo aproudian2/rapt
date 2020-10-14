@@ -2,9 +2,9 @@
 % Please edit documentation in R/rapt_file.R
 \name{createSpat}
 \alias{createSpat}
-\title{Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.}
+\title{Create a pp3 from a POS or ATO}
 \usage{
-createSpat(pos, win = NULL)
+createSpat(pos, win = NULL, marks = NULL)
 }
 \arguments{
 \item{pos}{A POS or ATO data frame.}
@@ -16,8 +16,10 @@ A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
   the supplied POS or ATO.
 }
 \description{
-Create a \code{\link[spatstat]{pp3}} object from a POS or ATO data frame.
+\code{createSpat} creates a \code{\link[spatstat]{pp3}} from a POS or ATO
+data frame.
 }
 \seealso{
-\code{\link{readPOS}}, \code{\link{readATO}}
+\code{\link{readPOS}}, \code{\link{readATO}},
+  \code{\link[spatstat]{pp3}}
 }

@@ -4,8 +4,7 @@
 \alias{nndensity.pp3}
 \title{Extension of \code{\link[spatstat]{nndensity}} to handle pp3 objects.}
 \usage{
-\method{nndensity}{pp3}(X, k, nx, ny, nz, dz, at.points = FALSE,
-  par = TRUE, cores = 7)
+\method{nndensity}{pp3}(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, cores = 7)
 }
 \arguments{
 \item{X}{The point pattern to estimate the intensity of.}

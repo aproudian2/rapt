@@ -2,21 +2,23 @@
 % Please edit documentation in R/rapt_cluster-sim.R
 \name{hcp.gen}
 \alias{hcp.gen}
-\title{Helper for \code{\link{hcpcluster}} which generates a HCP lattice with the correct spacing.}
+\title{Generate an HCP Lattice}
 \usage{
 hcp.gen(r, win)
 }
 \arguments{
 \item{r}{The radius of the spheres for the HCP structure.}
 
-\item{win}{A \code{\link[spatstat]{box3}} object defining the window for the generation.}
+\item{win}{A \code{\link[spatstat]{box3}} object defining the window for the
+generation.}
 }
 \value{
-A data frame object containing xyz coordinates of the HCP lattice centers.
+A data.frame object containing xyz coordinates of the HCP lattice
+  centers.
 }
 \description{
-Generates a hexagonal close packed (HCP) structure based on spheres with specified radius
-within a window of specified size.
+Generates a hexagonal close packed (HCP) structure based on spheres with
+specified radius within a window of specified size.
 }
 \seealso{
 \code{\link{hcpcluster}}

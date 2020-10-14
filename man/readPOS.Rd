@@ -2,23 +2,27 @@
 % Please edit documentation in R/rapt_file.R
 \name{readPOS}
 \alias{readPOS}
-\title{Read a POS file.}
+\title{Read a POS File}
 \usage{
 readPOS(filepath)
 }
 \arguments{
-\item{filepath}{A string. The file path to the POS file.}
+\item{filepath}{Character. The file path to the POS file.}
 }
 \value{
-A dataframe with columns corresponding to the x, y, and z positions
+A data.frame with columns corresponding to the x, y, and z positions
   of the reconstruction and the mass-to-charge ratio.
 }
 \description{
 \code{readPOS} reads a POS file (from IVAS) into a data frame.
 }
 \references{
-Local Electrode Atom Probe Tomography: A User's Guide
+Larson \emph{et al.},
+  \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
-\code{\link{readATO}}
+Other APT import functions: 
+\code{\link{readATO}()},
+\code{\link{readRRNG}()}
 }
+\concept{APT import functions}

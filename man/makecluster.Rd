@@ -4,16 +4,34 @@
 \alias{makecluster}
 \title{Simulate point clustering in an RCP matrix}
 \usage{
-makecluster(under, over, radius1, radius2, type = "cr", ppc = NULL,
-  cr = NULL, speed = "superfast", d = NULL, pic = 1, pcp = 0.06,
-  den = 1, gb = FALSE, gbp = c(0, 1), gbmethod = 1, rb = FALSE,
-  rbp = 1, rbmethod = 1, s = 100, toPlot = FALSE,
-  showOverPts = FALSE)
+makecluster(
+  under,
+  over,
+  radius1,
+  radius2,
+  type = "cr",
+  ppc = NULL,
+  cr = NULL,
+  speed = "superfast",
+  d = NULL,
+  pic = 1,
+  pcp = 0.06,
+  den = 1,
+  gb = FALSE,
+  gbp = c(0, 1),
+  gbmethod = "r",
+  rb = FALSE,
+  rbp = 1,
+  rbmethod = 1,
+  s = 100,
+  toPlot = FALSE,
+  showOverPts = FALSE
+)
 }
 \arguments{
 \item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
 object containing the correctly scaled RCP pattern point locations. Should
-have used scaleRCP prior to putting hte object into this argument.}
+have used scaleRCP prior to putting the object into this argument.}
 
 \item{over}{The overlaying RCP pattern. A \code{\link[spatstat]{pp3}} object
 containing the RCP pattern point locations. Scaled equal to the underlaying
@@ -97,12 +115,12 @@ Returns are different based on \code{type}.
   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] factor containing the number of
   points in each cluster.}
-  \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of: [[1]]
-  \code{\link[spatstat]{pp3}} object containing the cluster marked point
-  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+  \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of:
+  [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
+  point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
   overlaying RCP pattern after scaling. [[3]] number of points put in or
   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
-  center to center) from each cluster.}
+  center to center) from each cluster}
   \subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
@@ -173,3 +191,15 @@ Galen Vincent, know if you need some upgrades sooner. Thanks!
   through the remaining non-cluster-marked points.}
 }
 
+\seealso{
+Other simulation functions: 
+\code{\link{clustersim}()},
+\code{\link{lattice}()},
+\code{\link{morph_lamellar}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
+\code{\link{read.rcp}()},
+\code{\link{scaleRCP}()},
+\code{\link{stitch.size}()}
+}
+\concept{simulation functions}

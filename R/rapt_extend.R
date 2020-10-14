@@ -1,40 +1,62 @@
 #
-# This file contains 3D extensions to the spatstat package.
+# This file contains extensions to the spatstat package.
 #
 
-#### marktable.pp3 ####
-#' Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.
+#### marktable ####
+#' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 #'
-#' \code{marktable.pp3}
+#' @description This is an S3 generic that extends the use of
+#'   \code{\link[spatstat]{marktable}} beyond \code{ppp} objects.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{marktable.ppp}}, \code{\link{marktable.pp3}}
+#' @export
+marktable <- function(X, ...) UseMethod("marktable")
+
+### marktable.ppp ###
+#' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
+#'
 #' @seealso \code{\link[spatstat]{marktable}}
 #' @export
+marktable.ppp <- spatstat::marktable
+
+### marktable.pp3 ###
+#' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
+#'
+#' @description Visit each point in a point pattern, find the neighbouring
+#'   points, and compile a frequency table of the marks of these neighbour
+#'   points.
+#'
+#' @family spatstat extensions
+#'
+#' @export
 marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
-  verifyclass(X, "pp3")
-  if (!is.marked(X, dfok = FALSE))
+  spatstat::verifyclass(X, "pp3")
+  if (!spatstat::is.marked(X, dfok = FALSE))
     stop("point pattern has no marks")
   gotR <- !missing(R) && !is.null(R)
   gotN <- !missing(N) && !is.null(N)
   if (gotN == gotR)
     stop("Exactly one of the arguments N and R should be given")
   stopifnot(is.logical(exclude) && length(exclude) == 1)
-  m <- marks(X)
+  m <- spatstat::marks(X)
   if (!is.factor(m))
     stop("marks must be a factor")
   if (gotR) {
     stopifnot(is.numeric(R) && length(R) == 1 && R > 0)
-    p <- closepairs(X, R, what = "indices")
+    p <- spatstat::closepairs(X, R, what = "indices")
     pi <- p$i
     pj <- p$j
     if (!exclude) {
-      n <- npoints(X)
+      n <- spatstat::npoints(X)
       pi <- c(pi, 1:n)
       pj <- c(pj, 1:n)
     }
   }
   else {
     stopifnot(is.numeric(N) && length(N) == 1)
-    ii <- seq_len(npoints(X))
-    nn <- nnwhich(X, k = 1:N)
+    ii <- seq_len(spatstat::npoints(X))
+    nn <- spatstat::nnwhich(X, k = 1:N)
     if (N == 1)
       nn <- matrix(nn, ncol = 1)
     if (!exclude)
@@ -43,7 +65,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
     pj <- as.vector(nn)
   }
   if (!collapse) {
-    i <- factor(pi, levels = seq_len(npoints(X)))
+    i <- factor(pi, levels = seq_len(spatstat::npoints(X)))
     mj <- m[pj]
     mat <- table(point = i, mark = mj)
   }
@@ -55,38 +77,101 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
   return(mat)
 }
 
-#### superimpose.pp3 ####
-#' Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.
+#### rjitter ####
+#' Random Perturbation of a Point Pattern
 #'
-#' \code{superimpose.pp3}
-#' @seealso \code{\link[spatstat]{superimpose}}
+#' @description This is an S3 generic that extends the use of
+#'   \code{\link[spatstat]{rjitter}} beyond \code{ppp} objects.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}},
+#'   \code{\link{rjitter.pp3}}
+#'
 #' @export
-superimpose.pp3 <- function(..., W = NULL, check = F) {
+rjitter <- function(X, ...) UseMethod("rjitter")
+
+### rjitter.ppp ###
+#' Random Perturbation of a Point Pattern
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.pp3}}
+#' @export
+rjitter.ppp <- spatstat::rjitter
+
+### rjitter.pp3 ###
+#' Random Perturbation of a Point Pattern
+#'
+#' Applies independent random displacements to each point in a point pattern.
+#' Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}}
+#'
+#' @export
+rjitter.pp3 <- function(X, domain = box3()) {
+  spatstat::verifyclass(X, "pp3")
+  nX <- spatstat::npoints(X)
+  if (nX == 0)
+    return(X)
+  W <- X$domain
+  D <- spatstat::runifpoint3(nX, domain = domain)
+  xnew <- X$data$x + D$data$x
+  ynew <- X$data$y + D$data$y
+  znew <- X$data$z + D$data$z
+  new <- pp3(xnew, ynew, znew, W)
+  ok <- subset(new, subset =
+                 (x > W$xrange[1] & x < W$xrange[2]) &
+                 (y > W$yrange[1] & y < W$yrange[2]) &
+                 (z > W$zrange[1] & z < W$zrange[2])
+  )
+  return(ok)
+}
+
+#### superimpose.pp3 ####
+#' Superimpose Several Geometric Patterns
+#'
+#' \code{superimpose.pp3} superimposes any number of 3D point patterns
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{superimpose}}
+#'
+#' @export
+superimpose.pp3 <- function(..., W = NULL, check = FALSE) {
   input.list <- list(...)
-  m <- unlist(sapply(input.list, marks))
   df.list <- lapply(input.list, as.data.frame)
-  df.comb <- Reduce(rbind, df.list)
+  df.comb <- do.call(rbind, df.list)
   out.pp3 <-  createSpat(df.comb, win = W)
-  marks(out.pp3) <- m
+  if(!is.null(df.comb$marks)) {
+    spatstat::marks(out.pp3) <- df.comb$marks
+  }
   return(out.pp3)
 }
 
 #### shift.pp3 ####
-#' Extends \code{\link[spatstat]{shift}} to \code{\link[spatstat]{pp3}}.
+#' Apply Vector Translation
 #'
+#' Applies a vector shift to a 3D point pattern
+#'
+#' @param X Point pattern(object of class"pp3")
+#' @param vec Numeric. A vector of length 3 specifying the translation
+#' @param origin Location that will be shifted to the origin. Either a vector of
+#'   length 3 specifying the new origin or one of the character strings
+#'   "midpoint" or "bottomleft" (will be extended)
+#'
+#' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{shift}}
+#'
 #' @export
 shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 {
-  verifyclass(X, "pp3")
+  spatstat::verifyclass(X, "pp3")
   if (!is.null(origin)) {
     if (!missing(vec))
       warning("argument vec ignored; overruled by argument origin")
-    if (is.numeric(origin)) {
+    if (is.numeric(origin) & length(origin) == 3) {
       locn <- origin
-    }
-    else if (is.character(origin)) {
-      origin <- pickoption("origin", origin,
+    } else if (is.character(origin)) {
+      origin <- spatstat::pickoption("origin", origin,
                            c(midpoint = "midpoint", bottomleft = "bottomleft"))
       W <- X$domain
       locn <- switch(origin, midpoint = {
@@ -94,76 +179,59 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
       }, bottomleft = {
         c(W$domain$xrange[1], W$domain$yrange[1], W$domain$zrange[1])
       })
+    } else {
+      stop("origin must be a character string or a numeric vector")
     }
-    else stop("origin must be a character string or a numeric vector")
     vec <- -locn
   }
-  Y <- pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
+  Y <- spatstat::pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
            xrange = X$domain$xrange + vec[1],
            yrange = X$domain$yrange + vec[2],
-           zrange = X$domain$zrange + vec[3])
+           zrange = X$domain$zrange + vec[3],
+           marks = marks(X))
   attr(Y, "lastshift") <- vec
   return(Y)
 }
 
-#### inside.pp3 ####
-#' Extends \code{\link[spatstat]{inside}} to \code{\link[spatstat]pp3}}.
-#'
-#' @seealso \code{\link[spatstat]{inside}}
-#' @export
-inside.pp3 <- function(points, domain = NULL) {
-  if(is.null(domain)) {
-    domain <- points$domain
-  }
-  if (length(points) == 0)
-    return(logical(0))
-  xr <- domain$xrange
-  yr <- domain$yrange
-  zr <- domain$zrange
-  x <- points$data$x
-  y <- points$data$y
-  z <- points$data$z
-  eps <- sqrt(.Machine$double.eps)
-  frameok <- (x >= xr[1] - eps) & (x <= xr[2] + eps) &
-    (y >= yr[1] - eps) & (y <= yr[2] + eps) &
-    (z >= zr[1] - eps) & (z <= zr[2] + eps)
-  return(frameok)
-}
-
-#### sample.ppp ####
-#' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{ppp}}.
+#### sample ####
+### sample.ppp ###
+#' Sample a Planar Point Pattern
 #'
 #' @param X A \code{ppp}. The point pattern from which to sample.
 #' @param size A numeric. The number of points to sample.
 #' @return A \code{ppp}. The sampled point pattern.
 #'
-#' @seealso \code{\link[base]{sample}}
+#' @family spatstat extensions
+#' @seealso \code{\link{sample.pp3}}, \code{\link[base]{sample}}
+#'
 #' @export
 sample.ppp <- function(X, size) {
-  sam.n <- npoints(X)
-  sam.pts <- sample(1:sam.n, size)
+  sam.n <- seq_len(spatstat::npoints(X))
+  sam.pts <- sample(sam.n, size, replace = FALSE)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
 
-#### sample.pp3 ####
-#' Extends \code{\link[base]{sample}} to handle \code{\link[spatstat]{pp3}}.
+### sample.pp3 ###
+#' Sample A 3D Point Pattern
 #'
 #' @param X A \code{pp3}. The point pattern from which to sample.
 #' @param size A numeric. The number of points to sample.
 #' @return A \code{pp3}. The sampled point pattern.
 #'
-#' @seealso \code{\link[base]{sample}}
+#' @family spatstat extensions
+#' @seealso \code{\link{sample.ppp}}, \code{\link[base]{sample}}
+#'
 #' @export
 sample.pp3 <- function(X, size) {
-  sam.lab <- rownames(as.data.frame(X$data))
-  sam.pts <- sample(sam.lab, size)
+  sam.n <- seq_len(spatstat::npoints(X))
+  sam.pts <- sample(sam.n, size, replace = FALSE)
   sam.dat <- X[sam.pts]
   return(sam.dat)
 }
 
 #### findClusters.pp3 ####
-#' Finds clusters by NN adjacency marks.
+#' Find Clusters by NN Adjacency Marks
 findClusters.pp3 <- function(X, mark, k = 1) {
   if(!(mark %in% marks(X)))
     stop('The specified mark does not exist in the pattern')
@@ -194,14 +262,21 @@ findClusters.pp3 <- function(X, mark, k = 1) {
 #### intensity.pp3 ####
 #' Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
 #'
-#' @seealso \code{\link[spatstat]{intensity}}
+#' @name intensity.pp3-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{intensity.pp3}:
+#'   For \code{intensity.pp3}, use \code{\link[spatstat]{intensity.ppx}}
+#'
 #' @export
 intensity.pp3 <- function(X, weights = NULL) {
-  n <- npoints(X)
-  a <- volume(domain(X))
+  n <- spatstat::npoints(X)
+  a <- spatstat::volume(domain(X))
   if (is.null(weights)) {
-    if (is.multitype(X)) {
-      mks <- marks(X)
+    if (spatstat::is.multitype(X)) {
+      mks <- spatstat::marks(X)
       answer <- as.vector(table(mks))/a
       names(answer) <- levels(mks)
     }
@@ -212,41 +287,61 @@ intensity.pp3 <- function(X, weights = NULL) {
 }
 
 #### rownames.pp3 ####
-#' Extends \code{\link[base:row+colnames]{rownames}} to \code{\link[spatstat]{pp3}}.
+#' Extends \code{\link[base:row+colnames]{rownames}} to
+#' \code{\link[spatstat]{pp3}}.
 #'
-#' @param pat A \code{pp3}. The point pattern from which to extract rownames.
-#' @return A string vector. The rownames of the point pattern.
+#' @param pat \code{pp3}. The point pattern from which to extract rownames.
+#' @return Character vector. The rownames of the point pattern.
 #' @seealso \code{\link[base:row+colnames]{rownames}}
 rownames.pp3 <- function(pat) {
   dat <- rownames(as.data.frame(pat))
   return(dat)
+}
+#### rownames.pp3<- ####
+#' Extends \code{\link[base:row+colnames]{rownames}} to
+#' \code{\link[spatstat]{pp3}}.
+#'
+#' @param pat \code{pp3}. The point pattern to assign rownames.
+#' @param lab character. The new rownames.
+#' @seealso \code{\link[base:row+colnames]{rownames}}
+"rownames.pp3<-" <- function(pat,lab) {
+  rownames(as.data.frame(pat)) <- lab
+  return(pat)
 }
 
 #### plot3d.pp3 ####
 #' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
 #'
 #' (requires the rgl library)
-#' @param X A \code{pp3}. The point pattern to visualize
+#' @param X \code{pp3}. The point pattern to visualize
 #' @param ... Other arguments to pass to \code{plot3d} from the \code{rgl}
 #' library.
+#'
+#' @family visualization functions
 #' @seealso \code{\link[rgl]{plot3d}}
+#'
 #' @export
 plot3d.pp3 <- function(X, ...) {
-  rgl::plot3d(as.data.frame(X$data), ...)
+  rgl::plot3d(coords(X), ...)
 }
 
 #### quadratcount.pp3 ####
-#' Extension of \code{\link[spatstat]{quadratcount}} to \code{\link[spatstat]{pp3}} objects.
+#' Count Points in Sub-Volumes of a 3D Point Pattern
 #'
 #' Divides volume into quadrats and counts the number of points in each quadrat.
 #'
 #' @param X The \code{\link[spatstat]{pp3}} object to split up.
 #' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions.
 #'
-#' @return A \code{data.frame} object containing the number of counts in each quadrat.
+#' @return A \code{data.frame} object containing the number of counts in each
+#'   quadrat.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{quadratcount}}
+#'
 #' @export
 quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
-  verifyclass(X, "pp3")
+  spatstat::verifyclass(X, "pp3")
   w <- domain(X)
 
   # create box3objects for each quadrat
@@ -254,9 +349,9 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   ylim <- w$yrange
   zlim <- w$zrange
 
-  xbreaks <- seq(xlim[1],xlim[2],length.out = (nx+1))
-  ybreaks <- seq(ylim[1],ylim[2],length.out = (ny+1))
-  zbreaks <- seq(zlim[1],zlim[2],length.out = (nz+1))
+  xbreaks <- seq(xlim[1], xlim[2],length.out = (nx+1))
+  ybreaks <- seq(ylim[1], ylim[2],length.out = (ny+1))
+  zbreaks <- seq(zlim[1], zlim[2],length.out = (nz+1))
 
   ntot <- nx*ny*nz
   gridvals <- list()
@@ -279,12 +374,87 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   return(data.frame(quad.no = seq(1,ntot), count = counts))
 }
 
+#### quadrats.pp3 ####
+#' Divide a 3D Point Pattern into Sub-Volumes
+#'
+#' Divides volume into quadrats and returns them.
+#'
+#' @param X The \code{\link[spatstat]{pp3}} object to split up.
+#' @param nx,ny,nz Number of rectangular quadrats in the x, y, and z directions,
+#'   if you wish to split up your point patthern by number of boxes.
+#' @param box.dims Vector containing the dimensions of the subsetted 3D boxxes,
+#'   if you wish to define the individual boxx size. Use either \code{nx, ny,
+#'   nz} or \code{box.dims}, but not both.
+#'
+#' @return A list containing the split up \code{pp3} objects.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{quadrats}}
+#'
+#' @export
+quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
+  # Rewrite to use n = c(nx,ny,nz) with a default of c(1,1,1). Update with
+  # description of how the function handles a box.dims that's not commensurate
+  # with the domain size.
+  spatstat::verifyclass(X, "pp3")
+  w <- domain(X)
+  xlim <- w$xrange
+  ylim <- w$yrange
+  zlim <- w$zrange
+
+  # create box3objects for each quadrat
+  if(is.null(box.dims)){
+    xbreaks <- seq(xlim[1],xlim[2],length.out = (nx+1))
+    ybreaks <- seq(ylim[1],ylim[2],length.out = (ny+1))
+    zbreaks <- seq(zlim[1],zlim[2],length.out = (nz+1))
+
+    ntot <- nx*ny*nz
+  } else {
+    xbreaks <- seq(xlim[1],xlim[2],by = box.dims[1])
+    ybreaks <- seq(ylim[1],ylim[2],by = box.dims[2])
+    zbreaks <- seq(zlim[1],zlim[2],by = box.dims[3])
+  }
+
+
+  gridvals <- list()
+  cnt <- 1
+
+  for(i in 1:(length(xbreaks)-1)){
+    for(j in 1:(length(ybreaks)-1)){
+      for(k in 1:(length(zbreaks)-1)){
+        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)],
+                                yrange = ybreaks[j:(j+1)],
+                                zrange = zbreaks[k:(k+1)])
+        cnt <- cnt + 1
+      }
+    }
+  }
+
+  #browser()
+  coo <- coords(X)
+  if(!is.null(marks(X))){
+    marks <- marks(X)
+  }
+
+  boxes <- lapply(gridvals, function(x){
+    res.coo <- coo[inside.boxx(X, w = x),]
+    if(!is.null(marks(X))) {
+      res.marks <- marks[inside.boxx(X, w = x)]
+      return(pp3(res.coo$x, res.coo$y, res.coo$z, x, marks = res.marks))
+    } else {
+      return(pp3(res.coo$x, res.coo$y, res.coo$z, x))
+    }
+  })
+
+  return(boxes)
+}
+
 #### K3cross ####
 # barely works... Needs corrections and inferface streamlining
 K3multi <- function(X, I, J, r, breaks,
               correction = c("none", "isotropic", "translation"),
               ..., ratio = FALSE) {
-  verifyclass(X, "pp3")
+  spatstat::verifyclass(X, "pp3")
   npts <- npoints(X)
   W <- X$domain
   volW <- volume(W)
@@ -358,20 +528,86 @@ K3multi <- function(X, I, J, r, breaks,
   return(K)
 }
 
-#### split.pp3 ####
-#' Extends split to pp3
-
-#### studpermu.pp3 ####
-#' Extends studpermu.test to pp3
+#### studpermu.test ####
+#' Studentised Permutation Test
 #'
-#' This function is still experimental. It needs full testing and validation.
-studpermu.pp3 <- function (X, formula,
-                           summaryfunction = G3est, ..., rinterval = NULL,
-                           nperm = 999, use.Tbar = FALSE,
-                           minpoints = 20, rsteps = 128,
-                           r = NULL, arguments.in.data = FALSE)
-{
-  if (arguments.in.data & !is.hyperframe(X))
+#' @description This is an S3 generic that extends the use of
+#'   \code{\link[spatstat]{studpermu.test}} beyond \code{ppp} objects.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{studpermu.test}},
+#' \code{\link{studpermu.test.pp3}}
+#'
+#' @export
+studpermu.test <- function(X, ...) UseMethod("studpermu.test")
+
+### studpermu.test.list ###
+#' Studentised Permutation Test
+#'
+#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @export
+studpermu.test.list <- spatstat::studpermu.test
+
+
+### studpermu.test.hyperframe ###
+#' Studentised Permutation Test
+#'
+#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @export
+studpermu.test.hyperframe <- function(X, ...) {
+  h.class <- unclass(X)$vclass
+  if (any(h.class == "ppp")) {
+    studpermu.test.ppp(X, ... = ...)
+  } else if (any(h.class == "pp3")) {
+    studpermu.test.pp3(X, ... = ...)
+  } else {
+    stop("Unknown type for studpermu.test()")
+  }
+}
+
+### studpermu.test.ppp ###
+#' Studentised Permutation Test
+#'
+#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @export
+studpermu.test.ppp <- spatstat::studpermu.test
+
+### studpermu.test.pp3 ###
+#' Studentised Permutation Test
+#'
+#' Perform a studentised permutation test for a difference between groups of
+#' point patterns
+#'
+#' @param X A hyperframe containing at least the point patterns and groups
+#' @param formula Formula describing the grouping. The left side of the formula
+#'   identifies which column of X contains the point patterns. The right side
+#'   identifies the grouping factor
+#' @param summaryfunction Summary function applicable to pp3. Defaults to
+#'   \code{link[spatstat]{K3est}}
+#' @param ... Additional arguments passed to summaryfunction
+#' @param rinterval Numeric of length 2. Experimental
+#' @param nperm Number of random permutations for the test; defaults to 999
+#' @param use.Tbar Logical value indicating choice of test statistic. If TRUE,
+#'   use the alternative test statistic, which is appropriate for summary
+#'   functions with roughly constant variance, such as K(r)/r or L(r). Defaults
+#'   to FALSE
+#' @param minpoints Minimum permissible number of points in a point pattern for
+#'   inclusion in the test calculation
+#'
+#' @family spatstat extensions
+#'
+#' @references Hahn, U. (2012) A studentized permutation test for the comparison
+#'   of spatial point patterns.
+#'   Journal of the American Statistical Association 107 (498), 754-764.
+#' @seealso \code{\link[spatstat]{studpermu.test}}, \code{link[spatstat]{K3est}}
+#'
+#' @export
+# Add ability to supply a summary function directly...
+studpermu.test.pp3 <- function (X, formula,
+                                summaryfunction = K3est, ...,
+                                nperm = 999, use.Tbar = FALSE, rinterval = NULL,
+                                minpoints = 20, rmax = NULL, nrval = 128) {
+  if (!is.hyperframe(X))
     stop(paste("X needs to be a hyperframe",
                "if arguments for summary function are to be retrieved"),
          call. = FALSE)
@@ -396,7 +632,7 @@ studpermu.pp3 <- function (X, formula,
         stop(paste("Argument", dQuote("formula"), "should be a formula"))
       if (length(formula) < 3)
         stop(paste("Argument", sQuote("formula"), "must have a left hand side"))
-      rhs <- rhs.of.formula(formula)
+      rhs <- spatstat.utils::rhs.of.formula(formula)
       ppname <- formula[[2]]
       if (!is.name(ppname))
         stop("Left hand side of formula should be a single name")
@@ -468,30 +704,39 @@ studpermu.pp3 <- function (X, formula,
   if (any(m < 3))
     stop(paste("Data groups need to contain at least two patterns;",
                "\nafter discarding those with fewer than", minpoints,
-               "points, the remaining group sizes are", commasep(m)),
+               "points, the remaining group sizes are",
+               spatstat.utils::commasep(m)),
          call. = FALSE)
   npossible <- factorial(sum(m))/prod(factorial(m))/prod(factorial(table(m)))
+  if (is.nan(npossible))
+    npossible <- Inf
   if (npossible < max(100, nperm))
     warning("Don't expect exact results - group sizes are too small")
-  if (!is.null(r)) {
-    rinterval <- range(r)
-    rsteps <- length(r)
+  if (is.null(rmax)) {
+    rmax <- sapply(pp, function(P) {
+      spatstat::diameter(P$domain)/2
+    })
+    rmax <- min(rmax)
   }
-  else if (is.null(rinterval)) {
-    foochar <- substr(fooname, 1, 1)
-    if (foochar %in% c("p", "L"))
-      foochar <- "K"
-    if (fooname %in% c("Kscaled", "Lscaled"))
-      foochar <- "Kscaled"
-    rinterval <- c(0, min(with(data,
-                               rmax.rule(foochar, domain(pp), intensity(pp)))))
-  }
+  if (is.null(rinterval))
+    rinterval <- c(0, rmax)
   ranger <- diff(range(rinterval))
-  rr <- r %orifnull% seq(0, rinterval[2], length.out = rsteps + 1)
+  rr <- seq(0, rmax, length.out = nrval)
   taker <- rr >= rinterval[1] & rr <= rinterval[2]
-  if (arguments.in.data)
-    fvlist <- multicall(summaryfunction, pp, data, r = rr, ...)
-  else fvlist <- with(data, summaryfunction(pp, r = rr, ...))
+  needcorx <- "correction" %in% names(formals(summaryfunction))
+  gavecorx <- "correction" %in% names(list(...))
+  corx <- if (needcorx && !gavecorx)
+    "translation"
+  else NULL
+  fvlist <-
+    if (is.null(corx)) {
+      with(data, summaryfunction(pp, rmax = rmax, ...))
+    }
+  else {
+    with(data, summaryfunction(pp, rmax = rmax, ..., correction = corx))
+  }
+  # can skip most of the previous if summary functions are supplied...
+  # need to extract rmax, nrval from functions
   fvtemplate <- fvlist[[1]]
   valu <- attr(fvtemplate, "valu")
   argu <- attr(fvtemplate, "argu")
@@ -500,23 +745,28 @@ studpermu.pp3 <- function (X, formula,
   predigested <- list(lev = lev, foar = foar, m = m, combs = combs,
                       rrr = rr[taker], ranger = ranger)
   if (use.Tbar) {
-    Tobs <- Tbarstat(groupi, predigested)
-    Tsim <- replicate(nperm, Tbarstat(sample(groupi), predigested))
+    Tobs <- T.barstat(groupi, predigested)
+    Tsim <- replicate(nperm, T.barstat(sample(groupi), predigested))
   }
   else {
-    Tobs <- Tstat(groupi, predigested)
-    Tsim <- replicate(nperm, Tstat(sample(groupi), predigested))
+    Tobs <- T.stat(groupi, predigested)
+    Tsim <- replicate(nperm, T.stat(sample(groupi), predigested))
   }
   names(Tobs) <- if (use.Tbar)
     "Tbar"
   else "T"
   pval <- (1 + sum(Tobs < Tsim))/(1 + nperm)
   method <- c("Studentized permutation test for grouped point patterns",
-              if (is.hyperframe(X)) pasteFormula(formula) else NULL,
-              choptext(ngroups, "groups:", paste(levels(data$group),
-                collapse = ", ")), choptext("summary function:",
-                  paste0(fooname, ","), "evaluated on r in", prange(rinterval)),
-              choptext("test statistic:", if (use.Tbar) "Tbar," else "T,",
+              ifelse(is.hyperframe(X),
+                     spatstat.utils::pasteFormula(formula), NULL),
+              spatstat.utils::choptext(ngroups, "groups:",
+                                       paste(levels(data$group),
+                collapse = ", ")),
+              spatstat.utils::choptext("summary function:",
+                  paste0(fooname, ","), "evaluated on r in",
+                  spatstat.utils::prange(rinterval)),
+              spatstat.utils::choptext("test statistic:",
+                                       ifelse(use.Tbar, "Tbar,", "T,"),
                        nperm, "random permutations"))
   fooshort <- switch(fooname, pcf = "pair correlation ",
                      Kinhom = "inhomogeneous K-",
@@ -531,9 +781,9 @@ studpermu.pp3 <- function (X, formula,
   class(testerg) <- c("studpermutest", "htest")
   fvs <- lapply(fvlist, "[.fv", j = c(argu, valu))
   fvs <- lapply(fvs, "attr<-", which = "alim", value = rinterval)
-  testerg$curves <- hyperframe(fvs = fvs, groups = data$group)
+  testerg$curves <- spatstat::hyperframe(fvs = fvs, groups = data$group)
   fvtheo <- fvlist[[1]]
-  fvnames(fvtheo, ".y") <- "theo"
+  spatstat::fvnames(fvtheo, ".y") <- "theo"
   attr(fvtheo, "alim") <- rinterval
   testerg$curvtheo <- fvtheo[, c(argu, "theo")]
   grmn <- lapply(lev, splitmean, ind = groupi, f = foar)
@@ -542,21 +792,295 @@ studpermu.pp3 <- function (X, formula,
   return(testerg)
 }
 
-#### bdist.points3 ####
-#' Extension of \code{\link[spatstat]{bdist.points}}. Helper function for border
-#' correction \code{\link{bK3est}}.
+# These helpers are undocumented, but located at
+# https://rdrr.io/github/spatstat/spatstat.core/src/R/studpermutest.R
+
+splitmean <- function(l, ind, f) {
+  apply(f[ , ind == l], 1, mean)
+}
+splitvarn <- function(l, ind, f, m) {
+  apply(f[ , ind == l], 1, var) / m[l]
+}
+studentstat <- function(i, grmean, grvar) {
+  (grmean[, i[1]] - grmean[, i[2]])^2 / (grvar[i[1],] + grvar[i[2], ])
+}
+
+T.stat <- function (ind = groupi, predigested) {
+  # predigested should be a list with entries lev, foar, m, combs, rrr
+  with(predigested, {
+    grmean <- sapply(lev, splitmean, ind=ind, f=foar)
+    grvar <- t(sapply(lev, splitvarn, ind=ind, f=foar, m=m))
+    y <- apply(combs, 2, studentstat, grmean=grmean, grvar=grvar)
+    sum(apply(y, 2, trapint, x = rrr))
+  })
+}
+
+intstudent <- function(i, rrr, grmean, meangrvar) {
+  trapint(rrr, (grmean[, i[1]] - grmean[, i[2]])^2 /
+            (meangrvar[i[1]] + meangrvar[i[2]]))
+}
+
+T.barstat <- function (ind = groupi, predigested) {
+  # predigested should be a list
+  # with entries lev, foar, m, combs, rrr, ranger
+  with(predigested, {
+    grmean <- sapply(lev, splitmean, ind=ind, f=foar)
+    grvar <- t(sapply(lev, splitvarn, ind=ind, f=foar, m=m))
+    meangrvar <- apply(grvar, 1, trapint, x = rrr)/ranger
+    sum(apply(combs, 2, intstudent,
+              rrr=rrr, grmean=grmean, meangrvar=meangrvar))
+    # trapint(rr[taker], grvar[i[1],] + grvar[i[2], ]))))
+  })
+}
+
+makefv <- function(yvals, xvals, template) {
+  fdf <- data.frame(r = xvals, y = yvals)
+  argu <- fvnames(template, ".x")
+  valu <- fvnames(template, ".y")
+  names(fdf) <- c(argu,valu)
+  fv(fdf, argu = argu, ylab = attr(template, "ylab"), valu = valu,
+     fmla = attr(template,"fmla"), alim = attr(template, "alim"))
+}
+
+# Trapezoidal rule approximation to integral
+trapint <- function(x, y) {
+  nonan <- !is.na(y)
+  nn <- sum(nonan)
+  if(nn < 2L) return(0)
+  Y <- y[nonan]
+  X <- x[nonan]
+  0.5 * sum( (Y[-1] + Y[-nn]) * diff(X))
+}
+
+# call foo(x, further arguments) repeatedly
+# further arguments are taken from hyperframe H and ...
+multicall <- function(foo, x, H, ...){
+  stopifnot(is.hyperframe(H))
+  if (is.hyperframe(x)) {
+    x <- as.list(x)[[1]]
+  } else if(!is.list(x))
+    stop("in multicall: x should be a hyperframe or list", call.=FALSE)
+
+  # check if same length
+  nrows <- dim(H)[1]
+  if (length(x) != nrows)
+    stop(paste("in multicall: x and H need to have",
+               "the same number of rows or list elements"),
+         call.=FALSE)
+  dotargs <- list(...)
+  hnames <- names(H)
+  argnames <- names(formals(foo))# always assume first argument is given
+
+  ppname <- argnames[1]
+  argnames <- argnames[-1]
+  dotmatch <- pmatch(names(dotargs), argnames)
+  dotmatched <- dotmatch[!is.na(dotmatch)]
+  dotuseargs <- dotargs[!is.na(dotmatch)]
+  restargs <- if(length(dotmatched) >0) argnames[-dotmatched] else argnames
+  hmatch <- pmatch(hnames, restargs)
+  huse <- !is.na(hmatch)
+  lapply(seq_len(nrows), function (i)
+    do.call(foo, c(list(x[[i]]),
+                   as.list(H[i, huse, drop=TRUE, strip=FALSE]),
+                   dotargs)))
+}
+
+#### Tstat.pp3 ####
+#' Extends Tstat to pp3
+#'
+#' Tstat.pp3 extends the third-order summary statistic
+#' \code{\link[spatstat]{Tstat}} to pp3
+#'
+#' @param correction One of "none" or "isotropic." "translation" correction is
+#'   planned but not yet implemented.
+#'
+#' @family spatstat extensions
+#'
+#' @seealso \code{\link[spatstat]{Tstat}}
+#' @references Schladitz, K. and Baddeley, A. (2000) A third order point process
+#' characteristic. Scandinavian Journal of Statistics 27 (2000) 657-671.
+Tstat.pp3 <- function (X, ..., rmax = NULL, nrval = 128,
+                       correction = "border",
+                       ratio = FALSE, verbose = TRUE) {
+  spatstat::verifyclass(X, "pp3")
+  npts <- spatstat::npoints(X)
+  W <- spatstat::domain(X)
+  areaW <- spatstat::volume(W)
+  lambda <- npts/areaW
+  lambda2 <- (npts * (npts - 1))/(areaW^2)
+  lambda3 <- (npts * (npts - 1) * (npts - 2))/(areaW^3)
+  if (is.null(rmax))
+    rmax <- spatstat::diameter(W)/2
+  r <- seq(0, rmax, length.out = nrval)
+  breaks <- spatstat::breakpts.from.r(r)
+  correction.given <- !missing(correction) && !is.null(correction)
+  if (!correction.given)
+    correction <- c("border", "bord.modif") #, "translate") not implemented yet
+  correction <- spatstat::pickoption(
+    "correction", correction,
+    c(none = "none",
+      border = "border", bord.modif = "bord.modif", trans = "translate",
+      translate = "translate", translation = "translate", best = "best"),
+    multi = TRUE)
+  alim <- c(0, rmax)
+  TT <- data.frame(r = r, theo = 5/12 * pi^2 * r^6)
+  desc <- c("distance argument r", "theoretical Poisson %s")
+  TT <- spatstat::fv(TT, "r",
+                     quote(T(r)), "theo", , alim, c("r", "%s[pois](r)"),
+                     desc, fname = "T") # blank is in ppp version...
+  if (ratio) {
+    denom <- lambda2 * areaW
+    numT <- spatstat::eval.fv(denom * TT)
+    denT <- spatstat::eval.fv(denom + TT * 0)
+    attributes(numT) <- attributes(denT) <- attributes(TT)
+    attr(numT, "desc")[2] <- "numerator for theoretical Poisson %s"
+    attr(denT, "desc")[2] <- "denominator for theoretical Poisson %s"
+  }
+  close <- spatstat::closepairs(X, rmax, what = "ijd", twice = FALSE,
+                                neat = FALSE)
+  I <- close$i
+  J <- close$j
+  DIJ <- close$d
+  nI <- length(I)
+  continue <- TRUE
+  if (verbose) {
+    nTmax <- nI * (nI - 1)/2
+    esttime <- exp(1.25 * log(nTmax) - 21.5)
+    message(paste("Searching", nTmax, "potential triangles;",
+                  "estimated time", spatstat::codetime(esttime)))
+    if(esttime > 60)
+      continue <- askYesNo("Estimated time greater than one minute. Continue?")
+  }
+  if (!continue) return(NULL)
+  tri <- spatstat::trianglediameters(I, J, DIJ, nvert = npts)
+  stopifnot(identical(colnames(tri), c("i", "j", "k", "diam")))
+  II <- with(tri, c(i, j, k))
+  DD <- with(tri, rep.int(diam, 3))
+  if (any(correction == "none")) {
+    wh <- whist(DD, breaks$val)
+    numTun <- cumsum(wh)
+    denTun <- lambda3 * areaW
+    Tun <- numTun/denTun
+    TT <- spatstat::bind.fv(TT, data.frame(un = Tun), "hat(%s)[un](r)",
+                            "uncorrected estimate of %s", "un")
+    if (ratio) {
+      numT <- spatstat::bind.fv(numT, data.frame(un = numTun), "hat(%s)[un](r)",
+                                "numerator of uncorrected estimate of %s", "un")
+      denT <- spatstat::bind.fv(denT, data.frame(un = denTun), "hat(%s)[un](r)",
+                                "denominator of uncorrected estimate of %s",
+                                "un")
+    }
+  }
+  if (any(correction == "border" | correction == "bord.modif")) {
+    b <- bdist.points.pp3(X)
+    bI <- b[II]
+    RS <- spatstat::Kount(DD, bI, b, breaks)
+    if (any(correction == "bord.modif")) {
+      denom.area <- eroded.volumes(W, r)
+      numTbm <- RS$numerator
+      denTbm <- lambda3 * denom.area
+      Tbm <- numTbm/denTbm
+      TT <- spatstat::bind.fv(TT, data.frame(bord.modif = Tbm),
+                              "hat(%s)[bordm](r)",
+                              "modified border-corrected estimate of %s",
+                              "bord.modif")
+      if (ratio) {
+        numT <- spatstat::bind.fv(numT, data.frame(bord.modif = numTbm),
+                        "hat(%s)[bordm](r)",
+                        "numerator of modified border-corrected estimate of %s",
+                        "bord.modif")
+        denT <- spatstat::bind.fv(denT, data.frame(bord.modif = denTbm),
+                                  "hat(%s)[bordm](r)",
+                      "denominator of modified border-corrected estimate of %s",
+                      "bord.modif")
+      }
+    }
+    if (any(correction == "border")) {
+      numTb <- RS$numerator
+      denTb <- lambda2 * RS$denom.count
+      Tb <- numTb/denTb
+      TT <- spatstat::bind.fv(TT, data.frame(border = Tb), "hat(%s)[bord](r)",
+                    "border-corrected estimate of %s", "border")
+      if (ratio) {
+        numT <- spatstat::bind.fv(numT, data.frame(border = numTb),
+                                  "hat(%s)[bord](r)",
+                                "numerator of border-corrected estimate of %s",
+                                "border")
+        denT <- spatstat::bind.fv(denT, data.frame(border = denTb),
+                                  "hat(%s)[bord](r)",
+                              "denominator of border-corrected estimate of %s",
+                              "border")
+      }
+    }
+  }
+  if (any(correction == "translate")) {
+    stop("Translation correction not yet implemented.")
+    edgewt <- edgetri.Trans(X, tri[, 1:3])
+    wh <- whist(tri$diam, breaks$val, edgewt)
+    numTtrans <- 3 * cumsum(wh)
+    denTtrans <- lambda3 * areaW
+    Ttrans <- numTtrans/denTtrans
+    h <- spatstat::diameter(W)/2
+    Ttrans[r >= h] <- NA
+    TT <- spatstat::bind.fv(TT, data.frame(trans = Ttrans), "hat(%s)[trans](r)",
+                  "translation-corrected estimate of %s", "trans")
+    if (ratio) {
+      numT <- spatstat::bind.fv(numT, data.frame(trans = numTtrans),
+                                "hat(%s)[trans](r)",
+                            "numerator of translation-corrected estimate of %s",
+                            "trans")
+      denT <- spatstat::bind.fv(denT, data.frame(trans = denTtrans),
+                                "hat(%s)[trans](r)",
+                          "denominator of translation-corrected estimate of %s",
+                          "trans")
+    }
+  }
+  formula(TT) <- . ~ r
+  spatstat::unitname(TT) <- spatstat::unitname(X)
+  if (ratio) {
+    formula(numT) <- formula(denT) <- . ~ r
+    spatstat::unitname(denT) <- spatstat::unitname(TT)
+    spatstat::unitname(numT) <- spatstat::unitname(TT)
+    TT <- spatstat::rat(TT, numT, denT, check = FALSE)
+  }
+  return(TT)
+}
+
+#### bdist.points ####
+#' Distance to Boundary of Domain
+#'
+#' @description This is an S3 generic that extends the use of
+#'   \code{\link[spatstat]{bdist.points}} beyond \code{ppp} objects.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{bdist.points}}, \code{\link{bdist.points.pp3}}
+#'
+#' @export
+bdist.points <- function(X, ...) UseMethod("bdist.points")
+
+### bdist.points.ppp ###
+#' Distance to Boundary of Window
+#'
+#' @seealso \code{\link[spatstat]{bdist.points}}
+#' @export
+bdist.points.ppp <- spatstat::bdist.points
+
+### bdist.points.pp3 ###
+#' Distance to Boundary of Domain
 #'
 #' Finds the smallest distance to a boundary for each point in a point pattern.
 #'
 #' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
 #'   object.
+#'
 #' @return An object containing the shortest distance to the boundary for each
 #'   point in the pattern X.
 #' @seealso \code{\link[spatstat]{bdist.points}}
+#'
+#' @export
+bdist.points.pp3 <- function (X) {
 
-bdist.points3 <- function (X) {
-
-  verifyclass(X, "pp3")
+  spatstat::verifyclass(X, "pp3")
 
   x <- X$data$x
   y <- X$data$y
@@ -569,12 +1093,16 @@ bdist.points3 <- function (X) {
   ymax <- max(d$yrange)
   zmin <- min(d$zrange)
   zmax <- max(d$zrange)
-  result <- pmin.int(x - xmin, xmax - x, y - ymin, ymax - y , z - zmin , zmax - z)
+  result <- pmin.int(x - xmin, xmax - x,
+                     y - ymin, ymax - y,
+                     z - zmin, zmax - z)
 
   return(result)
 }
 
 #### bdist.points3.multi ####
+#' Cardinal Direction Distances to Boundary of Domain
+#'
 #' Returns the shortest distances to boundaries in the x, y, and z directions
 #' separately.
 #'
@@ -582,11 +1110,10 @@ bdist.points3 <- function (X) {
 #'   object.
 #' @return A data.frame containing the shortest distance to the closest three
 #'   boundaries for each point in the pattern X.
-#' @seealso \code{\link{bdist.points3}}
-
+#' @seealso \code{\link{bdist.points.pp3}}
 bdist.points3.multi <- function (X){
 
-  verifyclass(X, "pp3")
+  spatstat::verifyclass(X, "pp3")
 
   x <- X$data$x
   y <- X$data$y
@@ -600,7 +1127,9 @@ bdist.points3.multi <- function (X){
   zmin <- min(d$zrange)
   zmax <- max(d$zrange)
 
-  result <- data.frame(x = pmin.int(x - xmin, xmax - x), y =  pmin.int(y - ymin, ymax - y), z = pmin.int(z - zmin, zmax - z))
+  result <- data.frame(x = pmin.int(x - xmin, xmax - x),
+                       y = pmin.int(y - ymin, ymax - y),
+                       z = pmin.int(z - zmin, zmax - z))
 
   return(result)
 }

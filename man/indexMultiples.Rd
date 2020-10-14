@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_multi.R
 \name{indexMultiples}
 \alias{indexMultiples}
-\title{Returns a list of indicies where the position in the list is the hit
-multiplicity and the index is of the first hit in the multiple hit event.}
+\title{Index multiple hits}
 \usage{
 indexMultiples(ato, cl.n = 3)
 }

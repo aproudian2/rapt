@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_extend.R
 \name{quadratcount.pp3}
 \alias{quadratcount.pp3}
-\title{Extension of \code{\link[spatstat]{quadratcount}} to \code{\link[spatstat]{pp3}} objects.}
+\title{Count Points in Sub-Volumes of a 3D Point Pattern}
 \usage{
 \method{quadratcount}{pp3}(X, nx = 5, ny = 5, nz = 5)
 }
@@ -12,8 +12,31 @@
 \item{nx, ny, nz}{Number of ractangular quadrats in the x, y, and z directions.}
 }
 \value{
-A \code{data.frame} object containing the number of counts in each quadrat.
+A \code{data.frame} object containing the number of counts in each
+  quadrat.
 }
 \description{
 Divides volume into quadrats and counts the number of points in each quadrat.
 }
+\seealso{
+\code{\link[spatstat]{quadratcount}}
+
+Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
+\code{\link{bdist.points}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
+\code{\link{rjitter}()},
+\code{\link{rpoint3}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
+\code{\link{studpermu.test}()},
+\code{\link{superimpose.pp3}()}
+}
+\concept{spatstat extensions}

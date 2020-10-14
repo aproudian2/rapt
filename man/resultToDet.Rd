@@ -2,21 +2,28 @@
 % Please edit documentation in R/rapt_tapsim.R
 \name{resultToDet}
 \alias{resultToDet}
-\title{Convert a TAPSim results file to a detector point pattern}
+\title{Convert TAPSim Result to Detector \code{\link[spatstat]{ppp}}}
 \usage{
 resultToDet(res, clip.radius = NULL)
 }
 \arguments{
-\item{res}{The results data.frame}
+\item{res}{data.frame. The results \code{data.frame} as returned by
+\code{\link{readResult}}}
 
-\item{clip.radius}{The detector radius at which to clip the points}
+\item{clip.radius}{Numeric. The detector radius at which to clip the points.}
 }
 \value{
-A ppp containing the detector positions marked by their id
+A \code{\link[spatstat]{ppp}} containing the detector positions
+  marked by their id.
 }
 \description{
-Convert a TAPSim results file to a detector point pattern
+Convert TAPSim Result to Detector \code{\link[spatstat]{ppp}}
 }
 \seealso{
-\code{\link{createDet}}, \code{\link{readResult}}
+\code{\link{createDet}}
+
+Other TAPSim functions: 
+\code{\link{readResult}()},
+\code{\link{resultToPOS}()}
 }
+\concept{TAPSim functions}

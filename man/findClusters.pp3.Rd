@@ -2,10 +2,10 @@
 % Please edit documentation in R/rapt_extend.R
 \name{findClusters.pp3}
 \alias{findClusters.pp3}
-\title{Finds clusters by NN adjacency marks.}
+\title{Find Clusters by NN Adjacency Marks}
 \usage{
 findClusters.pp3(X, mark, k = 1)
 }
 \description{
-Finds clusters by NN adjacency marks.
+Find Clusters by NN Adjacency Marks
 }

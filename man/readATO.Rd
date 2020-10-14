@@ -2,22 +2,27 @@
 % Please edit documentation in R/rapt_file.R
 \name{readATO}
 \alias{readATO}
-\title{Read an ATO file.}
+\title{Read an ATO File}
 \usage{
 readATO(filepath)
 }
 \arguments{
-\item{filepath}{A string. The file path to the ATO file.}
+\item{filepath}{Character. The file path to the ATO file.}
 }
 \value{
-A dataframe.
+A data.frame with columns corresponding to the ATO structure
+  definition.
 }
 \description{
 \code{readATO} reads an ATO file (from IVAS) into a data frame.
 }
 \references{
-Local Electrode Atom Probe Tomography: A User's Guide
+Larson \emph{et al.},
+  \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
-\code{\link{readPOS}}
+Other APT import functions: 
+\code{\link{readPOS}()},
+\code{\link{readRRNG}()}
 }
+\concept{APT import functions}

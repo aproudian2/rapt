@@ -2,11 +2,43 @@
 % Please edit documentation in R/rapt_sim.R
 \name{rpoint3}
 \alias{rpoint3}
-\title{Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.}
+\title{Generate N Random Points}
 \usage{
-rpoint3(n, f, fmax = 1, win = box3(), ..., giveup = 1000,
-  verbose = FALSE, nsim = 1, drop = TRUE)
+rpoint3(
+  n,
+  f,
+  fmax = 1,
+  win = box3(),
+  ...,
+  giveup = 1000,
+  verbose = FALSE,
+  nsim = 1,
+  drop = TRUE
+)
 }
 \description{
-Extends \code{\link[spatstat]{rpoint}} to \code{\link[spatstat]{pp3}}.
+\code{rpoint3} extends \code{\link[spatstat]{rpoint}} to
+\code{\link[spatstat]{pp3}}.
 }
+\seealso{
+\code{\link[spatstat]{rpoint}}
+
+Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
+\code{\link{bdist.points}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
+\code{\link{quadratcount.pp3}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
+\code{\link{rjitter}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
+\code{\link{studpermu.test}()},
+\code{\link{superimpose.pp3}()}
+}
+\concept{spatstat extensions}

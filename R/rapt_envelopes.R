@@ -1,5 +1,6 @@
 #
-# This file contains information relating to the calculation and display of envelopes.
+# This file contains information relating to the calculation and display of
+# envelopes.
 #
 
 #### envPlot ####
@@ -19,29 +20,36 @@
 #'   on the plot.
 #' @param ylab Y axis label.
 #' @param xlab X axis label.
-#' @param leg True or falsel whether to show the automatically generated legend.
+#' @param leg True or false whether to show the automatically generated legend.
 #' @param colors List of color names to make the envelopes.
 #' @param ... Arguments to be passed into \code{plot()}.
 #' @return Nothing, just produces a plot.
-#' @seealso \code{\link{pK3est}}, \code{\link{pG3est}}, \code{\link{pF3est}}
+#'
 #' @export
 
-envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
-                    ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),
-                    ylab = expression(sqrt('K'[3]*'(r)')*'  Anomaly'), xlab = 'r',
-                    leg = TRUE, colors = c("lightskyblue", "mediumpurple", "lightpink"),
-                    ...) {
+envPlot <- function(
+  tests, percentiles = c(0.999, 0.99, 0.97),
+  ylim = c(-3,3), xlim = c(0, ceiling(max(tests[,1]))),
+  ylab = expression(sqrt('K'[3]*'(r)')*'  Anomaly'), xlab = 'r',
+  leg = TRUE, colors = c("lightskyblue", "mediumpurple", "lightpink"),
+  ...) {
   color <- colors
   # break up data into r values and test results
   rvals <- tests[,1]
   tvals <- tests[,2:ncol(tests)]
 
-  nTests <- ncol(tvals) # number of tests done
-  prange <- percentiles * nTests # get the range of indeces for which each percentile spans
+  # number of tests done
+  nTests <- ncol(tvals)
+  # get the range of indices for which each percentile spans
+  prange <- percentiles * nTests
 
-  sortedtVals <- t(apply(tvals, 1, sort)) # sort the results at each r value from lowest to highest
-  percentileIndicesBig <- round(nTests/2) + floor(prange/2) # select the high end indexes based on being 1/2 of the percentile span from the middle of the tests
-  percentileIndicesSmall <- round(nTests/2) - floor(prange/2) # do the same for the low end
+  # sort the results at each r value from lowest to highest
+  sortedtVals <- t(apply(tvals, 1, sort))
+  # select the high end indexes based on being 1/2 of the percentile span
+  # from the middle of the tests
+  percentileIndicesSmall <- round(nTests/2) - floor(prange/2)
+  # do the same for the low end
+  percentileIndicesBig <- round(nTests/2) + floor(prange/2)
 
   # grab out the columns from the sorted test results that we will plot
   toPlotBigs <- matrix(0, nrow = nrow(tvals), ncol = length(percentiles))
@@ -57,19 +65,20 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
   toplt <- data.frame(rvals,tvals[,1])
   plot(toplt, type = "n",
        ylab = ylab, xlab = xlab,
-       ylim = ylim, xlim = xlim, xaxt = "n", ...)
-  axis(1, at = 0:xlim[2], labels=FALSE)
-  axis(1, at = seq(0,xlim[2],by=xlim[2]/10), ...)
+       ylim = ylim, xlim = xlim, ...)
+  #axis(1, at = 0:xlim[2], labels=FALSE)
+  #axis(1, at = seq(0,xlim[2],by=xlim[2]/10), ...)
   a <- c(rvals, rev(rvals))
   for(i in 1:length(percentiles)) {
-    polygon(a, c(toPlotBigs[,i], rev(toPlotSmalls[,i])), col = color[i])#,border=color[i],lwd=2)
+    polygon(a, c(toPlotBigs[,i], rev(toPlotSmalls[,i])), col = color[i])
+    #,border=color[i],lwd=2)
   }
   abline(h = 0, lty = 2, lwd = 1, col="black")
   if(leg == TRUE) {
     legend(0, ylim[2], legend = c(paste(toString(percentiles[1]*100), "% AI"),
                                   paste(toString(percentiles[2]*100), "% AI"),
                                   paste(toString(percentiles[3]*100), "% AI")),
-           col=c(color[1], color[2], color[3]),
+           col = c(color[1], color[2], color[3]),
            lty = c(1,1,1), lwd = c(10,10,10))
   }
 }
@@ -138,11 +147,23 @@ envPlot <- function(tests, percentiles = c(0.999, 0.99, 0.97),
 #' that were subtracted from the results at each r value. Can be used to
 #' subtract from another set of envelopes for comparison. [[3]] rmax used in the
 #' calculation. [[4]] nrval used in the calculation.}
+#'
+#'
+#' @name pK3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{pK3est}:
+#'   For \code{pK3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
                    correction="trans",anom=FALSE,toSub=NULL, sorted=TRUE,
                    cores = NULL){
+  .Deprecated("pEnvelope")
+
   #find cores and initialize the cluster
   if(is.null(cores)){
     cores2use <- detectCores()
@@ -150,7 +171,8 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
     cores2use <- cores
   }
   cl <- makePSOCKcluster(cores2use)
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
+  clusterExport(cl, c("pattern","rmax","nrval","correction"),
+                envir = environment())
   clusterExport(cl,"percentSelect")
   clusterEvalQ(cl,library(spatstat))
 
@@ -158,12 +180,14 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
 
   # apply K3est function to each of the pp3 patterns in parallel
   if(correction=="iso"){
-    result <- parallel::parLapply(cl,percents,function(x){
-      K3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "isotropic")
+    result <- parallel::parLapply(cl, percents, function(x) {
+      K3est(percentSelect(x,pattern), rmax=rmax, nrval=nrval,
+            correction = "isotropic")
     })
   }else if(correction=="trans"){
-    result <- parallel::parLapply(cl,percents,function(x){
-      K3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "translation")
+    result <- parallel::parLapply(cl, percents, function(x) {
+      K3est(percentSelect(x,pattern), rmax=rmax, nrval=nrval,
+            correction = "translation")
     })
   }else if(correction=="bord"){
     clusterExport(cl,"bK3est")
@@ -206,9 +230,9 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
     return(tests)
 
   }else if (anom == TRUE){
-    # If yes, sort the values, take the sqare root (to keep variance constant over r)
-    # then subtract toSub from another pattern or from the 50th perentile of this
-    # pattern. Return the results.
+    # If yes, sort the values, take the square root (to keep variance constant
+    # over r) then subtract toSub from another pattern or
+    # from the 50th perentile of this pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]
     tvals <- sqrt(tvals)
 
@@ -262,9 +286,18 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
 #' @return Returns data fram containing r values and associated anomaly K3est
 #'   values.
 #'
+#' @name anomK3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{anomK3est}:
+#'   For \code{anomK3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
+  .Deprecated("pEnvelope")
 
   if(correction == "iso"){
     a <- K3est(pattern,rmax=rmax,nrval=nrval,correction="isotropic")
@@ -362,11 +395,20 @@ anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 #' Can be used to subtract from another set of envelopes for comparison. [[3]]
 #' rmax used in the calculation. [[4]] nrval used in the calculation.}
 #'
+#' @name pG3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{pG3est}:
+#'   For \code{pG3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
                    correction="rs", anom=FALSE, toSub=NULL,
                    cores=NULL){
+  .Deprecated("pEnvelope")
 
   #find cores and initialize the cluster
   if(is.null(cores)){
@@ -376,7 +418,8 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
   }
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"), envir = environment())
+  clusterExport(cl,c("pattern","rmax","nrval","correction"),
+                envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -392,7 +435,8 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
     })
   }else if(correction=="Hanisch"){
     result <- parallel::parLapply(cl,percents,function(x){
-      G3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "Hanisch")
+      G3est(percentSelect(x,pattern), rmax=rmax, nrval=nrval,
+            correction = "Hanisch")
     })
   }else{
     print("Please input valid correction argument.")
@@ -424,8 +468,8 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
     return(tests)
 
   }else if (anom == TRUE){
-    # If yes, sort the values, subtract toSub from another pattern or from the 50th perentile of this
-    # pattern. Return the results.
+    # If yes, sort the values, subtract toSub from another pattern or
+    # from the 50th perentile of this pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]
     #tvals <- sqrt(tvals)
     tvals <- t(apply(tvals,1,sort))
@@ -455,7 +499,7 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 }
 
 #### anomG3est ####
-#' Perfrom anomaly G3est on a \code{\link[spatstat]{pp3}} object.
+#' Perform anomaly G3est on a \code{\link[spatstat]{pp3}} object.
 #'
 #' See \code{\link[spatstat]{G3est}}. Performs the anomaly G3est on a set of
 #' point cloud data. This means subtracting the 50th percentile from the
@@ -475,9 +519,18 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 #' @return Returns data fram containing r values and associated anomaly G3est
 #'   values.
 #'
+#' @name anomG3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{anomG3est}:
+#'   For \code{anomG3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
+  .Deprecated("pEnvelope")
 
   if(correction == "rs"){
     a <- G3est(pattern,rmax=rmax,nrval=nrval,correction="rs")
@@ -575,11 +628,20 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #' subtract from another set of envelopes for comparison. [[3]] rmax used in the
 #' calculation. [[4]] nrval used in the calculation.}
 #'
+#' @name pF3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{pF3est}:
+#'   For \code{pF3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
                    correction="rs", anom=FALSE, toSub=NULL,
                    cores=NULL){
+  .Deprecated("pEnvelope")
 
   #find cores and initialize the cluster
   if(is.null(cores)){
@@ -589,7 +651,8 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
   }
   cl <- makePSOCKcluster(cores2use)
   clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),envir = environment())
+  clusterExport(cl, c("pattern","rmax","nrval","correction"),
+                envir = environment())
   clusterEvalQ(cl,library(spatstat))
 
   percents <- as.list(rep(perc, nEvals))
@@ -637,8 +700,8 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
     return(tests)
 
   }else if (anom == TRUE){
-    # If yes, sort the values, subtract toSub from another pattern or from the 50th perentile of this
-    # pattern. Return the results.
+    # If yes, sort the values, subtract toSub from another pattern or
+    # from the 50th perentile of this pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]
     #tvals <- sqrt(tvals)
     tvals <- t(apply(tvals,1,sort))
@@ -688,9 +751,18 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 #' @return Returns data fram containing r values and associated anomaly F3est
 #'   values.
 #'
+#' @name anomF3est-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section \code{anomF3est}:
+#'   For \code{anomF3est}, use \code{\link{pEnvelope}}
+#'
 #' @export
 
 anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
+  .Deprecated("pEnvelope")
 
   if(correction == "rs"){
     a <- F3est(pattern,rmax=rmax,nrval=nrval,correction="rs")
@@ -800,4 +872,96 @@ bK3est <- function(X, rmax=NULL, nrval=128){
   colnames(K)<-c("r","bord")
 
   return(K)
+}
+
+#### pEnvelope ####
+#' Create an Envelope in Parallel
+#'
+#' @param cl A \code{\link[parallel]{cluster}} object
+#' @param X A point pattern
+#' @param fun Function that computes the desired summary statistic for a 3D
+#'   point pattern.
+#' @param nsim Number of simulated point patterns to be generated when computing
+#'   the envelopes.
+#' @param nrank Integer. Rank of the envelope value amongst the nsim simulated
+#'   values. A rank of 1 means that the minimum and maximum simulated values
+#'   will be used.
+#' @param ... Extra arguments passed to fun.
+#' @param simulate Optional. Specifies how to generate the simulated point
+#'   patterns. If simulate is an expression in the R language, then this
+#'   expression will be evaluated nsim times, to obtain nsim point patterns
+#'   which are taken as the simulated patterns from which the envelopes are
+#'   computed. If simulate is a function, then this function will be repeatedly
+#'   applied to the data pattern X to obtain nsim simulated patterns. If
+#'   simulate is a list of point patterns, then the entries in this list will be
+#'   treated as the simulated patterns from which the envelopes are computed.
+#'
+#' @return A function value table (object of class "fv") which can be plotted
+#'   directly. See \code{\link[spatstat]{envelope}} for further details.
+#'
+#' @seealso \link[spatstat]{envelope}, \link[spatstat]{K3est},
+#'   \link[spatstat]{G3est}, \link[spatstat]{F3est}, \link[spatstat]{pcf3est}
+#' @export
+pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
+                      simulate=NULL) {
+  # Should the ability to specify a subset of marks be added?
+  savefuns <- TRUE
+  n.cut <- cut(seq_len(nsim), length(cl), labels = FALSE)
+  pSim <- split(simulate, n.cut) # this doesn't handle the NULL simulate case
+  env <- parallel::parLapply(cl, pSim, function(s) {
+    spatstat::envelope(X, fun=fun, nsim=length(s), nrank=1, ...=...,
+                       simulate=s, savefuns=savefuns, verbose=FALSE)
+  })
+  po <- do.call(spatstat::pool, c(env, savefuns=savefuns))
+  dat <- spatstat::envelope(po, nrank=nrank, savefuns=savefuns)
+  return(dat)
+}
+
+#### pRlabel ####
+#' Relabel a Point Pattern in Parallel
+#'
+#' Randomly allocates marks to a point pattern, or permutes the existing marks,
+#' or resamples from the existing marks.
+#'
+#' @param X Point pattern (object of class "ppp", "lpp", "pp3" or "ppx")
+#'   or line segment pattern (object of class "psp")
+#' @param labels Vector of values from which the new marks will be drawn at
+#'   random. Defaults to the vector of existing marks
+#' @param permute Logical value indicating whether to generate new marks by
+#'   randomly permuting labels or by drawing a random sample with replacement
+#' @param nsim Number of simulated realisations to be generated. Default is 99
+#'
+#' @return A list of marked point patterns, each of the same class of X.
+#'
+#' @seealso \code{\link[spatstat]{rlabel}}
+#'
+#' @export
+pRlabel <- function(cl, X, labels=marks(X), permute=TRUE, nsim=99) {
+  stopifnot(is.ppp(X) || is.lpp(X) || is.pp3(X) || is.ppx(X) ||
+              is.psp(X))
+  if (is.null(labels))
+    stop("labels not given and marks not present")
+  nthings <- nobjects(X)
+  things <- if (is.psp(X))
+    "segments"
+  else "points"
+  if (is.vector(labels) || is.factor(labels)) {
+    nlabels <- length(labels)
+    if (permute && (nlabels != nthings))
+      stop(paste("length of labels vector does not match number of",
+                 things))
+    Y <- parallel::parLapply(cl, seq_len(nsim), function(n) {
+      X %mark% sample(labels, nthings, replace = !permute)
+    })
+  } else if (is.data.frame(labels) || is.hyperframe(labels)) {
+    nlabels <- nrow(labels)
+    if (permute && (nlabels != nthings))
+      stop(paste("number of rows of data frame does not match number of",
+                 things))
+    Y <- parallel::parLapply(cl, seq_len(nsim), function(n) {
+      X %mark% labels[sample(1:nlabels,
+                             nthings, replace = !permute), , drop = FALSE]
+    })
+  } else stop("Format of labels argument is not understood")
+  return(simulationresult(Y, nsim))
 }

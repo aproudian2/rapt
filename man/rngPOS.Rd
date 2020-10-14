@@ -2,22 +2,29 @@
 % Please edit documentation in R/rapt_spec.R
 \name{rngPOS}
 \alias{rngPOS}
-\title{Extract hits according to a RNG and create a new pos}
+\title{Extract Hits in RRNG}
 \usage{
 rngPOS(pos, rng)
 }
 \arguments{
-\item{pos}{The pos or ato to extract hits}
+\item{pos}{data.frame. The \code{POS} or \code{ATO} from which to extract
+hits}
 
-\item{rng}{The ranges to extract}
+\item{rng}{data.frame. The \code{RRNG} ranges to apply}
 }
 \value{
-A data.frame of the same structure as pos
+A data.frame of the same structure as \code{pos}, with an appended
+  column called "mark" that carries the name of the ion
 }
 \description{
-rngPOS extracts the rows of a \code{POS} or \code{ATO} object whose mass
-is within the ranges of the provided \code{RRNG}.
+\code{rngPOS} extracts the rows of a \code{POS} or \code{ATO} object whose
+mass is within the ranges of the provided \code{RRNG}. To count the hits
+within a \code{RRNG}, use \code{\link{rngCount}}
 }
 \seealso{
-\code{\link{rangePOS}}
+Other ranging functions: 
+\code{\link{rangeCount}()},
+\code{\link{rangePOS}()},
+\code{\link{rngCount}()}
 }
+\concept{ranging functions}

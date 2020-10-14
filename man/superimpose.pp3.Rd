@@ -2,13 +2,32 @@
 % Please edit documentation in R/rapt_extend.R
 \name{superimpose.pp3}
 \alias{superimpose.pp3}
-\title{Extends \code{\link[spatstat]{superimpose}} to \code{\link[spatstat]{pp3}}.}
+\title{Superimpose Several Geometric Patterns}
 \usage{
-\method{superimpose}{pp3}(..., W = NULL, check = F)
+\method{superimpose}{pp3}(..., W = NULL, check = FALSE)
 }
 \description{
-\code{superimpose.pp3}
+\code{superimpose.pp3} superimposes any number of 3D point patterns
 }
 \seealso{
 \code{\link[spatstat]{superimpose}}
+
+Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
+\code{\link{bdist.points}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
+\code{\link{quadratcount.pp3}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
+\code{\link{rjitter}()},
+\code{\link{rpoint3}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
+\code{\link{studpermu.test}()}
 }
+\concept{spatstat extensions}

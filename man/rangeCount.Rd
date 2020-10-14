@@ -2,23 +2,29 @@
 % Please edit documentation in R/rapt_spec.R
 \name{rangeCount}
 \alias{rangeCount}
-\title{Count the hits within a mass range}
+\title{Count Hits in Range}
 \usage{
 rangeCount(pos, start, end)
 }
 \arguments{
 \item{pos}{A data.frame. The pos to be ranged}
 
-\item{start}{The start of the mass range}
+\item{start}{Numeric. The start of the mass range}
 
-\item{end}{The end of the mass range}
+\item{end}{Numeric. The end of the mass range}
 }
 \value{
 The number of hits falling within the range.
 }
 \description{
-To get the hit information within a mass range, use \code{\link{rangePOS}}
+\code{rangeCount} counts the number of hits in the \code{POS} or \code{ATO}
+that fall within the provided mass range. To get the hit information within a
+mass range, use \code{\link{rangePOS}}.
 }
 \seealso{
-\code{\link{rngCount}}, \code{\link{rangePOS}}
+Other ranging functions: 
+\code{\link{rangePOS}()},
+\code{\link{rngCount}()},
+\code{\link{rngPOS}()}
 }
+\concept{ranging functions}

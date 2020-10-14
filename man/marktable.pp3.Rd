@@ -2,13 +2,32 @@
 % Please edit documentation in R/rapt_extend.R
 \name{marktable.pp3}
 \alias{marktable.pp3}
-\title{Extends \code{\link[spatstat]{marktable}} to \code{\link[spatstat]{pp3}}.}
+\title{Tabulate Marks in Neighbourhood of Every Point in a Point Pattern}
 \usage{
-marktable.pp3(X, R, N, exclude = TRUE, collapse = FALSE)
+\method{marktable}{pp3}(X, R, N, exclude = TRUE, collapse = FALSE)
 }
 \description{
-\code{marktable.pp3}
+Visit each point in a point pattern, find the neighbouring
+  points, and compile a frequency table of the marks of these neighbour
+  points.
 }
 \seealso{
-\code{\link[spatstat]{marktable}}
+Other spatstat extensions: 
+\code{\link{Tstat.pp3}()},
+\code{\link{bdist.points}()},
+\code{\link{marktable}()},
+\code{\link{quadratcount.pp3}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
+\code{\link{rjitter}()},
+\code{\link{rpoint3}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
+\code{\link{studpermu.test}()},
+\code{\link{superimpose.pp3}()}
 }
+\concept{spatstat extensions}

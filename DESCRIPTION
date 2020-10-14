@@ -1,34 +1,38 @@
 Package: rapt
 Type: Package
 Title: Atom Probe Tomography Analysis
-Version: 0.1.6
-Date: 2019-07-12
-Authors@R: as.person(c("Andrew P. Proudian <aproudia@mines.edu> [aut, cre]","Galen Vincent <galenvincent@mines.edu [aut]"))
-Description: Tools for analyzing atom probe tomography (APT) data in R. It provides methods for both spatial and mass spectral analysis, along with simulation tools.
+Version: 0.2.1
+Date: 2020-09-24
+Authors@R: c(
+    person("Andrew P.", "Proudian",
+           email = "aproudia@mines.edu", role = c("aut", "cre")),
+    person("Galen", "Vincent",
+           email = "galenvincent@mines.edu", role = "aut"))
+Description: Tools for analyzing atom probe tomography (APT) data in R. It
+    provides methods for both spatial and mass spectral analysis, along with
+    simulation tools.
 License: CC-BY-SA-4.0
 LazyData: TRUE
 SystemRequirements: C++11
 Depends:
-  MALDIquant (>= 1.15),
-  spatstat (>= 1.49)
+  R (>= 3.6),
+  MALDIquant (>= 1.19),
+  spatstat (>= 1.64)
 Imports:
-  enviPat (>= 2.0),
-  pracma (>= 1.8),
-  parallel (>= 3.2),
+  enviPat (>= 2.4),
+  pracma (>= 2.2),
   gtools (>= 3.5),
   Hmisc (>= 3.17),
-  ash(>= 1.0),
-  Rcpp (>= 0.12),
+  ash (>= 1.0),
+  Rcpp (>= 1.0),
   Rcpp11 (>= 3.1),
-  PET (>= 0.4),
-  magrittr (>= 1.5),
-  glue (>= 1.3)
+  glue (>= 1.4)
 LinkingTo:
   Rcpp
 Suggests:
-    rgl (>= 0.95.1201),
-    knitr,
-    rmarkdown
+    rgl (>= 0.100),
+    knitr (>= 1.29),
+    rmarkdown (>= 2.3)
 RdMacros: Rdpack
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr

@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_rcp-sim.R
 \name{scaleRCP}
 \alias{scaleRCP}
-\title{Scale RCP data to a desired radius}
+\title{Scale RCP Data}
 \usage{
 scaleRCP(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL)
 }
@@ -33,3 +33,15 @@ generation, and the new desired radius, \code{scaleRCP} will scale the RCP
 point cloud as if the original generation hapened with spheres of radius that
 you desire.
 }
+\seealso{
+Other simulation functions: 
+\code{\link{clustersim}()},
+\code{\link{lattice}()},
+\code{\link{makecluster}()},
+\code{\link{morph_lamellar}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
+\code{\link{read.rcp}()},
+\code{\link{stitch.size}()}
+}
+\concept{simulation functions}

@@ -11,7 +11,7 @@ stitch.size(pp3file, win = NULL, boxSize)
 generated 3D point positions.}
 
 \item{win}{A \code{\link[spatstat]{box3}} object indicating the size of the
-original rcp generation. Can leave blank if these are integer value.}
+original rcp generation. Can leave blank.}
 
 \item{boxSize}{A numeric vector of the dimensions that you want in the final
 \code{\link[spatstat]{pp3}} object: c(xmax,ymax,zmax). Assumes that
@@ -26,3 +26,15 @@ repetitions in each dimension, \code{stitch.size} allows you to specify the
 domain size that you want to return, even if it is not an integer multiple of
 the original dimensions.
 }
+\seealso{
+Other simulation functions: 
+\code{\link{clustersim}()},
+\code{\link{lattice}()},
+\code{\link{makecluster}()},
+\code{\link{morph_lamellar}()},
+\code{\link{morph_rods}()},
+\code{\link{nmers}()},
+\code{\link{read.rcp}()},
+\code{\link{scaleRCP}()}
+}
+\concept{simulation functions}

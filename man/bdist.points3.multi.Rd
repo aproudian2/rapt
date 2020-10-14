@@ -2,8 +2,7 @@
 % Please edit documentation in R/rapt_extend.R
 \name{bdist.points3.multi}
 \alias{bdist.points3.multi}
-\title{Returns the shortest distances to boundaries in the x, y, and z directions
-separately.}
+\title{Cardinal Direction Distances to Boundary of Domain}
 \usage{
 bdist.points3.multi(X)
 }
@@ -20,5 +19,5 @@ Returns the shortest distances to boundaries in the x, y, and z directions
 separately.
 }
 \seealso{
-\code{\link{bdist.points3}}
+\code{\link{bdist.points.pp3}}
 }

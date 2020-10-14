@@ -4,10 +4,17 @@
 \alias{envPlot}
 \title{Plot envelopes of K3est test}
 \usage{
-envPlot(tests, percentiles = c(0.999, 0.99, 0.97), ylim = c(-3, 3),
-  xlim = c(0, ceiling(max(tests[, 1]))), ylab = expression(sqrt("K"[3]
-  * "(r)") * "  Anomaly"), xlab = "r", leg = TRUE,
-  colors = c("lightskyblue", "mediumpurple", "lightpink"), ...)
+envPlot(
+  tests,
+  percentiles = c(0.999, 0.99, 0.97),
+  ylim = c(-3, 3),
+  xlim = c(0, ceiling(max(tests[, 1]))),
+  ylab = expression(sqrt("K"[3] * "(r)") * "  Anomaly"),
+  xlab = "r",
+  leg = TRUE,
+  colors = c("lightskyblue", "mediumpurple", "lightpink"),
+  ...
+)
 }
 \arguments{
 \item{tests}{The return file from \code{p(K/G/F)3est} or the first, [[1]],
@@ -26,7 +33,7 @@ on the plot.}
 
 \item{xlab}{X axis label.}
 
-\item{leg}{True or falsel whether to show the automatically generated legend.}
+\item{leg}{True or false whether to show the automatically generated legend.}
 
 \item{colors}{List of color names to make the envelopes.}
 
@@ -39,7 +46,4 @@ Nothing, just produces a plot.
 Plot the results of envelope calculations from the \code{\link{pK3est}},
 \code{\link{pG3est}}, or \code{\link{pF3est}} functions, with the ability to
 choose the percentiles for plotting.
-}
-\seealso{
-\code{\link{pK3est}}, \code{\link{pG3est}}, \code{\link{pF3est}}
 }
