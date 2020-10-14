@@ -541,6 +541,30 @@ K3multi <- function(X, I, J, r, breaks,
 #' @export
 studpermu.test <- function(X, ...) UseMethod("studpermu.test")
 
+### studpermu.test.list ###
+#' Studentised Permutation Test
+#'
+#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @export
+studpermu.test.list <- spatstat::studpermu.test
+
+
+### studpermu.test.hyperframe ###
+#' Studentised Permutation Test
+#'
+#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @export
+studpermu.test.hyperframe <- function(X, ...) {
+  h.class <- unclass(X)$vclass
+  if (any(h.class == "ppp")) {
+    studpermu.test.ppp(X, ... = ...)
+  } else if (any(h.class == "pp3")) {
+    studpermu.test.pp3(X, ... = ...)
+  } else {
+    stop("Unknown type for studpermu.test()")
+  }
+}
+
 ### studpermu.test.ppp ###
 #' Studentised Permutation Test
 #'
