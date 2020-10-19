@@ -449,7 +449,131 @@ quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
   return(boxes)
 }
 
-#### K3cross ####
+#### G3multi ####
+#' Marked Nearest Neighbour Distance Function
+#'
+#' For a marked point pattern, estimate the distribution of the distance from a
+#' typical point in subset I to the nearest point of subset J.
+#'
+#' @param X The observed point pattern, from which an estimate of the multitype
+#'   distance distribution function G3IJ(r) will be computed. It must be a
+#'   marked point pattern. See under Details.
+#' @param I Subset of points of X from which distances are measured.
+#' @param J Subset of points in X to which distances are measured.
+#' @param rmax Optional. Maximum value of argument r for which G3IJ(r) will be
+#'   estimated.
+#' @param nrval Optional. Number of values of r for which G3(r) will be
+#'   estimated. A large value of nrval is required to avoid discretisation
+#'   effects.
+#' @param disjoint Optional flag indicating whether the subsets I and J are
+#'   disjoint. If missing, this value will be computed by inspecting the vectors
+#'   I and J.
+#' @param correction Optional. Character string specifying the edge
+#'   correction(s) to be used. Options are "none", "rs", "km", "hanisch"
+#'   and "best". Alternatively correction="all" selects all options.
+#'
+#' @export
+G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
+                    correction = c("rs", "km", "han")) {
+  spatstat::verifyclass(X, "pp3")
+  W <- X$domain
+  npts <- spatstat::npoints(X)
+  volW <- spatstat::volume(W)
+  if (is.null(rmax)) {
+    rmax <- spatstat::diameter(W)/2
+  }
+  I <- spatstat::ppsubset(X, I)
+  J <- spatstat::ppsubset(X, J)
+  if (is.null(I) || is.null(J))
+    stop("I and J must be valid subset indices")
+  nI <- sum(I)
+  nJ <- sum(J)
+  if (nI == 0)
+    stop("No points satisfy condition I")
+  if (nJ == 0)
+    stop("No points satisfy condition J")
+  if (is.null(disjoint))
+    disjoint <- !any(I & J)
+  if (is.null(correction))
+    correction <- c("rs", "km", "han")
+  correction <- pickoption("correction", correction,
+                           c(none = "none",
+                             border = "rs", rs = "rs",
+                             KM = "km", km = "km", Kaplan = "km",
+                             han = "han", Hanisch = "han",
+                             best = "km"), multi = TRUE)
+  lamJ <- nJ/volW
+
+  XI <- X[I]
+  XJ <- X[J]
+  if (disjoint) {
+    nnd <- spatstat::nncross(XI, XJ, what = "dist")
+  } else {
+    seqnp <- seq_len(npts)
+    iX <- seqnp[I]
+    iY <- seqnp[J]
+    nnd <- spatstat::nncross(XI, XJ, iX, iY, what = "dist")
+  }
+  bdry <- bdist.points(XI)
+  d <- (nnd <= bdry)
+  r <- seq(0, rmax, length.out = nrval)
+  breaks <- c(r[1L] - r[2L], r)
+  df <- data.frame(r = r, theo = 1 - exp(-lamJ * (4/3) * pi * r^3))
+  fname <- c("G", "list(I,J)")
+  Z <- fv(df, "r", quote(G[I, J](r)), "theo", . ~ r, c(0, rmax),
+          c("r", spatstat::makefvlabel(NULL, NULL, fname, "pois")),
+          c("distance argument r", "theoretical Poisson %s"),
+          fname = fname, yexp = quote(G[list(I,J)](r)))
+  if ("none" %in% correction) {
+    if (npts == 0)
+      edf <- zeroes
+    else {
+      hh <- hist(nnd[nnd <= rmax], breaks = breaks, plot = FALSE)$counts
+      edf <- cumsum(hh)/length(nnd)
+    }
+    Z <- bind.fv(Z, data.frame(raw = edf),
+                 spatstat::makefvlabel(NULL,"hat", fname, "raw"),
+                 "uncorrected estimate of %s",  "raw")
+  }
+  if ("han" %in% correction) {
+    if (npts == 0)
+      G <- zeroes
+    else {
+      x <- nnd[d]
+      a <- spatstat::eroded.volumes(W, r)
+      h <- hist(x[x <= rmax], breaks = breaks, plot = FALSE)$counts
+      G <- cumsum(h/a)
+      G <- G/max(G[is.finite(G)])
+    }
+    Z <- bind.fv(Z, data.frame(han = G),
+                 spatstat::makefvlabel(NULL,"hat", fname, "han"),
+                 "Hanisch estimate of %s", "han")
+    attr(Z, "alim") <- range(r[G <= 0.9])
+  }
+  if (any(correction %in% c("rs", "km"))) {
+    if (npts == 0)
+      result <- data.frame(rs = zeroes, km = zeroes, hazard = zeroes)
+    else {
+      o <- pmin.int(nnd, bdry)
+      result <- spatstat::km.rs(o, bdry, d, breaks)
+      result <- as.data.frame(result[c("rs", "km", "hazard")])
+    }
+    Z <- bind.fv(Z, result, c(
+      spatstat::makefvlabel(NULL, "hat", fname, "bord"),
+      spatstat::makefvlabel(NULL, "hat", fname, "km"), "hazard(r)"),
+      c("border corrected estimate of %s", "Kaplan-Meier estimate of %s",
+        "Kaplan-Meier estimate of hazard function lambda(r)"),
+      "km")
+    attr(Z, "alim") <- range(r[result$km <= 0.9])
+  }
+  nama <- names(Z)
+  spatstat::fvnames(Z, ".") <- rev(nama[!(nama %in% c("r", "hazard"))])
+  formula(Z) <- . ~ r
+  spatstat::unitname(Z) <- spatstat::unitname(X)
+  return(Z)
+}
+
+#### K3multi ####
 # barely works... Needs corrections and inferface streamlining
 K3multi <- function(X, I, J, r, breaks,
               correction = c("none", "isotropic", "translation"),
