@@ -21,6 +21,8 @@ Sample A 3D Point Pattern
 \code{\link{sample.ppp}}, \code{\link[base]{sample}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

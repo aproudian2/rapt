@@ -15,7 +15,7 @@ would like to select: c(xdim, ydim, zdim) (e.g. c(10,10,10)).}
 }
 \value{
 Returns a \code{\link[spatstat]{pp3}} object of the selected box,
-  shifted so that the origin is still at (0,0,0).
+shifted so that the origin is still at (0,0,0).
 }
 \description{
 Given an original \code{\link[spatstat]{pp3}} object, \code{subSquare} will

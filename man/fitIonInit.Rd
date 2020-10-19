@@ -44,7 +44,7 @@ peak = "emg". Ignored for peak = "gaussian".}
 }
 \value{
 A list containing elements of the fitting formula, the starting fit
-  values, and the lower limits for each parameter.
+values, and the lower limits for each parameter.
 }
 \description{
 \code{fitIonInit} creates the formula and starting values for fitting mass

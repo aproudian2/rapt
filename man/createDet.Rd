@@ -15,7 +15,7 @@ a window will be calculated from the data using
 }
 \value{
 A \code{\link[spatstat]{ppp}} with the positions of the detector hits
-  from the ATO.
+from the ATO.
 }
 \description{
 \code{createDet} generates a \code{\link[spatstat]{ppp}} of detector hits
@@ -23,5 +23,5 @@ from an ATO.
 }
 \seealso{
 \code{\link{readATO}}, \code{\link[spatstat]{ppp}},
-  \code{\link[spatstat]{ripras}}
+\code{\link[spatstat]{ripras}}
 }

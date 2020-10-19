@@ -19,7 +19,7 @@ the same as the envelopes that you are comparing to.}
 }
 \value{
 Returns data fram containing r values and associated anomaly G3est
-  values.
+values.
 }
 \description{
 See \code{\link[spatstat]{G3est}}. Performs the anomaly G3est on a set of

@@ -14,7 +14,7 @@ hits}
 }
 \value{
 A data.frame of the same structure as \code{pos}, with an appended
-  column called "mark" that carries the name of the ion
+column called "mark" that carries the name of the ion
 }
 \description{
 \code{rngPOS} extracts the rows of a \code{POS} or \code{ATO} object whose

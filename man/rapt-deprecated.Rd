@@ -68,58 +68,58 @@ anomF3est(pattern, toSub, rmax, nrval, correction = "rs")
 }
 \description{
 The functions listed below are deprecated and will be defunct in
-  the near future. When possible, alternative functions with similar
-  functionality are also mentioned. Help pages for deprecated functions are
-  available at \code{help("-deprecated")}.
+the near future. When possible, alternative functions with similar
+functionality are also mentioned. Help pages for deprecated functions are
+available at \code{help("-deprecated")}.
 }
 \section{\code{bcc.gen}}{
 
-  For \code{bcc.gen}, use \code{\link{lattice}}
+For \code{bcc.gen}, use \code{\link{lattice}}
 }
 
 \section{\code{splitpp3}}{
 
-  For \code{splitpp3}, use \code{\link[spatstat]{split.ppx}}
+For \code{splitpp3}, use \code{\link[spatstat]{split.ppx}}
 }
 
 \section{\code{pb_gen}}{
 
-  For \code{pb_gen}, use \code{\link{rgblur}}
+For \code{pb_gen}, use \code{\link{rgblur}}
 }
 
 \section{\code{pK3est}}{
 
-  For \code{pK3est}, use \code{\link{pEnvelope}}
+For \code{pK3est}, use \code{\link{pEnvelope}}
 }
 
 \section{\code{anomK3est}}{
 
-  For \code{anomK3est}, use \code{\link{pEnvelope}}
+For \code{anomK3est}, use \code{\link{pEnvelope}}
 }
 
 \section{\code{pG3est}}{
 
-  For \code{pG3est}, use \code{\link{pEnvelope}}
+For \code{pG3est}, use \code{\link{pEnvelope}}
 }
 
 \section{\code{anomG3est}}{
 
-  For \code{anomG3est}, use \code{\link{pEnvelope}}
+For \code{anomG3est}, use \code{\link{pEnvelope}}
 }
 
 \section{\code{pF3est}}{
 
-  For \code{pF3est}, use \code{\link{pEnvelope}}
+For \code{pF3est}, use \code{\link{pEnvelope}}
 }
 
 \section{\code{anomF3est}}{
 
-  For \code{anomF3est}, use \code{\link{pEnvelope}}
+For \code{anomF3est}, use \code{\link{pEnvelope}}
 }
 
 \section{\code{intensity.pp3}}{
 
-  For \code{intensity.pp3}, use \code{\link[spatstat]{intensity.ppx}}
+For \code{intensity.pp3}, use \code{\link[spatstat]{intensity.ppx}}
 }
 
 \keyword{internal}

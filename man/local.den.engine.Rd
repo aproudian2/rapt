@@ -26,7 +26,7 @@ parallel calculation.}
 }
 \value{
 A data.frame with intensity estimates for each value of k (# of
-  nearest neighbors).
+nearest neighbors).
 }
 \description{
 Helper for \code{\link{nndensity.pp3}}.

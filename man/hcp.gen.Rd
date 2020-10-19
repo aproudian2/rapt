@@ -14,7 +14,7 @@ generation.}
 }
 \value{
 A data.frame object containing xyz coordinates of the HCP lattice
-  centers.
+centers.
 }
 \description{
 Generates a hexagonal close packed (HCP) structure based on spheres with

@@ -14,7 +14,7 @@ if you wish to split up your point patthern by number of boxes.}
 
 \item{box.dims}{Vector containing the dimensions of the subsetted 3D boxxes,
 if you wish to define the individual boxx size. Use either \code{nx, ny,
-nz} or \code{box.dims}, but not both.}
+  nz} or \code{box.dims}, but not both.}
 }
 \value{
 A list containing the split up \code{pp3} objects.
@@ -26,6 +26,8 @@ Divides volume into quadrats and returns them.
 \code{\link[spatstat]{quadrats}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

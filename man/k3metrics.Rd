@@ -15,9 +15,9 @@ underlying RCP pattern.}
 These need to be trimmed to the same indices as rvals.new.}
 }
 \value{
-A list of [[1]] Km, [[2]] Rm, [[3]] Rdm, [[4]] Rddm, [[5]] Kdm for
-  the input K function. If no first K peak is found, returns a list of 5
-  NaNs.
+A list of [\link{1}] Km, [\link{2}] Rm, [\link{3}] Rdm, [\link{4}] Rddm, [\link{5}] Kdm for
+the input K function. If no first K peak is found, returns a list of 5
+NaNs.
 }
 \description{
 Takes as inputs the results from \code{\link{anomK3est}} function performed

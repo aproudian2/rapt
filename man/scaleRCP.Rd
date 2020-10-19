@@ -21,7 +21,7 @@ original rcp generation. Can leave blank if these are integer value.}
 }
 \value{
 Will return a \code{\link[spatstat]{pp3}} object with the scaled
-  point positions.
+point positions.
 }
 \description{
 Given an original raw RCP output file, scale the 3D point cloud as if the

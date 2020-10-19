@@ -8,13 +8,15 @@ studpermu.test(X, ...)
 }
 \description{
 This is an S3 generic that extends the use of
-  \code{\link[spatstat]{studpermu.test}} beyond \code{ppp} objects.
+\code{\link[spatstat]{studpermu.test}} beyond \code{ppp} objects.
 }
 \seealso{
 \code{\link[spatstat]{studpermu.test}},
 \code{\link{studpermu.test.pp3}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

@@ -27,9 +27,9 @@ specified type. Currently, only simple cubic ("sc"), body-centered cubic
 }
 \details{
 For a hexagonal close packed (hcp) lattice, there are two dimensions
-  that are defined: the side of the hexagon, a, and the height of the
-  hexagonal prism, c. For a perfect hcp crystal, the ratio of these two
-  dimensions is exactly \eqn{c/a = \sqrt{8/3}}.
+that are defined: the side of the hexagon, a, and the height of the
+hexagonal prism, c. For a perfect hcp crystal, the ratio of these two
+dimensions is exactly \eqn{c/a = \sqrt{8/3}}.
 }
 \seealso{
 \code{\link{hcp.gen()}}, \code{\link[spatstat]{pp3()}}

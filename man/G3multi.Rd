@@ -16,29 +16,53 @@ G3multi(
 }
 \arguments{
 \item{X}{The observed point pattern, from which an estimate of the multitype
-distance distribution function G3IJ(r) will be computed. It must be a
-marked point pattern. See under Details.}
+distance distribution function \eqn{G3IJ(r)} will be computed. It must be a
+marked point pattern. See Details.}
 
-\item{I}{Subset of points of X from which distances are measured.}
+\item{I}{Subset of points of \code{X} from which distances are measured.}
 
-\item{J}{Subset of points in X to which distances are measured.}
+\item{J}{Subset of points in \code{X} to which distances are measured.}
 
-\item{rmax}{Optional. Maximum value of argument r for which G3IJ(r) will be
-estimated.}
+\item{rmax}{Optional. Maximum value of argument \emph{r} for which \eqn{G3IJ(r)}
+will be estimated.}
 
-\item{nrval}{Optional. Number of values of r for which G3(r) will be
-estimated. A large value of nrval is required to avoid discretisation
-effects.}
+\item{nrval}{Optional. Number of values of \emph{r} for which \eqn{G3IJ(r)} will
+be estimated. A large value of \code{nrval} is required to avoid
+discretisation effects.}
 
-\item{disjoint}{Optional flag indicating whether the subsets I and J are
-disjoint. If missing, this value will be computed by inspecting the vectors
-I and J.}
+\item{disjoint}{Optional flag indicating whether the subsets \code{I} and
+\code{J} are disjoint. If missing, this value will be computed by
+inspecting the vectors \code{I} and \code{J}.}
 
 \item{correction}{Optional. Character string specifying the edge
 correction(s) to be used. Options are "none", "rs", "km", "hanisch"
-and "best". Alternatively correction="all" selects all options.}
+and "best". Alternatively \code{correction="all"} selects all options.}
 }
 \description{
 For a marked point pattern, estimate the distribution of the distance from a
-typical point in subset I to the nearest point of subset J.
+typical point in subset \code{I} to the nearest point of subset \code{J}.
 }
+\seealso{
+\code{\link{G3cross}}, \code{\link[spatstat]{G3est}}
+
+Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{Tstat.pp3}()},
+\code{\link{bdist.points}()},
+\code{\link{marktable.pp3}()},
+\code{\link{marktable}()},
+\code{\link{quadratcount.pp3}()},
+\code{\link{quadrats.pp3}()},
+\code{\link{rPoissonCluster3}()},
+\code{\link{rjitter.pp3}()},
+\code{\link{rjitter.ppp}()},
+\code{\link{rjitter}()},
+\code{\link{rpoint3}()},
+\code{\link{sample.pp3}()},
+\code{\link{sample.ppp}()},
+\code{\link{shift.pp3}()},
+\code{\link{studpermu.test.pp3}()},
+\code{\link{studpermu.test}()},
+\code{\link{superimpose.pp3}()}
+}
+\concept{spatstat extensions}

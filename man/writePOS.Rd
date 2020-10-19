@@ -17,7 +17,7 @@ structure of the \code{data.frame} returned by \code{\link{readPOS}}.}
 }
 \references{
 Larson \emph{et al.},
-  \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
+\emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
 \code{\link{readPOS}}

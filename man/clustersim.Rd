@@ -56,14 +56,14 @@ in the pattern will be within this tolerance of the value specified by the
 \code{TRUE} or \code{FALSE} (the default).}
 }
 \value{
-List of: [[1]] A \code{\link[spatstat]{pp3}} object containing the
-  final locations of only type-A points within the final marked point
-  pattern. [[2]] A \code{\link[spatstat]{pp3}} object containing the full
-  marked underlying point pattern with points marked as either type A (cluser
-  type point in a cluster), B (cluster type point not in a cluster) or C
-  (non-cluster type point). [[3]] A vector containing the simulated radius of
-  each cluster in the final point pattern. [[4]] A single value containing
-  the true fraction of type-A points in the final simulated pattern.
+List of: [\link{1}] A \code{\link[spatstat]{pp3}} object containing the
+final locations of only type-A points within the final marked point
+pattern. [\link{2}] A \code{\link[spatstat]{pp3}} object containing the full
+marked underlying point pattern with points marked as either type A (cluser
+type point in a cluster), B (cluster type point not in a cluster) or C
+(non-cluster type point). [\link{3}] A vector containing the simulated radius of
+each cluster in the final point pattern. [\link{4}] A single value containing
+the true fraction of type-A points in the final simulated pattern.
 }
 \description{
 The \code{clustersim} function simulates point clusters using two RCP point

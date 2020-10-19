@@ -20,8 +20,8 @@ in cluster.ind.}
 \item{Y}{The underlaying point pattern. A \code{\link[spatstat]{pp3}} object.}
 }
 \value{
-A list of [[1]] The updated cluster.ind vector and [[2]] the updated
-  cluster.info factor.
+A list of [\link{1}] The updated cluster.ind vector and [\link{2}] the updated
+cluster.info factor.
 }
 \description{
 Adjustment method to get correct number of points in each cluster for the

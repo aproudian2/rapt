@@ -13,7 +13,7 @@
 }
 \value{
 A \code{data.frame} object containing the number of counts in each
-  quadrat.
+quadrat.
 }
 \description{
 Divides volume into quadrats and counts the number of points in each quadrat.
@@ -22,6 +22,8 @@ Divides volume into quadrats and counts the number of points in each quadrat.
 \code{\link[spatstat]{quadratcount}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

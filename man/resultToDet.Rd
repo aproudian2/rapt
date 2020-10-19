@@ -14,7 +14,7 @@ resultToDet(res, clip.radius = NULL)
 }
 \value{
 A \code{\link[spatstat]{ppp}} containing the detector positions
-  marked by their id.
+marked by their id.
 }
 \description{
 Convert TAPSim Result to Detector \code{\link[spatstat]{ppp}}

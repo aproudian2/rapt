@@ -13,7 +13,7 @@ createSpat(pos, win = NULL, marks = NULL)
 }
 \value{
 A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
-  the supplied POS or ATO.
+the supplied POS or ATO.
 }
 \description{
 \code{createSpat} creates a \code{\link[spatstat]{pp3}} from a POS or ATO
@@ -21,5 +21,5 @@ data frame.
 }
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},
-  \code{\link[spatstat]{pp3}}
+\code{\link[spatstat]{pp3}}
 }

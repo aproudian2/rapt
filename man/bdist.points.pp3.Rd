@@ -12,7 +12,7 @@ object.}
 }
 \value{
 An object containing the shortest distance to the boundary for each
-  point in the pattern X.
+point in the pattern X.
 }
 \description{
 Finds the smallest distance to a boundary for each point in a point pattern.

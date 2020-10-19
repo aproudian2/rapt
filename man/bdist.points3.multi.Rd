@@ -12,7 +12,7 @@ object.}
 }
 \value{
 A data.frame containing the shortest distance to the closest three
-  boundaries for each point in the pattern X.
+boundaries for each point in the pattern X.
 }
 \description{
 Returns the shortest distances to boundaries in the x, y, and z directions

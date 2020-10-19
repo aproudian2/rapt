@@ -13,7 +13,7 @@ finite_deriv(x, y)
 }
 \value{
 A vector with the same length as x containing estimated derivative at
-  each x value.
+each x value.
 }
 \description{
 Uses the central difference method to calculate the numerical derivative for

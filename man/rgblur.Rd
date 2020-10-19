@@ -20,7 +20,7 @@ normally distributes r, while "xyz" normally distributes x, y and z.}
 }
 \value{
 If \code{coords = "rec"}, returns a vector of cartesian coordinates.
-  If \code{coords = "sph"}, returns a vector of spherical coordinates.
+If \code{coords = "sph"}, returns a vector of spherical coordinates.
 }
 \description{
 Function which returns a list of coordinates of radial gaussian blurred

@@ -28,13 +28,13 @@ should be considered as cluster type points. All points with marks not
 included in this vector will be considered background points.}
 }
 \value{
-A list of [[1]] Vector containing estimated radius of each cluster
-  found, [[2]] Vector containing estimated intra-cluster concentration of
-  cluster type points in each cluster found, [[3]] Estaimted background
-  concentration of cluster type points within the background (the entire
-  domain minus the clusters), [[4]] List of indices from the original pattern
-  of cluster type points that reside in clusters, [[5]] List of indices from
-  the original pattern of background type points that reside in clusters.
+A list of [\link{1}] Vector containing estimated radius of each cluster
+found, [\link{2}] Vector containing estimated intra-cluster concentration of
+cluster type points in each cluster found, [\link{3}] Estaimted background
+concentration of cluster type points within the background (the entire
+domain minus the clusters), [\link{4}] List of indices from the original pattern
+of cluster type points that reside in clusters, [\link{5}] List of indices from
+the original pattern of background type points that reside in clusters.
 }
 \description{
 Main argument is a marked \code{\link[spatstat]{pp3}} object. Marks can be of

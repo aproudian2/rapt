@@ -14,8 +14,8 @@ resultToPOS(res, clip.radius = NULL)
 }
 \value{
 A \code{data.frame} containing the (x,y,z) position and "mass" (id)
-  of the point in the stame structure of a POS as created by
-  \code{\link{readPOS}}.
+of the point in the stame structure of a POS as created by
+\code{\link{readPOS}}.
 }
 \description{
 Convert TAPSim Results to POS

@@ -18,14 +18,14 @@ acceptable to \code{\link[enviPat]{isopattern}}}
 }
 \value{
 A character string that concatinates all the formulae for the ions
-  and their respetive isotopes, along with a constant noise term.
+and their respetive isotopes, along with a constant noise term.
 }
 \description{
 Creates the formulae that get passed to \code{\link[stats]{nls}}
 }
 \details{
 The base peak shape of the formula is either a gaussian
-  (peak = "gaussian") or an exponentially modified gaussian (peak = "emg").
+(peak = "gaussian") or an exponentially modified gaussian (peak = "emg").
 }
 \seealso{
 \code{\link[enviPat]{fitIonInit}}, \code{\link[enviPat]{isopattern}}

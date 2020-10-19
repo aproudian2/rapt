@@ -18,7 +18,7 @@ included.}
 }
 \value{
 A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the
-  \code{mass} field of the POS or ATO, with the resolution set by \code{res}.
+\code{mass} field of the POS or ATO, with the resolution set by \code{res}.
 }
 \description{
 \code{createSpec} generates a
@@ -35,5 +35,5 @@ the mass value is zero unless \code{clip} is set.
 }
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},
-  \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
+\code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
 }

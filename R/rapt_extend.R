@@ -453,24 +453,28 @@ quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
 #' Marked Nearest Neighbour Distance Function
 #'
 #' For a marked point pattern, estimate the distribution of the distance from a
-#' typical point in subset I to the nearest point of subset J.
+#' typical point in subset \code{I} to the nearest point of subset \code{J}.
 #'
 #' @param X The observed point pattern, from which an estimate of the multitype
-#'   distance distribution function G3IJ(r) will be computed. It must be a
-#'   marked point pattern. See under Details.
-#' @param I Subset of points of X from which distances are measured.
-#' @param J Subset of points in X to which distances are measured.
-#' @param rmax Optional. Maximum value of argument r for which G3IJ(r) will be
-#'   estimated.
-#' @param nrval Optional. Number of values of r for which G3(r) will be
-#'   estimated. A large value of nrval is required to avoid discretisation
-#'   effects.
-#' @param disjoint Optional flag indicating whether the subsets I and J are
-#'   disjoint. If missing, this value will be computed by inspecting the vectors
-#'   I and J.
+#'   distance distribution function \eqn{G3IJ(r)} will be computed. It must be a
+#'   marked point pattern. See Details.
+#' @param I Subset of points of \code{X} from which distances are measured.
+#' @param J Subset of points in \code{X} to which distances are measured.
+#' @param rmax Optional. Maximum value of argument *r* for which \eqn{G3IJ(r)}
+#'   will be estimated.
+#' @param nrval Optional. Number of values of *r* for which \eqn{G3IJ(r)} will
+#'   be estimated. A large value of \code{nrval} is required to avoid
+#'   discretisation effects.
+#' @param disjoint Optional flag indicating whether the subsets \code{I} and
+#'   \code{J} are disjoint. If missing, this value will be computed by
+#'   inspecting the vectors \code{I} and \code{J}.
 #' @param correction Optional. Character string specifying the edge
 #'   correction(s) to be used. Options are "none", "rs", "km", "hanisch"
-#'   and "best". Alternatively correction="all" selects all options.
+#'   and "best". Alternatively \code{correction="all"} selects all options.
+#'
+#' @family spatstat extensions
+#'
+#' @seealso \code{\link{G3cross}}, \code{\link[spatstat]{G3est}}
 #'
 #' @export
 G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
@@ -571,6 +575,135 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
   formula(Z) <- . ~ r
   spatstat::unitname(Z) <- spatstat::unitname(X)
   return(Z)
+}
+
+#### G3cross ####
+#' Multitype Nearest Neighbour Distance Function (i-to-j)
+#'
+#' For a multitype point pattern, estimate the distribution of the distance from
+#' a point of type i to the nearest point of type j.
+#'
+#' @param X The observed point pattern, from which an estimate of the cross type
+#'   distance distribution function \eqn{G[3ij](r)} will be computed. It must
+#'   be a multitype point pattern (a marked point pattern whose marks are a
+#'   factor). See Details.
+#' @param i The type (mark value) of the points in \code{X} from which distances
+#'   are measured. A character string (or something that will be converted to a
+#'   character string). Defaults to the first level of \code{marks(X)}.
+#' @param j The type (mark value) of the points in \code{X} to which distances
+#'   are measured. A character string (or something that will be converted to a
+#'   character string). Defaults to the second level of \code{marks(X)}.
+#' @param rmax Optional. Maximum value of argument *r* for which
+#'   \eqn{G[3ij](r)} will be estimated.
+#' @param nrval Optional. Number of values of *r* for which
+#'   \eqn{G[3ij](r)} will be estimated. A large value of \code{nrval} is
+#'   required to avoid discretisation effects.
+#' @param correction Optional. Character string specifying the edge
+#'   correction(s) to be used. Options are "none", "rs", "km", "hanisch"
+#'   and "best". Alternatively \code{correction="all"} selects all options.
+#'
+#' @return An object of class "fv" (see \code{\link[spastat]{fv.object}}).
+#'
+#' @family spatstat extensions
+#'
+#' @details
+#'
+#' This function \code{G3cross} and its companion \code{\link{G3multi}} are
+#' generalisations of the function \code{\link[spatstat]{G3est}} to multitype
+#' point patterns.
+#'
+#' A multitype point pattern is a spatial pattern of points classified into a
+#' finite number of possible "colors" or "types." In the **spatstat**
+#' package, a multitype pattern is represented as a single point pattern object
+#' in which the points carry marks, and the mark value attached to each point
+#' determines the type of that point.
+#'
+#' The argument \code{X} must be a point pattern (object of class "pp3"). It
+#' must be a marked point pattern, and the mark vector \code{X$marks} must be a
+#' factor. The arguments \code{i} and \code{j} will be interpreted as levels of
+#' the factor \code{X$marks}. (**Warning:** this means that an integer value
+#' \code{i=3} will be interpreted as the number 3, *not* the 3rd smallest
+#' level).
+#'
+#' The "cross-type" (type *i* to type *j*) nearest neighbour
+#' distance distribution function of a multitype point process is the cumulative
+#' distribution function \eqn{G[3ij](r)} of the distance from a typical random
+#' point of the process with type *i* the nearest point of type
+#' *j*.
+#'
+#' An estimate of \eqn{G[3ij](r)} is a useful summary statistic in exploratory
+#' data analysis of a multitype point pattern. If the process of type *i*
+#' points were independent of the process of type *j* points, then
+#' \eqn{G[3ij](r)} would equal \eqn{F[3j](r)}, the empty space function of the
+#' type *j* points. For a multitype Poisson point process where the type
+#' *i* points have intensity \eqn{\lambda[i]}, we have
+#'
+#' \deqn{G[3ij](r) = 1 - exp( - \lambda[j] * (4/3) * pi * r^3)}
+#'
+#' Deviations between the empirical and theoretical \eqn{G[3ij](r)} curves may
+#' suggest dependence between the points of types *i* and *j*.
+#'
+#' This algorithm estimates the distribution function \eqn{G[3ij](r)} from the
+#' point pattern \code{X}. It assumes that \code{X} can be treated as a
+#' realisation of a stationary (spatially homogeneous) random spatial point
+#' process in the plane, observed through a bounded window. The window (which is
+#' specified in \code{X} as \code{Domain(X)}) may have arbitrary shape. Biases
+#' due to edge effects are treated in the same manner as in
+#' \code{\link[spatstat]{G3est}}.
+#'
+#' The argument \code{rmax} is the maximum value of the distance *r* at
+#' which \eqn{G[3ij](r)} should be evaluated. It is also used to determine (in
+#' combination with \code{nrval}) the breakpoints (in the sense of
+#' \code{\link[graphics]{hist}}) for the computation of histograms of distances.
+#' The reduced-sample and Kaplan-Meier estimators are computed from histogram
+#' counts. In the case of the Kaplan-Meier estimator this introduces a
+#' discretisation error which is controlled by the fineness of the breakpoints.
+#'
+#' The algorithm also returns an estimate of the hazard rate function,
+#' \eqn{lambda(r)}, of \eqn{G[3ij](r)}. This estimate should be used with
+#' caution as \eqn{G[3ij](r)} is not necessarily differentiable.
+#'
+#' The naive empirical distribution of distances from each point of the pattern
+#' \code{X} to the nearest other point of the pattern, is a biased estimate of
+#' \eqn{G[3ij](r)}. However this is also returned by the algorithm, as it is
+#' sometimes useful in other contexts. Care should be taken not to use the
+#' uncorrected empirical \eqn{G[3ij](r)} as if it were an unbiased estimator of
+#' \eqn{G[3ij](r)}.
+#'
+#' @seealso \code{\link{G3multi}}, \code{\link[spatstat]{G3est}}
+#'
+#' @export
+G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
+                    correction = c("rs", "km", "han")) {
+  spatstat::verifyclass(X, "pp3")
+  if (!spatstat::is.marked(X, dfok = FALSE))
+    stop(paste("point pattern has no", sQuote("marks")))
+  stopifnot(spatstat::is.multitype(X))
+  marx <- spatstat::marks(X, dfok = FALSE)
+  if (missing(i))
+    i <- levels(marx)[1]
+  if (missing(j))
+    j <- levels(marx)[2]
+  I <- (marx == i)
+  if (sum(I) == 0)
+    stop("No points are of type i")
+  if (i == j) {
+    result <- spatstat::G3est(X[I], rmax = rmax, nrval = nrval)
+  } else {
+    J <- (marx == j)
+    if (sum(J) == 0)
+      stop("No points are of type j")
+    result <- G3multi(X, I, J, rmax = rmax, nrval = nrval, disjoint = FALSE,
+                     correction = correction)
+  }
+  iname <- spatstat.utils::make.parseable(paste(i))
+  jname <- spatstat.utils::make.parseable(paste(j))
+  result <- spatstat::rebadge.fv(result,
+                       substitute(G[i, j](r), list(i = iname, j = jname)),
+                       c("G", paste0("list(", iname, ",", jname,")")),
+                       new.yexp = substitute(G[list(i, j)](r),
+                                             list(i = iname, j = jname)))
+  return(result)
 }
 
 #### K3multi ####
@@ -704,17 +837,17 @@ studpermu.test.ppp <- spatstat::studpermu.test
 #'
 #' @param X A hyperframe containing at least the point patterns and groups
 #' @param formula Formula describing the grouping. The left side of the formula
-#'   identifies which column of X contains the point patterns. The right side
-#'   identifies the grouping factor
+#'   identifies which column of \code{X} contains the point patterns. The right
+#'   side identifies the grouping factor
 #' @param summaryfunction Summary function applicable to pp3. Defaults to
 #'   \code{link[spatstat]{K3est}}
-#' @param ... Additional arguments passed to summaryfunction
+#' @param ... Additional arguments passed to \code{summaryfunction}
 #' @param rinterval Numeric of length 2. Experimental
 #' @param nperm Number of random permutations for the test; defaults to 999
 #' @param use.Tbar Logical value indicating choice of test statistic. If TRUE,
 #'   use the alternative test statistic, which is appropriate for summary
-#'   functions with roughly constant variance, such as K(r)/r or L(r). Defaults
-#'   to FALSE
+#'   functions with roughly constant variance, such as \eqn{K(r)/r} or
+#'   \eqn{L(r)}. Defaults to FALSE
 #' @param minpoints Minimum permissible number of points in a point pattern for
 #'   inclusion in the test calculation
 #'
@@ -722,7 +855,7 @@ studpermu.test.ppp <- spatstat::studpermu.test
 #'
 #' @references Hahn, U. (2012) A studentized permutation test for the comparison
 #'   of spatial point patterns.
-#'   Journal of the American Statistical Association 107 (498), 754-764.
+#'   *Journal of the American Statistical Association* **107** (498), 754-764.
 #' @seealso \code{\link[spatstat]{studpermu.test}}, \code{link[spatstat]{K3est}}
 #'
 #' @export
@@ -1021,8 +1154,9 @@ multicall <- function(foo, x, H, ...){
 #' @family spatstat extensions
 #'
 #' @seealso \code{\link[spatstat]{Tstat}}
-#' @references Schladitz, K. and Baddeley, A. (2000) A third order point process
-#' characteristic. Scandinavian Journal of Statistics 27 (2000) 657-671.
+#' @references Schladitz, K. and Baddeley, A. (2000)
+#' A third order point process characteristic.
+#' *Scandinavian Journal of Statistics* **27** 657-671.
 Tstat.pp3 <- function (X, ..., rmax = NULL, nrval = 128,
                        correction = "border",
                        ratio = FALSE, verbose = TRUE) {

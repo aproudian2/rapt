@@ -17,7 +17,7 @@ envPlot(
 )
 }
 \arguments{
-\item{tests}{The return file from \code{p(K/G/F)3est} or the first, [[1]],
+\item{tests}{The return file from \code{p(K/G/F)3est} or the first, [\link{1}],
 entry in the list returned by \code{p(K/G/F)3est} with \code{anom = TRUE}.}
 
 \item{percentiles}{Numerical vector of percentiles that you want to see the

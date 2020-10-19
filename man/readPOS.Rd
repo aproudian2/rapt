@@ -11,14 +11,14 @@ readPOS(filepath)
 }
 \value{
 A data.frame with columns corresponding to the x, y, and z positions
-  of the reconstruction and the mass-to-charge ratio.
+of the reconstruction and the mass-to-charge ratio.
 }
 \description{
 \code{readPOS} reads a POS file (from IVAS) into a data frame.
 }
 \references{
 Larson \emph{et al.},
-  \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
+\emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
 Other APT import functions: 
