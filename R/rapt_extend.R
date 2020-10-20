@@ -638,7 +638,6 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #' @family spatstat extensions
 #'
 #' @details
-#'
 #' The function `G3cross` and its companions \code{G3dot} (unimplemented)
 #' and \code{\link{G3multi}} are generalisations of the function
 #' \code{\link[spatstat]{G3est}} to multitype point patterns.
