@@ -2,15 +2,15 @@
 % Please edit documentation in R/rapt_file.R
 \name{createDet}
 \alias{createDet}
-\title{Create a \code{\link[spatstat]{ppp}} from an ATO.}
+\title{Create a "ppp" from an ATO.}
 \usage{
 createDet(ato, win = NULL, marks = NULL)
 }
 \arguments{
 \item{ato}{An ATO data frame.}
 
-\item{window}{An object of class \code{\link[spatstat]{owin}}. If NULL,
-a window will be calculated from the data using
+\item{window}{An object of class \code{\link[spatstat]{owin}}. If \code{NULL} (the
+default), a window will be calculated from the data using
 \code{\link[spatstat]{ripras}}.}
 }
 \value{
@@ -18,10 +18,15 @@ A \code{\link[spatstat]{ppp}} with the positions of the detector hits
 from the ATO.
 }
 \description{
-\code{createDet} generates a \code{\link[spatstat]{ppp}} of detector hits
-from an ATO.
+\code{createDet} generates a \code{\link[spatstat]{ppp}} of detector hits from an
+ATO.
 }
 \seealso{
 \code{\link{readATO}}, \code{\link[spatstat]{ppp}},
 \code{\link[spatstat]{ripras}}
+
+Other APT data transformation functions: 
+\code{\link{createSpat}()},
+\code{\link{createSpec}()}
 }
+\concept{APT data transformation functions}

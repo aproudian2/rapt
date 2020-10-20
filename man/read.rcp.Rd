@@ -15,7 +15,7 @@ read.rcp(fpath_config, fpath_sys, scaleUp = FALSE, newRadius = 0.5)
 that the RCP particles will be scaled to. Default is 0.5.}
 
 \item{scaleUP}{Boolean. If \code{TRUE}, scales RCP so particles have new
-radius. If \code{FALSE}, RCP stays as generated.}
+radius. If \code{FALSE} (the default), RCP stays as generated.}
 }
 \value{
 A \code{\link[spatstat]{pp3}} object of the RCP pattern.

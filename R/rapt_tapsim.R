@@ -8,12 +8,12 @@
 #' Read TAPSim Results
 #'
 #' Given a filepath, read in a TAPSim results file.
-#' \emph{Currently only implemented for ASCII results files.}
+#' *Currently only implemented for ASCII results files.*
 #'
 #' @param fp Character. The filepath
 #' @param type Character. The file type to be read. Currently, only ASCII is
 #'   implemented.
-#' @return A data.frame with the structure of the TAPSim output.
+#' @return A `data.frame` with the structure of the TAPSim output.
 #'
 #' @family TAPSim functions
 #' @seealso \url{
@@ -52,10 +52,13 @@ readResult <- function(fp, type = 'ASCII') {
 ### resultToPOS ###
 #' Convert TAPSim Results to POS
 #'
-#' @param res data.frame. The results \code{data.frame} as returned by
-#'   \code{\link{readResult}}
+#' `resultToDet` converts a TAPSim result `data.frame` (as returned by
+#' \code{\link{readResult}}) into a \code{\link[spatstat]{pp3}} using
+#' [readPOS()].
+#'
+#' @param res The results `data.frame` as returned by \code{\link{readResult}}
 #' @param clip.radius Numeric. The detector radius at which to clip the points
-#' @return A \code{data.frame} containing the (x,y,z) position and "mass" (id)
+#' @return A `data.frame` containing the (x,y,z) position and "mass" (id)
 #'   of the point in the stame structure of a POS as created by
 #'   \code{\link{readPOS}}.
 #'
@@ -76,11 +79,15 @@ resultToPOS <- function(res, clip.radius = NULL) {
 }
 
 ### resultToDet ###
-#' Convert TAPSim Result to Detector \code{\link[spatstat]{ppp}}
+#' Convert TAPSim Result to Detector "ppp"
 #'
-#' @param res data.frame. The results \code{data.frame} as returned by
-#'   \code{\link{readResult}}
+#' `resultToDet` converts a TAPSim result `data.frame` (as returned by
+#' \code{\link{readResult}}) into a \code{\link[spatstat]{ppp}} using
+#' [createDet()].
+#'
+#' @param res The results `data.frame` as returned by \code{\link{readResult}}
 #' @param clip.radius Numeric. The detector radius at which to clip the points.
+#'   If `NULL` (the default), no clipping is applied.
 #' @return A \code{\link[spatstat]{ppp}} containing the detector positions
 #'   marked by their id.
 #'
@@ -101,12 +108,13 @@ resultToDet <- function(res, clip.radius = NULL) {
 #### Write Data ####
 
 ### writeNode ###
-#' Write a Node File
+#' Write a TAPSim Node File
 #'
-#' \code{writeNode} writes a node file to the TAPSim format for creating a mesh
+#' `writeNode` writes a node file to the TAPSim format for creating a mesh
 #' file for TAPSim.
+#' *Currently only ASCII is supported*
 #'
-#' @param node data.frame A \code{data.frame} with columns correponding to the
+#' @param node A `data.frame` with columns correponding to the
 #' x, y, z, and id of each point in order
 #' @param fp Character. The file to which to write the data.
 #' @return None.

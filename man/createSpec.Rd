@@ -13,7 +13,7 @@ createSpec(pos, res = 0.05, clip = NULL)
 \item{res}{numeric. The bin width of the mass spectrum.}
 
 \item{clip}{numeric of length two. The minimum and maximum mass values to be
-included in the mass spectrum. If NULL (the default), all values are
+included in the mass spectrum. If \code{NULL} (the default), all values are
 included.}
 }
 \value{
@@ -36,4 +36,9 @@ the mass value is zero unless \code{clip} is set.
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},
 \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
+
+Other APT data transformation functions: 
+\code{\link{createDet}()},
+\code{\link{createSpat}()}
 }
+\concept{APT data transformation functions}

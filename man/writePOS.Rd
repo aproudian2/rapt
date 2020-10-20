@@ -7,17 +7,20 @@
 writePOS(pos, filepath)
 }
 \arguments{
-\item{pos}{A data.frame with columns of x, y, z, and mass, following the
+\item{pos}{A \code{data.frame} with columns of x, y, z, and mass, following the
 structure of the \code{data.frame} returned by \code{\link{readPOS}}.}
 
-\item{filepath}{A string. The file path to the POS file.}
+\item{filepath}{A string. The file path to the \code{POS} file.}
+}
+\value{
+\code{NULL}
 }
 \description{
 \code{writePOS} writes a POS \code{data.frame} into a POS file
 }
 \references{
-Larson \emph{et al.},
-\emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
+Larson \verb{et al.},
+\verb{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
 \code{\link{readPOS}}

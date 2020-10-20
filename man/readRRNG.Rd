@@ -11,7 +11,7 @@ readRRNG(filepath)
 }
 \value{
 A \code{data.frame} with columns corresponding to the mass ranges,
-ion volume, name, molecular formula (\code{NA} if not present), and color
+ion volume, name, molecular formulae (\code{NA} if not present), and color
 for display.
 }
 \description{

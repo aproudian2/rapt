@@ -12,9 +12,11 @@ acceptable to \code{\link[enviPat]{isopattern}}}
 
 \item{charge}{Numeric. Charge of ion.}
 
-\item{threshold}{Numeric. Percentage threshold of isotope.}
+\item{threshold}{Numeric. Percentage threshold of isotope relative to highest
+intensity isotope. Defaults to 10}
 
-\item{peak}{Character. One of "gaussian" or "emg". See Details.}
+\item{peak}{Character. One of \code{"gaussian"} or \code{"emg"}. Default is
+\code{peak = "gaussian"}. See Details.}
 }
 \value{
 A character string that concatinates all the formulae for the ions
@@ -24,8 +26,18 @@ and their respetive isotopes, along with a constant noise term.
 Creates the formulae that get passed to \code{\link[stats]{nls}}
 }
 \details{
-The base peak shape of the formula is either a gaussian
-(peak = "gaussian") or an exponentially modified gaussian (peak = "emg").
+The fitting peak shape is either a gaussian (\code{peak = "gaussian"}) or
+exponentially modified gaussian (\code{peak = "emg"}).  The \code{"gaussian"} peak
+shape is defined as
+\deqn{rel[i] * \lambda[ij] *
+    exp(-(mass - m[ij] - mass.shift)^2 / (2 * sd ^2))}
+where \eqn{\lambda[ij]} is the intensity of the \emph{j}th isotope of \code{ions[i]}
+normalized to the most intense isotope of \code{ions[i]} and \eqn{m[ij]} is the
+mass of the \emph{j}th isotope of \code{ions[i]}. The \code{"emg"} peak shape
+is defined as
+\deqn{(rel[i] * \lambda[ij] * sd / tau) * sqrt(pi/2) *
+     exp(1/2*(sd/tau)^2-(mass-m[j]-mass.shift)/tau) *
+     erfc(sqrt(1/2)*(sd/tau-(mass-m[j]-mass.shift)/sd))}
 }
 \seealso{
 \code{\link[enviPat]{fitIonInit}}, \code{\link[enviPat]{isopattern}}

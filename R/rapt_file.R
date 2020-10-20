@@ -7,14 +7,14 @@
 ### readPOS ###
 #' Read a POS File
 #'
-#' \code{readPOS} reads a POS file (from IVAS) into a data frame.
+#' \code{readPOS} reads a POS file (from IVAS) into a `data.frame`.
 #'
 #' @param filepath Character. The file path to the POS file.
-#' @return A data.frame with columns corresponding to the x, y, and z positions
-#'   of the reconstruction and the mass-to-charge ratio.
+#' @return A `data.frame` with columns corresponding to the x, y, and z
+#'   positions of the reconstruction and the mass-to-charge ratio.
 #'
-#' @references Larson \emph{et al.},
-#'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
+#' @references Larson *et al.*,
+#'   *Local Electrode Atom Probe Tomography: A User's Guide* (2009)
 #' @family APT import functions
 #'
 #' @export
@@ -38,14 +38,14 @@ readPOS <- function(filepath) {
 ### readATO ###
 #' Read an ATO File
 #'
-#' \code{readATO} reads an ATO file (from IVAS) into a data frame.
+#' \code{readATO} reads an ATO file (from IVAS) into a `data.frame`.
 #'
 #' @param filepath Character. The file path to the ATO file.
-#' @return A data.frame with columns corresponding to the ATO structure
+#' @return A `data.frame` with columns corresponding to the ATO structure
 #'   definition.
 #'
-#' @references Larson \emph{et al.},
-#'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
+#' @references Larson *et al.*,
+#'   *Local Electrode Atom Probe Tomography: A User's Guide* (2009)
 #' @family APT import functions
 #'
 #' @export
@@ -78,12 +78,12 @@ readATO <- function(filepath) {
 #' \code{\link{createSpec}}
 #'
 #' @param filepath Character. A filepath to the RRNG file.
-#' @return A \code{data.frame} with columns corresponding to the mass ranges,
-#'   ion volume, name, molecular formula (\code{NA} if not present), and color
+#' @return A `data.frame` with columns corresponding to the mass ranges,
+#'   ion volume, name, molecular formulae (`NA` if not present), and color
 #'   for display.
 #'
-#' @references Larson \emph{et al.},
-#'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
+#' @references Larson *et al.*,
+#'   *Local Electrode Atom Probe Tomography: A User's Guide* (2009)
 #' @family APT import functions
 #'
 #' @export
@@ -136,7 +136,7 @@ readRRNG <- function(filepath) {
   return(dat)
 }
 
-#### Condition Data ####
+#### Transform Data ####
 
 ### createSpat ###
 #' Create a pp3 from a POS or ATO
@@ -148,6 +148,8 @@ readRRNG <- function(filepath) {
 #' @param win The domain of the data.
 #' @return A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
 #'   the supplied POS or ATO.
+#'
+#' @family APT data transformation functions
 #'
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}},
 #'   \code{\link[spatstat]{pp3}}
@@ -165,17 +167,19 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
 }
 
 ### createDet ###
-#' Create a \code{\link[spatstat]{ppp}} from an ATO.
+#' Create a "ppp" from an ATO.
 #'
-#' \code{createDet} generates a \code{\link[spatstat]{ppp}} of detector hits
-#' from an ATO.
+#' `createDet` generates a \code{\link[spatstat]{ppp}} of detector hits from an
+#' ATO.
 #'
 #' @param ato An ATO data frame.
-#' @param window An object of class \code{\link[spatstat]{owin}}. If NULL,
-#'   a window will be calculated from the data using
+#' @param window An object of class \code{\link[spatstat]{owin}}. If `NULL` (the
+#' default), a window will be calculated from the data using
 #'   \code{\link[spatstat]{ripras}}.
 #' @return A \code{\link[spatstat]{ppp}} with the positions of the detector hits
 #'   from the ATO.
+#'
+#' @family APT data transformation functions
 #'
 #' @seealso \code{\link{readATO}}, \code{\link[spatstat]{ppp}},
 #'   \code{\link[spatstat]{ripras}}
@@ -194,7 +198,7 @@ createDet <- function(ato, win = NULL, marks = NULL) {
 #' Create a \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from a POS
 #' or ATO
 #'
-#' \code{createSpec} generates a
+#' `createSpec` generates a
 #' \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} object with a
 #' specified resolution from an ATO or POS data frame (like that created by
 #' \code{\link{readPOS}}).
@@ -202,18 +206,20 @@ createDet <- function(ato, win = NULL, marks = NULL) {
 #' @param pos A POS or ATO data frame.
 #' @param res numeric. The bin width of the mass spectrum.
 #' @param clip numeric of length two. The minimum and maximum mass values to be
-#'   included in the mass spectrum. If NULL (the default), all values are
+#'   included in the mass spectrum. If `NULL` (the default), all values are
 #'   included.
 #'
 #' @return A \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} from the
-#'   \code{mass} field of the POS or ATO, with the resolution set by \code{res}.
+#'   `mass` field of the POS or ATO, with the resolution set by `res`.
 #'
 #' @details
-#' The input POS or ATO is binned by mass values; the \code{res} parameter sets
+#' The input POS or ATO is binned by mass values; the `res` parameter sets
 #' the width of the mass bins used in \code{\link[graphics]{hist}} to create the
 #' input to the \code{\link[MALDIquant]{createMassSpectrum}} call, and also acts
 #' as a tolerance around the spectrum minimum and maximum mass. The minimum of
-#' the mass value is zero unless \code{clip} is set.
+#' the mass value is zero unless `clip` is set.
+#'
+#' @family APT data transformation functions
 #'
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}},
 #'   \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}
@@ -240,15 +246,15 @@ createSpec <- function(pos, res = 0.05, clip = NULL) {
 ### writePOS ###
 #' Write a POS File
 #'
-#' \code{writePOS} writes a POS \code{data.frame} into a POS file
+#' `writePOS` writes a POS `data.frame` into a POS file
 #'
-#' @param pos A data.frame with columns of x, y, z, and mass, following the
-#'   structure of the \code{data.frame} returned by \code{\link{readPOS}}.
-#' @param filepath A string. The file path to the POS file.
-#' @return NULL
+#' @param pos A `data.frame` with columns of x, y, z, and mass, following the
+#'   structure of the `data.frame` returned by \code{\link{readPOS}}.
+#' @param filepath A string. The file path to the `POS` file.
+#' @return `NULL`
 #'
-#' @references Larson \emph{et al.},
-#'   \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
+#' @references Larson `et al.`,
+#'   `Local Electrode Atom Probe Tomography: A User's Guide` (2009)
 #' @seealso \code{\link{readPOS}}
 #'
 #' @export

@@ -10,11 +10,11 @@ readPOS(filepath)
 \item{filepath}{Character. The file path to the POS file.}
 }
 \value{
-A data.frame with columns corresponding to the x, y, and z positions
-of the reconstruction and the mass-to-charge ratio.
+A \code{data.frame} with columns corresponding to the x, y, and z
+positions of the reconstruction and the mass-to-charge ratio.
 }
 \description{
-\code{readPOS} reads a POS file (from IVAS) into a data frame.
+\code{readPOS} reads a POS file (from IVAS) into a \code{data.frame}.
 }
 \references{
 Larson \emph{et al.},

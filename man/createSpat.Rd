@@ -22,4 +22,9 @@ data frame.
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},
 \code{\link[spatstat]{pp3}}
+
+Other APT data transformation functions: 
+\code{\link{createDet}()},
+\code{\link{createSpec}()}
 }
+\concept{APT data transformation functions}

@@ -10,11 +10,11 @@ readATO(filepath)
 \item{filepath}{Character. The file path to the ATO file.}
 }
 \value{
-A data.frame with columns corresponding to the ATO structure
+A \code{data.frame} with columns corresponding to the ATO structure
 definition.
 }
 \description{
-\code{readATO} reads an ATO file (from IVAS) into a data frame.
+\code{readATO} reads an ATO file (from IVAS) into a \code{data.frame}.
 }
 \references{
 Larson \emph{et al.},

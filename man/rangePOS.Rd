@@ -7,14 +7,15 @@
 rangePOS(pos, start, end)
 }
 \arguments{
-\item{pos}{data.frame. The \code{POS} or \code{ATO} to be ranged}
+\item{pos}{The \code{POS} or \code{ATO} to be ranged. A \code{data.frame} created by
+\code{\link{readPOS}} or \code{\link{readATO}}}
 
 \item{start}{Numeric. The start of the mass range}
 
 \item{end}{Numeric. The end of the mass range}
 }
 \value{
-A data.frame of the same structure as \code{pos} containing only hits
+A \code{data.frame} of the same structure as \code{pos} containing only hits
 in the provided range
 }
 \description{

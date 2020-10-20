@@ -7,10 +7,11 @@
 rngPOS(pos, rng)
 }
 \arguments{
-\item{pos}{data.frame. The \code{POS} or \code{ATO} from which to extract
-hits}
+\item{pos}{The \code{POS} or \code{ATO} from which to extract hits. A \code{data.frame}
+created by \code{\link{readPOS}} or \code{\link{readATO}}}
 
-\item{rng}{data.frame. The \code{RRNG} ranges to apply}
+\item{rng}{The \code{RRNG} ranges to apply. A \code{data.frame} created by
+\code{\link{readRRNG}}}
 }
 \value{
 A data.frame of the same structure as \code{pos}, with an appended

@@ -2,12 +2,12 @@
 % Please edit documentation in R/rapt_tapsim.R
 \name{writeNode}
 \alias{writeNode}
-\title{Write a Node File}
+\title{Write a TAPSim Node File}
 \usage{
 writeNode(node, fp)
 }
 \arguments{
-\item{node}{data.frame A \code{data.frame} with columns correponding to the
+\item{node}{A \code{data.frame} with columns correponding to the
 x, y, z, and id of each point in order}
 
 \item{fp}{Character. The file to which to write the data.}
@@ -18,6 +18,7 @@ None.
 \description{
 \code{writeNode} writes a node file to the TAPSim format for creating a mesh
 file for TAPSim.
+\emph{Currently only ASCII is supported}
 }
 \seealso{
 \url{

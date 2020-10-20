@@ -7,8 +7,7 @@
 resultToPOS(res, clip.radius = NULL)
 }
 \arguments{
-\item{res}{data.frame. The results \code{data.frame} as returned by
-\code{\link{readResult}}}
+\item{res}{The results \code{data.frame} as returned by \code{\link{readResult}}}
 
 \item{clip.radius}{Numeric. The detector radius at which to clip the points}
 }
@@ -18,7 +17,9 @@ of the point in the stame structure of a POS as created by
 \code{\link{readPOS}}.
 }
 \description{
-Convert TAPSim Results to POS
+\code{resultToDet} converts a TAPSim result \code{data.frame} (as returned by
+\code{\link{readResult}}) into a \code{\link[spatstat]{pp3}} using
+\code{\link[=readPOS]{readPOS()}}.
 }
 \seealso{
 \code{\link{readPOS}}
