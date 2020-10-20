@@ -47,8 +47,8 @@
 msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')) {
   verifyclass(X, "pp3")
   if(!is.marked(X)) {
-    error <- paste(dQuote(X), "must be a marked point pattern")
-    stop(error)
+    gripe <- paste(dQuote(X), "must be a marked point pattern")
+    stop(gripe)
   }
   X.A <- X[marks(X) %in% clust.mark]
   X.B <- X[!(marks(X) %in% clust.mark)]
@@ -198,15 +198,19 @@ msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')) {
 gema <- function(X, ...) UseMethod("gema")
 
 ### gema.pp3 ###
-#' Identify Clusters in a Marked Point Pattern Using GEMA
+#' Identify Clusters in a Point Pattern Using GEMA
 #'
-#' @param X The marked point pattern (object of class
+#' @param X The point pattern (object of class \code{\link[spatstat]{ppp}} or
 #'   \code{\link[spatstat]{pp3}}) in which to identify clusters.
+#' @param cluster The marks of `X` that are cluster-type points. If
+#'   `cluster = NULL` (the default) or `X` is unmarked, all points are assumed
+#'   to be cluster-type points.
 #' @param threshold The probability threshold at which to assign a point to a
-#'   cluster or to the background.
-#' @return A marked point pattern (object of class \code{\link[spatstat]{pp3}})
-#'   with marks corresponding to the identified background and each identified
-#'   cluster.
+#'   cluster or to the background. Defaults to 0.5, which is usually Bayes
+#'   optimal.
+#' @return A marked point pattern (of the same class as `X`) with marks
+#'   corresponding to the identified background and each identified cluster
+#'   based on `threshold`.
 #'
 #' @details
 #' A `data.frame` is returned as an attribute (`attr("prob")`) that contains the
@@ -218,7 +222,19 @@ gema <- function(X, ...) UseMethod("gema")
 #' "Detecting Clusters in Atom Probe Data with Gaussian Mixture Models",
 #' *Microscopy and Microanalysis*, **23** (2), 269-278 (2017):
 #' <https://doi.org/10.1017/S1431927617000320>
-gema.pp3 <- function (X, threshold = 0.5) {}
+gema.pp3 <- function(X, cluster = NULL, threshold = 0.5) {
+  stopifnot(inherits(X, c("ppp","pp3")))
+  stopifnot(threshold >= 0 & threshold <= 1)
+  if (!is.null(cluster) & is.marked(X)) {
+    Y <- unmark(X[marks(X) %in% cluster])
+  } else {
+    Y <- unmark(X)
+  }
+
+}
+
+### gema.ppp ###
+gema.ppp <- gema.pp3
 
 ### gema.gema ###
 #' Reprocess Clusters Identified Using GEMA
@@ -229,4 +245,4 @@ gema.pp3 <- function (X, threshold = 0.5) {}
 #' @return An
 #'
 #' @family cluster identification functions
-gema.gema <- function (X, threshold = 0.5) {}
+gema.gema <- function(X, threshold = 0.5) {}

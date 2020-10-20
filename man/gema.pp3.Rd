@@ -2,24 +2,29 @@
 % Please edit documentation in R/rapt_cluster-detection.R
 \name{gema.pp3}
 \alias{gema.pp3}
-\title{Identify Clusters in a Marked Point Pattern Using GEMA}
+\title{Identify Clusters in a Point Pattern Using GEMA}
 \usage{
-\method{gema}{pp3}(X, threshold = 0.5)
+\method{gema}{pp3}(X, cluster = NULL, threshold = 0.5)
 }
 \arguments{
-\item{X}{The marked point pattern (object of class
+\item{X}{The point pattern (object of class \code{\link[spatstat]{ppp}} or
 \code{\link[spatstat]{pp3}}) in which to identify clusters.}
 
+\item{cluster}{The marks of \code{X} that are cluster-type points. If
+\code{cluster = NULL} (the default) or \code{X} is unmarked, all points are assumed
+to be cluster-type points.}
+
 \item{threshold}{The probability threshold at which to assign a point to a
-cluster or to the background.}
+cluster or to the background. Defaults to 0.5, which is usually Bayes
+optimal.}
 }
 \value{
-A marked point pattern (object of class \code{\link[spatstat]{pp3}})
-with marks corresponding to the identified background and each identified
-cluster.
+A marked point pattern (of the same class as \code{X}) with marks
+corresponding to the identified background and each identified cluster
+based on \code{threshold}.
 }
 \description{
-Identify Clusters in a Marked Point Pattern Using GEMA
+Identify Clusters in a Point Pattern Using GEMA
 }
 \details{
 A \code{data.frame} is returned as an attribute (\code{attr("prob")}) that contains the
