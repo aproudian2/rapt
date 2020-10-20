@@ -13,11 +13,11 @@ quadrats.pp3(X, nx, ny, nz, box.dims = NULL)
 if you wish to split up your point patthern by number of boxes.}
 
 \item{box.dims}{Vector containing the dimensions of the subsetted 3D boxxes,
-if you wish to define the individual boxx size. Use either \code{nx, ny,
-  nz} or \code{box.dims}, but not both.}
+if you wish to define the individual boxx size. Use either \code{nx}, \code{ny},
+\code{nz} or \code{box.dims}, but not both.}
 }
 \value{
-A list containing the split up \code{pp3} objects.
+A list containing the split up "pp3" objects.
 }
 \description{
 Divides volume into quadrats and returns them.

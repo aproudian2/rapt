@@ -154,25 +154,26 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
 #' Generate a spatial lattice
 #'
 #' \code{lattice} creates a spatial region filled with lattice points of the
-#' specified type. Currently, only simple cubic ("sc"), body-centered cubic
-#' ("bcc"), and face-centered cubic ("fcc") are implemented.
+#' specified type. Currently, only simple cubic (`"sc"`), body-centered cubic
+#' (`"bcc"`), and face-centered cubic (`"fcc"`) are implemented.
 #'
 #' @param domain A \code{\link[spatstat]{box3}}. The domain in which to
 #' generate the lattice
-#' @param a numeric. The lattice parameter of the lattice. For cubic lattices
-#'   (i.e. "sc", "bcc", "fcc"), this is the length of the side of the cube; for
-#'   "hcp", this is the length of the side of the hexagon. See Details.
-#' @param lattice character. The lattice to generate (one of "sc", "bcc", or
-#' "fcc").
-#' @return A pp3 with points at the lattice positions
+#' @param a Numeric. The lattice parameter of the lattice. For cubic lattices
+#'   (*i.e.* `"sc"`, `"bcc"`, `"fcc"`), this is the length of the side of the
+#'   cube; for `"hcp"`, this is the length of the side of the hexagon. See
+#'   Details.
+#' @param lattice character. The lattice to generate (one of `"sc"`, `"bcc"`,
+#'   `"fcc"`, or `"hcp"`).
+#' @return A \code{\link[spatstat]{pp3}} with points at the lattice positions
 #'
 #' @details For a hexagonal close packed (hcp) lattice, there are two dimensions
-#'   that are defined: the side of the hexagon, a, and the height of the
-#'   hexagonal prism, c. For a perfect hcp crystal, the ratio of these two
+#'   that are defined: the side of the hexagon, *a*, and the height of the
+#'   hexagonal prism, *c*. For a perfect hcp crystal, the ratio of these two
 #'   dimensions is exactly \eqn{c/a = \sqrt{8/3}}.
 #'
 #' @family simulation functions
-#' @seealso \code{\link{hcp.gen()}}, \code{\link[spatstat]{pp3()}}
+#' @seealso \code{\link{hcp.gen}}, \code{\link[spatstat]{pp3}}
 #'
 #' @export
 lattice <- function(domain = box3(), a = 1, lattice = "sc") {
@@ -223,11 +224,11 @@ lattice <- function(domain = box3(), a = 1, lattice = "sc") {
 #' @param parent pp3. The point pattern from which to draw the n-mers
 #' @param n numeric. The number of points in the n-mer. Default is 2
 #' @param full logical. Return a marked pattern with both n-mers and
-#'   "background" points? Default is FALSE
+#'   "background" points? Default is `FALSE`
 #'
-#' @return A pp3 with the n-mers. If \code{full = FALSE} (the default) this is
+#' @return A pp3 with the n-mers. If `full = FALSE` (the default) this is
 #'   an unmarked pattern with only the positions of the n-mers. If
-#'   \code{full = TRUE}, this is a marked pattern with marks "nmers" and "bkgd".
+#'   `full = TRUE`, this is a marked pattern with marks "nmers" and "bkgd".
 #'
 #' @family simulation functions
 #' @seealso \code{\link{clustersim}}

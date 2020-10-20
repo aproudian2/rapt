@@ -8,7 +8,7 @@ rjitter(X, ...)
 }
 \description{
 This is an S3 generic that extends the use of
-\code{\link[spatstat]{rjitter}} beyond \code{ppp} objects.
+\code{\link[spatstat]{rjitter}} beyond "ppp" objects.
 }
 \seealso{
 \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}},

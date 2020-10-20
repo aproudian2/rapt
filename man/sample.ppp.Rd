@@ -7,12 +7,12 @@
 sample.ppp(X, size)
 }
 \arguments{
-\item{X}{A \code{ppp}. The point pattern from which to sample.}
+\item{X}{An object of class "ppp". The point pattern from which to sample.}
 
 \item{size}{A numeric. The number of points to sample.}
 }
 \value{
-A \code{ppp}. The sampled point pattern.
+A "ppp". The sampled point pattern.
 }
 \description{
 Sample a Planar Point Pattern

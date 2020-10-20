@@ -7,7 +7,7 @@
 \method{superimpose}{pp3}(..., W = NULL, check = FALSE)
 }
 \description{
-\code{superimpose.pp3} superimposes any number of 3D point patterns
+Superimposes any number of 3D point patterns
 }
 \seealso{
 \code{\link[spatstat]{superimpose}}

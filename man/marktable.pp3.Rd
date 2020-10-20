@@ -6,10 +6,25 @@
 \usage{
 \method{marktable}{pp3}(X, R, N, exclude = TRUE, collapse = FALSE)
 }
+\arguments{
+\item{X}{A marked point pattern. An object of class "ppp".}
+
+\item{R}{Neighbourhood radius. Incompatible with \code{N}.}
+
+\item{N}{Number of neighbours of each point. Incompatible with \code{R}.}
+
+\item{exclude}{Logical. If \code{exclude=TRUE}, the neighbours of a point do
+not include the point itself. If \code{exclude=FALSE}, a point belongs to
+its own neighbourhood.}
+
+\item{collapse}{Logical. If \code{collapse=FALSE} (the default) the results
+for each point are returned as separate rows of a table. If
+\code{collapse=TRUE}, the results are aggregated according to the type of
+point.}
+}
 \description{
-Visit each point in a point pattern, find the neighbouring
-points, and compile a frequency table of the marks of these neighbour
-points.
+Visit each point in a point pattern, find the neighbouring points, and
+compile a frequency table of the marks of these neighbour points.
 }
 \seealso{
 Other spatstat extensions: 

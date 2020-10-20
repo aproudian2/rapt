@@ -8,7 +8,8 @@
 rownames.pp3(pat)
 }
 \arguments{
-\item{pat}{\code{pp3}. The point pattern from which to extract rownames.}
+\item{pat}{An object of class "pp3". The point pattern from which to extract
+rownames.}
 }
 \value{
 Character vector. The rownames of the point pattern.

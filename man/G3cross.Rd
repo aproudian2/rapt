@@ -28,8 +28,9 @@ character string). Defaults to the second level of \code{marks(X)}.}
 required to avoid discretisation effects.}
 
 \item{correction}{Optional. Character string specifying the edge
-correction(s) to be used. Options are "none", "rs", "km", "hanisch"
-and "best". Alternatively \code{correction="all"} selects all options.}
+correction(s) to be used. Options are \code{"none"}, \code{"rs"},
+\code{"km"}, \code{"hanisch"}, and \code{"best"}. Alternatively
+\code{correction="all"} selects all options.}
 }
 \value{
 An object of class "fv" (see \code{\link[spastat]{fv.object}}).
@@ -39,9 +40,9 @@ For a multitype point pattern, estimate the distribution of the distance from
 a point of type i to the nearest point of type j.
 }
 \details{
-This function \code{G3cross} and its companion \code{\link{G3multi}} are
-generalisations of the function \code{\link[spatstat]{G3est}} to multitype
-point patterns.
+The function \code{G3cross} and its companions \code{G3dot} (unimplemented)
+and \code{\link{G3multi}} are generalisations of the function
+\code{\link[spatstat]{G3est}} to multitype point patterns.
 
 A multitype point pattern is a spatial pattern of points classified into a
 finite number of possible "colors" or "types." In the \strong{spatstat}
@@ -102,7 +103,8 @@ uncorrected empirical \eqn{G[3ij](r)} as if it were an unbiased estimator of
 \eqn{G[3ij](r)}.
 }
 \seealso{
-\code{\link{G3multi}}, \code{\link[spatstat]{G3est}}
+\code{\link{G3multi}}, \code{\link[spatstat]{G3est}},
+\code{\link[spatstat]{marks}}
 
 Other spatstat extensions: 
 \code{\link{G3multi}()},

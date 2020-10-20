@@ -14,7 +14,7 @@ nmers(sam, parent, n = 2, full = FALSE)
 \item{n}{numeric. The number of points in the n-mer. Default is 2}
 
 \item{full}{logical. Return a marked pattern with both n-mers and
-"background" points? Default is FALSE}
+"background" points? Default is \code{FALSE}}
 }
 \value{
 A pp3 with the n-mers. If \code{full = FALSE} (the default) this is

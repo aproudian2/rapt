@@ -6,7 +6,18 @@
 #' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 #'
 #' @description This is an S3 generic that extends the use of
-#'   \code{\link[spatstat]{marktable}} beyond \code{ppp} objects.
+#'   \code{\link[spatstat]{marktable}} beyond "ppp" objects.
+#'
+#' @param X A marked point pattern. An object of class "ppp".
+#' @param R Neighbourhood radius. Incompatible with `N`.
+#' @param N Number of neighbours of each point. Incompatible with `R`.
+#' @param exclude Logical. If `exclude=TRUE`, the neighbours of a point do
+#'   not include the point itself. If `exclude=FALSE`, a point belongs to
+#'   its own neighbourhood.
+#' @param collapse Logical. If `collapse=FALSE` (the default) the results
+#'   for each point are returned as separate rows of a table. If
+#'   `collapse=TRUE`, the results are aggregated according to the type of
+#'   point.
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{marktable.ppp}}, \code{\link{marktable.pp3}}
@@ -23,9 +34,19 @@ marktable.ppp <- spatstat::marktable
 ### marktable.pp3 ###
 #' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 #'
-#' @description Visit each point in a point pattern, find the neighbouring
-#'   points, and compile a frequency table of the marks of these neighbour
-#'   points.
+#' Visit each point in a point pattern, find the neighbouring points, and
+#' compile a frequency table of the marks of these neighbour points.
+#'
+#' @param X A marked point pattern. An object of class "ppp".
+#' @param R Neighbourhood radius. Incompatible with `N`.
+#' @param N Number of neighbours of each point. Incompatible with `R`.
+#' @param exclude Logical. If `exclude=TRUE`, the neighbours of a point do
+#'   not include the point itself. If `exclude=FALSE`, a point belongs to
+#'   its own neighbourhood.
+#' @param collapse Logical. If `collapse=FALSE` (the default) the results
+#'   for each point are returned as separate rows of a table. If
+#'   `collapse=TRUE`, the results are aggregated according to the type of
+#'   point.
 #'
 #' @family spatstat extensions
 #'
@@ -81,7 +102,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
 #' Random Perturbation of a Point Pattern
 #'
 #' @description This is an S3 generic that extends the use of
-#'   \code{\link[spatstat]{rjitter}} beyond \code{ppp} objects.
+#'   \code{\link[spatstat]{rjitter}} beyond "ppp" objects.
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}},
@@ -130,7 +151,7 @@ rjitter.pp3 <- function(X, domain = box3()) {
 #### superimpose.pp3 ####
 #' Superimpose Several Geometric Patterns
 #'
-#' \code{superimpose.pp3} superimposes any number of 3D point patterns
+#' Superimposes any number of 3D point patterns
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{superimpose}}
@@ -197,9 +218,9 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 ### sample.ppp ###
 #' Sample a Planar Point Pattern
 #'
-#' @param X A \code{ppp}. The point pattern from which to sample.
+#' @param X An object of class "ppp". The point pattern from which to sample.
 #' @param size A numeric. The number of points to sample.
-#' @return A \code{ppp}. The sampled point pattern.
+#' @return A "ppp". The sampled point pattern.
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link{sample.pp3}}, \code{\link[base]{sample}}
@@ -215,9 +236,9 @@ sample.ppp <- function(X, size) {
 ### sample.pp3 ###
 #' Sample A 3D Point Pattern
 #'
-#' @param X A \code{pp3}. The point pattern from which to sample.
+#' @param X An object of class "pp3". The point pattern from which to sample.
 #' @param size A numeric. The number of points to sample.
-#' @return A \code{pp3}. The sampled point pattern.
+#' @return A "pp3". The sampled point pattern.
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link{sample.ppp}}, \code{\link[base]{sample}}
@@ -290,7 +311,8 @@ intensity.pp3 <- function(X, weights = NULL) {
 #' Extends \code{\link[base:row+colnames]{rownames}} to
 #' \code{\link[spatstat]{pp3}}.
 #'
-#' @param pat \code{pp3}. The point pattern from which to extract rownames.
+#' @param pat An object of class "pp3". The point pattern from which to extract
+#'   rownames.
 #' @return Character vector. The rownames of the point pattern.
 #' @seealso \code{\link[base:row+colnames]{rownames}}
 rownames.pp3 <- function(pat) {
@@ -301,7 +323,7 @@ rownames.pp3 <- function(pat) {
 #' Extends \code{\link[base:row+colnames]{rownames}} to
 #' \code{\link[spatstat]{pp3}}.
 #'
-#' @param pat \code{pp3}. The point pattern to assign rownames.
+#' @param pat An object of class "pp3". The point pattern to assign rownames.
 #' @param lab character. The new rownames.
 #' @seealso \code{\link[base:row+colnames]{rownames}}
 "rownames.pp3<-" <- function(pat,lab) {
@@ -313,9 +335,9 @@ rownames.pp3 <- function(pat) {
 #' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
 #'
 #' (requires the rgl library)
-#' @param X \code{pp3}. The point pattern to visualize
-#' @param ... Other arguments to pass to \code{plot3d} from the \code{rgl}
-#' library.
+#' @param X An object of class "pp3". The point pattern to visualize
+#' @param ... Other arguments to pass to \code{\link[rgl]{plot3d}} from the
+#'   `rgl` library.
 #'
 #' @family visualization functions
 #' @seealso \code{\link[rgl]{plot3d}}
@@ -333,7 +355,7 @@ plot3d.pp3 <- function(X, ...) {
 #' @param X The \code{\link[spatstat]{pp3}} object to split up.
 #' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions.
 #'
-#' @return A \code{data.frame} object containing the number of counts in each
+#' @return A `data.frame` object containing the number of counts in each
 #'   quadrat.
 #'
 #' @family spatstat extensions
@@ -383,10 +405,10 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
 #' @param nx,ny,nz Number of rectangular quadrats in the x, y, and z directions,
 #'   if you wish to split up your point patthern by number of boxes.
 #' @param box.dims Vector containing the dimensions of the subsetted 3D boxxes,
-#'   if you wish to define the individual boxx size. Use either \code{nx, ny,
-#'   nz} or \code{box.dims}, but not both.
+#'   if you wish to define the individual boxx size. Use either `nx`, `ny`,
+#'   `nz` or `box.dims`, but not both.
 #'
-#' @return A list containing the split up \code{pp3} objects.
+#' @return A list containing the split up "pp3" objects.
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{quadrats}}
@@ -453,24 +475,32 @@ quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
 #' Marked Nearest Neighbour Distance Function
 #'
 #' For a marked point pattern, estimate the distribution of the distance from a
-#' typical point in subset \code{I} to the nearest point of subset \code{J}.
+#' typical point in subset `I` to the nearest point of subset `J`.
 #'
 #' @param X The observed point pattern, from which an estimate of the multitype
-#'   distance distribution function \eqn{G3IJ(r)} will be computed. It must be a
-#'   marked point pattern. See Details.
-#' @param I Subset of points of \code{X} from which distances are measured.
-#' @param J Subset of points in \code{X} to which distances are measured.
-#' @param rmax Optional. Maximum value of argument *r* for which \eqn{G3IJ(r)}
+#'   distance distribution function \eqn{G[3IJ](r)} will be computed. It must be
+#'   a marked point pattern. See Details.
+#' @param I Subset of points of `X` from which distances are measured.
+#' @param J Subset of points in `X` to which distances are measured.
+#' @param rmax Optional. Maximum value of argument *r* for which \eqn{G[3IJ](r)}
 #'   will be estimated.
 #' @param nrval Optional. Number of values of *r* for which \eqn{G3IJ(r)} will
-#'   be estimated. A large value of \code{nrval} is required to avoid
-#'   discretisation effects.
-#' @param disjoint Optional flag indicating whether the subsets \code{I} and
-#'   \code{J} are disjoint. If missing, this value will be computed by
-#'   inspecting the vectors \code{I} and \code{J}.
+#'   be estimated. A large value of `nrval` is required to avoid discretisation
+#'   effects.
+#' @param disjoint Optional flag indicating whether the subsets `I` and `J` are
+#'   disjoint. If missing, this value will be computed by inspecting the vectors
+#'   `I` and `J`.
 #' @param correction Optional. Character string specifying the edge
-#'   correction(s) to be used. Options are "none", "rs", "km", "hanisch"
-#'   and "best". Alternatively \code{correction="all"} selects all options.
+#'   correction(s) to be used. Options are `"none"`, `"rs"`, `"km"`,
+#'   `"hanisch"`, and `"best"`. Alternatively `correction="all"` selects all
+#'   options.
+#'
+#' @details
+#'
+#' The function `G3multi` generalises \code{\link[spatstat]{G3est}} (for
+#' unmarked point patterns) and \code{G3dot} (unimplmented) and
+#' \code{\link{G3cross}} (for multitype point patterns) to arbitrary marked
+#' point patterns.
 #'
 #' @family spatstat extensions
 #'
@@ -587,20 +617,21 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #'   distance distribution function \eqn{G[3ij](r)} will be computed. It must
 #'   be a multitype point pattern (a marked point pattern whose marks are a
 #'   factor). See Details.
-#' @param i The type (mark value) of the points in \code{X} from which distances
+#' @param i The type (mark value) of the points in `X` from which distances
 #'   are measured. A character string (or something that will be converted to a
-#'   character string). Defaults to the first level of \code{marks(X)}.
-#' @param j The type (mark value) of the points in \code{X} to which distances
+#'   character string). Defaults to the first level of `marks(X)`.
+#' @param j The type (mark value) of the points in `X` to which distances
 #'   are measured. A character string (or something that will be converted to a
-#'   character string). Defaults to the second level of \code{marks(X)}.
+#'   character string). Defaults to the second level of `marks(X)`.
 #' @param rmax Optional. Maximum value of argument *r* for which
 #'   \eqn{G[3ij](r)} will be estimated.
 #' @param nrval Optional. Number of values of *r* for which
-#'   \eqn{G[3ij](r)} will be estimated. A large value of \code{nrval} is
+#'   \eqn{G[3ij](r)} will be estimated. A large value of `nrval` is
 #'   required to avoid discretisation effects.
 #' @param correction Optional. Character string specifying the edge
-#'   correction(s) to be used. Options are "none", "rs", "km", "hanisch"
-#'   and "best". Alternatively \code{correction="all"} selects all options.
+#'   correction(s) to be used. Options are `"none"`, `"rs"`,
+#'   `"km"`, `"hanisch"`, and `"best"`. Alternatively
+#'   `correction="all"` selects all options.
 #'
 #' @return An object of class "fv" (see \code{\link[spastat]{fv.object}}).
 #'
@@ -608,9 +639,9 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #'
 #' @details
 #'
-#' This function \code{G3cross} and its companion \code{\link{G3multi}} are
-#' generalisations of the function \code{\link[spatstat]{G3est}} to multitype
-#' point patterns.
+#' The function `G3cross` and its companions \code{G3dot} (unimplemented)
+#' and \code{\link{G3multi}} are generalisations of the function
+#' \code{\link[spatstat]{G3est}} to multitype point patterns.
 #'
 #' A multitype point pattern is a spatial pattern of points classified into a
 #' finite number of possible "colors" or "types." In the **spatstat**
@@ -618,11 +649,11 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #' in which the points carry marks, and the mark value attached to each point
 #' determines the type of that point.
 #'
-#' The argument \code{X} must be a point pattern (object of class "pp3"). It
-#' must be a marked point pattern, and the mark vector \code{X$marks} must be a
-#' factor. The arguments \code{i} and \code{j} will be interpreted as levels of
-#' the factor \code{X$marks}. (**Warning:** this means that an integer value
-#' \code{i=3} will be interpreted as the number 3, *not* the 3rd smallest
+#' The argument `X` must be a point pattern (object of class "pp3"). It
+#' must be a marked point pattern, and the mark vector `X$marks` must be a
+#' factor. The arguments `i` and `j` will be interpreted as levels of
+#' the factor `X$marks`. (**Warning:** this means that an integer value
+#' `i=3` will be interpreted as the number 3, *not* the 3rd smallest
 #' level).
 #'
 #' The "cross-type" (type *i* to type *j*) nearest neighbour
@@ -644,16 +675,16 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #' suggest dependence between the points of types *i* and *j*.
 #'
 #' This algorithm estimates the distribution function \eqn{G[3ij](r)} from the
-#' point pattern \code{X}. It assumes that \code{X} can be treated as a
+#' point pattern `X`. It assumes that `X` can be treated as a
 #' realisation of a stationary (spatially homogeneous) random spatial point
 #' process in the plane, observed through a bounded window. The window (which is
-#' specified in \code{X} as \code{Domain(X)}) may have arbitrary shape. Biases
+#' specified in `X` as `Domain(X)`) may have arbitrary shape. Biases
 #' due to edge effects are treated in the same manner as in
 #' \code{\link[spatstat]{G3est}}.
 #'
-#' The argument \code{rmax} is the maximum value of the distance *r* at
+#' The argument `rmax` is the maximum value of the distance *r* at
 #' which \eqn{G[3ij](r)} should be evaluated. It is also used to determine (in
-#' combination with \code{nrval}) the breakpoints (in the sense of
+#' combination with `nrval`) the breakpoints (in the sense of
 #' \code{\link[graphics]{hist}}) for the computation of histograms of distances.
 #' The reduced-sample and Kaplan-Meier estimators are computed from histogram
 #' counts. In the case of the Kaplan-Meier estimator this introduces a
@@ -664,13 +695,14 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #' caution as \eqn{G[3ij](r)} is not necessarily differentiable.
 #'
 #' The naive empirical distribution of distances from each point of the pattern
-#' \code{X} to the nearest other point of the pattern, is a biased estimate of
+#' `X` to the nearest other point of the pattern, is a biased estimate of
 #' \eqn{G[3ij](r)}. However this is also returned by the algorithm, as it is
 #' sometimes useful in other contexts. Care should be taken not to use the
 #' uncorrected empirical \eqn{G[3ij](r)} as if it were an unbiased estimator of
 #' \eqn{G[3ij](r)}.
 #'
-#' @seealso \code{\link{G3multi}}, \code{\link[spatstat]{G3est}}
+#' @seealso \code{\link{G3multi}}, \code{\link[spatstat]{G3est}},
+#'   \code{\link[spatstat]{marks}}
 #'
 #' @export
 G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
@@ -789,7 +821,7 @@ K3multi <- function(X, I, J, r, breaks,
 #' Studentised Permutation Test
 #'
 #' @description This is an S3 generic that extends the use of
-#'   \code{\link[spatstat]{studpermu.test}} beyond \code{ppp} objects.
+#'   \code{\link[spatstat]{studpermu.test}} beyond "ppp" objects.
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{studpermu.test}},
@@ -837,11 +869,11 @@ studpermu.test.ppp <- spatstat::studpermu.test
 #'
 #' @param X A hyperframe containing at least the point patterns and groups
 #' @param formula Formula describing the grouping. The left side of the formula
-#'   identifies which column of \code{X} contains the point patterns. The right
+#'   identifies which column of `X` contains the point patterns. The right
 #'   side identifies the grouping factor
 #' @param summaryfunction Summary function applicable to pp3. Defaults to
 #'   \code{link[spatstat]{K3est}}
-#' @param ... Additional arguments passed to \code{summaryfunction}
+#' @param ... Additional arguments passed to `summaryfunction`
 #' @param rinterval Numeric of length 2. Experimental
 #' @param nperm Number of random permutations for the test; defaults to 999
 #' @param use.Tbar Logical value indicating choice of test statistic. If TRUE,
@@ -851,12 +883,28 @@ studpermu.test.ppp <- spatstat::studpermu.test
 #' @param minpoints Minimum permissible number of points in a point pattern for
 #'   inclusion in the test calculation
 #'
+#' @return An object of class "`studpermutest`".
+#'
 #' @family spatstat extensions
+#'
+#' @details
+#'
+#' This function performs the studentized permutation test of Hahn (2012) for a
+#' difference between groups of point patterns.
+#'
+#' A group needs to contain at least two point patterns with at least
+#' `minpoints` points in each pattern.
+#'
+#' The function returns an object of class "`htest`" and "`studpermutest`" that
+#' can be printed and plotted. The printout shows the test result and *p*-value.
+#' The plot shows the summary functions for the groups (and the group means if
+#' requested).
 #'
 #' @references Hahn, U. (2012) A studentized permutation test for the comparison
 #'   of spatial point patterns.
 #'   *Journal of the American Statistical Association* **107** (498), 754-764.
-#' @seealso \code{\link[spatstat]{studpermu.test}}, \code{link[spatstat]{K3est}}
+#' @seealso \code{\link[spatstat]{studpermu.test}},
+#'   \code{link[spatstat]{plot.studpermutest}}
 #'
 #' @export
 # Add ability to supply a summary function directly...
@@ -1148,16 +1196,42 @@ multicall <- function(foo, x, H, ...){
 #' Tstat.pp3 extends the third-order summary statistic
 #' \code{\link[spatstat]{Tstat}} to pp3
 #'
-#' @param correction One of "none" or "isotropic." "translation" correction is
-#'   planned but not yet implemented.
+#' @param X The observed point pattern, from which an estimate of T(r) will be
+#' computed. A \code{\link[spatstat]{pp3}} object.
+#' @param rmax Optional. Maximum value of argument *r* for which
+#'   \eqn{T(r)} will be estimated.
+#' @param nrval Optional. Number of values of *r* for which
+#'   \eqn{T(r)} will be estimated. A large value of `nrval` is
+#'   required to avoid discretisation effects.
+#' @param correction One of `"none"` or `"isotropic"`. `"translation"`
+#' correction is planned but not yet implemented.
+#' @param ratio Logical. If `TRUE`, the numerator and denominator of each
+#'   edge-corrected estimate will also be saved, for use in analysing replicated
+#'   point patterns.
+#' @param verbose Logical. If `TRUE`, an estimate of the computation time is
+#'   printed.
+#'
+#' @return An object of class "`fv`", see \code{\link[spatstat]{fv.object}},
+#'   which can be plotted directly using \code{\link[spatstat]{plot.fv}}.
 #'
 #' @family spatstat extensions
+#'
+#' @details
+#'
+#' This command calculates the third-order summary statistic \eqn{T(r)} for a
+#' spatial point patterns, defined by Schladitz and Baddeley (2000).
+#'
+#' The definition of \eqn{T(r)} is similar to the definition of Ripley's *K*
+#' function \eqn{K(r)}, except that \eqn{K(r)} counts pairs of points while
+#' \eqn{T(r)} counts triples of points. Essentially \eqn{T(r)} is a rescaled
+#' cumulative distribution function of the diameters of triangles in the point
+#' pattern. The diameter of a triangle is the length of its longest side.
 #'
 #' @seealso \code{\link[spatstat]{Tstat}}
 #' @references Schladitz, K. and Baddeley, A. (2000)
 #' A third order point process characteristic.
 #' *Scandinavian Journal of Statistics* **27** 657-671.
-Tstat.pp3 <- function (X, ..., rmax = NULL, nrval = 128,
+Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
                        correction = "border",
                        ratio = FALSE, verbose = TRUE) {
   spatstat::verifyclass(X, "pp3")
@@ -1308,7 +1382,7 @@ Tstat.pp3 <- function (X, ..., rmax = NULL, nrval = 128,
 #' Distance to Boundary of Domain
 #'
 #' @description This is an S3 generic that extends the use of
-#'   \code{\link[spatstat]{bdist.points}} beyond \code{ppp} objects.
+#'   \code{\link[spatstat]{bdist.points}} beyond "ppp" objects.
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{bdist.points}}, \code{\link{bdist.points.pp3}}
@@ -1366,8 +1440,8 @@ bdist.points.pp3 <- function (X) {
 #'
 #' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
 #'   object.
-#' @return A data.frame containing the shortest distance to the closest three
-#'   boundaries for each point in the pattern X.
+#' @return A `data.frame` containing the shortest distance to the closest three
+#'   boundaries for each point in the pattern `X`.
 #' @seealso \code{\link{bdist.points.pp3}}
 bdist.points3.multi <- function (X){
 

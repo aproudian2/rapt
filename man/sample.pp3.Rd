@@ -7,12 +7,12 @@
 sample.pp3(X, size)
 }
 \arguments{
-\item{X}{A \code{pp3}. The point pattern from which to sample.}
+\item{X}{An object of class "pp3". The point pattern from which to sample.}
 
 \item{size}{A numeric. The number of points to sample.}
 }
 \value{
-A \code{pp3}. The sampled point pattern.
+A "pp3". The sampled point pattern.
 }
 \description{
 Sample A 3D Point Pattern

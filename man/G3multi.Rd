@@ -16,31 +16,38 @@ G3multi(
 }
 \arguments{
 \item{X}{The observed point pattern, from which an estimate of the multitype
-distance distribution function \eqn{G3IJ(r)} will be computed. It must be a
-marked point pattern. See Details.}
+distance distribution function \eqn{G[3IJ](r)} will be computed. It must be
+a marked point pattern. See Details.}
 
 \item{I}{Subset of points of \code{X} from which distances are measured.}
 
 \item{J}{Subset of points in \code{X} to which distances are measured.}
 
-\item{rmax}{Optional. Maximum value of argument \emph{r} for which \eqn{G3IJ(r)}
+\item{rmax}{Optional. Maximum value of argument \emph{r} for which \eqn{G[3IJ](r)}
 will be estimated.}
 
 \item{nrval}{Optional. Number of values of \emph{r} for which \eqn{G3IJ(r)} will
-be estimated. A large value of \code{nrval} is required to avoid
-discretisation effects.}
+be estimated. A large value of \code{nrval} is required to avoid discretisation
+effects.}
 
-\item{disjoint}{Optional flag indicating whether the subsets \code{I} and
-\code{J} are disjoint. If missing, this value will be computed by
-inspecting the vectors \code{I} and \code{J}.}
+\item{disjoint}{Optional flag indicating whether the subsets \code{I} and \code{J} are
+disjoint. If missing, this value will be computed by inspecting the vectors
+\code{I} and \code{J}.}
 
 \item{correction}{Optional. Character string specifying the edge
-correction(s) to be used. Options are "none", "rs", "km", "hanisch"
-and "best". Alternatively \code{correction="all"} selects all options.}
+correction(s) to be used. Options are \code{"none"}, \code{"rs"}, \code{"km"},
+\code{"hanisch"}, and \code{"best"}. Alternatively \code{correction="all"} selects all
+options.}
 }
 \description{
 For a marked point pattern, estimate the distribution of the distance from a
 typical point in subset \code{I} to the nearest point of subset \code{J}.
+}
+\details{
+The function \code{G3multi} generalises \code{\link[spatstat]{G3est}} (for
+unmarked point patterns) and \code{G3dot} (unimplmented) and
+\code{\link{G3cross}} (for multitype point patterns) to arbitrary marked
+point patterns.
 }
 \seealso{
 \code{\link{G3cross}}, \code{\link[spatstat]{G3est}}

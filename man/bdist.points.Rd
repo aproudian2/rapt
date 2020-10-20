@@ -8,7 +8,7 @@ bdist.points(X, ...)
 }
 \description{
 This is an S3 generic that extends the use of
-\code{\link[spatstat]{bdist.points}} beyond \code{ppp} objects.
+\code{\link[spatstat]{bdist.points}} beyond "ppp" objects.
 }
 \seealso{
 \code{\link[spatstat]{bdist.points}}, \code{\link{bdist.points.pp3}}
