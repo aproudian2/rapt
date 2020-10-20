@@ -9,7 +9,7 @@ pEnvelope(cl, X, fun = K3est, nsim = 99, nrank = 1, ..., simulate = NULL)
 \arguments{
 \item{cl}{A \code{\link[parallel]{cluster}} object}
 
-\item{X}{A point pattern}
+\item{X}{A point pattern (object of class "pp3")}
 
 \item{fun}{Function that computes the desired summary statistic for a 3D
 point pattern.}
@@ -17,20 +17,21 @@ point pattern.}
 \item{nsim}{Number of simulated point patterns to be generated when computing
 the envelopes.}
 
-\item{nrank}{Integer. Rank of the envelope value amongst the nsim simulated
+\item{nrank}{Integer. Rank of the envelope value amongst the \code{nsim} simulated
 values. A rank of 1 means that the minimum and maximum simulated values
 will be used.}
 
-\item{...}{Extra arguments passed to fun.}
+\item{...}{Extra arguments passed to \code{fun}}
 
 \item{simulate}{Optional. Specifies how to generate the simulated point
-patterns. If simulate is an expression in the R language, then this
-expression will be evaluated nsim times, to obtain nsim point patterns
+patterns. If \code{simulate} is an expression in the R language, then this
+expression will be evaluated \code{nsim} times, to obtain \code{nsim} point patterns
 which are taken as the simulated patterns from which the envelopes are
-computed. If simulate is a function, then this function will be repeatedly
-applied to the data pattern X to obtain nsim simulated patterns. If
-simulate is a list of point patterns, then the entries in this list will be
-treated as the simulated patterns from which the envelopes are computed.}
+computed. If \code{simulate} is a function, then this function will be
+repeatedly applied to the point pattern \code{X} to obtain \code{nsim} simulated
+patterns. If \code{simulate} is a list of point patterns, then the entries in
+this list will be treated as the simulated patterns from which the
+envelopes are computed.}
 }
 \value{
 A function value table (object of class "fv") which can be plotted

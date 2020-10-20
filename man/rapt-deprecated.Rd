@@ -6,6 +6,7 @@
 \alias{bcc.gen}
 \alias{splitpp3}
 \alias{pb_gen}
+\alias{envPlot}
 \alias{pK3est}
 \alias{anomK3est}
 \alias{pG3est}
@@ -20,6 +21,18 @@ bcc.gen(npoint, win)
 splitpp3(overPattern, num)
 
 pb_gen(n, mean, sd)
+
+envPlot(
+  tests,
+  percentiles = c(0.999, 0.99, 0.97),
+  ylim = c(-3, 3),
+  xlim = c(0, ceiling(max(tests[, 1]))),
+  ylab = expression(sqrt("K"[3] * "(r)") * "  Anomaly"),
+  xlab = "r",
+  leg = TRUE,
+  colors = c("lightskyblue", "mediumpurple", "lightpink"),
+  ...
+)
 
 pK3est(
   perc,
@@ -85,6 +98,11 @@ For \code{splitpp3}, use \code{\link[spatstat]{split.ppx}}
 \section{\code{pb_gen}}{
 
 For \code{pb_gen}, use \code{\link{rgblur}}
+}
+
+\section{\code{envPlot}}{
+
+For \code{envPlot}, use \code{\link[spatstat]{plot.envelope}}
 }
 
 \section{\code{pK3est}}{

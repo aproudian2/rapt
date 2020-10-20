@@ -25,6 +25,14 @@
 #' @param ... Arguments to be passed into \code{plot()}.
 #' @return Nothing, just produces a plot.
 #'
+#' @name envPlot-deprecated
+#' @seealso \code{\link{rapt-deprecated}}
+#' @keywords internal
+NULL
+#' @rdname rapt-deprecated
+#' @section `envPlot`:
+#'   For `envPlot`, use \code{\link[spatstat]{plot.envelope}}
+#'
 #' @export
 
 envPlot <- function(
@@ -878,23 +886,24 @@ bK3est <- function(X, rmax=NULL, nrval=128){
 #' Create an Envelope in Parallel
 #'
 #' @param cl A \code{\link[parallel]{cluster}} object
-#' @param X A point pattern
+#' @param X A point pattern (object of class "pp3")
 #' @param fun Function that computes the desired summary statistic for a 3D
 #'   point pattern.
 #' @param nsim Number of simulated point patterns to be generated when computing
 #'   the envelopes.
-#' @param nrank Integer. Rank of the envelope value amongst the nsim simulated
+#' @param nrank Integer. Rank of the envelope value amongst the `nsim` simulated
 #'   values. A rank of 1 means that the minimum and maximum simulated values
 #'   will be used.
-#' @param ... Extra arguments passed to fun.
+#' @param ... Extra arguments passed to `fun`
 #' @param simulate Optional. Specifies how to generate the simulated point
-#'   patterns. If simulate is an expression in the R language, then this
-#'   expression will be evaluated nsim times, to obtain nsim point patterns
+#'   patterns. If `simulate` is an expression in the R language, then this
+#'   expression will be evaluated `nsim` times, to obtain `nsim` point patterns
 #'   which are taken as the simulated patterns from which the envelopes are
-#'   computed. If simulate is a function, then this function will be repeatedly
-#'   applied to the data pattern X to obtain nsim simulated patterns. If
-#'   simulate is a list of point patterns, then the entries in this list will be
-#'   treated as the simulated patterns from which the envelopes are computed.
+#'   computed. If `simulate` is a function, then this function will be
+#'   repeatedly applied to the point pattern `X` to obtain `nsim` simulated
+#'   patterns. If `simulate` is a list of point patterns, then the entries in
+#'   this list will be treated as the simulated patterns from which the
+#'   envelopes are computed.
 #'
 #' @return A function value table (object of class "fv") which can be plotted
 #'   directly. See \code{\link[spatstat]{envelope}} for further details.
@@ -931,7 +940,7 @@ pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
 #'   randomly permuting labels or by drawing a random sample with replacement
 #' @param nsim Number of simulated realisations to be generated. Default is 99
 #'
-#' @return A list of marked point patterns, each of the same class of X.
+#' @return A list of marked point patterns, each of the same class of `X`.
 #'
 #' @seealso \code{\link[spatstat]{rlabel}}
 #'
