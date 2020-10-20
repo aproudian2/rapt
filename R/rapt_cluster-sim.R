@@ -6,10 +6,10 @@
 #### clustersim ####
 #' Simulate clusters of marks on an RCP background point pattern.
 #'
-#' The \code{clustersim} function simulates point clusters using two RCP point
-#' clouds. The first point cloud is the "underlaying" pattern. This is the set
-#' of points that will be used as actual cluster point locations in the final
-#' product. The second point cloud is the "overlaying" pattern. This is the set
+#' `clustersim` simulates point clusters using two RCP point clouds. The first
+#' point cloud is the "underlaying" pattern. This is the set of points that will
+#' be used as actual cluster point locations in the resultant marked point
+#' pattern. The second point cloud is the "overlaying" pattern. This is the set
 #' of points that will be scaled to determine the positions of the cluster
 #' centroids within the underlying point pattern.
 #'
@@ -27,24 +27,29 @@
 #' @param rho1 Intra-cluster type-A point concentration. A decimal value between
 #'   0 and 1.
 #' @param rho2 Background type-A point concentration. A decimal value between 0
-#'   and the value of \code{pcp}.
+#'   and the value of `pcp`.
 #' @param rb Radius blur. A decimal value between 0 and 1.
 #' @param pb Position blur. A decimal value between 0 and 1.
-#' @param tol Tolerance value for \code{pcp}. The true fraction of type-A points
+#' @param tol Tolerance value for `pcp`. The true fraction of type-A points
 #'   in the pattern will be within this tolerance of the value specified by the
-#'   \code{pcp} parameter. If not, function will return NULL.
+#'   `pcp` parameter. If not, function will return `NULL`.
 #' @param s Random seed for the simulation.
 #' @param toplot Show a 3D plot of the cluster points once generation is done?
-#'   \code{TRUE} or \code{FALSE} (the default).
+#'   `TRUE` or `FALSE` (the default).
 #'
-#' @return List of: [[1]] A \code{\link[spatstat]{pp3}} object containing the
-#'   final locations of only type-A points within the final marked point
-#'   pattern. [[2]] A \code{\link[spatstat]{pp3}} object containing the full
-#'   marked underlying point pattern with points marked as either type A (cluser
-#'   type point in a cluster), B (cluster type point not in a cluster) or C
-#'   (non-cluster type point). [[3]] A vector containing the simulated radius of
-#'   each cluster in the final point pattern. [[4]] A single value containing
-#'   the true fraction of type-A points in the final simulated pattern.
+#' @return List of:
+#' * `clusters` - A \code{\link[spatstat]{pp3}} object containing the final
+#'   locations of only type-A points within `all`.
+#' * `all` - A \code{\link[spatstat]{pp3}} object containing the full marked
+#'   underlying point pattern with points marked as either type A (cluster type
+#'   point in a cluster), B (cluster type point not in a cluster) or C
+#'   (non-cluster type point).
+#' * `radii` - A vector containing the simulated radius of each cluster in
+#'   `all`.
+#' * `perc` - A single value containing the true fraction of type-A points in
+#'   `all`.
+#' * `centers` - A \code{\link[spatstat]{pp3}} object containing the cluster
+#'   center locations within `all`.
 #'
 #' @family simulation functions
 #'

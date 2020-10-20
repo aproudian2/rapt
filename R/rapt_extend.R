@@ -1227,9 +1227,9 @@ multicall <- function(foo, x, H, ...){
 #' pattern. The diameter of a triangle is the length of its longest side.
 #'
 #' @seealso \code{\link[spatstat]{Tstat}}
-#' @references Schladitz, K. and Baddeley, A. (2000)
-#' A third order point process characteristic.
-#' *Scandinavian Journal of Statistics* **27** 657-671.
+#' @references Schladitz, K. & Baddeley, A.
+#' "A third order point process characteristic",
+#' *Scandinavian Journal of Statistics*, **27**, 657-671 (2000).
 Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
                        correction = "border",
                        ratio = FALSE, verbose = TRUE) {

@@ -1,47 +1,65 @@
 #### msa ####
-#' Performs the maximum separation algorithm on a marked point pattern.
+#' Identify Clusters in a Marked Point Pattern Using MSA
 #'
-#' Main argument is a marked \code{\link[spatstat]{pp3}} object. Marks can be of
-#' multiple types, but will be reduced to only two (the cluster species and
-#' non-cluster species) as part of the algorithm.
+#' `msa` segments a marked \code{\link[spatstat]{pp3}} into clusters and
+#' background matrix using the maximum separation algorithm (MSA. The marks can
+#' have more than two types, but MSA requires that each type is categorized as
+#' either a cluster or non-cluster species.
 #'
-#' @param X A marked \code{\link[spatstat]{pp3}} object which MSA will be
-#'   performed on.
-#' @param dmax Maximum separation distance; The maximum distance two points can
-#'   be separated by and still be considered part of the same cluster.
-#' @param Nmin Minimum cluster points; The minimum number of points needed to
-#'   classify a grouping of points as a cluster.
-#' @param denv Envelope distance; Any points within this distance of a point
-#'   residing in a cluster will be included in the cluster (this controls the
-#'   addition of background points to a cluster).
-#' @param der Erosion distance; Any points within this distance of a background
-#'   matrix point (after enveloping) will be removed from the cluster.
-#' @param clust.mark Vector containing the names of the marks in \code{X} that
+#' @param X A marked \code{\link[spatstat]{pp3}} object on which MSA will be
+#'   performed.
+#' @param dmax The maximum distance two points can be separated by and still be
+#'   considered part of the same cluster.
+#' @param Nmin The minimum number of points needed to classify a grouping of
+#'   points as a cluster.
+#' @param denv Any points within this distance of a point residing in a cluster
+#'   will be included in the cluster (this controls the addition of background
+#'   points to a cluster).
+#' @param der Any points within this distance of a background matrix point
+#'   (after enveloping) will be removed from the cluster.
+#' @param clust.mark Vector containing the names of the marks in `X` that
 #'   should be considered as cluster type points. All points with marks not
 #'   included in this vector will be considered background points.
 #'
-#' @return A list of [[1]] Vector containing estimated radius of each cluster
-#'   found, [[2]] Vector containing estimated intra-cluster concentration of
-#'   cluster type points in each cluster found, [[3]] Estaimted background
-#'   concentration of cluster type points within the background (the entire
-#'   domain minus the clusters), [[4]] List of indices from the original pattern
-#'   of cluster type points that reside in clusters, [[5]] List of indices from
-#'   the original pattern of background type points that reside in clusters.
+#' @return A list of:
+#' * `radius` - A vector containing estimated radius of each cluster found
+#' * `den` - A vector containing estimated intra-cluster concentration of cluster
+#'   type points in each cluster found
+#' * `bgnd.den` - The estimated background concentration of cluster type points
+#'   within the background (*i.e.* the entire domain minus the clusters)
+#' * `cluster` - A list of indices from the original pattern of cluster type
+#'   points that reside in clusters
+#' * `bgnd` - A list of indices from the original pattern of background type
+#'   points that reside in clusters.
+#'
+#' @references
+#' Marquis, E.A. & Hyde, J.M.,
+#' "Applications of atom-probe tomography to the characterisation of solute
+#' behaviours,"
+#' *Materials Science and Engineering: R: Reports*, **69** (4-5), 37-62 (2010):
+#' \url{https://doi.org/10.1016/j.mser.2010.05.001}
 #'
 #' @export
-
-msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')){
+# Add a new marked pp3 with marks corresponding to ID'ed background and
+# individual cluster points
+msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')) {
+  verifyclass(X, "pp3")
+  if(!is.marked(X)) {
+    error <- paste(dQuote(X), "must be a marked point pattern")
+    stop(error)
+  }
   X.A <- X[marks(X) %in% clust.mark]
   X.B <- X[!(marks(X) %in% clust.mark)]
 
   marks(X.A) <- which(marks(X) %in% clust.mark)
   marks(X.B) <- which(!(marks(X) %in% clust.mark))
 
-  #find the nns within dmax of all type A points:
+  # find the nns within dmax of all type A points:
   cp <- closepairs(X.A, rmax = dmax, twice = TRUE, what = 'indices')
   cp <- data.frame('i' = cp$i[order(cp$i)], 'j' = cp$j[order(cp$i)])
 
-  #change results to list (nns): for each i, create an entry in a list that contains a vector of its nns
+  # change results to list (nns): for each i, create an entry in a list
+  # that contains a vector of its nns
   nns <- list()
   nns.gb <- dplyr::group_by(cp, i)
   nns.labs <- attr(nns.gb, 'groups')$i
@@ -99,7 +117,8 @@ msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')){
   B.in.clusters <- list()
 
   cp.AB <- crosspairs(X.clusters.A, X.B, rmax = denv, what = 'indices')
-  cp.AB <- data.frame('i' = cp.AB$i[order(cp.AB$i)], 'j' = cp.AB$j[order(cp.AB$i)])
+  cp.AB <- data.frame('i' = cp.AB$i[order(cp.AB$i)],
+                      'j' = cp.AB$j[order(cp.AB$i)])
 
   AB.gb <- dplyr::group_by(cp.AB, i)
   AB.labs <- attr(AB.gb, 'groups')$i
@@ -146,11 +165,13 @@ msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')){
 
   # Intra-cluster density
   cluster.den <- sapply(1:nclusters, function(x){
-    length(A.clusters.eroded[[x]])/(length(B.clusters.eroded[[x]]) + length(A.clusters.eroded[[x]]))
+    length(A.clusters.eroded[[x]]) /
+      (length(B.clusters.eroded[[x]]) + length(A.clusters.eroded[[x]]))
   })
 
   #background density
-  bgnd.total <- npoints(X) - length(unlist(A.clusters.eroded)) - length(unlist(B.clusters.eroded))
+  bgnd.total <- npoints(X) - length(unlist(A.clusters.eroded)) -
+    length(unlist(B.clusters.eroded))
   bgnd.A <- npoints(X.A) - length(unlist(A.clusters.eroded))
   bgnd.den <- bgnd.A/bgnd.total
 
@@ -167,5 +188,6 @@ msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')){
   A.cluster.inds.orig <- lapply(A.clusters.eroded, function(x){marks(X.A)[x]})
   B.cluster.inds.orig <- lapply(B.clusters.eroded, function(x){marks(X.B)[x]})
 
-  return(list('radius'=cluster.Rg, 'den'=cluster.den, 'bgnd.den' = bgnd.den, 'A' = A.cluster.inds.orig, 'B' = B.cluster.inds.orig))
+  return(list('radius' = cluster.Rg, 'den'=cluster.den, 'bgnd.den' = bgnd.den,
+              'cluster' = A.cluster.inds.orig, 'bgnd' = B.cluster.inds.orig))
 }

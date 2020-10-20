@@ -53,9 +53,9 @@ cumulative distribution function of the diameters of triangles in the point
 pattern. The diameter of a triangle is the length of its longest side.
 }
 \references{
-Schladitz, K. and Baddeley, A. (2000)
-A third order point process characteristic.
-\emph{Scandinavian Journal of Statistics} \strong{27} 657-671.
+Schladitz, K. & Baddeley, A.
+"A third order point process characteristic",
+\emph{Scandinavian Journal of Statistics}, \strong{27}, 657-671 (2000).
 }
 \seealso{
 \code{\link[spatstat]{Tstat}}
