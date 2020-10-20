@@ -2,7 +2,7 @@
 #' Identify Clusters in a Marked Point Pattern Using MSA
 #'
 #' `msa` segments a marked \code{\link[spatstat]{pp3}} into clusters and
-#' background matrix using the maximum separation algorithm (MSA. The marks can
+#' background matrix using the maximum separation algorithm (MSA). The marks can
 #' have more than two types, but MSA requires that each type is categorized as
 #' either a cluster or non-cluster species.
 #'
@@ -23,8 +23,8 @@
 #'
 #' @return A list of:
 #' * `radius` - A vector containing estimated radius of each cluster found
-#' * `den` - A vector containing estimated intra-cluster concentration of cluster
-#'   type points in each cluster found
+#' * `den` - A vector containing estimated intra-cluster concentration of
+#'   cluster type points in each cluster found
 #' * `bgnd.den` - The estimated background concentration of cluster type points
 #'   within the background (*i.e.* the entire domain minus the clusters)
 #' * `cluster` - A list of indices from the original pattern of cluster type
@@ -32,12 +32,14 @@
 #' * `bgnd` - A list of indices from the original pattern of background type
 #'   points that reside in clusters.
 #'
+#' @family cluster identification functions
+#'
 #' @references
 #' Marquis, E.A. & Hyde, J.M.,
 #' "Applications of atom-probe tomography to the characterisation of solute
 #' behaviours,"
 #' *Materials Science and Engineering: R: Reports*, **69** (4-5), 37-62 (2010):
-#' \url{https://doi.org/10.1016/j.mser.2010.05.001}
+#' <https://doi.org/10.1016/j.mser.2010.05.001>
 #'
 #' @export
 # Add a new marked pp3 with marks corresponding to ID'ed background and
@@ -191,3 +193,40 @@ msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')) {
   return(list('radius' = cluster.Rg, 'den'=cluster.den, 'bgnd.den' = bgnd.den,
               'cluster' = A.cluster.inds.orig, 'bgnd' = B.cluster.inds.orig))
 }
+
+#### gema ####
+gema <- function(X, ...) UseMethod("gema")
+
+### gema.pp3 ###
+#' Identify Clusters in a Marked Point Pattern Using GEMA
+#'
+#' @param X The marked point pattern (object of class
+#'   \code{\link[spatstat]{pp3}}) in which to identify clusters.
+#' @param threshold The probability threshold at which to assign a point to a
+#'   cluster or to the background.
+#' @return A marked point pattern (object of class \code{\link[spatstat]{pp3}})
+#'   with marks corresponding to the identified background and each identified
+#'   cluster.
+#'
+#' @details
+#' A `data.frame` is returned as an attribute (`attr("prob")`) that contains the
+#' probabilities of assignment to the background and each cluster.
+#'
+#' @family cluster identification functions
+#'
+#' @references Zelenty, J. *et al.*,
+#' "Detecting Clusters in Atom Probe Data with Gaussian Mixture Models",
+#' *Microscopy and Microanalysis*, **23** (2), 269-278 (2017):
+#' <https://doi.org/10.1017/S1431927617000320>
+gema.pp3 <- function (X, threshold = 0.5) {}
+
+### gema.gema ###
+#' Reprocess Clusters Identified Using GEMA
+#'
+#' @param X An object of class "gema" (as produced by \code{\link{gema.pp3}})
+#' @param threshold The probability threshold at which to assign a point to a
+#'   cluster or to the background.
+#' @return An
+#'
+#' @family cluster identification functions
+gema.gema <- function (X, threshold = 0.5) {}

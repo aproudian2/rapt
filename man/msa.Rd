@@ -31,8 +31,8 @@ included in this vector will be considered background points.}
 A list of:
 \itemize{
 \item \code{radius} - A vector containing estimated radius of each cluster found
-\item \code{den} - A vector containing estimated intra-cluster concentration of cluster
-type points in each cluster found
+\item \code{den} - A vector containing estimated intra-cluster concentration of
+cluster type points in each cluster found
 \item \code{bgnd.den} - The estimated background concentration of cluster type points
 within the background (\emph{i.e.} the entire domain minus the clusters)
 \item \code{cluster} - A list of indices from the original pattern of cluster type
@@ -43,7 +43,7 @@ points that reside in clusters.
 }
 \description{
 \code{msa} segments a marked \code{\link[spatstat]{pp3}} into clusters and
-background matrix using the maximum separation algorithm (MSA. The marks can
+background matrix using the maximum separation algorithm (MSA). The marks can
 have more than two types, but MSA requires that each type is categorized as
 either a cluster or non-cluster species.
 }
@@ -54,3 +54,9 @@ behaviours,"
 \emph{Materials Science and Engineering: R: Reports}, \strong{69} (4-5), 37-62 (2010):
 \url{https://doi.org/10.1016/j.mser.2010.05.001}
 }
+\seealso{
+Other cluster identification functions: 
+\code{\link{gema.gema}()},
+\code{\link{gema.pp3}()}
+}
+\concept{cluster identification functions}
