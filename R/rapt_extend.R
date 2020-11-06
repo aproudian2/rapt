@@ -347,55 +347,6 @@ plot3d.pp3 <- function(X, ...) {
   rgl::plot3d(coords(X), ...)
 }
 
-#### quadratcount.pp3 ####
-#' Count Points in Sub-Volumes of a 3D Point Pattern
-#'
-#' Divides volume into quadrats and counts the number of points in each quadrat.
-#'
-#' @param X The \code{\link[spatstat]{pp3}} object to split up.
-#' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions.
-#'
-#' @return A `data.frame` object containing the number of counts in each
-#'   quadrat.
-#'
-#' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{quadratcount}}
-#'
-#' @export
-quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
-  spatstat::verifyclass(X, "pp3")
-  w <- domain(X)
-
-  # create box3objects for each quadrat
-  xlim <- w$xrange
-  ylim <- w$yrange
-  zlim <- w$zrange
-
-  xbreaks <- seq(xlim[1], xlim[2],length.out = (nx+1))
-  ybreaks <- seq(ylim[1], ylim[2],length.out = (ny+1))
-  zbreaks <- seq(zlim[1], zlim[2],length.out = (nz+1))
-
-  ntot <- nx*ny*nz
-  gridvals <- list()
-  cnt <- 1
-
-  for(i in 1:nx){
-    for(j in 1:ny){
-      for(k in 1:nz){
-        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)],
-                                yrange = ybreaks[j:(j+1)],
-                                zrange = zbreaks[k:(k+1)])
-        cnt <- cnt + 1
-      }
-    }
-  }
-
-  inside.tf <- lapply(gridvals, function(x){inside.boxx(X, w = x)})
-  counts <- lapply(inside.tf, function(x){sum(x)})
-  counts <- unlist(counts)
-  return(data.frame(quad.no = seq(1,ntot), count = counts))
-}
-
 #### quadrats.pp3 ####
 #' Divide a 3D Point Pattern into Sub-Volumes
 #'
@@ -406,20 +357,24 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
 #'   if you wish to split up your point patthern by number of boxes.
 #' @param box.dims Vector containing the dimensions of the subsetted 3D boxxes,
 #'   if you wish to define the individual boxx size. Use either `nx`, `ny`,
-#'   `nz` or `box.dims`, but not both.
+#'   `nz` or `box.dims`, but not both. See Details.
 #'
 #' @return A list containing the split up "pp3" objects.
+#'
+#' @details
+#' If `box.dims` is not commensurate with the size of the object, the
+#' quadrats are justified toward the smallest boundary in each dimension
+#' (*i.e.* (`c(min(x), min(y), min(z))`)).
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat]{quadrats}}
 #'
 #' @export
+# Should return an object of class "tess" to provide consistent behaviour
 quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
-  # Rewrite to use n = c(nx,ny,nz) with a default of c(1,1,1). Update with
-  # description of how the function handles a box.dims that's not commensurate
-  # with the domain size.
-  spatstat::verifyclass(X, "pp3")
-  w <- domain(X)
+  # Rewrite to use n = c(nx,ny,nz) with a default of c(1,1,1).
+  spatstat::verifyclass(X, c("pp3", "box3"))
+  w <- as.box3(X)
   xlim <- w$xrange
   ylim <- w$yrange
   zlim <- w$zrange
@@ -470,6 +425,70 @@ quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
 
   return(boxes)
 }
+
+#### quadratcount.pp3 ####
+#' Count Points in Sub-Volumes of a 3D Point Pattern
+#'
+#' Divides volume into quadrats and counts the number of points in each quadrat.
+#'
+#' @param X The \code{\link[spatstat]{pp3}} object to split up.
+#' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions.
+#'
+#' @return A `data.frame` object containing the number of counts in each
+#'   quadrat.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{quadratcount}}
+#'
+#' @export
+quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
+  spatstat::verifyclass(X, "pp3")
+  w <- domain(X)
+
+  # create box3objects for each quadrat
+  xlim <- w$xrange
+  ylim <- w$yrange
+  zlim <- w$zrange
+
+  xbreaks <- seq(xlim[1], xlim[2],length.out = (nx+1))
+  ybreaks <- seq(ylim[1], ylim[2],length.out = (ny+1))
+  zbreaks <- seq(zlim[1], zlim[2],length.out = (nz+1))
+
+  ntot <- nx*ny*nz
+  gridvals <- list()
+  cnt <- 1
+
+  for(i in 1:nx){
+    for(j in 1:ny){
+      for(k in 1:nz){
+        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)],
+                                yrange = ybreaks[j:(j+1)],
+                                zrange = zbreaks[k:(k+1)])
+        cnt <- cnt + 1
+      }
+    }
+  }
+
+  inside.tf <- lapply(gridvals, function(x){inside.boxx(X, w = x)})
+  counts <- lapply(inside.tf, function(x){sum(x)})
+  counts <- unlist(counts)
+  return(data.frame(quad.no = seq(1,ntot), count = counts))
+}
+
+#### quantess.pp3 ####
+#' Quantile Tessellation
+#'
+#' Divide space into tiles which contain equal amounts of stuff.
+#'
+#' @param M A pp3
+#' @param Z A spatial covariate (a pixel image or a function(x,y,z)) or one of
+#'   the strings `"x"`, `"y"`, or `"z"` indicating the Cartesian coordinates
+#'   *x*, *y*, or *z* or one of the strings `"rad"` or `"ang"` indicating polar
+#'   coordinates. The range of values of `Z` will be broken into n bands
+#'   containing equal amounts of stuff.
+#' @param n Number of bands. A positive integer.
+#'
+quantess.pp3 <- function(M, Z, n, ..., type=2, origin=c(0,0), eps=NULL) {}
 
 #### G3multi ####
 #' Marked Nearest Neighbour Distance Function

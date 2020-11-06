@@ -190,11 +190,13 @@ msa <- function(X, dmax, Nmin, denv, der, clust.mark = c('A')) {
   A.cluster.inds.orig <- lapply(A.clusters.eroded, function(x){marks(X.A)[x]})
   B.cluster.inds.orig <- lapply(B.clusters.eroded, function(x){marks(X.B)[x]})
 
-  return(list('radius' = cluster.Rg, 'den'=cluster.den, 'bgnd.den' = bgnd.den,
+  return(list('radius' = cluster.Rg, 'den' = cluster.den, 'bgnd.den' = bgnd.den,
               'cluster' = A.cluster.inds.orig, 'bgnd' = B.cluster.inds.orig))
 }
 
 #### gema ####
+#' Identify Clusters in a Point Pattern Using GEMA
+#' @family cluster identification functions
 gema <- function(X, ...) UseMethod("gema")
 
 ### gema.pp3 ###
@@ -234,6 +236,8 @@ gema.pp3 <- function(X, cluster = NULL, threshold = 0.5) {
 }
 
 ### gema.ppp ###
+#' @inheritParams gema.pp3
+#' @family cluster identification functions
 gema.ppp <- gema.pp3
 
 ### gema.gema ###

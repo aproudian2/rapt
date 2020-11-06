@@ -1921,7 +1921,7 @@ overlap_fix <- function(X, cr.rand) {
     check <- which(nnd < (cr.rand + cr.rand[nnw]))
     t2 <- Sys.time()
     if((as.numeric(t2) - as.numeric(t1)) > 15) {
-      stop("Impossible to find no-overlap solution.")
+      warning("Impossible to find no-overlap solution.")
     }
   }
   return(X)
