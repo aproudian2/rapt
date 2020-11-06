@@ -186,7 +186,7 @@ clustersim <- function(under, over, rcp_rad,
 
   pcp.real <- (length(bgnd.inds) + length(cluster.inds))/npoints(under)
   if(pcp.real < (pcp - tol) | pcp.real > (pcp + tol)){
-    stop('Pcp outside of tolerance range')
+    warning('Pcp outside of tolerance range')
   }
   #print(pcp.real)
   dat <- list(clusters = just.cluster.points,
@@ -1921,7 +1921,7 @@ overlap_fix <- function(X, cr.rand) {
     check <- which(nnd < (cr.rand + cr.rand[nnw]))
     t2 <- Sys.time()
     if((as.numeric(t2) - as.numeric(t1)) > 15) {
-      stop("Impossible to find no-overlap solution.")
+      warning("Impossible to find no-overlap solution.")
     }
   }
   return(X)
