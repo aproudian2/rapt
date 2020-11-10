@@ -124,7 +124,7 @@ clustersim <- function(under, over, rcp_rad,
 
   # shift points to remove overlaps
   over.nolap <- overlap_fix(over.scaled2, cr.rand)
-  if(is.numeric(over.nolap)){return(-1)}
+  if(is.numeric(over.nolap)){return(-1)} # change to a tryCatch
   over.nolap.coo <- spatstat::coords(over.nolap)
 
   # Re-check once for volume correctness
@@ -140,14 +140,16 @@ clustersim <- function(under, over, rcp_rad,
 
   if(!(is.numeric(max(cr.rand.final)) && length(max(cr.rand.final)) == 1L &&
        max(cr.rand.final) >= 0)){
-    stop("Error with cr.rand.final")
+    print("Error with cr.rand.final")
+    return(-1) # change to a tryCatch
   }
 
   nnR <- spatstat::crosspairs.pp3(over.final, under, rmax = max(cr.rand.final),
                         what = 'ijd', neat = TRUE, distinct = TRUE,
                         twice = FALSE)
   if(is.empty(nnR$i)) {
-    stop("No cluster centers in domain.")
+    print("No cluster centers in domain.")
+    return(-1) # change to a tryCatch
   }
   nnR.split <- list()
   nnR.split$d <- split(nnR$d, nnR$i, drop = FALSE)
@@ -668,7 +670,7 @@ makecluster <- function(under, over, radius1, radius2,
             nnd <- nndist.pp3(over.scaledf)
             check <- which(nnd < comp)
             if((as.numeric(t2) - as.numeric(t1)) > 15){
-              return(-1)
+              return(-1) # change to a tryCatch
             }
 
           }
@@ -1911,7 +1913,7 @@ overlap_fix <- function(X, cr.rand) {
   #print(check)
 
   t1 <- Sys.time()
-  while(!is.empty(check)){
+  while(!is.empty(check)) {
     ind <- check[1]
     minsep <- cr.rand[ind] + cr.rand[nnw[ind]]
     direction <- (coords(X)[nnw[ind],]-coords(X)[ind,])/nnd[ind]
@@ -1921,7 +1923,9 @@ overlap_fix <- function(X, cr.rand) {
     check <- which(nnd < (cr.rand + cr.rand[nnw]))
     t2 <- Sys.time()
     if((as.numeric(t2) - as.numeric(t1)) > 15) {
-      warning("Impossible to find no-overlap solution.")
+      warning("Impossible to find no-overlap solution.") # change to a tryCatch
+      X <- -1
+      break
     }
   }
   return(X)
