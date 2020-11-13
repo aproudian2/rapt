@@ -14,13 +14,18 @@ if you wish to split up your point patthern by number of boxes.}
 
 \item{box.dims}{Vector containing the dimensions of the subsetted 3D boxxes,
 if you wish to define the individual boxx size. Use either \code{nx}, \code{ny},
-\code{nz} or \code{box.dims}, but not both.}
+\code{nz} or \code{box.dims}, but not both. See Details.}
 }
 \value{
 A list containing the split up "pp3" objects.
 }
 \description{
 Divides volume into quadrats and returns them.
+}
+\details{
+If \code{box.dims} is not commensurate with the size of the object, the
+quadrats are justified toward the smallest boundary in each dimension
+(\emph{i.e.} (\code{c(min(x), min(y), min(z))})).
 }
 \seealso{
 \code{\link[spatstat]{quadrats}}
