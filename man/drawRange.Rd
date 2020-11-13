@@ -7,15 +7,18 @@
 drawRange(ms, start, end, col = "red")
 }
 \arguments{
-\item{ms}{data.frame or
-\code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}}. The data on
-on which the ranges should be drawn}
+\item{ms}{The \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} or
+\code{data.frame} (with columns named \code{mass} and \code{intensity}) on which the ranges
+are to be drawn}
 
-\item{start}{numeric. The start of the range.}
+\item{start}{numeric. The start of the range(s).}
 
-\item{end}{numeric. The end of the range}
+\item{end}{numeric. The end of the range(s).}
 
-\item{col}{The color of the range.}
+\item{col}{The color of the range(s).}
+}
+\value{
+\code{NULL}
 }
 \description{
 \code{drawRange} draws a colored range on a plot

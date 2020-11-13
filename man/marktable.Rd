@@ -6,14 +6,32 @@
 \usage{
 marktable(X, ...)
 }
+\arguments{
+\item{X}{A marked point pattern. An object of class "ppp".}
+
+\item{R}{Neighbourhood radius. Incompatible with \code{N}.}
+
+\item{N}{Number of neighbours of each point. Incompatible with \code{R}.}
+
+\item{exclude}{Logical. If \code{exclude=TRUE}, the neighbours of a point do
+not include the point itself. If \code{exclude=FALSE}, a point belongs to
+its own neighbourhood.}
+
+\item{collapse}{Logical. If \code{collapse=FALSE} (the default) the results
+for each point are returned as separate rows of a table. If
+\code{collapse=TRUE}, the results are aggregated according to the type of
+point.}
+}
 \description{
 This is an S3 generic that extends the use of
-  \code{\link[spatstat]{marktable}} beyond \code{ppp} objects.
+\code{\link[spatstat]{marktable}} beyond "ppp" objects.
 }
 \seealso{
 \code{\link[spatstat]{marktable.ppp}}, \code{\link{marktable.pp3}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

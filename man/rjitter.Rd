@@ -8,13 +8,15 @@ rjitter(X, ...)
 }
 \description{
 This is an S3 generic that extends the use of
-  \code{\link[spatstat]{rjitter}} beyond \code{ppp} objects.
+\code{\link[spatstat]{rjitter}} beyond "ppp" objects.
 }
 \seealso{
 \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}},
-  \code{\link{rjitter.pp3}}
+\code{\link{rjitter.pp3}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

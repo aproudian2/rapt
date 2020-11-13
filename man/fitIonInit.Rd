@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_spec.R
 \name{fitIonInit}
 \alias{fitIonInit}
-\title{Initialize nls Fitting Using Ions}
+\title{Initialize \code{nls} Fitting Using Ions}
 \usage{
 fitIonInit(
   ions,
@@ -21,13 +21,13 @@ fitIonInit(
 passed to \code{\link[enviPat]{isopattern}}.}
 
 \item{sd}{Numeric. The estimated standard deviation (or equivalent for
-peak = "emg") of the fitted peak.}
+\code{peak = "emg"}) of the fitted peak.}
 
 \item{rel}{Numeric. A numeric vector of relative heights for each ion to
 initialize the starting values of the peak magnitudes.}
 
 \item{peak}{Character. A string specifying what sort of peak shape to fit.
-Acceptable values are "gaussian" (the default) and "emg". See Details.}
+Acceptable values are \code{"gaussian"} (the default) and \code{"emg"}. See Details.}
 
 \item{mass.shift}{Numeric. The estimated mass shift of the measured mass
 spectrum relative to the absolute mass position of the ions.}
@@ -36,15 +36,16 @@ spectrum relative to the absolute mass position of the ions.}
 mass spectrum.}
 
 \item{tau}{Numeric. The estimated value of the skewness parameter for
-peak = "emg". Ignored for peak = "gaussian".}
+\code{peak = "emg"}. Ignored for \code{peak = "gaussian"}.}
 
-\item{charge}{Numeric.}
+\item{charge}{Integer. The charge(s) of the ion(s). Either a single value for
+all ions or a vector of values of the same length as \code{ions}. Defaults to 1}
 
-\item{threshold}{Numeric.}
+\item{threshold}{Numeric. The lowest relative}
 }
 \value{
 A list containing elements of the fitting formula, the starting fit
-  values, and the lower limits for each parameter.
+values, and the lower limits for each parameter.
 }
 \description{
 \code{fitIonInit} creates the formula and starting values for fitting mass
@@ -52,8 +53,18 @@ spectra using \code{\link[stats]{nls}} based on molecular formulae. The
 isotopic signatures are generated using \code{\link[enviPat]{isopattern}}.
 }
 \details{
-Fitting peak shape is either a gaussian (peak = "gaussian") or
-exponentially modified gaussian (peak = "emg").
+The fitting peak shape is either a gaussian (\code{peak = "gaussian"}) or
+exponentially modified gaussian (\code{peak = "emg"}).  The \code{"gaussian"} peak
+shape is defined as
+\deqn{rel[i] * \lambda[ij] *
+    exp(-(mass - m[ij] - mass.shift)^2 / (2 * sd ^2))}
+where \eqn{\lambda[ij]} is the intensity of the \emph{j}th isotope of \code{ions[i]}
+normalized to the most intense isotope of \code{ions[i]} and \eqn{m[ij]} is the
+mass of the \emph{j}th isotope of \code{ions[i]}. The \code{"emg"} peak shape
+is defined as
+\deqn{(rel[i] * \lambda[ij] * sd / tau) * sqrt(pi/2) *
+     exp(1/2*(sd/tau)^2-(mass-m[j]-mass.shift)/tau) *
+     erfc(sqrt(1/2)*(sd/tau-(mass-m[j]-mass.shift)/sd))}
 }
 \seealso{
 \code{\link[stats]{nls}}, \code{\link[enviPat]{isopattern}}

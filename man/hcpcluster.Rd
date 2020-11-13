@@ -24,13 +24,13 @@ Poission distributed points or RCP points for the points in the clusters
 and in the background.}
 
 \item{filepath}{Needed if \code{background = 'rcp'}. Vector with the filepath
-to [1] the FinalConfig file of the RCP pattern desired, [2] the system file
+to \link{1} the FinalConfig file of the RCP pattern desired, \link{2} the system file
 of the RCP pattern desired}
 }
 \value{
-A list of [[1]] A \code{\link[spatstat]{pp3}} object containing the
-  cluster points, [[2]] The overall intensity of the point pattern; Total
-  number of points/total volume.
+A list of [\link{1}] A \code{\link[spatstat]{pp3}} object containing the
+cluster points, [\link{2}] The overall intensity of the point pattern; Total
+number of points/total volume.
 }
 \description{
 Generates perfectly spherical clusters with structred order of hexagonal

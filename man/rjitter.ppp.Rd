@@ -13,6 +13,8 @@ Random Perturbation of a Point Pattern
 \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.pp3}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

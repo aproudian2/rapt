@@ -21,39 +21,57 @@
 \item{X}{A hyperframe containing at least the point patterns and groups}
 
 \item{formula}{Formula describing the grouping. The left side of the formula
-identifies which column of X contains the point patterns. The right side
-identifies the grouping factor}
+identifies which column of \code{X} contains the point patterns. The right
+side identifies the grouping factor}
 
 \item{summaryfunction}{Summary function applicable to pp3. Defaults to
 \code{link[spatstat]{K3est}}}
 
-\item{...}{Additional arguments passed to summaryfunction}
+\item{...}{Additional arguments passed to \code{summaryfunction}}
 
 \item{nperm}{Number of random permutations for the test; defaults to 999}
 
 \item{use.Tbar}{Logical value indicating choice of test statistic. If TRUE,
 use the alternative test statistic, which is appropriate for summary
-functions with roughly constant variance, such as K(r)/r or L(r). Defaults
-to FALSE}
+functions with roughly constant variance, such as \eqn{K(r)/r} or
+\eqn{L(r)}. Defaults to FALSE}
 
 \item{rinterval}{Numeric of length 2. Experimental}
 
 \item{minpoints}{Minimum permissible number of points in a point pattern for
 inclusion in the test calculation}
 }
+\value{
+An object of class "\code{studpermutest}".
+}
 \description{
 Perform a studentised permutation test for a difference between groups of
 point patterns
 }
+\details{
+This function performs the studentized permutation test of Hahn (2012) for a
+difference between groups of point patterns.
+
+A group needs to contain at least two point patterns with at least
+\code{minpoints} points in each pattern.
+
+The function returns an object of class "\code{htest}" and "\code{studpermutest}" that
+can be printed and plotted. The printout shows the test result and \emph{p}-value.
+The plot shows the summary functions for the groups (and the group means if
+requested).
+}
 \references{
 Hahn, U. (2012) A studentized permutation test for the comparison
-  of spatial point patterns.
-  Journal of the American Statistical Association 107 (498), 754-764.
+of spatial point patterns.
+\emph{Journal of the American Statistical Association} \strong{107} (498), 754-764.
 }
 \seealso{
-\code{\link[spatstat]{studpermu.test}}, \code{link[spatstat]{K3est}}
+\code{\link[spatstat]{studpermu.test}},
+\code{link[spatstat]{plot.studpermutest}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

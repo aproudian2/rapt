@@ -13,19 +13,26 @@ quadrats.pp3(X, nx, ny, nz, box.dims = NULL)
 if you wish to split up your point patthern by number of boxes.}
 
 \item{box.dims}{Vector containing the dimensions of the subsetted 3D boxxes,
-if you wish to define the individual boxx size. Use either \code{nx, ny,
-nz} or \code{box.dims}, but not both.}
+if you wish to define the individual boxx size. Use either \code{nx}, \code{ny},
+\code{nz} or \code{box.dims}, but not both. See Details.}
 }
 \value{
-A list containing the split up \code{pp3} objects.
+A list containing the split up "pp3" objects.
 }
 \description{
 Divides volume into quadrats and returns them.
+}
+\details{
+If \code{box.dims} is not commensurate with the size of the object, the
+quadrats are justified toward the smallest boundary in each dimension
+(\emph{i.e.} (\code{c(min(x), min(y), min(z))})).
 }
 \seealso{
 \code{\link[spatstat]{quadrats}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

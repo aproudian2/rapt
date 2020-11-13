@@ -7,12 +7,12 @@
 sample.pp3(X, size)
 }
 \arguments{
-\item{X}{A \code{pp3}. The point pattern from which to sample.}
+\item{X}{An object of class "pp3". The point pattern from which to sample.}
 
 \item{size}{A numeric. The number of points to sample.}
 }
 \value{
-A \code{pp3}. The sampled point pattern.
+A "pp3". The sampled point pattern.
 }
 \description{
 Sample A 3D Point Pattern
@@ -21,6 +21,8 @@ Sample A 3D Point Pattern
 \code{\link{sample.ppp}}, \code{\link[base]{sample}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

@@ -7,12 +7,14 @@
 \method{superimpose}{pp3}(..., W = NULL, check = FALSE)
 }
 \description{
-\code{superimpose.pp3} superimposes any number of 3D point patterns
+Superimposes any number of 3D point patterns
 }
 \seealso{
 \code{\link[spatstat]{superimpose}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

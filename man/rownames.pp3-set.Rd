@@ -8,7 +8,7 @@
 rownames.pp3(pat, lab) <- value
 }
 \arguments{
-\item{pat}{\code{pp3}. The point pattern to assign rownames.}
+\item{pat}{An object of class "pp3". The point pattern to assign rownames.}
 
 \item{lab}{character. The new rownames.}
 }

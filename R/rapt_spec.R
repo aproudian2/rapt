@@ -1,5 +1,5 @@
 #
-# This file contains methods for working with the mass spectrum of APT data
+# This file contains methods for working with APT mass spectra
 #
 
 #### as.data.frame.MassSpectrum ####
@@ -12,11 +12,11 @@ as.data.frame.MassSpectrum <- function(M) {
 ### rangeCount ###
 #' Count Hits in Range
 #'
-#' \code{rangeCount} counts the number of hits in the \code{POS} or \code{ATO}
-#' that fall within the provided mass range. To get the hit information within a
-#' mass range, use \code{\link{rangePOS}}.
+#' `rangeCount` counts the number of hits in the `POS` or `ATO` that fall within
+#' the provided mass range. To get the hit information within a mass range, use
+#' \code{\link{rangePOS}}.
 #'
-#' @param pos A data.frame. The pos to be ranged
+#' @param pos A `data.frame`. The `POS` to be ranged
 #' @param start Numeric. The start of the mass range
 #' @param end Numeric. The end of the mass range
 #'
@@ -33,15 +33,16 @@ rangeCount <- function(pos, start, end) {
 ### rangePOS ###
 #' Extract Hits in Range
 #'
-#' \code{rangePOS} extracts the rows of a \code{POS} or \code{ATO} object whose
+#' \code{rangePOS} extracts the rows of a `POS` or `ATO` object whose
 #' mass is within the provided range. To count the number of hits within a mass
 #' range, use \code{\link{rangeCount}}.
 #'
-#' @param pos data.frame. The \code{POS} or \code{ATO} to be ranged
+#' @param pos The `POS` or `ATO` to be ranged. A `data.frame` created by
+#'   \code{\link{readPOS}} or \code{\link{readATO}}
 #' @param start Numeric. The start of the mass range
 #' @param end Numeric. The end of the mass range
 #'
-#' @return A data.frame of the same structure as \code{pos} containing only hits
+#' @return A `data.frame` of the same structure as `pos` containing only hits
 #' in the provided range
 #'
 #' @family ranging functions
@@ -54,17 +55,19 @@ rangePOS <- function(pos, start, end) {
 ### rngCount ###
 #' Count Hits in RRNG
 #'
-#' \code{rngCount} counts the number of hits for each entry within a \code{RRNG}
-#' object. To get hit information within a \code{RRNG}, use
+#' `rngCount` counts the number of hits for each entry within a `RRNG`
+#' object. To get hit information within a `RRNG`, use
 #' \code{\link{rngPOS}}.
 #'
-#' @param pos data.frame. The \code{POS} or \code{ATO} to be ranged
-#' @param rng data.frame. The \code{RRNG} ranges to apply
+#' @param pos The `POS` or `ATO` to be ranged. A `data.frame` created by
+#'   \code{\link{readPOS}} or \code{\link{readATO}}
+#' @param rng The `RRNG` ranges to apply. A `data.frame` created by
+#'   \code{\link{readRRNG}}
 #' @param simplify logical. Whether to simplify the counts by ion name;
-#'   default is FALSE
+#'   default is `FALSE`
 #'
-#' @return A data.frame containing the name of each range, the number of counts
-#' and fraction of the total ranged counts.
+#' @return A `data.frame` containing the name of each range, the number of
+#'   counts and fraction of the total ranged counts.
 #'
 #' @family ranging functions
 #'
@@ -89,9 +92,10 @@ rngCount <- function(pos, rng, simplify = FALSE) {
 #' mass is within the ranges of the provided \code{RRNG}. To count the hits
 #' within a \code{RRNG}, use \code{\link{rngCount}}
 #'
-#' @param pos data.frame. The \code{POS} or \code{ATO} from which to extract
-#'   hits
-#' @param rng data.frame. The \code{RRNG} ranges to apply
+#' @param pos The `POS` or `ATO` from which to extract hits. A `data.frame`
+#'   created by \code{\link{readPOS}} or \code{\link{readATO}}
+#' @param rng The `RRNG` ranges to apply. A `data.frame` created by
+#'   \code{\link{readRRNG}}
 #'
 #' @return A data.frame of the same structure as \code{pos}, with an appended
 #'   column called "mark" that carries the name of the ion
@@ -129,7 +133,7 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #### Spectral Fitting ####
 
 ### fitIonInit ###
-#' Initialize nls Fitting Using Ions
+#' Initialize `nls` Fitting Using Ions
 #'
 #' \code{fitIonInit} creates the formula and starting values for fitting mass
 #' spectra using \code{\link[stats]{nls}} based on molecular formulae. The
@@ -138,25 +142,37 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
 #' @param ions Character. A character vector of molecular formulae sutable to be
 #'   passed to \code{\link[enviPat]{isopattern}}.
 #' @param sd Numeric. The estimated standard deviation (or equivalent for
-#' peak = "emg") of the fitted peak.
+#'   `peak = "emg"`) of the fitted peak.
 #' @param rel Numeric. A numeric vector of relative heights for each ion to
 #'   initialize the starting values of the peak magnitudes.
 #' @param peak Character. A string specifying what sort of peak shape to fit.
-#'   Acceptable values are "gaussian" (the default) and "emg". See Details.
+#'   Acceptable values are `"gaussian"` (the default) and `"emg"`. See Details.
 #' @param mass.shift Numeric. The estimated mass shift of the measured mass
 #'   spectrum relative to the absolute mass position of the ions.
 #' @param noise Numeric. The estimated value of the constant noise floor of the
 #'   mass spectrum.
 #' @param tau Numeric. The estimated value of the skewness parameter for
-#'   peak = "emg". Ignored for peak = "gaussian".
-#' @param charge Numeric.
-#' @param threshold Numeric.
+#'   `peak = "emg"`. Ignored for `peak = "gaussian"`.
+#' @param charge Integer. The charge(s) of the ion(s). Either a single value for
+#'   all ions or a vector of values of the same length as `ions`. Defaults to 1
+#' @param threshold Numeric. The lowest relative
 #'
 #' @return A list containing elements of the fitting formula, the starting fit
 #'   values, and the lower limits for each parameter.
 #'
-#' @details Fitting peak shape is either a gaussian (peak = "gaussian") or
-#' exponentially modified gaussian (peak = "emg").
+#' @details
+#' The fitting peak shape is either a gaussian (`peak = "gaussian"`) or
+#' exponentially modified gaussian (`peak = "emg"`).  The `"gaussian"` peak
+#' shape is defined as
+#'   \deqn{rel[i] * \lambda[ij] *
+#'     exp(-(mass - m[ij] - mass.shift)^2 / (2 * sd ^2))}
+#'  where \eqn{\lambda[ij]} is the intensity of the *j*th isotope of `ions[i]`
+#'  normalized to the most intense isotope of `ions[i]` and \eqn{m[ij]} is the
+#'  mass of the *j*th isotope of `ions[i]`. The `"emg"` peak shape
+#'  is defined as
+#'    \deqn{(rel[i] * \lambda[ij] * sd / tau) * sqrt(pi/2) *
+#'      exp(1/2*(sd/tau)^2-(mass-m[j]-mass.shift)/tau) *
+#'      erfc(sqrt(1/2)*(sd/tau-(mass-m[j]-mass.shift)/sd))}
 #'
 #' @family spectral fitting functions
 #'
@@ -209,14 +225,27 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = "gaussian",
 #' @param ions Character. Molecular formula formatted in a way that is
 #'   acceptable to \code{\link[enviPat]{isopattern}}
 #' @param charge Numeric. Charge of ion.
-#' @param threshold Numeric. Percentage threshold of isotope.
-#' @param peak Character. One of "gaussian" or "emg". See Details.
+#' @param threshold Numeric. Percentage threshold of isotope relative to highest
+#'   intensity isotope. Defaults to 10
+#' @param peak Character. One of `"gaussian"` or `"emg"`. Default is
+#'   `peak = "gaussian"`. See Details.
 #'
 #' @return A character string that concatinates all the formulae for the ions
 #'   and their respetive isotopes, along with a constant noise term.
 #'
-#' @details The base peak shape of the formula is either a gaussian
-#'   (peak = "gaussian") or an exponentially modified gaussian (peak = "emg").
+#' @details
+#' The fitting peak shape is either a gaussian (`peak = "gaussian"`) or
+#' exponentially modified gaussian (`peak = "emg"`).  The `"gaussian"` peak
+#' shape is defined as
+#'   \deqn{rel[i] * \lambda[ij] *
+#'     exp(-(mass - m[ij] - mass.shift)^2 / (2 * sd ^2))}
+#'  where \eqn{\lambda[ij]} is the intensity of the *j*th isotope of `ions[i]`
+#'  normalized to the most intense isotope of `ions[i]` and \eqn{m[ij]} is the
+#'  mass of the *j*th isotope of `ions[i]`. The `"emg"` peak shape
+#'  is defined as
+#'    \deqn{(rel[i] * \lambda[ij] * sd / tau) * sqrt(pi/2) *
+#'      exp(1/2*(sd/tau)^2-(mass-m[j]-mass.shift)/tau) *
+#'      erfc(sqrt(1/2)*(sd/tau-(mass-m[j]-mass.shift)/sd))}
 #'
 #' @family spectral fitting functions
 #'

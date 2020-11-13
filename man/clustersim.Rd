@@ -48,7 +48,7 @@ and the value of \code{pcp}.}
 
 \item{tol}{Tolerance value for \code{pcp}. The true fraction of type-A points
 in the pattern will be within this tolerance of the value specified by the
-\code{pcp} parameter. If not, function will return NULL.}
+\code{pcp} parameter. If not, function will return \code{NULL}.}
 
 \item{s}{Random seed for the simulation.}
 
@@ -56,20 +56,27 @@ in the pattern will be within this tolerance of the value specified by the
 \code{TRUE} or \code{FALSE} (the default).}
 }
 \value{
-List of: [[1]] A \code{\link[spatstat]{pp3}} object containing the
-  final locations of only type-A points within the final marked point
-  pattern. [[2]] A \code{\link[spatstat]{pp3}} object containing the full
-  marked underlying point pattern with points marked as either type A (cluser
-  type point in a cluster), B (cluster type point not in a cluster) or C
-  (non-cluster type point). [[3]] A vector containing the simulated radius of
-  each cluster in the final point pattern. [[4]] A single value containing
-  the true fraction of type-A points in the final simulated pattern.
+List of:
+\itemize{
+\item \code{clusters} - A \code{\link[spatstat]{pp3}} object containing the final
+locations of only type-A points within \code{all}.
+\item \code{all} - A \code{\link[spatstat]{pp3}} object containing the full marked
+underlying point pattern with points marked as either type A (cluster type
+point in a cluster), B (cluster type point not in a cluster) or C
+(non-cluster type point).
+\item \code{radii} - A vector containing the simulated radius of each cluster in
+\code{all}.
+\item \code{perc} - A single value containing the true fraction of type-A points in
+\code{all}.
+\item \code{centers} - A \code{\link[spatstat]{pp3}} object containing the cluster
+center locations within \code{all}.
+}
 }
 \description{
-The \code{clustersim} function simulates point clusters using two RCP point
-clouds. The first point cloud is the "underlaying" pattern. This is the set
-of points that will be used as actual cluster point locations in the final
-product. The second point cloud is the "overlaying" pattern. This is the set
+\code{clustersim} simulates point clusters using two RCP point clouds. The first
+point cloud is the "underlaying" pattern. This is the set of points that will
+be used as actual cluster point locations in the resultant marked point
+pattern. The second point cloud is the "overlaying" pattern. This is the set
 of points that will be scaled to determine the positions of the cluster
 centroids within the underlying point pattern.
 }

@@ -6,10 +6,10 @@
 #### clustersim ####
 #' Simulate clusters of marks on an RCP background point pattern.
 #'
-#' The \code{clustersim} function simulates point clusters using two RCP point
-#' clouds. The first point cloud is the "underlaying" pattern. This is the set
-#' of points that will be used as actual cluster point locations in the final
-#' product. The second point cloud is the "overlaying" pattern. This is the set
+#' `clustersim` simulates point clusters using two RCP point clouds. The first
+#' point cloud is the "underlaying" pattern. This is the set of points that will
+#' be used as actual cluster point locations in the resultant marked point
+#' pattern. The second point cloud is the "overlaying" pattern. This is the set
 #' of points that will be scaled to determine the positions of the cluster
 #' centroids within the underlying point pattern.
 #'
@@ -27,24 +27,29 @@
 #' @param rho1 Intra-cluster type-A point concentration. A decimal value between
 #'   0 and 1.
 #' @param rho2 Background type-A point concentration. A decimal value between 0
-#'   and the value of \code{pcp}.
+#'   and the value of `pcp`.
 #' @param rb Radius blur. A decimal value between 0 and 1.
 #' @param pb Position blur. A decimal value between 0 and 1.
-#' @param tol Tolerance value for \code{pcp}. The true fraction of type-A points
+#' @param tol Tolerance value for `pcp`. The true fraction of type-A points
 #'   in the pattern will be within this tolerance of the value specified by the
-#'   \code{pcp} parameter. If not, function will return NULL.
+#'   `pcp` parameter. If not, function will return `NULL`.
 #' @param s Random seed for the simulation.
 #' @param toplot Show a 3D plot of the cluster points once generation is done?
-#'   \code{TRUE} or \code{FALSE} (the default).
+#'   `TRUE` or `FALSE` (the default).
 #'
-#' @return List of: [[1]] A \code{\link[spatstat]{pp3}} object containing the
-#'   final locations of only type-A points within the final marked point
-#'   pattern. [[2]] A \code{\link[spatstat]{pp3}} object containing the full
-#'   marked underlying point pattern with points marked as either type A (cluser
-#'   type point in a cluster), B (cluster type point not in a cluster) or C
-#'   (non-cluster type point). [[3]] A vector containing the simulated radius of
-#'   each cluster in the final point pattern. [[4]] A single value containing
-#'   the true fraction of type-A points in the final simulated pattern.
+#' @return List of:
+#' * `clusters` - A \code{\link[spatstat]{pp3}} object containing the final
+#'   locations of only type-A points within `all`.
+#' * `all` - A \code{\link[spatstat]{pp3}} object containing the full marked
+#'   underlying point pattern with points marked as either type A (cluster type
+#'   point in a cluster), B (cluster type point not in a cluster) or C
+#'   (non-cluster type point).
+#' * `radii` - A vector containing the simulated radius of each cluster in
+#'   `all`.
+#' * `perc` - A single value containing the true fraction of type-A points in
+#'   `all`.
+#' * `centers` - A \code{\link[spatstat]{pp3}} object containing the cluster
+#'   center locations within `all`.
 #'
 #' @family simulation functions
 #'
@@ -119,7 +124,7 @@ clustersim <- function(under, over, rcp_rad,
 
   # shift points to remove overlaps
   over.nolap <- overlap_fix(over.scaled2, cr.rand)
-  if(is.numeric(over.nolap)){return(-1)}
+  if(is.numeric(over.nolap)){return(-1)} # change to a tryCatch
   over.nolap.coo <- spatstat::coords(over.nolap)
 
   # Re-check once for volume correctness
@@ -135,14 +140,16 @@ clustersim <- function(under, over, rcp_rad,
 
   if(!(is.numeric(max(cr.rand.final)) && length(max(cr.rand.final)) == 1L &&
        max(cr.rand.final) >= 0)){
-    stop("Error with cr.rand.final")
+    print("Error with cr.rand.final")
+    return(-1) # change to a tryCatch
   }
 
   nnR <- spatstat::crosspairs.pp3(over.final, under, rmax = max(cr.rand.final),
                         what = 'ijd', neat = TRUE, distinct = TRUE,
                         twice = FALSE)
   if(is.empty(nnR$i)) {
-    stop("No cluster centers in domain.")
+    print("No cluster centers in domain.")
+    return(-1) # change to a tryCatch
   }
   nnR.split <- list()
   nnR.split$d <- split(nnR$d, nnR$i, drop = FALSE)
@@ -181,7 +188,7 @@ clustersim <- function(under, over, rcp_rad,
 
   pcp.real <- (length(bgnd.inds) + length(cluster.inds))/npoints(under)
   if(pcp.real < (pcp - tol) | pcp.real > (pcp + tol)){
-    stop('Pcp outside of tolerance range')
+    warning('Pcp outside of tolerance range')
   }
   #print(pcp.real)
   dat <- list(clusters = just.cluster.points,
@@ -663,7 +670,7 @@ makecluster <- function(under, over, radius1, radius2,
             nnd <- nndist.pp3(over.scaledf)
             check <- which(nnd < comp)
             if((as.numeric(t2) - as.numeric(t1)) > 15){
-              return(-1)
+              return(-1) # change to a tryCatch
             }
 
           }
@@ -1906,7 +1913,7 @@ overlap_fix <- function(X, cr.rand) {
   #print(check)
 
   t1 <- Sys.time()
-  while(!is.empty(check)){
+  while(!is.empty(check)) {
     ind <- check[1]
     minsep <- cr.rand[ind] + cr.rand[nnw[ind]]
     direction <- (coords(X)[nnw[ind],]-coords(X)[ind,])/nnd[ind]
@@ -1916,7 +1923,9 @@ overlap_fix <- function(X, cr.rand) {
     check <- which(nnd < (cr.rand + cr.rand[nnw]))
     t2 <- Sys.time()
     if((as.numeric(t2) - as.numeric(t1)) > 15) {
-      stop("Impossible to find no-overlap solution.")
+      warning("Impossible to find no-overlap solution.") # change to a tryCatch
+      X <- -1
+      break
     }
   }
   return(X)

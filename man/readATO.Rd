@@ -10,15 +10,15 @@ readATO(filepath)
 \item{filepath}{Character. The file path to the ATO file.}
 }
 \value{
-A data.frame with columns corresponding to the ATO structure
-  definition.
+A \code{data.frame} with columns corresponding to the ATO structure
+definition.
 }
 \description{
-\code{readATO} reads an ATO file (from IVAS) into a data frame.
+\code{readATO} reads an ATO file (from IVAS) into a \code{data.frame}.
 }
 \references{
 Larson \emph{et al.},
-  \emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
+\emph{Local Electrode Atom Probe Tomography: A User's Guide} (2009)
 }
 \seealso{
 Other APT import functions: 

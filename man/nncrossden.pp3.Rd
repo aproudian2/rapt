@@ -44,10 +44,10 @@ serial calculation.}
 method used.}
 }
 \value{
-List containing: [[1]] A data frame of the intensity estimates for
-  each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
-  The coordinates of the original points from the data set. [[4]] A vector
-  containing all k values tested.
+List containing: [\link{1}] A data frame of the intensity estimates for
+each nearest neighbor value. [\link{2}] The coordinates of the estimates. [\link{3}]
+The coordinates of the original points from the data set. [\link{4}] A vector
+containing all k values tested.
 }
 \description{
 Calculates the 3D nearest-neighbor intensity estimate of a point process at

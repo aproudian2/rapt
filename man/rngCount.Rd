@@ -7,16 +7,18 @@
 rngCount(pos, rng, simplify = FALSE)
 }
 \arguments{
-\item{pos}{data.frame. The \code{POS} or \code{ATO} to be ranged}
+\item{pos}{The \code{POS} or \code{ATO} to be ranged. A \code{data.frame} created by
+\code{\link{readPOS}} or \code{\link{readATO}}}
 
-\item{rng}{data.frame. The \code{RRNG} ranges to apply}
+\item{rng}{The \code{RRNG} ranges to apply. A \code{data.frame} created by
+\code{\link{readRRNG}}}
 
 \item{simplify}{logical. Whether to simplify the counts by ion name;
-default is FALSE}
+default is \code{FALSE}}
 }
 \value{
-A data.frame containing the name of each range, the number of counts
-and fraction of the total ranged counts.
+A \code{data.frame} containing the name of each range, the number of
+counts and fraction of the total ranged counts.
 }
 \description{
 \code{rngCount} counts the number of hits for each entry within a \code{RRNG}

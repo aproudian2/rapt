@@ -12,8 +12,8 @@ first \code{\link[spatstat]{pp3}} object.}
 }
 \value{
 List containing the two \code{\link[spatstat]{pp3}} patterns. If
-  these two patterns were combined, they would create the original
-  \code{overPattern} object.
+these two patterns were combined, they would create the original
+\code{overPattern} object.
 }
 \description{
 Splits a \code{\link[spatstat]{pp3}} function into two smaller subset

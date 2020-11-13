@@ -15,7 +15,7 @@ read.rcp(fpath_config, fpath_sys, scaleUp = FALSE, newRadius = 0.5)
 that the RCP particles will be scaled to. Default is 0.5.}
 
 \item{scaleUP}{Boolean. If \code{TRUE}, scales RCP so particles have new
-radius. If \code{FALSE}, RCP stays as generated.}
+radius. If \code{FALSE} (the default), RCP stays as generated.}
 }
 \value{
 A \code{\link[spatstat]{pp3}} object of the RCP pattern.
@@ -25,17 +25,17 @@ Reads in a RCP Generator output file as a \code{\link[spatstat]{pp3}} object.
 }
 \details{
 The RCP generation is described in Desmond & Weeks,
-  "Random Close Packing of Disks and Spheres in Confined Geometries",
-  \emph{Physical Review E}, \strong{80} (5), 051305 (2009):
-  \url{https://doi.org/10.1103/PhysRevE.80.051305}; the algorithm can be
-  downloaded at
-  \url{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}.
+"Random Close Packing of Disks and Spheres in Confined Geometries",
+\emph{Physical Review E}, \strong{80} (5), 051305 (2009):
+\url{https://doi.org/10.1103/PhysRevE.80.051305}; the algorithm can be
+downloaded at
+\url{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}.
 }
 \references{
 Desmond & Weeks,
-  "Random Close Packing of Disks and Spheres in Confined Geometries",
-  \emph{Physical Review E}, \strong{80} (5), 051305 (2009):
-  \url{https://doi.org/10.1103/PhysRevE.80.051305}
+"Random Close Packing of Disks and Spheres in Confined Geometries",
+\emph{Physical Review E}, \strong{80} (5), 051305 (2009):
+\url{https://doi.org/10.1103/PhysRevE.80.051305}
 }
 \seealso{
 \href{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}{RCP

@@ -29,9 +29,9 @@ parallel}
 parallel calculation.}
 }
 \value{
-List containing: [[1]] A data frame of the intensity estimates for
-  each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
-  The coordinates of the original points from the data set.
+List containing: [\link{1}] A data frame of the intensity estimates for
+each nearest neighbor value. [\link{2}] The coordinates of the estimates. [\link{3}]
+The coordinates of the original points from the data set.
 }
 \description{
 Calculates the 3D nearest-neighbor intensity estimate of a point process at

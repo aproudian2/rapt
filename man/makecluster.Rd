@@ -68,7 +68,7 @@ Currently written for application to \code{type = "cr"} \code{speed = "fast"}
 and \code{"superfast"}, and to \code{type = "dist"}.}
 
 \item{gb}{\code{TRUE} or \code{FALSE}. Whether or not to apply a gaussian
-  blur to the cluster center positions. See \code{\link{rgblur}} for more
+blur to the cluster center positions. See \code{\link{rgblur}} for more
 information on the blur function.}
 
 \item{gbp}{Parameters for the cluster center gaussian blurs. \code{gbp =
@@ -99,35 +99,35 @@ points? TRUE or FALSE.}
 }
 \value{
 Returns are different based on \code{type}.
-  \subsection{\code{type} = "ppc" or "dist"}{List of: [[1]]
-  \code{\link[spatstat]{pp3}} object containing the cluster marked point
-  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
-  overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
-  points per cluster 1 [2] number of points with points per cluster 1 [3]
-  points per cluster 2 [4] number of points with points per cluster 2. }
-  \subsection{\code{type} = "cr", speed = "slow"}{List of: [[1]]
-  \code{\link[spatstat]{pp3}} object containing the cluster marked point
-  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
-  overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
-  number of clusters [2] number of points in those clusters.}
-  \subsection{\code{type} = "cr", speed = "fast"}{List of: [[1]]
-  \code{\link[spatstat]{pp3}} object containing the cluster marked point
-  locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
-  overlaying RCP pattern after scaling. [[3]] factor containing the number of
-  points in each cluster.}
-  \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of:
-  [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
-  point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
-  overlaying RCP pattern after scaling. [[3]] number of points put in or
-  taken away at random. [[4]] Vector of nearest neighbor distance (cluster
-  center to center) from each cluster}
-  \subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
-  [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
-  point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
-  overlaying RCP pattern after scaling. [[3]] number of points put in or
-  taken away at random. [[4]] Vector of nearest neighbor distance (cluster
-  center to center) from each cluster. [[5]] A vector contining the radius of
-  each cluster.}
+\subsection{\code{type} = "ppc" or "dist"}{List of: [\link{1}]
+\code{\link[spatstat]{pp3}} object containing the cluster marked point
+locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+overlaying RCP pattern after scaling. [\link{3}] Numeric vector containing: \link{1}
+points per cluster 1 \link{2} number of points with points per cluster 1 \link{3}
+points per cluster 2 \link{4} number of points with points per cluster 2. }
+\subsection{\code{type} = "cr", speed = "slow"}{List of: [\link{1}]
+\code{\link[spatstat]{pp3}} object containing the cluster marked point
+locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+overlaying RCP pattern after scaling. [\link{3}] Numeric vector containing: \link{1}
+number of clusters \link{2} number of points in those clusters.}
+\subsection{\code{type} = "cr", speed = "fast"}{List of: [\link{1}]
+\code{\link[spatstat]{pp3}} object containing the cluster marked point
+locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+overlaying RCP pattern after scaling. [\link{3}] factor containing the number of
+points in each cluster.}
+\subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of:
+[\link{1}] \code{\link[spatstat]{pp3}} object containing the cluster marked
+point locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+overlaying RCP pattern after scaling. [\link{3}] number of points put in or
+taken away at random. [\link{4}] Vector of nearest neighbor distance (cluster
+center to center) from each cluster}
+\subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
+[\link{1}] \code{\link[spatstat]{pp3}} object containing the cluster marked
+point locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+overlaying RCP pattern after scaling. [\link{3}] number of points put in or
+taken away at random. [\link{4}] Vector of nearest neighbor distance (cluster
+center to center) from each cluster. [\link{5}] A vector contining the radius of
+each cluster.}
 }
 \description{
 The \code{makecluster} function simulates point clusters using two RCP point
@@ -146,49 +146,49 @@ Galen Vincent, know if you need some upgrades sooner. Thanks!
 }
 \section{Cluster Creation Methods}{
  What the different arguments for
-  \code{type} argument mean.
-  \subsection{Points Per Cluster - "ppc"}{
-  Specify the number of points that should be in each cluster. Needs to be
-  paired with the \code{ppc} argument The program will scale the overlaying
-  pattern so that there are approximately the correct number of clusters
-  placed through the underlaying patten, mark the n closest points to these
-  cluster centers as cluster points, where n is the value input to the ppc
-  argument. The cluster centers are defined by the point locations of the
-  scaled overlaying RCP pattern. At this point, there should be approximately
-  N x \code{pcp} x \code{pip} points containined in clusters (N = total
-  points in the underlaying RCP pattern). The method cleans up by marking or
-  removing marks around the centers as necesary so that there are exactly N x
-  pcp x pip points in clusters. The rest of the N x \code{pcp} x
-  (1-\code{pip}) points are then placed randomly through the remaining
-  non-cluster-marked points.}
-  \subsection{Cluster Radius - "cr"}{
-  Specify the radius of the clusters. Needs to be paried with the \code{cr}
-  argument. The overlaying RCP pattern will be scaled so that there are
-  approximately the correct number of clusters placed through the underlaying
-  pattern. All points in the underlaying pattern within distance \code{cr} of
-  the cluster centers are marked as cluster points. The cluster centers are
-  defined by the point locations of the scaled overlaying RCP pattern. At
-  this point, there should be approximately N x \code{pcp} x \code{pip}
-  points containined in clusters (N = total points in the underlaying RCP
-  pattern). The method cleans up by marking or removing marks around the
-  centers as necesary so that there are exactly N x pcp x pip points in
-  clusters. The rest of the N x \code{pcp} x (1-\code{pip}) points are then
-  placed randomly through the remaining non-cluster-marked points.
-  \code{speed = "slow"} gives the most accurate, but slowest realization.
-  \code{speed = "fast"} gives the second fastest, but less accurate
-  realization (fails with large data sets). Clusters may not be 100\% dense
-  with points. \code{speed = "superfast"} gives the fastest, but least
-  accurate realization (works well with large data sets). Clusters may not be
-  100\% dense with points and additional random points may be scattered
-  through the pattern.}
-  \subsection{Distance - "dist"}{
-  Specify the distance between clusters. Needs to be paired with the \code{d}
-  argument. The overlaying RCP pattern will be scaled according to the
-  \code{d} argumnet so that the small radius of the overlaying RCP pattern is
-  \code{d}/2. Selects the closest n points around each cluster center so that
-  there are N x \code{pcp} x \code{pip} points contained in clusters. The
-  rest of the N x \code{pcp} x (1-\code{pip}) points are then placed randomly
-  through the remaining non-cluster-marked points.}
+\code{type} argument mean.
+\subsection{Points Per Cluster - "ppc"}{
+Specify the number of points that should be in each cluster. Needs to be
+paired with the \code{ppc} argument The program will scale the overlaying
+pattern so that there are approximately the correct number of clusters
+placed through the underlaying patten, mark the n closest points to these
+cluster centers as cluster points, where n is the value input to the ppc
+argument. The cluster centers are defined by the point locations of the
+scaled overlaying RCP pattern. At this point, there should be approximately
+N x \code{pcp} x \code{pip} points containined in clusters (N = total
+points in the underlaying RCP pattern). The method cleans up by marking or
+removing marks around the centers as necesary so that there are exactly N x
+pcp x pip points in clusters. The rest of the N x \code{pcp} x
+(1-\code{pip}) points are then placed randomly through the remaining
+non-cluster-marked points.}
+\subsection{Cluster Radius - "cr"}{
+Specify the radius of the clusters. Needs to be paried with the \code{cr}
+argument. The overlaying RCP pattern will be scaled so that there are
+approximately the correct number of clusters placed through the underlaying
+pattern. All points in the underlaying pattern within distance \code{cr} of
+the cluster centers are marked as cluster points. The cluster centers are
+defined by the point locations of the scaled overlaying RCP pattern. At
+this point, there should be approximately N x \code{pcp} x \code{pip}
+points containined in clusters (N = total points in the underlaying RCP
+pattern). The method cleans up by marking or removing marks around the
+centers as necesary so that there are exactly N x pcp x pip points in
+clusters. The rest of the N x \code{pcp} x (1-\code{pip}) points are then
+placed randomly through the remaining non-cluster-marked points.
+\code{speed = "slow"} gives the most accurate, but slowest realization.
+\code{speed = "fast"} gives the second fastest, but less accurate
+realization (fails with large data sets). Clusters may not be 100\\% dense
+with points. \code{speed = "superfast"} gives the fastest, but least
+accurate realization (works well with large data sets). Clusters may not be
+100\\% dense with points and additional random points may be scattered
+through the pattern.}
+\subsection{Distance - "dist"}{
+Specify the distance between clusters. Needs to be paired with the \code{d}
+argument. The overlaying RCP pattern will be scaled according to the
+\code{d} argumnet so that the small radius of the overlaying RCP pattern is
+\code{d}/2. Selects the closest n points around each cluster center so that
+there are N x \code{pcp} x \code{pip} points contained in clusters. The
+rest of the N x \code{pcp} x (1-\code{pip}) points are then placed randomly
+through the remaining non-cluster-marked points.}
 }
 
 \seealso{

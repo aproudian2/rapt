@@ -33,11 +33,11 @@ available on the machine.}
 \subsection{For \code{anom = FALSE}}{Returns a matrix containing the data
 from the all of the \code{\link[spatstat]{G3est}} runs on different
 re-labelings. Can plot data using \code{\link{envPlot}}.}
-\subsection{For \code{anom = TRUE}}{A list of: [[1]] Matrix of data for all
-relabelings. Can be plotted using \code{\link{envPlot}}. [[2]] Vector
+\subsection{For \code{anom = TRUE}}{A list of: [\link{1}] Matrix of data for all
+relabelings. Can be plotted using \code{\link{envPlot}}. [\link{2}] Vector
 containing the values that were subtracted from the results at each r value.
-Can be used to subtract from another set of envelopes for comparison. [[3]]
-rmax used in the calculation. [[4]] nrval used in the calculation.}
+Can be used to subtract from another set of envelopes for comparison. [\link{3}]
+rmax used in the calculation. [\link{4}] nrval used in the calculation.}
 }
 \description{
 \code{pG3est} first randomly relabels a specified percentage of points from
@@ -48,8 +48,8 @@ increase computation speed.
 }
 \section{Edge Corrections}{
  See  book availible at
-  \url{http://spatstat.org/book.html} for more info on these edge
-  corrections.
+\url{http://spatstat.org/book.html} for more info on these edge
+corrections.
 
 \subsection{Reduced Sample - "rs"}{}
 \subsection{Kaplan-Meier - "km"}{}
@@ -65,7 +65,7 @@ out. This centers envelopes around zero.
 
 \code{toSub} is an argumet to be paired with \code{anom = TRUE}. If NULL, use
 the 50th percentile of the calculated set of \code{\link[spatstat]{G3est}}
-envelopes to subtract off. Otherwise, use the second, [[2]], entry in the
+envelopes to subtract off. Otherwise, use the second, [\link{2}], entry in the
 list returned from this same function. This is how to compare envelope
 calculations from different point patterns. You must subtract the same values
 from both data sets. toSub allows you to input the values that were

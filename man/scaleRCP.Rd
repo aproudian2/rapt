@@ -21,7 +21,7 @@ original rcp generation. Can leave blank if these are integer value.}
 }
 \value{
 Will return a \code{\link[spatstat]{pp3}} object with the scaled
-  point positions.
+point positions.
 }
 \description{
 Given an original raw RCP output file, scale the 3D point cloud as if the
@@ -30,8 +30,8 @@ spheres have a specific radius.
 \details{
 Input the original radius, taken from the "system" file output from the RCP
 generation, and the new desired radius, \code{scaleRCP} will scale the RCP
-point cloud as if the original generation hapened with spheres of radius that
-you desire.
+point cloud as if the original generation hapened with spheres of the
+specified radius.
 }
 \seealso{
 Other simulation functions: 

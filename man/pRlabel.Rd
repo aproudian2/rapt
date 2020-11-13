@@ -19,7 +19,7 @@ randomly permuting labels or by drawing a random sample with replacement}
 \item{nsim}{Number of simulated realisations to be generated. Default is 99}
 }
 \value{
-A list of marked point patterns, each of the same class of X.
+A list of marked point patterns, each of the same class of \code{X}.
 }
 \description{
 Randomly allocates marks to a point pattern, or permutes the existing marks,

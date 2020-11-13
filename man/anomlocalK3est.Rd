@@ -18,7 +18,7 @@ results of the K function applied to X.}
 }
 \value{
 Date frame with columns of the anomaly K test for each point in the
-  pattern.
+pattern.
 }
 \description{
 Similar to \code{\link{anomK3est}}, but returns the anomaly K3est for each

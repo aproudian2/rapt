@@ -6,7 +6,6 @@
 \usage{
 Tstat.pp3(
   X,
-  ...,
   rmax = NULL,
   nrval = 128,
   correction = "border",
@@ -15,21 +14,55 @@ Tstat.pp3(
 )
 }
 \arguments{
-\item{correction}{One of "none" or "isotropic." "translation" correction is
-planned but not yet implemented.}
+\item{X}{The observed point pattern, from which an estimate of T(r) will be
+computed. A \code{\link[spatstat]{pp3}} object.}
+
+\item{rmax}{Optional. Maximum value of argument \emph{r} for which
+\eqn{T(r)} will be estimated.}
+
+\item{nrval}{Optional. Number of values of \emph{r} for which
+\eqn{T(r)} will be estimated. A large value of \code{nrval} is
+required to avoid discretisation effects.}
+
+\item{correction}{One of \code{"none"} or \code{"isotropic"}. \code{"translation"}
+correction is planned but not yet implemented.}
+
+\item{ratio}{Logical. If \code{TRUE}, the numerator and denominator of each
+edge-corrected estimate will also be saved, for use in analysing replicated
+point patterns.}
+
+\item{verbose}{Logical. If \code{TRUE}, an estimate of the computation time is
+printed.}
+}
+\value{
+An object of class "\code{fv}", see \code{\link[spatstat]{fv.object}},
+which can be plotted directly using \code{\link[spatstat]{plot.fv}}.
 }
 \description{
 Tstat.pp3 extends the third-order summary statistic
 \code{\link[spatstat]{Tstat}} to pp3
 }
+\details{
+This command calculates the third-order summary statistic \eqn{T(r)} for a
+spatial point patterns, defined by Schladitz and Baddeley (2000).
+
+The definition of \eqn{T(r)} is similar to the definition of Ripley's \emph{K}
+function \eqn{K(r)}, except that \eqn{K(r)} counts pairs of points while
+\eqn{T(r)} counts triples of points. Essentially \eqn{T(r)} is a rescaled
+cumulative distribution function of the diameters of triangles in the point
+pattern. The diameter of a triangle is the length of its longest side.
+}
 \references{
-Schladitz, K. and Baddeley, A. (2000) A third order point process
-characteristic. Scandinavian Journal of Statistics 27 (2000) 657-671.
+Schladitz, K. & Baddeley, A.
+"A third order point process characteristic",
+\emph{Scandinavian Journal of Statistics}, \strong{27}, 657-671 (2000).
 }
 \seealso{
 \code{\link[spatstat]{Tstat}}
 
 Other spatstat extensions: 
+\code{\link{G3cross}()},
+\code{\link{G3multi}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},
 \code{\link{marktable}()},

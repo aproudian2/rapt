@@ -7,7 +7,7 @@
 rangeCount(pos, start, end)
 }
 \arguments{
-\item{pos}{A data.frame. The pos to be ranged}
+\item{pos}{A \code{data.frame}. The \code{POS} to be ranged}
 
 \item{start}{Numeric. The start of the mass range}
 
@@ -17,9 +17,9 @@ rangeCount(pos, start, end)
 The number of hits falling within the range.
 }
 \description{
-\code{rangeCount} counts the number of hits in the \code{POS} or \code{ATO}
-that fall within the provided mass range. To get the hit information within a
-mass range, use \code{\link{rangePOS}}.
+\code{rangeCount} counts the number of hits in the \code{POS} or \code{ATO} that fall within
+the provided mass range. To get the hit information within a mass range, use
+\code{\link{rangePOS}}.
 }
 \seealso{
 Other ranging functions: 

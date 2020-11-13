@@ -29,9 +29,9 @@ spacing of the gyroid.}
 \item{win}{The simulation window.}
 }
 \value{
-A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
-  guest points. [[2]] A \code{pp3} object containing the entire background
-  underlying point pattern.
+A list of: [\link{1}] a \code{\link[spatstat]{pp3}} object contining the
+guest points. [\link{2}] A \code{pp3} object containing the entire background
+underlying point pattern.
 }
 \description{
 Simulate morphology of guest molecules in gyroid pattern

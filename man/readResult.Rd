@@ -13,7 +13,7 @@ readResult(fp, type = "ASCII")
 implemented.}
 }
 \value{
-A data.frame with the structure of the TAPSim output.
+A \code{data.frame} with the structure of the TAPSim output.
 }
 \description{
 Given a filepath, read in a TAPSim results file.

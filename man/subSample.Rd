@@ -15,7 +15,7 @@ that you wish to cut down to the volume of \code{underPattern}.}
 }
 \value{
 A \code{\link[spatstat]{pp3}} object containing \code{overPattern}
-  cut down to the volume of \code{underPattern}.
+cut down to the volume of \code{underPattern}.
 }
 \description{
 Takes one \code{\link[spatstat]{pp3}} object, and cuts its volume down to the

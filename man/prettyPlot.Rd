@@ -15,6 +15,15 @@ prettyPlot(
   ...
 )
 }
+\arguments{
+\item{ms}{The \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} to
+be plotted}
+
+\item{rng}{Optional. The RRNG \code{data.frame} used to color ranged peaks in the
+mass spectrum}
+
+\item{hold.par}{}
+}
 \description{
 \code{prettyPlot}
 }

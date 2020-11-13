@@ -17,7 +17,7 @@ localK3est(X, rmax = NULL, nrval = 128, correction = "translation")
 }
 \value{
 Data frame with columns for the local K function around each point in
-  the pattern.
+the pattern.
 }
 \description{
 Outputs local K function information for a \code{\link[spatstat]{pp3}}
