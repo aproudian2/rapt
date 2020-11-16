@@ -7,7 +7,7 @@ Authors@R: c(
     person("Andrew P.", "Proudian",
            email = "aproudia@mines.edu", role = c("aut", "cre")),
     person("Galen", "Vincent",
-           email = "galenvincent@mines.edu", role = "aut"))
+           email = "galen@stat.cmu.edu", role = "aut"))
 Description: Tools for analyzing atom probe tomography (APT) data in R. It
     provides methods for both spatial and mass spectral analysis, along with
     simulation tools.
