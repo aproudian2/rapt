@@ -39,6 +39,7 @@ Zelenty, J. \emph{et al.},
 \seealso{
 Other cluster identification functions: 
 \code{\link{gema.gema}()},
+\code{\link{gema}()},
 \code{\link{msa}()}
 }
 \concept{cluster identification functions}
