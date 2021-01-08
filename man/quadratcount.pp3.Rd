@@ -24,6 +24,7 @@ Divides volume into quadrats and counts the number of points in each quadrat.
 Other spatstat extensions: 
 \code{\link{G3cross}()},
 \code{\link{G3multi}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

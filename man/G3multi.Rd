@@ -26,7 +26,7 @@ a marked point pattern. See Details.}
 \item{rmax}{Optional. Maximum value of argument \emph{r} for which \eqn{G[3IJ](r)}
 will be estimated.}
 
-\item{nrval}{Optional. Number of values of \emph{r} for which \eqn{G3IJ(r)} will
+\item{nrval}{Optional. Number of values of \emph{r} for which \eqn{G[3IJ](r)} will
 be estimated. A large value of \code{nrval} is required to avoid discretisation
 effects.}
 
@@ -54,6 +54,7 @@ point patterns.
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

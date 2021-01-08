@@ -108,6 +108,7 @@ uncorrected empirical \eqn{G[3ij](r)} as if it were an unbiased estimator of
 
 Other spatstat extensions: 
 \code{\link{G3multi}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

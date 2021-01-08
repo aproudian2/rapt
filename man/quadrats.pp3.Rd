@@ -33,6 +33,7 @@ quadrats are justified toward the smallest boundary in each dimension
 Other spatstat extensions: 
 \code{\link{G3cross}()},
 \code{\link{G3multi}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

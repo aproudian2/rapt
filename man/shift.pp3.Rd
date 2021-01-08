@@ -24,6 +24,7 @@ Applies a vector shift to a 3D point pattern
 Other spatstat extensions: 
 \code{\link{G3cross}()},
 \code{\link{G3multi}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

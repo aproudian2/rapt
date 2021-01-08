@@ -503,7 +503,7 @@ quantess.pp3 <- function(M, Z, n, ..., type=2, origin=c(0,0), eps=NULL) {}
 #' @param J Subset of points in `X` to which distances are measured.
 #' @param rmax Optional. Maximum value of argument *r* for which \eqn{G[3IJ](r)}
 #'   will be estimated.
-#' @param nrval Optional. Number of values of *r* for which \eqn{G3IJ(r)} will
+#' @param nrval Optional. Number of values of *r* for which \eqn{G[3IJ](r)} will
 #'   be estimated. A large value of `nrval` is required to avoid discretisation
 #'   effects.
 #' @param disjoint Optional flag indicating whether the subsets `I` and `J` are
@@ -754,6 +754,154 @@ G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
                        new.yexp = substitute(G[list(i, j)](r),
                                              list(i = iname, j = jname)))
   return(result)
+}
+
+#### K3scaled ####
+#' Locally Scaled K-function in Three Dimensions
+#'
+#' Estimates the locally-rescaled K-function of a 3D point pattern
+#'
+#' @param X A pp3
+#' @param lambda An estimate of the intensity function f(x,y,z). Defaults to a
+#'   uniform intensity, estimated with \code{\link[spatstat]{intensity}}; this
+#'   results in the same behavior as \code{\link[spatstat]{K3est}}.
+#' @param correction The correction to be used. Currently only the uncorrected
+#'   estimate (`correction = "none"`) is implemented.
+#'
+#' In 3D the cube root is used instead of the square root to estimate the
+#' correction of the scaled intensity. Thas is, the eucledian distance between
+#' two points \eqn{u[i]} and \eqn{u[j]}, \eqn{d[ij]}, is
+#' multiplied by the mean of the cube roots of the local intensities
+#' \eqn{lambda[c](u[i])} and \eqn{lambda[c](u[j])}.
+#'
+#' @family spatstat extensions
+#' @seealso \code{\link[spatstat]{Kscaled}}
+#'
+K3scaled <- function (X, lambda = NULL, ...,
+                      rmax = NULL, nrval = 128,
+                      correction = "none",#c("isotropic", "translate"),
+                      renormalise = FALSE,
+                      normpower = 1)#, sigma = NULL, varcov = NULL)
+{
+  spatstat::verifyclass(X, "pp3")
+  B <- X$domain
+  npts <- spatstat::npoints(X)
+  volW <- spatstat::volume(B)
+  halfdiameter <- spatstat::diameter(B)/2
+  correction.given <- !missing(correction) && !is.null(correction)
+  correction <- spatstat::pickoption("correction", correction,
+                                     c(none = "none",
+                                       border = "border",
+                                       isotropic = "isotropic",
+                                       Ripley = "isotropic",
+                                       trans = "translate",
+                                       translate = "translate",
+                                       translation = "translate",
+                                       best = "best"),
+                                     multi = TRUE)
+  if (missing(lambda)) {
+    lambda <- rep(spatstat::intensity.ppx(X), npts)
+  }
+  else {
+    if (is.im(lambda)) {
+      # lambda <- safelookup(lambda, X)
+      stop("No im3 implemented for lambda; supply a function")
+    }
+    else if (is.function(lambda)) {
+      lambda <- lambda(X$data$x, X$data$y, X$data$z)
+    }
+    else if (is.ppm(lambda)) {
+      # lambda <- safelookup(predict(lambda, type = "trend"),
+      #                      X)
+      stop("No p3m implemented for lambda; supply a function")
+    }
+    else if (!is.numeric(lambda) || !is.null(dim(lambda)))
+      # stop(paste(sQuote("lambda"),
+      #            "should be a vector, a pixel image, a function or a ppm"))
+      stop(paste(sQuote("lambda"),
+                 "should be a function"))
+    check.nvector(lambda, npts)
+  }
+  # need to confirm that this renormalization is correct in 3D...
+  if (renormalise) {
+    spatstat.utils::check.1.real(normpower)
+    stopifnot(normpower %in% 1:2)
+    renorm.factor <- (volW/sum(1/lambda))^(normpower/2)
+    lambda <- lambda/renorm.factor
+  }
+  cra <- (range(lambda))^(1/3)
+  minrescale <- cra[1]
+  maxrescale <- cra[2]
+  absrmaxdefault <- halfdiameter/maxrescale
+  if (is.null(rmax)) {
+    absrmax <- absrmaxdefault
+  } else {
+    absrmax <- rmax/maxrescale
+  }
+  absr <- seq(0, to = absrmax, length.out = nrval)
+  r <- absr * maxrescale
+  breaks <- breakpts.from.r(r)$val
+  alim <- c(0, min(rmax, maxrescale * absrmaxdefault))
+  rthresh <- minrescale * halfdiameter
+  maxabsdist <- min(rmax/minrescale, halfdiameter)
+  K <- data.frame(r = r, theo = (4/3) * pi * r^3)
+  desc <- c("distance argument r", "theoretical Poisson %s")
+  fname <- c("K", "list(3,scaled)")
+  yexp <- quote(K[list(3,scaled)](r))
+  K <- fv(K, "r", quote(K[3,scaled](r)), "theo" , alim = alim,
+          labl = c("r", "{%s[%s]^{pois}}(r)"),
+          desc = desc, fname = fname, yexp = yexp)
+  needXI <- any(correction %in% c("translate", "isotropic"))
+  close <- closepairs(X, maxabsdist, what = if (needXI)
+    "all"
+    else "ijd")
+  I <- close$i
+  J <- close$j
+  cbrtLambda <- (lambda)^(1/3)
+  lamIJ <- (cbrtLambda[I] + cbrtLambda[J])/2
+  absDIJ <- close$d
+  DIJ <- absDIJ * lamIJ
+  XI <- if (needXI)
+    pp3(close$xi, close$yi, close$zi, B)
+  else NULL
+  if (any(correction == "none")) {
+    wh <- whist(DIJ, breaks)
+    Kun <- cumsum(wh)/npts
+    K <- bind.fv(K, data.frame(un = Kun), "{hat(%s)[%s]^{un}}(r)",
+                 "uncorrected estimate of %s", "un")
+  }
+  ### ***** corrections not implemented *****
+  # if (any(correction == "border")) {
+  #   b <- bdist.points(X) * cbrtLambda
+  #   bI <- b[I]
+  #   RS <- Kount(DIJ, bI, b, breaks)
+  #   Kb <- RS$numerator/RS$denom.count
+  #   Kb[r > rthresh] <- NA
+  #   K <- bind.fv(K, data.frame(border = Kb), "{hat(%s)[%s]^{bord}}(r)",
+  #                "border-corrected estimate of %s", "border")
+  # }
+  # if (any(correction == "translate")) {
+  #   XJ <- pp3(close$xj, close$yj, close$zj, B)
+  #   edgewt <- edge.Trans(XI, XJ, paired = TRUE)
+  #   wh <- whist(DIJ, breaks, edgewt)
+  #   Ktrans <- cumsum(wh)/npts
+  #   Ktrans[r >= rthresh] <- NA
+  #   K <- bind.fv(K, data.frame(trans = Ktrans), "{hat(%s)[%s]^{trans}}(r)",
+  #                "translation-corrected estimate of %s", "trans")
+  # }
+  # if (any(correction == "isotropic")) {
+  #   edgewt <- edge.Ripley(XI, matrix(absDIJ, ncol = 1))
+  #   wh <- whist(DIJ, breaks$val, edgewt)
+  #   Kiso <- cumsum(wh)/npts
+  #   Kiso[r >= rthresh] <- NA
+  #   K <- bind.fv(K, data.frame(iso = Kiso), "{hat(%s)[%s]^{iso}}(r)",
+  #                "Ripley isotropic correction estimate of %s", "iso")
+  # }
+  formula(K) <- . ~ r
+  nama <- rev(colnames(K))
+  fvnames(K, ".") <- nama[!(nama %in% c("r", "bord", "iso", "trans"))]
+  unitname(K) <- c("normalised unit", "normalised units")
+  return(K)
 }
 
 #### K3multi ####
@@ -1214,15 +1362,15 @@ multicall <- function(foo, x, H, ...){
 #' Tstat.pp3 extends the third-order summary statistic
 #' \code{\link[spatstat]{Tstat}} to pp3
 #'
-#' @param X The observed point pattern, from which an estimate of T(r) will be
-#' computed. A \code{\link[spatstat]{pp3}} object.
+#' @param X The observed point pattern, from which an estimate of \eqn{T(r)}
+#' will be computed. A \code{\link[spatstat]{pp3}} object.
 #' @param rmax Optional. Maximum value of argument *r* for which
 #'   \eqn{T(r)} will be estimated.
 #' @param nrval Optional. Number of values of *r* for which
 #'   \eqn{T(r)} will be estimated. A large value of `nrval` is
 #'   required to avoid discretisation effects.
 #' @param correction One of `"none"` or `"isotropic"`. `"translation"`
-#' correction is planned but not yet implemented.
+#'   correction is planned but not yet implemented.
 #' @param ratio Logical. If `TRUE`, the numerator and denominator of each
 #'   edge-corrected estimate will also be saved, for use in analysing replicated
 #'   point patterns.
