@@ -26,6 +26,8 @@ as.data.frame.MassSpectrum <- function(M) {
 #'
 #' @export
 rangeCount <- function(pos, start, end) {
+  stopifnot(length(start) == 1)
+  stopifnot(length(stop) == 1)
   n <- sum(pos$mass > start & pos$mass < end)
   return(n)
 }
@@ -49,6 +51,8 @@ rangeCount <- function(pos, start, end) {
 #'
 #' @export
 rangePOS <- function(pos, start, end) {
+  stopifnot(length(start) == 1)
+  stopifnot(length(stop) == 1)
   pos[pos$mass > start & pos$mass < end,]
 }
 

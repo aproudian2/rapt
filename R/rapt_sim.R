@@ -16,21 +16,21 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
 {
   if (missing(f) || (is.numeric(f) && length(f) == 1))
-    return(runifpoint3(n, domain = win, nsim = nsim, drop = drop))
+    return(spatstat::runifpoint3(n, domain = win, nsim = nsim, drop = drop))
   if (!is.function(f) && !is.im(f))
     stop(paste(sQuote("f"), "must be a function"))
-  verifyclass(win, "box3")
+  spatstat::verifyclass(win, "box3")
   if (n == 0) {
     emp <- pp3(numeric(0), numeric(0), numeric(0), window = win)
     if (nsim == 1 && drop)
       return(emp)
     result <- rep(list(emp), nsim)
     names(result) <- paste("Simulation", 1:nsim)
-    return(as.anylist(result))
+    return(spatstat::as.anylist(result))
   }
   result <- vector(mode = "list", length = nsim)
   for (isim in 1:nsim) {
-    X <- pp3(numeric(0), numeric(0), numeric(0), window = win)
+    X <- spatstat::pp3(numeric(0), numeric(0), numeric(0), window = win)
     pbar <- 1
     nremaining <- n
     totngen <- 0
@@ -39,20 +39,21 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
       ntries <- ntries + 1
       ngen <- nremaining/pbar + 10
       totngen <- totngen + ngen
-      prop <- runifpoint3(ngen, domain = win)
+      prop <- spatstat::runifpoint3(ngen, domain = win)
       if (npoints(prop) > 0) {
         fvalues <- f(prop$data$x, prop$data$y, prop$data$z, ...)
         paccept <- fvalues/fmax
-        u <- runif(npoints(prop))
+        u <- runif(spatstat::npoints(prop))
         Y <- prop[u < paccept]
-        if (npoints(Y) > 0) {
-          X <- superimpose(X, Y, W = win)
-          nX <- npoints(X)
+        if (spatstat::npoints(Y) > 0) {
+          X <- spatstat::superimpose(X, Y, W = win)
+          nX <- spatstat::npoints(X)
           pbar <- nX/totngen
           nremaining <- n - nX
           if (nremaining <= 0) {
             if (verbose)
-              splat("acceptance rate = ", round(100 * pbar, 2), "%")
+              spatstat.utils::splat("acceptance rate = ",
+                                    round(100 * pbar, 2), "%")
             result[[isim]] <- if (nX == n)
               X
             else X[1:n]
@@ -62,13 +63,13 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
       }
       if (ntries > giveup)
         stop(paste("Gave up after", giveup * n, "trials with",
-                   npoints(X), "points accepted"))
+                   spatstat::npoints(X), "points accepted"))
     }
   }
   if (nsim == 1 && drop)
     return(result[[1]])
   names(result) <- paste("Simulation", 1:nsim)
-  return(as.anylist(result))
+  return(spatstat::as.anylist(result))
 }
 
 #### rPoissonCluster3 ####
@@ -90,12 +91,12 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
     f <- rcluster
     rcluster <- function(..., rmax) f(...)
   }
-  verifyclass(win, "box3")
-  dilated <- box3(win$xrange + c(-expand, expand),
-                  win$yrange + c(-expand, expand),
-                  win$yrange + c(-expand, expand))
-  parentlist <- rpoispp3(kappa, domain = dilated,
-                        nsim = nsim)
+  spatstat::verifyclass(win, "box3")
+  dilated <- spatstat::box3(win$xrange + c(-expand, expand),
+                            win$yrange + c(-expand, expand),
+                            win$yrange + c(-expand, expand))
+  parentlist <- spatstat::rpoispp3(kappa, domain = dilated,
+                                   nsim = nsim)
   if (nsim == 1)
     parentlist <- list(parentlist)
   resultlist <- vector(mode = "list", length = nsim)
@@ -103,7 +104,7 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
     parents <- parentlist[[isim]]
     result <- NULL
     res.full <- NULL
-    np <- npoints(parents)
+    np <- spatstat::npoints(parents)
     if (np > 0) {
       xparent <- parents$data$x
       yparent <- parents$data$y

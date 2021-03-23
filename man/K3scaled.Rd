@@ -19,8 +19,8 @@ K3scaled(
 \item{X}{A pp3}
 
 \item{lambda}{An estimate of the intensity function f(x,y,z). Defaults to a
-uniform intensity, resulting in the same behavior as
-\code{\link[spatstat]{K3est}}.}
+uniform intensity, estimated with \code{\link[spatstat]{intensity}}; this
+results in the same behavior as \code{\link[spatstat]{K3est}}.}
 
 \item{correction}{The correction to be used. Currently only the uncorrected
 estimate (\code{correction = "none"}) is implemented.

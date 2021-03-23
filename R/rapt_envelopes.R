@@ -424,29 +424,34 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
   } else {
     cores2use <- cores
   }
-  cl <- makePSOCKcluster(cores2use)
-  clusterExport(cl,"percentSelect")
-  clusterExport(cl,c("pattern","rmax","nrval","correction"),
-                envir = environment())
-  clusterEvalQ(cl,library(spatstat))
+  if(.Platform$OS.type == "windows"){
+    cl <- makePSOCKcluster(cores2use)
+    clusterExport(cl,"percentSelect")
+    clusterExport(cl,c("pattern","rmax","nrval","correction"),
+                  envir = environment())
+    clusterEvalQ(cl,library(spatstat))
+  } else {
+    cl <- makeForkCluster(cores2use)
+  }
 
   percents <- as.list(rep(perc, nEvals))
 
   # apply G3est function to each of the pp3 patterns in parallel
-  if(correction=="rs"){
+  if(correction=="rs") {
     result <- parallel::parLapply(cl,percents,function(x){
-      G3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "rs")
+      spatstat::G3est(percentSelect(x,pattern),
+                      rmax = rmax, nrval = nrval,correction = "rs")
     })
-  }else if(correction=="km"){
+  }else if(correction=="km") {
     result <- parallel::parLapply(cl,percents,function(x){
       G3est(percentSelect(x,pattern),rmax=rmax,nrval=nrval,correction = "km")
     })
-  }else if(correction=="Hanisch"){
+  }else if(correction=="Hanisch") {
     result <- parallel::parLapply(cl,percents,function(x){
-      G3est(percentSelect(x,pattern), rmax=rmax, nrval=nrval,
-            correction = "Hanisch")
+      spatstat::G3est(percentSelect(x,pattern),
+                      rmax = rmax, nrval = nrval, correction = "Hanisch")
     })
-  }else{
+  }else {
     print("Please input valid correction argument.")
     return()
   }
@@ -460,22 +465,22 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
   tests[,1] <- result[[1]]$r
 
   # convert the results into the matrix tests
-  for(i in 1:length(result)){
+  for(i in 1:length(result)) {
     if(correction=="rs"){
       tests[,(1+i)] <- result[[i]]$rs
-    }else if(correction == "km"){
+    }else if(correction == "km") {
       tests[,(1+i)] <- result[[i]]$km
-    }else if(correction == "Hanisch"){
+    }else if(correction == "Hanisch") {
       tests[,(1+i)] <- result[[i]]$han
     }
   }
 
   # Convert to anomaly deviation or not
-  if (anom == FALSE){
+  if (anom == FALSE) {
     # If not, just return the regular tests matrix
     return(tests)
 
-  }else if (anom == TRUE){
+  }else if (anom == TRUE) {
     # If yes, sort the values, subtract toSub from another pattern or
     # from the 50th perentile of this pattern. Return the results.
     tvals <- tests[,2:ncol(tests)]

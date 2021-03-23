@@ -28,15 +28,17 @@ localK3est <- function(X, rmax=NULL, nrval=128, correction="translation") {
                              best="isotropic"),
                            multi=TRUE)
 
-  if(correction != "translation"){
-    print("Local K3est function is only implemented for the translation edge correction.")
+  if(correction != "translation") {
+    msg <- paste("Local K3est function is currently only implemented for the",
+                 "translation edge correction.")
+    print(msg)
     return()
   }
 
   B <- X$domain
   if(is.null(rmax))
     rmax <- diameter(B)/2
-  r <- seq(from=0, to=rmax, length.out=nrval)
+  r <- seq(from = 0, to = rmax, length.out = nrval)
   np <- npoints(X)
 
   # extract the x,y,z ranges as a vector of length 6
@@ -45,7 +47,8 @@ localK3est <- function(X, rmax=NULL, nrval=128, correction="translation") {
   # extract coordinates
   coo <- coords(X)
 
-  u <- localk3engine(coo$x, coo$y, coo$z, flatbox, rmax=rmax, nrval=nrval)
+  u <- localk3engine(coo$x, coo$y, coo$z, flatbox,
+                     rmax = rmax, nrval = nrval)
   um <- matrix(u, nrow = nrval, ncol = np)
   kavg <- apply(um, 1, mean)
 
