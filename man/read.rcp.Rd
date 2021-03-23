@@ -4,12 +4,13 @@
 \alias{read.rcp}
 \title{Read an RCP Simulation}
 \usage{
-read.rcp(fpath_config, fpath_sys, scaleUp = FALSE, newRadius = 0.5)
+read.rcp(fpath_config, fpath_sys = NULL, scaleUp = FALSE, newRadius = 0.5)
 }
 \arguments{
 \item{fpath_config}{The file path to the RCP FinalConfig file.}
 
-\item{fpath_sys}{The file path to the associated RCP system file.}
+\item{fpath_sys}{The file path to the associated RCP system file. Must only
+be specified if \code{scaleUp == TRUE}.}
 
 \item{newRadius}{Numeric. If \code{scaleUP = TRUE}, this is the new radius
 that the RCP particles will be scaled to. Default is 0.5.}

@@ -8,7 +8,8 @@
 #' Reads in a RCP Generator output file as a \code{\link[spatstat]{pp3}} object.
 #'
 #' @param fpath_config The file path to the RCP FinalConfig file.
-#' @param fpath_sys The file path to the associated RCP system file.
+#' @param fpath_sys The file path to the associated RCP system file. Must only
+#'   be specified if `scaleUp == TRUE`.
 #' @param scaleUP Boolean. If `TRUE`, scales RCP so particles have new
 #'   radius. If `FALSE` (the default), RCP stays as generated.
 #' @param newRadius Numeric. If `scaleUP = TRUE`, this is the new radius
@@ -35,14 +36,16 @@
 #' Generator Algorithm}
 #'
 #' @export
-read.rcp <- function(fpath_config, fpath_sys,
+read.rcp <- function(fpath_config, fpath_sys = NULL,
                      scaleUp = FALSE, newRadius = 0.5) {
+  if (is.null(fpath_sys & scaleUp)) {
+    stop("fpath_sys must be specified for scaling")
+  }
   rcp <- read.table(fpath_config,
                     sep = " ", col.names = c("x", "y", "z", "type"))
   pp <- createSpat(rcp[,c("x","y","z")])
   if (scaleUp == TRUE) {
-    a <- read.table(fpath_sys) # Change this to scan(); make sys optional
-    r <- as.numeric(levels(a$V1)[2])
+    r <- scan(fpath_sys, skip = 7, n = 1)
     pp <- scaleRCP(pp, newRadius = newRadius, oldRadius = r)
   }
   return(pp)
