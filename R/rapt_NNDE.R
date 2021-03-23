@@ -102,8 +102,6 @@ nndensity.pp3 <- function(X, k, nx, ny, nz, dz,
 #'   computations. This parameter is the number of points per split set.
 #' @param cores Number of cores to use for parallelization. Set to one for
 #'   serial calculation.
-#' @param os Either 'windows', 'mac', or 'linux'. Changes the parallelization
-#'   method used.
 #' @return List containing: [[1]] A data frame of the intensity estimates for
 #'   each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
 #'   The coordinates of the original points from the data set. [[4]] A vector

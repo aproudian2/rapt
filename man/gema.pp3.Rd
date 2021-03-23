@@ -4,7 +4,7 @@
 \alias{gema.pp3}
 \title{Identify Clusters in a Point Pattern Using GEMA}
 \usage{
-\method{gema}{pp3}(X, cluster = NULL, threshold = 0.5)
+\method{gema}{pp3}(X, cluster = NULL, kde.n = 20, max.clusters = 30, threshold = 0.5)
 }
 \arguments{
 \item{X}{The point pattern (object of class \code{\link[spatstat]{ppp}} or
@@ -13,6 +13,11 @@
 \item{cluster}{The marks of \code{X} that are cluster-type points. If
 \code{cluster = NULL} (the default) or \code{X} is unmarked, all points are assumed
 to be cluster-type points.}
+
+\item{kde.n}{Number of sampling grid lines for the 3D kernel density estimate}
+
+\item{max.clusters}{The maximum number of clusters to define the cluster
+search initialization. See Details.}
 
 \item{threshold}{The probability threshold at which to assign a point to a
 cluster or to the background. Defaults to 0.5, which is usually Bayes
