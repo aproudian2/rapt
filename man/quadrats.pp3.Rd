@@ -4,7 +4,7 @@
 \alias{quadrats.pp3}
 \title{Divide a 3D Point Pattern into Sub-Volumes}
 \usage{
-quadrats.pp3(X, nx, ny, nz, box.dims = NULL)
+quadrats.pp3(X, nx = 5, ny = nx, nz = ny, box.dims = NULL)
 }
 \arguments{
 \item{X}{The \code{\link[spatstat]{pp3}} object to split up.}

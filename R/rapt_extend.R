@@ -371,7 +371,7 @@ plot3d.pp3 <- function(X, ...) {
 #'
 #' @export
 # Should return an object of class "tess" to provide consistent behaviour
-quadrats.pp3 <- function(X, nx, ny, nz, box.dims = NULL){
+quadrats.pp3 <- function(X, nx = 5, ny = nx, nz = ny, box.dims = NULL) {
   # Rewrite to use n = c(nx,ny,nz) with a default of c(1,1,1).
   spatstat::verifyclass(X, c("pp3", "box3"))
   w <- as.box3(X)
@@ -738,7 +738,8 @@ G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
   if (sum(I) == 0)
     stop("No points are of type i")
   if (i == j) {
-    result <- spatstat::G3est(X[I], rmax = rmax, nrval = nrval)
+    result <- spatstat::G3est(X[I], rmax = rmax, nrval = nrval,
+                              correction = correction)
   } else {
     J <- (marx == j)
     if (sum(J) == 0)
