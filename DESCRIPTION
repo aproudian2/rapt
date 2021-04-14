@@ -1,8 +1,8 @@
 Package: rapt
 Type: Package
 Title: Atom Probe Tomography Analysis
-Version: 0.2.3
-Date: 2021-03-29
+Version: 0.3.0
+Date: 2021-04-13
 Authors@R: c(
     person("Andrew P.", "Proudian",
            email = "aproudia@mines.edu", role = c("aut", "cre")),
@@ -15,9 +15,9 @@ License: CC-BY-SA-4.0
 LazyData: TRUE
 SystemRequirements: C++11
 Depends:
-  R (>= 3.6),
+  R (>= 4.0),
   MALDIquant (>= 1.19),
-  spatstat (>= 1.64)
+  spatstat (>= 2.1)
 Imports:
   enviPat (>= 2.4),
   pracma (>= 2.2),

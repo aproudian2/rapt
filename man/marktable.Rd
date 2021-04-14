@@ -27,7 +27,7 @@ This is an S3 generic that extends the use of
 \code{\link[spatstat]{marktable}} beyond "ppp" objects.
 }
 \seealso{
-\code{\link[spatstat]{marktable.ppp}}, \code{\link{marktable.pp3}}
+\code{\link[spatstat.core]{marktable.ppp}}, \code{\link{marktable.pp3}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

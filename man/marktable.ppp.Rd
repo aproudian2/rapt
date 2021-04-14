@@ -10,5 +10,5 @@
 Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 }
 \seealso{
-\code{\link[spatstat]{marktable}}
+\code{\link[spatstat.core]{marktable}}
 }

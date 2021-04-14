@@ -20,16 +20,16 @@
 #'   point.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{marktable.ppp}}, \code{\link{marktable.pp3}}
+#' @seealso \code{\link[spatstat.core]{marktable.ppp}}, \code{\link{marktable.pp3}}
 #' @export
 marktable <- function(X, ...) UseMethod("marktable")
 
 ### marktable.ppp ###
 #' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 #'
-#' @seealso \code{\link[spatstat]{marktable}}
+#' @seealso \code{\link[spatstat.core]{marktable}}
 #' @export
-marktable.ppp <- spatstat::marktable
+marktable.ppp <- spatstat.core::marktable
 
 ### marktable.pp3 ###
 #' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
@@ -102,10 +102,10 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
 #' Random Perturbation of a Point Pattern
 #'
 #' @description This is an S3 generic that extends the use of
-#'   \code{\link[spatstat]{rjitter}} beyond "ppp" objects.
+#'   \code{\link[spatstat.geom]{rjitter}} beyond "ppp" objects.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}},
+#' @seealso \code{\link[spatstat.geom]{rjitter}}, \code{\link{rjitter.ppp}},
 #'   \code{\link{rjitter.pp3}}
 #'
 #' @export
@@ -115,18 +115,18 @@ rjitter <- function(X, ...) UseMethod("rjitter")
 #' Random Perturbation of a Point Pattern
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.pp3}}
+#' @seealso \code{\link[spatstat.geom]{rjitter}}, \code{\link{rjitter.pp3}}
 #' @export
-rjitter.ppp <- spatstat::rjitter
+rjitter.ppp <- spatstat.geom::rjitter
 
 ### rjitter.pp3 ###
 #' Random Perturbation of a Point Pattern
 #'
 #' Applies independent random displacements to each point in a point pattern.
-#' Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
+#' Extends \code{\link[spatstat.geom]{rjitter}} to \code{\link[spatstat]{pp3}}.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}}
+#' @seealso \code{\link[spatstat.geom]{rjitter}}, \code{\link{rjitter.ppp}}
 #'
 #' @export
 rjitter.pp3 <- function(X, domain = box3()) {
@@ -988,10 +988,10 @@ K3multi <- function(X, I, J, r, breaks,
 #' Studentised Permutation Test
 #'
 #' @description This is an S3 generic that extends the use of
-#'   \code{\link[spatstat]{studpermu.test}} beyond "ppp" objects.
+#'   \code{\link[spatstat.core]{studpermu.test}} beyond "ppp" objects.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{studpermu.test}},
+#' @seealso \code{\link[spatstat.core]{studpermu.test}},
 #' \code{\link{studpermu.test.pp3}}
 #'
 #' @export
@@ -1000,15 +1000,15 @@ studpermu.test <- function(X, ...) UseMethod("studpermu.test")
 ### studpermu.test.list ###
 #' Studentised Permutation Test
 #'
-#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @seealso \code{\link[spatstat.core]{studpermu.test}}
 #' @export
-studpermu.test.list <- spatstat::studpermu.test
+studpermu.test.list <- spatstat.core::studpermu.test
 
 
 ### studpermu.test.hyperframe ###
 #' Studentised Permutation Test
 #'
-#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @seealso \code{\link[spatstat.core]{studpermu.test}}
 #' @export
 studpermu.test.hyperframe <- function(X, ...) {
   h.class <- unclass(X)$vclass
@@ -1026,7 +1026,7 @@ studpermu.test.hyperframe <- function(X, ...) {
 #'
 #' @seealso \code{\link[spatstat]{studpermu.test}}
 #' @export
-studpermu.test.ppp <- spatstat::studpermu.test
+studpermu.test.ppp <- spatstat.core::studpermu.test
 
 ### studpermu.test.pp3 ###
 #' Studentised Permutation Test
@@ -1070,8 +1070,8 @@ studpermu.test.ppp <- spatstat::studpermu.test
 #' @references Hahn, U. (2012) A studentized permutation test for the comparison
 #'   of spatial point patterns.
 #'   *Journal of the American Statistical Association* **107** (498), 754-764.
-#' @seealso \code{\link[spatstat]{studpermu.test}},
-#'   \code{link[spatstat]{plot.studpermutest}}
+#' @seealso \code{\link[spatstat.core]{studpermu.test}},
+#'   \code{link[spatstat.core]{plot.studpermutest}}
 #'
 #' @export
 # Add ability to supply a summary function directly...
@@ -1549,10 +1549,10 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
 #' Distance to Boundary of Domain
 #'
 #' @description This is an S3 generic that extends the use of
-#'   \code{\link[spatstat]{bdist.points}} beyond "ppp" objects.
+#'   \code{\link[spatstat.geom]{bdist.points}} beyond "ppp" objects.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{bdist.points}}, \code{\link{bdist.points.pp3}}
+#' @seealso \code{\link[spatstat.geom]{bdist.points}}, \code{\link{bdist.points.pp3}}
 #'
 #' @export
 bdist.points <- function(X, ...) UseMethod("bdist.points")
@@ -1560,9 +1560,9 @@ bdist.points <- function(X, ...) UseMethod("bdist.points")
 ### bdist.points.ppp ###
 #' Distance to Boundary of Window
 #'
-#' @seealso \code{\link[spatstat]{bdist.points}}
+#' @seealso \code{\link[spatstat.geom]{bdist.points}}
 #' @export
-bdist.points.ppp <- spatstat::bdist.points
+bdist.points.ppp <- spatstat.geom::bdist.points
 
 ### bdist.points.pp3 ###
 #' Distance to Boundary of Domain

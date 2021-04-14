@@ -8,10 +8,10 @@
 }
 \description{
 Applies independent random displacements to each point in a point pattern.
-Extends \code{\link[spatstat]{rjitter}} to \code{\link[spatstat]{pp3}}.
+Extends \code{\link[spatstat.geom]{rjitter}} to \code{\link[spatstat]{pp3}}.
 }
 \seealso{
-\code{\link[spatstat]{rjitter}}, \code{\link{rjitter.ppp}}
+\code{\link[spatstat.geom]{rjitter}}, \code{\link{rjitter.ppp}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

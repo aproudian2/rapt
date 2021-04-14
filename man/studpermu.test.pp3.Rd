@@ -66,8 +66,8 @@ of spatial point patterns.
 \emph{Journal of the American Statistical Association} \strong{107} (498), 754-764.
 }
 \seealso{
-\code{\link[spatstat]{studpermu.test}},
-\code{link[spatstat]{plot.studpermutest}}
+\code{\link[spatstat.core]{studpermu.test}},
+\code{link[spatstat.core]{plot.studpermutest}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

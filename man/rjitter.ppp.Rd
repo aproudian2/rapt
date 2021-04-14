@@ -10,7 +10,7 @@
 Random Perturbation of a Point Pattern
 }
 \seealso{
-\code{\link[spatstat]{rjitter}}, \code{\link{rjitter.pp3}}
+\code{\link[spatstat.geom]{rjitter}}, \code{\link{rjitter.pp3}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

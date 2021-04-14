@@ -188,6 +188,7 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
 createDet <- function(ato, win = NULL, marks = NULL) {
   if(is.null(win)) {
     win <- spatstat::ripras(ato$dx, ato$dy)
+    unitname(win) <- "cm"
   }
   det.dat <- spatstat::ppp(ato$dx, ato$dy, window = win, marks = marks)
   attr(det.dat, "metaData") <- attr(ato, "metaData")
