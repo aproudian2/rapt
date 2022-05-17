@@ -160,8 +160,8 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
   if(is.null(win)) {
     pp3.box <- sapply(pos[1:3], range)
   }
-  pp3.dat <- spatstat::pp3(pos$x, pos$y, pos$z, pp3.box, marks = marks)
-  pp3.dat <- pp3.dat[spatstat::inside.boxx(pp3.dat, w = pp3.box)]
+  pp3.dat <- spatstat.geom::pp3(pos$x, pos$y, pos$z, pp3.box, marks = marks)
+  pp3.dat <- pp3.dat[spatstat.geom::inside.boxx(pp3.dat, w = pp3.box)]
   attr(pp3.dat, "metaData") <- attr(pos, "metaData")
   return(pp3.dat)
 }
