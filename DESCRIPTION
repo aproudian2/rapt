@@ -35,6 +35,6 @@ Suggests:
     knitr (>= 1.29),
     rmarkdown (>= 2.3)
 RdMacros: Rdpack
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
