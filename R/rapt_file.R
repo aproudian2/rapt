@@ -187,9 +187,9 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
 #' @export
 createDet <- function(ato, win = NULL, marks = NULL) {
   if(is.null(win)) {
-    win <- spatstat::ripras(ato$dx, ato$dy)
+    win <- spatstat.geom::ripras(ato$dx, ato$dy)
   }
-  det.dat <- spatstat::ppp(ato$dx, ato$dy, window = win, marks = marks)
+  det.dat <- spatstat.geom::ppp(ato$dx, ato$dy, window = win, marks = marks)
   attr(det.dat, "metaData") <- attr(ato, "metaData")
   return(det.dat)
 }
