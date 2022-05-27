@@ -16,7 +16,7 @@ in the HCP structure.}
 
 \item{sigma2}{Background density. Value between 0 and 1.}
 
-\item{win}{A \code{\link[spatstat]{box3}} object containing the window of the
+\item{win}{A \code{\link[spatstat.geom]{box3}} object containing the window of the
 cluster set you want to make.}
 
 \item{background}{Either \code{'poisson'} or \code{'rcp'}. Whether to have
@@ -28,7 +28,7 @@ to \link{1} the FinalConfig file of the RCP pattern desired, \link{2} the system
 of the RCP pattern desired}
 }
 \value{
-A list of [\link{1}] A \code{\link[spatstat]{pp3}} object containing the
+A list of [\link{1}] A \code{\link[spatstat.geom]{pp3}} object containing the
 cluster points, [\link{2}] The overall intensity of the point pattern; Total
 number of points/total volume.
 }

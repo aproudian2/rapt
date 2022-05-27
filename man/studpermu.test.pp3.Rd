@@ -25,7 +25,7 @@ identifies which column of \code{X} contains the point patterns. The right
 side identifies the grouping factor}
 
 \item{summaryfunction}{Summary function applicable to pp3. Defaults to
-\code{link[spatstat]{K3est}}}
+\code{link[spatstat.core]{K3est}}}
 
 \item{...}{Additional arguments passed to \code{summaryfunction}}
 

@@ -19,8 +19,8 @@ K3scaled(
 \item{X}{A pp3}
 
 \item{lambda}{An estimate of the intensity function f(x,y,z). Defaults to a
-uniform intensity, estimated with \code{\link[spatstat]{intensity}}; this
-results in the same behavior as \code{\link[spatstat]{K3est}}.}
+uniform intensity, estimated with \code{\link[spatstat.geom]{intensity}}; this
+results in the same behavior as \code{\link[spatstat.core]{K3est}}.}
 
 \item{correction}{The correction to be used. Currently only the uncorrected
 estimate (\code{correction = "none"}) is implemented.
@@ -35,7 +35,7 @@ multiplied by the mean of the cube roots of the local intensities
 Estimates the locally-rescaled K-function of a 3D point pattern
 }
 \seealso{
-\code{\link[spatstat]{Kscaled}}
+\code{\link[spatstat.core]{Kscaled}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

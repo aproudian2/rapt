@@ -7,16 +7,16 @@
 bK3est(X, rmax = NULL, nrval = 128)
 }
 \arguments{
-\item{X}{The point pattern for analysis. \code{\link[spatstat]{pp3}} object.}
+\item{X}{The point pattern for analysis. \code{\link[spatstat.geom]{pp3}} object.}
 
-\item{rmax}{See \code{\link[spatstat]{K3est}}. Maximum radius to be
-calculated for \code{\link[spatstat]{K3est}}.}
+\item{rmax}{See \code{\link[spatstat.core]{K3est}}. Maximum radius to be
+calculated for \code{\link[spatstat.core]{K3est}}.}
 
-\item{nrval}{See \code{\link[spatstat]{K3est}}. Number of radii that
-\code{\link[spatstat]{K3est}} should be calculated at.}
+\item{nrval}{See \code{\link[spatstat.core]{K3est}}. Number of radii that
+\code{\link[spatstat.core]{K3est}} should be calculated at.}
 }
 \value{
-Border corrected \code{\link[spatstat]{K3est}} data for object X.
+Border corrected \code{\link[spatstat.core]{K3est}} data for object X.
 }
 \description{
 Helper function for \code{\link{pK3est}}. This function is a hand written

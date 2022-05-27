@@ -44,13 +44,13 @@ For a marked point pattern, estimate the distribution of the distance from a
 typical point in subset \code{I} to the nearest point of subset \code{J}.
 }
 \details{
-The function \code{G3multi} generalises \code{\link[spatstat]{G3est}} (for
+The function \code{G3multi} generalises \code{\link[spatstat.core]{G3est}} (for
 unmarked point patterns) and \code{G3dot} (unimplmented) and
 \code{\link{G3cross}} (for multitype point patterns) to arbitrary marked
 point patterns.
 }
 \seealso{
-\code{\link{G3cross}}, \code{\link[spatstat]{G3est}}
+\code{\link{G3cross}}, \code{\link[spatstat.core]{G3est}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

@@ -37,12 +37,12 @@ accepted.}}
 }
 \value{
 A function value table (object of class "fv") which can be plotted
-directly. See \code{\link[spatstat]{envelope}} for further details.
+directly. See \code{\link[spatstat.core]{envelope}} for further details.
 }
 \description{
 Create an Envelope in Parallel
 }
 \seealso{
-\link[spatstat]{envelope}, \link[spatstat]{K3est},
-\link[spatstat]{G3est}, \link[spatstat]{F3est}, \link[spatstat]{pcf3est}
+\link[spatstat.core]{envelope}, \link[spatstat.core]{K3est},
+\link[spatstat.core]{G3est}, \link[spatstat.core]{F3est}, \link[spatstat.core]{pcf3est}
 }

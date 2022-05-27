@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_extend.R
 \name{plot3d.pp3}
 \alias{plot3d.pp3}
-\title{Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.}
+\title{Plot a \code{\link[spatstat.geom]{pp3}} in a manipulatable 3D plot.}
 \usage{
 plot3d.pp3(X, ...)
 }

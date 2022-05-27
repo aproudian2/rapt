@@ -29,11 +29,11 @@ makecluster(
 )
 }
 \arguments{
-\item{under}{The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
+\item{under}{The underlaying RCP pattern. A \code{\link[spatstat.geom]{pp3}}
 object containing the correctly scaled RCP pattern point locations. Should
 have used scaleRCP prior to putting the object into this argument.}
 
-\item{over}{The overlaying RCP pattern. A \code{\link[spatstat]{pp3}} object
+\item{over}{The overlaying RCP pattern. A \code{\link[spatstat.geom]{pp3}} object
 containing the RCP pattern point locations. Scaled equal to the underlaying
 pattern.}
 
@@ -100,30 +100,30 @@ points? TRUE or FALSE.}
 \value{
 Returns are different based on \code{type}.
 \subsection{\code{type} = "ppc" or "dist"}{List of: [\link{1}]
-\code{\link[spatstat]{pp3}} object containing the cluster marked point
-locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+\code{\link[spatstat.geom]{pp3}} object containing the cluster marked point
+locations. [\link{2}] \code{\link[spatstat.geom]{pp3}} object containing the
 overlaying RCP pattern after scaling. [\link{3}] Numeric vector containing: \link{1}
 points per cluster 1 \link{2} number of points with points per cluster 1 \link{3}
 points per cluster 2 \link{4} number of points with points per cluster 2. }
 \subsection{\code{type} = "cr", speed = "slow"}{List of: [\link{1}]
-\code{\link[spatstat]{pp3}} object containing the cluster marked point
-locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+\code{\link[spatstat.geom]{pp3}} object containing the cluster marked point
+locations. [\link{2}] \code{\link[spatstat.geom]{pp3}} object containing the
 overlaying RCP pattern after scaling. [\link{3}] Numeric vector containing: \link{1}
 number of clusters \link{2} number of points in those clusters.}
 \subsection{\code{type} = "cr", speed = "fast"}{List of: [\link{1}]
-\code{\link[spatstat]{pp3}} object containing the cluster marked point
-locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+\code{\link[spatstat.geom]{pp3}} object containing the cluster marked point
+locations. [\link{2}] \code{\link[spatstat.geom]{pp3}} object containing the
 overlaying RCP pattern after scaling. [\link{3}] factor containing the number of
 points in each cluster.}
 \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of:
-[\link{1}] \code{\link[spatstat]{pp3}} object containing the cluster marked
-point locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+[\link{1}] \code{\link[spatstat.geom]{pp3}} object containing the cluster marked
+point locations. [\link{2}] \code{\link[spatstat.geom]{pp3}} object containing the
 overlaying RCP pattern after scaling. [\link{3}] number of points put in or
 taken away at random. [\link{4}] Vector of nearest neighbor distance (cluster
 center to center) from each cluster}
 \subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
-[\link{1}] \code{\link[spatstat]{pp3}} object containing the cluster marked
-point locations. [\link{2}] \code{\link[spatstat]{pp3}} object containing the
+[\link{1}] \code{\link[spatstat.geom]{pp3}} object containing the cluster marked
+point locations. [\link{2}] \code{\link[spatstat.geom]{pp3}} object containing the
 overlaying RCP pattern after scaling. [\link{3}] number of points put in or
 taken away at random. [\link{4}] Vector of nearest neighbor distance (cluster
 center to center) from each cluster. [\link{5}] A vector contining the radius of

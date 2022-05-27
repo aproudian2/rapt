@@ -3,14 +3,14 @@
 #
 
 #### localK3est ####
-#' Extends \code{\link[spatstat]{localK}} to 3D.
+#' Extends \code{\link[spatstat.core]{localK}} to 3D.
 #'
-#' Outputs local K function information for a \code{\link[spatstat]{pp3}}
+#' Outputs local K function information for a \code{\link[spatstat.geom]{pp3}}
 #' pattern. Currently only implemented for the translation edge correction.
 #'
-#' @param X A \code{\link[spatstat]{pp3}} object to test.
-#' @param rmax See \code{\link[spatstat]{K3est}}.
-#' @param nrval See \code{\link[spatstat]{K3est}}.
+#' @param X A \code{\link[spatstat.geom]{pp3}} object to test.
+#' @param rmax See \code{\link[spatstat.core]{K3est}}.
+#' @param nrval See \code{\link[spatstat.core]{K3est}}.
 #' @param correction Currently only "translation" implemented.
 #'
 #' @return Data frame with columns for the local K function around each point in
@@ -76,11 +76,11 @@ localK3est <- function(X, rmax=NULL, nrval=128, correction="translation") {
 #' Similar to \code{\link{anomK3est}}, but returns the anomaly K3est for each
 #' point in the pattern.
 #'
-#' @param X The \code{\link[spatstat]{pp3}} object to be tested.
+#' @param X The \code{\link[spatstat.geom]{pp3}} object to be tested.
 #' @param toSub The vector of values to subtract from the square root of the
 #'   results of the K function applied to X.
-#' @param rmax See \code{\link[spatstat]{K3est}}.
-#' @param nrval See \code{\link[spatstat]{K3est}}.
+#' @param rmax See \code{\link[spatstat.core]{K3est}}.
+#' @param nrval See \code{\link[spatstat.core]{K3est}}.
 #'
 #' @return Date frame with columns of the anomaly K test for each point in the
 #'   pattern.

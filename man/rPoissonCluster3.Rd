@@ -15,11 +15,11 @@ rPoissonCluster3(
 )
 }
 \description{
-\code{rPoissonCluster3} extends \code{\link[spatstat]{rPoissonCluster}} to
-\code{\link[spatstat]{pp3}}.
+\code{rPoissonCluster3} extends \code{\link[spatstat.random]{rPoissonCluster}} to
+\code{\link[spatstat.geom]{pp3}}.
 }
 \seealso{
-\code{\link[spatstat]{rpoint}}
+\code{\link[spatstat.random]{rpoint}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

@@ -7,7 +7,7 @@
 msa(X, dmax, Nmin, denv, der, clust.mark = c("A"))
 }
 \arguments{
-\item{X}{A marked \code{\link[spatstat]{pp3}} object on which MSA will be
+\item{X}{A marked \code{\link[spatstat.geom]{pp3}} object on which MSA will be
 performed.}
 
 \item{dmax}{The maximum distance two points can be separated by and still be
@@ -42,7 +42,7 @@ points that reside in clusters.
 }
 }
 \description{
-\code{msa} segments a marked \code{\link[spatstat]{pp3}} into clusters and
+\code{msa} segments a marked \code{\link[spatstat.geom]{pp3}} into clusters and
 background matrix using the maximum separation algorithm (MSA). The marks can
 have more than two types, but MSA requires that each type is categorized as
 either a cluster or non-cluster species.

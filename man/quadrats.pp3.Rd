@@ -7,7 +7,7 @@
 quadrats.pp3(X, nx = 5, ny = nx, nz = ny, box.dims = NULL)
 }
 \arguments{
-\item{X}{The \code{\link[spatstat]{pp3}} object to split up.}
+\item{X}{The \code{\link[spatstat.geom]{pp3}} object to split up.}
 
 \item{nx, ny, nz}{Number of rectangular quadrats in the x, y, and z directions,
 if you wish to split up your point patthern by number of boxes.}
@@ -28,7 +28,7 @@ quadrats are justified toward the smallest boundary in each dimension
 (\emph{i.e.} (\code{c(min(x), min(y), min(z))})).
 }
 \seealso{
-\code{\link[spatstat]{quadrats}}
+\code{\link[spatstat.geom]{quadrats}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

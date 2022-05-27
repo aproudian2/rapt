@@ -13,9 +13,9 @@ crAdjust(mat, diff, X, Y)
 \item{diff}{The difference between the number of values needed and the number
 in mat}
 
-\item{X}{The overlaying point pattern. A \code{\link[spatstat]{pp3}} object.}
+\item{X}{The overlaying point pattern. A \code{\link[spatstat.geom]{pp3}} object.}
 
-\item{Y}{The underlaying point pattern. A \code{\link[spatstat]{pp3}} object.}
+\item{Y}{The underlaying point pattern. A \code{\link[spatstat.geom]{pp3}} object.}
 }
 \value{
 Updated mat matrix containing the correct number of cluster points.

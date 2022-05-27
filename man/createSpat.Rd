@@ -12,16 +12,16 @@ createSpat(pos, win = NULL, marks = NULL)
 \item{win}{The domain of the data.}
 }
 \value{
-A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
+A \code{\link[spatstat.geom]{pp3}} with the x,y,z positions of the hits in
 the supplied POS or ATO.
 }
 \description{
-\code{createSpat} creates a \code{\link[spatstat]{pp3}} from a POS or ATO
+\code{createSpat} creates a \code{\link[spatstat.geom]{pp3}} from a POS or ATO
 data frame.
 }
 \seealso{
 \code{\link{readPOS}}, \code{\link{readATO}},
-\code{\link[spatstat]{pp3}}
+\code{\link[spatstat.geom]{pp3}}
 
 Other APT data transformation functions: 
 \code{\link{createDet}()},

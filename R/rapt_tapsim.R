@@ -53,7 +53,7 @@ readResult <- function(fp, type = 'ASCII') {
 #' Convert TAPSim Results to POS
 #'
 #' `resultToDet` converts a TAPSim result `data.frame` (as returned by
-#' \code{\link{readResult}}) into a \code{\link[spatstat]{pp3}} using
+#' \code{\link{readResult}}) into a \code{\link[spatstat.geom]{pp3}} using
 #' [readPOS()].
 #'
 #' @param res The results `data.frame` as returned by \code{\link{readResult}}
@@ -82,13 +82,13 @@ resultToPOS <- function(res, clip.radius = NULL) {
 #' Convert TAPSim Result to Detector "ppp"
 #'
 #' `resultToDet` converts a TAPSim result `data.frame` (as returned by
-#' \code{\link{readResult}}) into a \code{\link[spatstat]{ppp}} using
+#' \code{\link{readResult}}) into a \code{\link[spatstat.geom]{ppp}} using
 #' [createDet()].
 #'
 #' @param res The results `data.frame` as returned by \code{\link{readResult}}
 #' @param clip.radius Numeric. The detector radius at which to clip the points.
 #'   If `NULL` (the default), no clipping is applied.
-#' @return A \code{\link[spatstat]{ppp}} containing the detector positions
+#' @return A \code{\link[spatstat.geom]{ppp}} containing the detector positions
 #'   marked by their id.
 #'
 #' @family TAPSim functions
@@ -98,9 +98,9 @@ resultToPOS <- function(res, clip.radius = NULL) {
 resultToDet <- function(res, clip.radius = NULL) {
     det.df <- data.frame(dx = res$stopX, dy = res$stopY, mass = res$id)
     det <- createDet(det.df)
-    spatstat::marks(det) = det.df$mass
+    spatstat.geom::marks(det) = det.df$mass
     if (!is.null(clip.radius)) {
-        spatstat::Window(det) <- spatstat::disc(radius = clip.radius)
+        spatstat.geom::Window(det) <- spatstat.geom::disc(radius = clip.radius)
     }
     return(det)
 }

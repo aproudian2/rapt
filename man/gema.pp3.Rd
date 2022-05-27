@@ -7,8 +7,8 @@
 \method{gema}{pp3}(X, cluster = NULL, kde.n = 20, max.clusters = 30, threshold = 0.5)
 }
 \arguments{
-\item{X}{The point pattern (object of class \code{\link[spatstat]{ppp}} or
-\code{\link[spatstat]{pp3}}) in which to identify clusters.}
+\item{X}{The point pattern (object of class \code{\link[spatstat.geom]{ppp}} or
+\code{\link[spatstat.geom]{pp3}}) in which to identify clusters.}
 
 \item{cluster}{The marks of \code{X} that are cluster-type points. If
 \code{cluster = NULL} (the default) or \code{X} is unmarked, all points are assumed

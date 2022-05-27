@@ -15,7 +15,7 @@ Tstat.pp3(
 }
 \arguments{
 \item{X}{The observed point pattern, from which an estimate of \eqn{T(r)}
-will be computed. A \code{\link[spatstat]{pp3}} object.}
+will be computed. A \code{\link[spatstat.geom]{pp3}} object.}
 
 \item{rmax}{Optional. Maximum value of argument \emph{r} for which
 \eqn{T(r)} will be estimated.}
@@ -40,7 +40,7 @@ which can be plotted directly using \code{\link[spatstat]{plot.fv}}.
 }
 \description{
 Tstat.pp3 extends the third-order summary statistic
-\code{\link[spatstat]{Tstat}} to pp3
+\code{\link[spatstat.core]{Tstat}} to pp3
 }
 \details{
 This command calculates the third-order summary statistic \eqn{T(r)} for a

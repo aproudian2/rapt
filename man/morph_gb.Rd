@@ -35,7 +35,7 @@ contain both the 'FinalConfigx' and 'systemx' files.}
 \item{win}{The simulation window.}
 }
 \value{
-A list of: [\link{1}] a \code{\link[spatstat]{pp3}} object contining the
+A list of: [\link{1}] a \code{\link[spatstat.geom]{pp3}} object contining the
 guest points. [\link{2}] A \code{pp3} object containing the entire background
 underlying point pattern.
 }

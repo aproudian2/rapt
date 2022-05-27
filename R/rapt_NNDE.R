@@ -3,7 +3,7 @@
 #
 
 #### nndensity.pp3 ####
-#' Extension of \code{\link[spatstat]{nndensity}} to handle pp3 objects.
+#' Extension of \code{\link[spatstat.core]{nndensity}} to handle pp3 objects.
 #'
 #' Calculates the 3D nearest-neighbor intensity estimate of a point process at
 #' either a grid of points or at the point locations in the data set. Utilizes
@@ -327,8 +327,8 @@ local.den.onevol <- function(x, y, z, r, dz){
 #'
 #' @param bdist Result from \code{\link{bdist.points3.multi}} giving shortest
 #'   distance to boundary in the x, y, and z directions.
-#' @param nnk Result from \code{\link[spatstat]{nndist}} or
-#'   \code{\link[spatstat]{nncross}} containing nearest neighbor distances.
+#' @param nnk Result from \code{\link[spatstat.geom]{nndist}} or
+#'   \code{\link[spatstat.geom]{nncross}} containing nearest neighbor distances.
 #' @param k Vector of nn#s to calculate estimate for.
 #' @param dz The spacing for numeric integration over the z direction to
 #'   determine edge corrections.

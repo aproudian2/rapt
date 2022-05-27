@@ -19,10 +19,10 @@ that the RCP particles will be scaled to. Default is 0.5.}
 radius. If \code{FALSE} (the default), RCP stays as generated.}
 }
 \value{
-A \code{\link[spatstat]{pp3}} object of the RCP pattern.
+A \code{\link[spatstat.pp3]{pp3}} object of the RCP pattern.
 }
 \description{
-Reads in a RCP Generator output file as a \code{\link[spatstat]{pp3}} object.
+Reads in a RCP Generator output file as a \code{\link[spatstat.pp3]{pp3}} object.
 }
 \details{
 The RCP generation is described in Desmond & Weeks,

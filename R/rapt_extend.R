@@ -6,7 +6,7 @@
 #' Tabulate Marks in Neighbourhood of Every Point in a Point Pattern
 #'
 #' @description This is an S3 generic that extends the use of
-#'   \code{\link[spatstat]{marktable}} beyond "ppp" objects.
+#'   \code{\link[spatstat.core]{marktable}} beyond "ppp" objects.
 #'
 #' @param X A marked point pattern. An object of class "ppp".
 #' @param R Neighbourhood radius. Incompatible with `N`.
@@ -52,32 +52,32 @@ marktable.ppp <- spatstat.core::marktable
 #'
 #' @export
 marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
-  spatstat::verifyclass(X, "pp3")
-  if (!spatstat::is.marked(X, dfok = FALSE))
+  spatstat.geom::verifyclass(X, "pp3")
+  if (!spatstat.geom::is.marked(X, dfok = FALSE))
     stop("point pattern has no marks")
   gotR <- !missing(R) && !is.null(R)
   gotN <- !missing(N) && !is.null(N)
   if (gotN == gotR)
     stop("Exactly one of the arguments N and R should be given")
   stopifnot(is.logical(exclude) && length(exclude) == 1)
-  m <- spatstat::marks(X)
+  m <- spatstat.geom::marks(X)
   if (!is.factor(m))
     stop("marks must be a factor")
   if (gotR) {
     stopifnot(is.numeric(R) && length(R) == 1 && R > 0)
-    p <- spatstat::closepairs(X, R, what = "indices")
+    p <- spatstat.geom::closepairs(X, R, what = "indices")
     pi <- p$i
     pj <- p$j
     if (!exclude) {
-      n <- spatstat::npoints(X)
+      n <- spatstat.geom::npoints(X)
       pi <- c(pi, 1:n)
       pj <- c(pj, 1:n)
     }
   }
   else {
     stopifnot(is.numeric(N) && length(N) == 1)
-    ii <- seq_len(spatstat::npoints(X))
-    nn <- spatstat::nnwhich(X, k = 1:N)
+    ii <- seq_len(spatstat.geom::npoints(X))
+    nn <- spatstat.geom::nnwhich(X, k = 1:N)
     if (N == 1)
       nn <- matrix(nn, ncol = 1)
     if (!exclude)
@@ -86,7 +86,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
     pj <- as.vector(nn)
   }
   if (!collapse) {
-    i <- factor(pi, levels = seq_len(spatstat::npoints(X)))
+    i <- factor(pi, levels = seq_len(spatstat.geom::npoints(X)))
     mj <- m[pj]
     mat <- table(point = i, mark = mj)
   }
@@ -123,19 +123,19 @@ rjitter.ppp <- spatstat.geom::rjitter
 #' Random Perturbation of a Point Pattern
 #'
 #' Applies independent random displacements to each point in a point pattern.
-#' Extends \code{\link[spatstat.geom]{rjitter}} to \code{\link[spatstat]{pp3}}.
+#' Extends \code{\link[spatstat.geom]{rjitter}} to \code{\link[spatstat.geom]{pp3}}.
 #'
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat.geom]{rjitter}}, \code{\link{rjitter.ppp}}
 #'
 #' @export
 rjitter.pp3 <- function(X, domain = box3()) {
-  spatstat::verifyclass(X, "pp3")
-  nX <- spatstat::npoints(X)
+  spatstat.geom::verifyclass(X, "pp3")
+  nX <- spatstat.geom::npoints(X)
   if (nX == 0)
     return(X)
   W <- X$domain
-  D <- spatstat::runifpoint3(nX, domain = domain)
+  D <- spatstat.random::runifpoint3(nX, domain = domain)
   xnew <- X$data$x + D$data$x
   ynew <- X$data$y + D$data$y
   znew <- X$data$z + D$data$z
@@ -154,7 +154,7 @@ rjitter.pp3 <- function(X, domain = box3()) {
 #' Superimposes any number of 3D point patterns
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{superimpose}}
+#' @seealso \code{\link[spatstat.geom]{superimpose}}
 #'
 #' @export
 superimpose.pp3 <- function(..., W = NULL, check = FALSE) {
@@ -163,7 +163,7 @@ superimpose.pp3 <- function(..., W = NULL, check = FALSE) {
   df.comb <- do.call(rbind, df.list)
   out.pp3 <-  createSpat(df.comb, win = W)
   if(!is.null(df.comb$marks)) {
-    spatstat::marks(out.pp3) <- df.comb$marks
+    spatstat.geom::marks(out.pp3) <- df.comb$marks
   }
   return(out.pp3)
 }
@@ -180,19 +180,19 @@ superimpose.pp3 <- function(..., W = NULL, check = FALSE) {
 #'   "midpoint" or "bottomleft" (will be extended)
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{shift}}
+#' @seealso \code{\link[spatstat.geom]{shift}}
 #'
 #' @export
 shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 {
-  spatstat::verifyclass(X, "pp3")
+  spatstat.geom::verifyclass(X, "pp3")
   if (!is.null(origin)) {
     if (!missing(vec))
       warning("argument vec ignored; overruled by argument origin")
     if (is.numeric(origin) & length(origin) == 3) {
       locn <- origin
     } else if (is.character(origin)) {
-      origin <- spatstat::pickoption("origin", origin,
+      origin <- spatstat.geom::pickoption("origin", origin,
                            c(midpoint = "midpoint", bottomleft = "bottomleft"))
       W <- X$domain
       locn <- switch(origin, midpoint = {
@@ -205,7 +205,7 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
     }
     vec <- -locn
   }
-  Y <- spatstat::pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
+  Y <- spatstat.geom::pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
            xrange = X$domain$xrange + vec[1],
            yrange = X$domain$yrange + vec[2],
            zrange = X$domain$zrange + vec[3],
@@ -227,7 +227,7 @@ shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
 #'
 #' @export
 sample.ppp <- function(X, size) {
-  sam.n <- seq_len(spatstat::npoints(X))
+  sam.n <- seq_len(spatstat.geom::npoints(X))
   sam.pts <- sample(sam.n, size, replace = FALSE)
   sam.dat <- X[sam.pts]
   return(sam.dat)
@@ -245,7 +245,7 @@ sample.ppp <- function(X, size) {
 #'
 #' @export
 sample.pp3 <- function(X, size) {
-  sam.n <- seq_len(spatstat::npoints(X))
+  sam.n <- seq_len(spatstat.geom::npoints(X))
   sam.pts <- sample(sam.n, size, replace = FALSE)
   sam.dat <- X[sam.pts]
   return(sam.dat)
@@ -281,7 +281,7 @@ findClusters.pp3 <- function(X, mark, k = 1) {
 }
 
 #### intensity.pp3 ####
-#' Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
+#' Extends \code{\link[spatstat.geom]{intensity}} to \code{\link[spatstat.geom]{pp3}}.
 #'
 #' @name intensity.pp3-deprecated
 #' @seealso \code{\link{rapt-deprecated}}
@@ -289,15 +289,15 @@ findClusters.pp3 <- function(X, mark, k = 1) {
 NULL
 #' @rdname rapt-deprecated
 #' @section \code{intensity.pp3}:
-#'   For \code{intensity.pp3}, use \code{\link[spatstat]{intensity.ppx}}
+#'   For \code{intensity.pp3}, use \code{\link[spatstat.geom]{intensity.ppx}}
 #'
 #' @export
 intensity.pp3 <- function(X, weights = NULL) {
-  n <- spatstat::npoints(X)
-  a <- spatstat::volume(domain(X))
+  n <- spatstat.geom::npoints(X)
+  a <- spatstat.geom::volume(domain(X))
   if (is.null(weights)) {
-    if (spatstat::is.multitype(X)) {
-      mks <- spatstat::marks(X)
+    if (spatstat.geom::is.multitype(X)) {
+      mks <- spatstat.geom::marks(X)
       answer <- as.vector(table(mks))/a
       names(answer) <- levels(mks)
     }
@@ -309,7 +309,7 @@ intensity.pp3 <- function(X, weights = NULL) {
 
 #### rownames.pp3 ####
 #' Extends \code{\link[base:row+colnames]{rownames}} to
-#' \code{\link[spatstat]{pp3}}.
+#' \code{\link[spatstat.geom]{pp3}}.
 #'
 #' @param pat An object of class "pp3". The point pattern from which to extract
 #'   rownames.
@@ -321,7 +321,7 @@ rownames.pp3 <- function(pat) {
 }
 #### rownames.pp3<- ####
 #' Extends \code{\link[base:row+colnames]{rownames}} to
-#' \code{\link[spatstat]{pp3}}.
+#' \code{\link[spatstat.geom]{pp3}}.
 #'
 #' @param pat An object of class "pp3". The point pattern to assign rownames.
 #' @param lab character. The new rownames.
@@ -332,7 +332,7 @@ rownames.pp3 <- function(pat) {
 }
 
 #### plot3d.pp3 ####
-#' Plot a \code{\link[spatstat]{pp3}} in a manipulatable 3D plot.
+#' Plot a \code{\link[spatstat.geom]{pp3}} in a manipulatable 3D plot.
 #'
 #' (requires the rgl library)
 #' @param X An object of class "pp3". The point pattern to visualize
@@ -352,7 +352,7 @@ plot3d.pp3 <- function(X, ...) {
 #'
 #' Divides volume into quadrats and returns them.
 #'
-#' @param X The \code{\link[spatstat]{pp3}} object to split up.
+#' @param X The \code{\link[spatstat.geom]{pp3}} object to split up.
 #' @param nx,ny,nz Number of rectangular quadrats in the x, y, and z directions,
 #'   if you wish to split up your point patthern by number of boxes.
 #' @param box.dims Vector containing the dimensions of the subsetted 3D boxxes,
@@ -367,13 +367,13 @@ plot3d.pp3 <- function(X, ...) {
 #' (*i.e.* (`c(min(x), min(y), min(z))`)).
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{quadrats}}
+#' @seealso \code{\link[spatstat.geom]{quadrats}}
 #'
 #' @export
 # Should return an object of class "tess" to provide consistent behaviour
 quadrats.pp3 <- function(X, nx = 5, ny = nx, nz = ny, box.dims = NULL) {
   # Rewrite to use n = c(nx,ny,nz) with a default of c(1,1,1).
-  spatstat::verifyclass(X, c("pp3", "box3"))
+  spatstat.geom::verifyclass(X, c("pp3", "box3"))
   w <- as.box3(X)
   xlim <- w$xrange
   ylim <- w$yrange
@@ -431,18 +431,18 @@ quadrats.pp3 <- function(X, nx = 5, ny = nx, nz = ny, box.dims = NULL) {
 #'
 #' Divides volume into quadrats and counts the number of points in each quadrat.
 #'
-#' @param X The \code{\link[spatstat]{pp3}} object to split up.
+#' @param X The \code{\link[spatstat.geom]{pp3}} object to split up.
 #' @param nx,ny,nz Number of ractangular quadrats in the x, y, and z directions.
 #'
 #' @return A `data.frame` object containing the number of counts in each
 #'   quadrat.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{quadratcount}}
+#' @seealso \code{\link[spatstat.geom]{quadratcount}}
 #'
 #' @export
 quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
-  spatstat::verifyclass(X, "pp3")
+  spatstat.geom::verifyclass(X, "pp3")
   w <- domain(X)
 
   # create box3objects for each quadrat
@@ -516,27 +516,27 @@ quantess.pp3 <- function(M, Z, n, ..., type=2, origin=c(0,0), eps=NULL) {}
 #'
 #' @details
 #'
-#' The function `G3multi` generalises \code{\link[spatstat]{G3est}} (for
+#' The function `G3multi` generalises \code{\link[spatstat.core]{G3est}} (for
 #' unmarked point patterns) and \code{G3dot} (unimplmented) and
 #' \code{\link{G3cross}} (for multitype point patterns) to arbitrary marked
 #' point patterns.
 #'
 #' @family spatstat extensions
 #'
-#' @seealso \code{\link{G3cross}}, \code{\link[spatstat]{G3est}}
+#' @seealso \code{\link{G3cross}}, \code{\link[spatstat.core]{G3est}}
 #'
 #' @export
 G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
                     correction = c("rs", "km", "han")) {
-  spatstat::verifyclass(X, "pp3")
+  spatstat.geom::verifyclass(X, "pp3")
   W <- X$domain
-  npts <- spatstat::npoints(X)
-  volW <- spatstat::volume(W)
+  npts <- spatstat.geom::npoints(X)
+  volW <- spatstat.geom::volume(W)
   if (is.null(rmax)) {
-    rmax <- spatstat::diameter(W)/2
+    rmax <- spatstat.geom::diameter(W)/2
   }
-  I <- spatstat::ppsubset(X, I)
-  J <- spatstat::ppsubset(X, J)
+  I <- spatstat.geom::ppsubset(X, I)
+  J <- spatstat.geom::ppsubset(X, J)
   if (is.null(I) || is.null(J))
     stop("I and J must be valid subset indices")
   nI <- sum(I)
@@ -560,12 +560,12 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
   XI <- X[I]
   XJ <- X[J]
   if (disjoint) {
-    nnd <- spatstat::nncross(XI, XJ, what = "dist")
+    nnd <- spatstat.geom::nncross(XI, XJ, what = "dist")
   } else {
     seqnp <- seq_len(npts)
     iX <- seqnp[I]
     iY <- seqnp[J]
-    nnd <- spatstat::nncross(XI, XJ, iX, iY, what = "dist")
+    nnd <- spatstat.geom::nncross(XI, XJ, iX, iY, what = "dist")
   }
   bdry <- bdist.points(XI)
   d <- (nnd <= bdry)
@@ -574,7 +574,7 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
   df <- data.frame(r = r, theo = 1 - exp(-lamJ * (4/3) * pi * r^3))
   fname <- c("G", "list(I,J)")
   Z <- fv(df, "r", quote(G[I, J](r)), "theo", . ~ r, c(0, rmax),
-          c("r", spatstat::makefvlabel(NULL, NULL, fname, "pois")),
+          c("r", spatstat.core::makefvlabel(NULL, NULL, fname, "pois")),
           c("distance argument r", "theoretical Poisson %s"),
           fname = fname, yexp = quote(G[list(I,J)](r)))
   if ("none" %in% correction) {
@@ -585,7 +585,7 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
       edf <- cumsum(hh)/length(nnd)
     }
     Z <- bind.fv(Z, data.frame(raw = edf),
-                 spatstat::makefvlabel(NULL,"hat", fname, "raw"),
+                 spatstat.core::makefvlabel(NULL,"hat", fname, "raw"),
                  "uncorrected estimate of %s",  "raw")
   }
   if ("han" %in% correction) {
@@ -593,13 +593,13 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
       G <- zeroes
     else {
       x <- nnd[d]
-      a <- spatstat::eroded.volumes(W, r)
+      a <- spatstat.geom::eroded.volumes(W, r)
       h <- hist(x[x <= rmax], breaks = breaks, plot = FALSE)$counts
       G <- cumsum(h/a)
       G <- G/max(G[is.finite(G)])
     }
     Z <- bind.fv(Z, data.frame(han = G),
-                 spatstat::makefvlabel(NULL,"hat", fname, "han"),
+                 spatstat.core::makefvlabel(NULL,"hat", fname, "han"),
                  "Hanisch estimate of %s", "han")
     attr(Z, "alim") <- range(r[G <= 0.9])
   }
@@ -608,21 +608,21 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
       result <- data.frame(rs = zeroes, km = zeroes, hazard = zeroes)
     else {
       o <- pmin.int(nnd, bdry)
-      result <- spatstat::km.rs(o, bdry, d, breaks)
+      result <- spatstat.core::km.rs(o, bdry, d, breaks)
       result <- as.data.frame(result[c("rs", "km", "hazard")])
     }
     Z <- bind.fv(Z, result, c(
-      spatstat::makefvlabel(NULL, "hat", fname, "bord"),
-      spatstat::makefvlabel(NULL, "hat", fname, "km"), "hazard(r)"),
+      spatstat.core::makefvlabel(NULL, "hat", fname, "bord"),
+      spatstat.core::makefvlabel(NULL, "hat", fname, "km"), "hazard(r)"),
       c("border corrected estimate of %s", "Kaplan-Meier estimate of %s",
         "Kaplan-Meier estimate of hazard function lambda(r)"),
       "km")
     attr(Z, "alim") <- range(r[result$km <= 0.9])
   }
   nama <- names(Z)
-  spatstat::fvnames(Z, ".") <- rev(nama[!(nama %in% c("r", "hazard"))])
+  spatstat.core::fvnames(Z, ".") <- rev(nama[!(nama %in% c("r", "hazard"))])
   formula(Z) <- . ~ r
-  spatstat::unitname(Z) <- spatstat::unitname(X)
+  spatstat.geom::unitname(Z) <- spatstat.geom::unitname(X)
   return(Z)
 }
 
@@ -659,7 +659,7 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #' @details
 #' The function `G3cross` and its companions \code{G3dot} (unimplemented)
 #' and \code{\link{G3multi}} are generalisations of the function
-#' \code{\link[spatstat]{G3est}} to multitype point patterns.
+#' \code{\link[spatstat.core]{G3est}} to multitype point patterns.
 #'
 #' A multitype point pattern is a spatial pattern of points classified into a
 #' finite number of possible "colors" or "types." In the **spatstat**
@@ -698,7 +698,7 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #' process in the plane, observed through a bounded window. The window (which is
 #' specified in `X` as `Domain(X)`) may have arbitrary shape. Biases
 #' due to edge effects are treated in the same manner as in
-#' \code{\link[spatstat]{G3est}}.
+#' \code{\link[spatstat.core]{G3est}}.
 #'
 #' The argument `rmax` is the maximum value of the distance *r* at
 #' which \eqn{G[3ij](r)} should be evaluated. It is also used to determine (in
@@ -719,17 +719,17 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 #' uncorrected empirical \eqn{G[3ij](r)} as if it were an unbiased estimator of
 #' \eqn{G[3ij](r)}.
 #'
-#' @seealso \code{\link{G3multi}}, \code{\link[spatstat]{G3est}},
-#'   \code{\link[spatstat]{marks}}
+#' @seealso \code{\link{G3multi}}, \code{\link[spatstat.core]{G3est}},
+#'   \code{\link[spatstat.geom]{marks}}
 #'
 #' @export
 G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
                     correction = c("rs", "km", "han")) {
-  spatstat::verifyclass(X, "pp3")
-  if (!spatstat::is.marked(X, dfok = FALSE))
+  spatstat.geom::verifyclass(X, "pp3")
+  if (!spatstat.geom::is.marked(X, dfok = FALSE))
     stop(paste("point pattern has no", sQuote("marks")))
-  stopifnot(spatstat::is.multitype(X))
-  marx <- spatstat::marks(X, dfok = FALSE)
+  stopifnot(spatstat.geom::is.multitype(X))
+  marx <- spatstat.geom::marks(X, dfok = FALSE)
   if (missing(i))
     i <- levels(marx)[1]
   if (missing(j))
@@ -738,7 +738,7 @@ G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
   if (sum(I) == 0)
     stop("No points are of type i")
   if (i == j) {
-    result <- spatstat::G3est(X[I], rmax = rmax, nrval = nrval,
+    result <- spatstat.core::G3est(X[I], rmax = rmax, nrval = nrval,
                               correction = correction)
   } else {
     J <- (marx == j)
@@ -749,7 +749,7 @@ G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
   }
   iname <- spatstat.utils::make.parseable(paste(i))
   jname <- spatstat.utils::make.parseable(paste(j))
-  result <- spatstat::rebadge.fv(result,
+  result <- spatstat.core::rebadge.fv(result,
                        substitute(G[i, j](r), list(i = iname, j = jname)),
                        c("G", paste0("list(", iname, ",", jname,")")),
                        new.yexp = substitute(G[list(i, j)](r),
@@ -764,8 +764,8 @@ G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
 #'
 #' @param X A pp3
 #' @param lambda An estimate of the intensity function f(x,y,z). Defaults to a
-#'   uniform intensity, estimated with \code{\link[spatstat]{intensity}}; this
-#'   results in the same behavior as \code{\link[spatstat]{K3est}}.
+#'   uniform intensity, estimated with \code{\link[spatstat.geom]{intensity}}; this
+#'   results in the same behavior as \code{\link[spatstat.core]{K3est}}.
 #' @param correction The correction to be used. Currently only the uncorrected
 #'   estimate (`correction = "none"`) is implemented.
 #'
@@ -776,7 +776,7 @@ G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
 #' \eqn{lambda[c](u[i])} and \eqn{lambda[c](u[j])}.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{Kscaled}}
+#' @seealso \code{\link[spatstat.core]{Kscaled}}
 #'
 K3scaled <- function (X, lambda = NULL, ...,
                       rmax = NULL, nrval = 128,
@@ -784,13 +784,13 @@ K3scaled <- function (X, lambda = NULL, ...,
                       renormalise = FALSE,
                       normpower = 1)#, sigma = NULL, varcov = NULL)
 {
-  spatstat::verifyclass(X, "pp3")
+  spatstat.geom::verifyclass(X, "pp3")
   B <- X$domain
-  npts <- spatstat::npoints(X)
-  volW <- spatstat::volume(B)
-  halfdiameter <- spatstat::diameter(B)/2
+  npts <- spatstat.geom::npoints(X)
+  volW <- spatstat.geom::volume(B)
+  halfdiameter <- spatstat.geom::diameter(B)/2
   correction.given <- !missing(correction) && !is.null(correction)
-  correction <- spatstat::pickoption("correction", correction,
+  correction <- spatstat.geom::pickoption("correction", correction,
                                      c(none = "none",
                                        border = "border",
                                        isotropic = "isotropic",
@@ -801,7 +801,7 @@ K3scaled <- function (X, lambda = NULL, ...,
                                        best = "best"),
                                      multi = TRUE)
   if (missing(lambda)) {
-    lambda <- rep(spatstat::intensity.ppx(X), npts)
+    lambda <- rep(spatstat.geom::intensity.ppx(X), npts)
   }
   else {
     if (is.im(lambda)) {
@@ -910,7 +910,7 @@ K3scaled <- function (X, lambda = NULL, ...,
 K3multi <- function(X, I, J, r, breaks,
               correction = c("none", "isotropic", "translation"),
               ..., ratio = FALSE) {
-  spatstat::verifyclass(X, "pp3")
+  spatstat.geom::verifyclass(X, "pp3")
   npts <- npoints(X)
   W <- X$domain
   volW <- volume(W)
@@ -1024,7 +1024,7 @@ studpermu.test.hyperframe <- function(X, ...) {
 ### studpermu.test.ppp ###
 #' Studentised Permutation Test
 #'
-#' @seealso \code{\link[spatstat]{studpermu.test}}
+#' @seealso \code{\link[spatstat.core]{studpermu.test}}
 #' @export
 studpermu.test.ppp <- spatstat.core::studpermu.test
 
@@ -1039,7 +1039,7 @@ studpermu.test.ppp <- spatstat.core::studpermu.test
 #'   identifies which column of `X` contains the point patterns. The right
 #'   side identifies the grouping factor
 #' @param summaryfunction Summary function applicable to pp3. Defaults to
-#'   \code{link[spatstat]{K3est}}
+#'   \code{link[spatstat.core]{K3est}}
 #' @param ... Additional arguments passed to `summaryfunction`
 #' @param rinterval Numeric of length 2. Experimental
 #' @param nperm Number of random permutations for the test; defaults to 999
@@ -1186,7 +1186,7 @@ studpermu.test.pp3 <- function (X, formula,
     warning("Don't expect exact results - group sizes are too small")
   if (is.null(rmax)) {
     rmax <- sapply(pp, function(P) {
-      spatstat::diameter(P$domain)/2
+      spatstat.geom::diameter(P$domain)/2
     })
     rmax <- min(rmax)
   }
@@ -1253,9 +1253,9 @@ studpermu.test.pp3 <- function (X, formula,
   class(testerg) <- c("studpermutest", "htest")
   fvs <- lapply(fvlist, "[.fv", j = c(argu, valu))
   fvs <- lapply(fvs, "attr<-", which = "alim", value = rinterval)
-  testerg$curves <- spatstat::hyperframe(fvs = fvs, groups = data$group)
+  testerg$curves <- spatstat.geom::hyperframe(fvs = fvs, groups = data$group)
   fvtheo <- fvlist[[1]]
-  spatstat::fvnames(fvtheo, ".y") <- "theo"
+  spatstat.core::fvnames(fvtheo, ".y") <- "theo"
   attr(fvtheo, "alim") <- rinterval
   testerg$curvtheo <- fvtheo[, c(argu, "theo")]
   grmn <- lapply(lev, splitmean, ind = groupi, f = foar)
@@ -1361,10 +1361,10 @@ multicall <- function(foo, x, H, ...){
 #' Extends Tstat to pp3
 #'
 #' Tstat.pp3 extends the third-order summary statistic
-#' \code{\link[spatstat]{Tstat}} to pp3
+#' \code{\link[spatstat.core]{Tstat}} to pp3
 #'
 #' @param X The observed point pattern, from which an estimate of \eqn{T(r)}
-#' will be computed. A \code{\link[spatstat]{pp3}} object.
+#' will be computed. A \code{\link[spatstat.geom]{pp3}} object.
 #' @param rmax Optional. Maximum value of argument *r* for which
 #'   \eqn{T(r)} will be estimated.
 #' @param nrval Optional. Number of values of *r* for which
@@ -1401,21 +1401,21 @@ multicall <- function(foo, x, H, ...){
 Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
                        correction = "border",
                        ratio = FALSE, verbose = TRUE) {
-  spatstat::verifyclass(X, "pp3")
-  npts <- spatstat::npoints(X)
-  W <- spatstat::domain(X)
-  areaW <- spatstat::volume(W)
+  spatstat.geom::verifyclass(X, "pp3")
+  npts <- spatstat.geom::npoints(X)
+  W <- spatstat.geom::domain(X)
+  areaW <- spatstat.geom::volume(W)
   lambda <- npts/areaW
   lambda2 <- (npts * (npts - 1))/(areaW^2)
   lambda3 <- (npts * (npts - 1) * (npts - 2))/(areaW^3)
   if (is.null(rmax))
-    rmax <- spatstat::diameter(W)/2
+    rmax <- spatstat.geom::diameter(W)/2
   r <- seq(0, rmax, length.out = nrval)
-  breaks <- spatstat::breakpts.from.r(r)
+  breaks <- spatstat.geom::breakpts.from.r(r)
   correction.given <- !missing(correction) && !is.null(correction)
   if (!correction.given)
     correction <- c("border", "bord.modif") #, "translate") not implemented yet
-  correction <- spatstat::pickoption(
+  correction <- spatstat.geom::pickoption(
     "correction", correction,
     c(none = "none",
       border = "border", bord.modif = "bord.modif", trans = "translate",
@@ -1424,18 +1424,18 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
   alim <- c(0, rmax)
   TT <- data.frame(r = r, theo = 5/12 * pi^2 * r^6)
   desc <- c("distance argument r", "theoretical Poisson %s")
-  TT <- spatstat::fv(TT, "r",
+  TT <- spatstat.core::fv(TT, "r",
                      quote(T(r)), "theo", , alim, c("r", "%s[pois](r)"),
                      desc, fname = "T") # blank is in ppp version...
   if (ratio) {
     denom <- lambda2 * areaW
-    numT <- spatstat::eval.fv(denom * TT)
-    denT <- spatstat::eval.fv(denom + TT * 0)
+    numT <- spatstat.core::eval.fv(denom * TT)
+    denT <- spatstat.core::eval.fv(denom + TT * 0)
     attributes(numT) <- attributes(denT) <- attributes(TT)
     attr(numT, "desc")[2] <- "numerator for theoretical Poisson %s"
     attr(denT, "desc")[2] <- "denominator for theoretical Poisson %s"
   }
-  close <- spatstat::closepairs(X, rmax, what = "ijd", twice = FALSE,
+  close <- spatstat.geom::closepairs(X, rmax, what = "ijd", twice = FALSE,
                                 neat = FALSE)
   I <- close$i
   J <- close$j
@@ -1446,12 +1446,12 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
     nTmax <- nI * (nI - 1)/2
     esttime <- exp(1.25 * log(nTmax) - 21.5)
     message(paste("Searching", nTmax, "potential triangles;",
-                  "estimated time", spatstat::codetime(esttime)))
+                  "estimated time", spatstat.geom::codetime(esttime)))
     if(esttime > 60)
       continue <- askYesNo("Estimated time greater than one minute. Continue?")
   }
   if (!continue) return(NULL)
-  tri <- spatstat::trianglediameters(I, J, DIJ, nvert = npts)
+  tri <- spatstat.geom::trianglediameters(I, J, DIJ, nvert = npts)
   stopifnot(identical(colnames(tri), c("i", "j", "k", "diam")))
   II <- with(tri, c(i, j, k))
   DD <- with(tri, rep.int(diam, 3))
@@ -1460,12 +1460,12 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
     numTun <- cumsum(wh)
     denTun <- lambda3 * areaW
     Tun <- numTun/denTun
-    TT <- spatstat::bind.fv(TT, data.frame(un = Tun), "hat(%s)[un](r)",
+    TT <- spatstat.core::bind.fv(TT, data.frame(un = Tun), "hat(%s)[un](r)",
                             "uncorrected estimate of %s", "un")
     if (ratio) {
-      numT <- spatstat::bind.fv(numT, data.frame(un = numTun), "hat(%s)[un](r)",
+      numT <- spatstat.core::bind.fv(numT, data.frame(un = numTun), "hat(%s)[un](r)",
                                 "numerator of uncorrected estimate of %s", "un")
-      denT <- spatstat::bind.fv(denT, data.frame(un = denTun), "hat(%s)[un](r)",
+      denT <- spatstat.core::bind.fv(denT, data.frame(un = denTun), "hat(%s)[un](r)",
                                 "denominator of uncorrected estimate of %s",
                                 "un")
     }
@@ -1473,22 +1473,22 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
   if (any(correction == "border" | correction == "bord.modif")) {
     b <- bdist.points.pp3(X)
     bI <- b[II]
-    RS <- spatstat::Kount(DD, bI, b, breaks)
+    RS <- spatstat.core::Kount(DD, bI, b, breaks)
     if (any(correction == "bord.modif")) {
       denom.area <- eroded.volumes(W, r)
       numTbm <- RS$numerator
       denTbm <- lambda3 * denom.area
       Tbm <- numTbm/denTbm
-      TT <- spatstat::bind.fv(TT, data.frame(bord.modif = Tbm),
+      TT <- spatstat.core::bind.fv(TT, data.frame(bord.modif = Tbm),
                               "hat(%s)[bordm](r)",
                               "modified border-corrected estimate of %s",
                               "bord.modif")
       if (ratio) {
-        numT <- spatstat::bind.fv(numT, data.frame(bord.modif = numTbm),
+        numT <- spatstat.core::bind.fv(numT, data.frame(bord.modif = numTbm),
                         "hat(%s)[bordm](r)",
                         "numerator of modified border-corrected estimate of %s",
                         "bord.modif")
-        denT <- spatstat::bind.fv(denT, data.frame(bord.modif = denTbm),
+        denT <- spatstat.core::bind.fv(denT, data.frame(bord.modif = denTbm),
                                   "hat(%s)[bordm](r)",
                       "denominator of modified border-corrected estimate of %s",
                       "bord.modif")
@@ -1498,14 +1498,14 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
       numTb <- RS$numerator
       denTb <- lambda2 * RS$denom.count
       Tb <- numTb/denTb
-      TT <- spatstat::bind.fv(TT, data.frame(border = Tb), "hat(%s)[bord](r)",
+      TT <- spatstat.core::bind.fv(TT, data.frame(border = Tb), "hat(%s)[bord](r)",
                     "border-corrected estimate of %s", "border")
       if (ratio) {
-        numT <- spatstat::bind.fv(numT, data.frame(border = numTb),
+        numT <- spatstat.core::bind.fv(numT, data.frame(border = numTb),
                                   "hat(%s)[bord](r)",
                                 "numerator of border-corrected estimate of %s",
                                 "border")
-        denT <- spatstat::bind.fv(denT, data.frame(border = denTb),
+        denT <- spatstat.core::bind.fv(denT, data.frame(border = denTb),
                                   "hat(%s)[bord](r)",
                               "denominator of border-corrected estimate of %s",
                               "border")
@@ -1519,28 +1519,28 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
     numTtrans <- 3 * cumsum(wh)
     denTtrans <- lambda3 * areaW
     Ttrans <- numTtrans/denTtrans
-    h <- spatstat::diameter(W)/2
+    h <- spatstat.geom::diameter(W)/2
     Ttrans[r >= h] <- NA
-    TT <- spatstat::bind.fv(TT, data.frame(trans = Ttrans), "hat(%s)[trans](r)",
+    TT <- spatstat.core::bind.fv(TT, data.frame(trans = Ttrans), "hat(%s)[trans](r)",
                   "translation-corrected estimate of %s", "trans")
     if (ratio) {
-      numT <- spatstat::bind.fv(numT, data.frame(trans = numTtrans),
+      numT <- spatstat.core::bind.fv(numT, data.frame(trans = numTtrans),
                                 "hat(%s)[trans](r)",
                             "numerator of translation-corrected estimate of %s",
                             "trans")
-      denT <- spatstat::bind.fv(denT, data.frame(trans = denTtrans),
+      denT <- spatstat.core::bind.fv(denT, data.frame(trans = denTtrans),
                                 "hat(%s)[trans](r)",
                           "denominator of translation-corrected estimate of %s",
                           "trans")
     }
   }
   formula(TT) <- . ~ r
-  spatstat::unitname(TT) <- spatstat::unitname(X)
+  spatstat.geom::unitname(TT) <- spatstat.geom::unitname(X)
   if (ratio) {
     formula(numT) <- formula(denT) <- . ~ r
-    spatstat::unitname(denT) <- spatstat::unitname(TT)
-    spatstat::unitname(numT) <- spatstat::unitname(TT)
-    TT <- spatstat::rat(TT, numT, denT, check = FALSE)
+    spatstat.geom::unitname(denT) <- spatstat.geom::unitname(TT)
+    spatstat.geom::unitname(numT) <- spatstat.geom::unitname(TT)
+    TT <- spatstat.core::rat(TT, numT, denT, check = FALSE)
   }
   return(TT)
 }
@@ -1569,7 +1569,7 @@ bdist.points.ppp <- spatstat.geom::bdist.points
 #'
 #' Finds the smallest distance to a boundary for each point in a point pattern.
 #'
-#' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
+#' @param X The point pattern for analysis. A \code{\link[spatstat.geom]{pp3}}
 #'   object.
 #'
 #' @return An object containing the shortest distance to the boundary for each
@@ -1579,7 +1579,7 @@ bdist.points.ppp <- spatstat.geom::bdist.points
 #' @export
 bdist.points.pp3 <- function (X) {
 
-  spatstat::verifyclass(X, "pp3")
+  spatstat.geom::verifyclass(X, "pp3")
 
   x <- X$data$x
   y <- X$data$y
@@ -1605,14 +1605,14 @@ bdist.points.pp3 <- function (X) {
 #' Returns the shortest distances to boundaries in the x, y, and z directions
 #' separately.
 #'
-#' @param X The point pattern for analysis. A \code{\link[spatstat]{pp3}}
+#' @param X The point pattern for analysis. A \code{\link[spatstat.geom]{pp3}}
 #'   object.
 #' @return A `data.frame` containing the shortest distance to the closest three
 #'   boundaries for each point in the pattern `X`.
 #' @seealso \code{\link{bdist.points.pp3}}
 bdist.points3.multi <- function (X){
 
-  spatstat::verifyclass(X, "pp3")
+  spatstat.geom::verifyclass(X, "pp3")
 
   x <- X$data$x
   y <- X$data$y

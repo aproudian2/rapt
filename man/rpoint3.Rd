@@ -17,11 +17,11 @@ rpoint3(
 )
 }
 \description{
-\code{rpoint3} extends \code{\link[spatstat]{rpoint}} to
-\code{\link[spatstat]{pp3}}.
+\code{rpoint3} extends \code{\link[spatstat.geom]{rpoint}} to
+\code{\link[spatstat.geom]{pp3}}.
 }
 \seealso{
-\code{\link[spatstat]{rpoint}}
+\code{\link[spatstat.geom]{rpoint}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

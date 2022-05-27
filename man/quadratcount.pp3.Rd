@@ -7,7 +7,7 @@
 \method{quadratcount}{pp3}(X, nx = 5, ny = 5, nz = 5)
 }
 \arguments{
-\item{X}{The \code{\link[spatstat]{pp3}} object to split up.}
+\item{X}{The \code{\link[spatstat.geom]{pp3}} object to split up.}
 
 \item{nx, ny, nz}{Number of ractangular quadrats in the x, y, and z directions.}
 }
@@ -19,7 +19,7 @@ quadrat.
 Divides volume into quadrats and counts the number of points in each quadrat.
 }
 \seealso{
-\code{\link[spatstat]{quadratcount}}
+\code{\link[spatstat.geom]{quadratcount}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

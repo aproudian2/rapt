@@ -77,7 +77,7 @@ pF3est(
 
 anomF3est(pattern, toSub, rmax, nrval, correction = "rs")
 
-\method{intensity}{pp3}(X, weights = NULL)
+intensity.pp3(X, weights = NULL)
 }
 \description{
 The functions listed below are deprecated and will be defunct in
@@ -92,7 +92,7 @@ For \code{bcc.gen}, use \code{\link{lattice}}
 
 \section{\code{splitpp3}}{
 
-For \code{splitpp3}, use \code{\link[spatstat]{split.ppx}}
+For \code{splitpp3}, use \code{\link[spatstat.geom]{split.ppx}}
 }
 
 \section{\code{pb_gen}}{
@@ -102,7 +102,7 @@ For \code{pb_gen}, use \code{\link{rgblur}}
 
 \section{\code{envPlot}}{
 
-For \code{envPlot}, use \code{\link[spatstat]{plot.envelope}}
+For \code{envPlot}, use \code{\link[spatstat.core]{plot.envelope}}
 }
 
 \section{\code{pK3est}}{
@@ -137,7 +137,7 @@ For \code{anomF3est}, use \code{\link{pEnvelope}}
 
 \section{\code{intensity.pp3}}{
 
-For \code{intensity.pp3}, use \code{\link[spatstat]{intensity.ppx}}
+For \code{intensity.pp3}, use \code{\link[spatstat.geom]{intensity.ppx}}
 }
 
 \keyword{internal}

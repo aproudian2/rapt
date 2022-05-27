@@ -7,7 +7,7 @@
 lattice(domain = box3(), a = 1, lattice = "sc")
 }
 \arguments{
-\item{domain}{A \code{\link[spatstat]{box3}}. The domain in which to
+\item{domain}{A \code{\link[spatstat.geom]{box3}}. The domain in which to
 generate the lattice}
 
 \item{a}{Numeric. The lattice parameter of the lattice. For cubic lattices
@@ -19,7 +19,7 @@ Details.}
 \code{"fcc"}, or \code{"hcp"}).}
 }
 \value{
-A \code{\link[spatstat]{pp3}} with points at the lattice positions
+A \code{\link[spatstat.geom]{pp3}} with points at the lattice positions
 }
 \description{
 \code{lattice} creates a spatial region filled with lattice points of the
@@ -33,7 +33,7 @@ hexagonal prism, \emph{c}. For a perfect hcp crystal, the ratio of these two
 dimensions is exactly \eqn{c/a = \sqrt{8/3}}.
 }
 \seealso{
-\code{\link{hcp.gen}}, \code{\link[spatstat]{pp3}}
+\code{\link{hcp.gen}}, \code{\link[spatstat.geom]{pp3}}
 
 Other simulation functions: 
 \code{\link{clustersim}()},

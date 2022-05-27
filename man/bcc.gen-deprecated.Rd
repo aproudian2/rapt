@@ -6,11 +6,11 @@
 \arguments{
 \item{npoint}{Approximate number of points to have in the pattern.}
 
-\item{win}{A \code{\link[spatstat]{box3}} object containing the window for
+\item{win}{A \code{\link[spatstat.geom]{box3}} object containing the window for
 the final pattern.}
 }
 \value{
-A \code{\link[spatstat]{pp3}} object with the lattice points.
+A \code{\link[spatstat.geom]{pp3}} object with the lattice points.
 }
 \description{
 Generates a BCC point pattern with a specified window size and number of

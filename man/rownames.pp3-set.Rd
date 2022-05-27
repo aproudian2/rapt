@@ -3,7 +3,7 @@
 \name{rownames.pp3<-}
 \alias{rownames.pp3<-}
 \title{Extends \code{\link[base:row+colnames]{rownames}} to
-\code{\link[spatstat]{pp3}}.}
+\code{\link[spatstat.geom]{pp3}}.}
 \usage{
 rownames.pp3(pat, lab) <- value
 }
@@ -14,7 +14,7 @@ rownames.pp3(pat, lab) <- value
 }
 \description{
 Extends \code{\link[base:row+colnames]{rownames}} to
-\code{\link[spatstat]{pp3}}.
+\code{\link[spatstat.geom]{pp3}}.
 }
 \seealso{
 \code{\link[base:row+colnames]{rownames}}

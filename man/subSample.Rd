@@ -7,18 +7,18 @@
 subSample(underPattern, overPattern)
 }
 \arguments{
-\item{underPattern}{The second \code{\link[spatstat]{pp3}} object. The volume
+\item{underPattern}{The second \code{\link[spatstat.geom]{pp3}} object. The volume
 that you want to cut down to.}
 
-\item{overPattern}{The first \code{\link[spatstat]{pp3}} object. The object
+\item{overPattern}{The first \code{\link[spatstat.geom]{pp3}} object. The object
 that you wish to cut down to the volume of \code{underPattern}.}
 }
 \value{
-A \code{\link[spatstat]{pp3}} object containing \code{overPattern}
+A \code{\link[spatstat.geom]{pp3}} object containing \code{overPattern}
 cut down to the volume of \code{underPattern}.
 }
 \description{
-Takes one \code{\link[spatstat]{pp3}} object, and cuts its volume down to the
-size of another \code{\link[spatstat]{pp3}} object. Only keeps the points of
+Takes one \code{\link[spatstat.geom]{pp3}} object, and cuts its volume down to the
+size of another \code{\link[spatstat.geom]{pp3}} object. Only keeps the points of
 the first object that lay within the volume of the second object.
 }

@@ -5,17 +5,17 @@
 \title{Perform G3est on random relabelings in parallel}
 \arguments{
 \item{perc}{The fraction of points to select randomly each time out of the
-original \code{\link[spatstat]{pp3}} object. Number between 0 and 1.}
+original \code{\link[spatstat.geom]{pp3}} object. Number between 0 and 1.}
 
-\item{pattern}{The original \code{\link[spatstat]{pp3}} object.}
+\item{pattern}{The original \code{\link[spatstat.geom]{pp3}} object.}
 
 \item{nEvals}{The number of random relabelings and  that should be performed.}
 
-\item{rmax}{See \code{\link[spatstat]{G3est}}. Maximum radius to be
-calculated for \code{\link[spatstat]{G3est}}.}
+\item{rmax}{See \code{\link[spatstat.core]{G3est}}. Maximum radius to be
+calculated for \code{\link[spatstat.core]{G3est}}.}
 
-\item{nrval}{See \code{\link[spatstat]{G3est}}. Number of radii that
-\code{\link[spatstat]{G3est}} should be calculated at.}
+\item{nrval}{See \code{\link[spatstat.core]{G3est}}. Number of radii that
+\code{\link[spatstat.core]{G3est}} should be calculated at.}
 
 \item{correction}{Either "rs", "km", or "Hanisch" edge correction.}
 
@@ -31,7 +31,7 @@ available on the machine.}
 }
 \value{
 \subsection{For \code{anom = FALSE}}{Returns a matrix containing the data
-from the all of the \code{\link[spatstat]{G3est}} runs on different
+from the all of the \code{\link[spatstat.core]{G3est}} runs on different
 re-labelings. Can plot data using \code{\link{envPlot}}.}
 \subsection{For \code{anom = TRUE}}{A list of: [\link{1}] Matrix of data for all
 relabelings. Can be plotted using \code{\link{envPlot}}. [\link{2}] Vector
@@ -41,8 +41,8 @@ rmax used in the calculation. [\link{4}] nrval used in the calculation.}
 }
 \description{
 \code{pG3est} first randomly relabels a specified percentage of points from
-the original \code{\link[spatstat]{pp3}} object. It then performs a 3D G
-function test (\code{\link[spatstat]{G3est}}) on these selected points. It
+the original \code{\link[spatstat.geom]{pp3}} object. It then performs a 3D G
+function test (\code{\link[spatstat.core]{G3est}}) on these selected points. It
 repeats this as many times as specified. These tests are run in parallel to
 increase computation speed.
 }
@@ -59,12 +59,12 @@ corrections.
 \section{Anomaly G3est}{
 
 When \code{anom = TRUE}, the function returns the anomaly
-\code{\link[spatstat]{G3est}}.This means that it returns the
-\code{\link[spatstat]{G3est}} results with the 50th percentile subtracted
+\code{\link[spatstat.core]{G3est}}.This means that it returns the
+\code{\link[spatstat.core]{G3est}} results with the 50th percentile subtracted
 out. This centers envelopes around zero.
 
 \code{toSub} is an argumet to be paired with \code{anom = TRUE}. If NULL, use
-the 50th percentile of the calculated set of \code{\link[spatstat]{G3est}}
+the 50th percentile of the calculated set of \code{\link[spatstat.core]{G3est}}
 envelopes to subtract off. Otherwise, use the second, [\link{2}], entry in the
 list returned from this same function. This is how to compare envelope
 calculations from different point patterns. You must subtract the same values

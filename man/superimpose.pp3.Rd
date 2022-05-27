@@ -10,7 +10,7 @@
 Superimposes any number of 3D point patterns
 }
 \seealso{
-\code{\link[spatstat]{superimpose}}
+\code{\link[spatstat.geom]{superimpose}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

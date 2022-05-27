@@ -19,7 +19,7 @@ length 3 specifying the new origin or one of the character strings
 Applies a vector shift to a 3D point pattern
 }
 \seealso{
-\code{\link[spatstat]{shift}}
+\code{\link[spatstat.geom]{shift}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},

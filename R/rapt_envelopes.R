@@ -31,7 +31,7 @@
 NULL
 #' @rdname rapt-deprecated
 #' @section `envPlot`:
-#'   For `envPlot`, use \code{\link[spatstat]{plot.envelope}}
+#'   For `envPlot`, use \code{\link[spatstat.core]{plot.envelope}}
 #'
 #' @export
 
@@ -95,19 +95,19 @@ envPlot <- function(
 #' Perform K3est on random relabelings in parallel
 #'
 #' \code{pK3est} first randomly relabels a specified percentage of points from
-#' the original \code{\link[spatstat]{pp3}} object. It then performs a 3D K
-#' function test (\code{\link[spatstat]{K3est}}) on these selected points. It
+#' the original \code{\link[spatstat.geom]{pp3}} object. It then performs a 3D K
+#' function test (\code{\link[spatstat.core]{K3est}}) on these selected points. It
 #' repeats this as many times as specified. These tests are run in parallel to
 #' increase computation speed.
 #'
 #' @param perc The fraction of points to select randomly each time out of the
-#'   original \code{\link[spatstat]{pp3}} object. Number between 0 and 1.
-#' @param pattern The original \code{\link[spatstat]{pp3}} object.
+#'   original \code{\link[spatstat.geom]{pp3}} object. Number between 0 and 1.
+#' @param pattern The original \code{\link[spatstat.geom]{pp3}} object.
 #' @param nEvals The number of random relabelings and  that should be performed.
-#' @param rmax See \code{\link[spatstat]{K3est}}. Maximum radius to be
-#'   calculated for \code{\link[spatstat]{K3est}}.
-#' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
-#'   \code{\link[spatstat]{K3est}} should be calculated at.
+#' @param rmax See \code{\link[spatstat.core]{K3est}}. Maximum radius to be
+#'   calculated for \code{\link[spatstat.core]{K3est}}.
+#' @param nrval See \code{\link[spatstat.core]{K3est}}. Number of radii that
+#'   \code{\link[spatstat.core]{K3est}} should be calculated at.
 #' @param correction Either "iso", "trans", or "bord" edge correction.
 #' @param anom Whether or not to retun the anomaly results. \code{TRUE} or
 #'   \code{FALSE}. See section below for more info.
@@ -118,7 +118,7 @@ envPlot <- function(
 #' @param cores Number of cores to use for parallel processing. If no parallel
 #'   desired, set to 1. If NULL, will automatically set to the number of cores
 #'   available on the machine.
-#' @section Edge Corrections: See \code{\link[spatstat]{Kest}} or book availible
+#' @section Edge Corrections: See \code{\link[spatstat.core]{Kest}} or book availible
 #'   at \url{http://spatstat.org/book.html} for more info on these edge
 #'   corrections.
 #'
@@ -128,19 +128,19 @@ envPlot <- function(
 #'   correction. Assumes translation of point pattern does not change
 #'   statistics.} \subsection{Border - "bord"}{Border edge correction. Makes no
 #'   assumptions about data. Uses only data provided in the original point
-#'   pattern. Only evaluates \code{\link[spatstat]{K3est}} when the radius of
+#'   pattern. Only evaluates \code{\link[spatstat.core]{K3est}} when the radius of
 #'   the search stays within the domain of the point pattern itself.}
 #'
 #' @section Anomaly K3est: When \code{anom = TRUE}, the function returns the
 #'   anomaly K3est.This means that it returns the square root of the
-#'   \code{\link[spatstat]{K3est}} results, with the 50th percentile subtracted
+#'   \code{\link[spatstat.core]{K3est}} results, with the 50th percentile subtracted
 #'   out. This centers envelopes around zero, and the square root standardized
 #'   variance across all r values. See book at
 #'   \url{http://spatstat.org/book.html} for a good statistical reference.
 #'
 #'   \code{toSub} is an argument to be paired with \code{anom = TRUE}. If NULL,
 #'   use the 50th percentile of the calculated set of
-#'   \code{\link[spatstat]{K3est}} envelopes to subtract off. Otherwise, use the
+#'   \code{\link[spatstat.core]{K3est}} envelopes to subtract off. Otherwise, use the
 #'   second, [[2]], entry in the list returned from this same function. This is
 #'   how to compare envelope calculations from different point patterns. You
 #'   must subtract the same values from both data sets. toSub allows you to
@@ -148,7 +148,7 @@ envPlot <- function(
 #'   comparison.
 #'
 #' @return \subsection{For \code{anom = FALSE}}{Returns a matrix containing the
-#' data from the all of the \code{\link[spatstat]{K3est}} runs on different
+#' data from the all of the \code{\link[spatstat.core]{K3est}} runs on different
 #' re-labelings. Can plot data using \code{\link{envPlot}}.} \subsection{For
 #' \code{anom = TRUE}}{A list of: [[1]] Matrix of data for all relabelings. Can
 #' be plotted using \code{\link{envPlot}}. [[2]] Vector containing the values
@@ -273,21 +273,21 @@ pK3est <- function(perc, pattern, nEvals,rmax=NULL,nrval=128,
 }
 
 #### anomK3est ####
-#' Perfrom anomaly K3est on a \code{\link[spatstat]{pp3}} object.
+#' Perfrom anomaly K3est on a \code{\link[spatstat.geom]{pp3}} object.
 #'
-#' See \code{\link[spatstat]{K3est}}. Performs the anomaly K3est on a set of
+#' See \code{\link[spatstat.core]{K3est}}. Performs the anomaly K3est on a set of
 #' point cloud data. This means taking the square root, and subtracting the 50th
 #' percentile from the results. This centers the curve around zero, and
 #' standardizeds the variance at different radii. Used for comparing data to
 #' envelopes from \code{\link{pK3est}} where \code{anom = TRUE}. Will subtract
 #' the same values used in the pK3est test that is being compared to.
 #'
-#' @param pattern The \code{\link[spatstat]{pp3}} object to analyze.
+#' @param pattern The \code{\link[spatstat.geom]{pp3}} object to analyze.
 #' @param toSub Returned from \code{\link{pK3est}} with \code{anom = TRUE}.
 #'   Second item in the returned list. The data to subtract from the results.
-#' @param rmax Max r value. See \code{\link[spatstat]{K3est}}. Should be the
+#' @param rmax Max r value. See \code{\link[spatstat.core]{K3est}}. Should be the
 #'   same as the envelopes that you are comparing to.
-#' @param nrval Number of r values. See \code{\link[spatstat]{K3est}}. Should be
+#' @param nrval Number of r values. See \code{\link[spatstat.core]{K3est}}. Should be
 #'   the same as the envelopes that you are comparing to.
 #' @param correction See \code{\link{pK3est}}.
 #'
@@ -350,19 +350,19 @@ anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 #' Perform G3est on random relabelings in parallel
 #'
 #' \code{pG3est} first randomly relabels a specified percentage of points from
-#' the original \code{\link[spatstat]{pp3}} object. It then performs a 3D G
-#' function test (\code{\link[spatstat]{G3est}}) on these selected points. It
+#' the original \code{\link[spatstat.geom]{pp3}} object. It then performs a 3D G
+#' function test (\code{\link[spatstat.core]{G3est}}) on these selected points. It
 #' repeats this as many times as specified. These tests are run in parallel to
 #' increase computation speed.
 #'
 #' @param perc The fraction of points to select randomly each time out of the
-#'   original \code{\link[spatstat]{pp3}} object. Number between 0 and 1.
-#' @param pattern The original \code{\link[spatstat]{pp3}} object.
+#'   original \code{\link[spatstat.geom]{pp3}} object. Number between 0 and 1.
+#' @param pattern The original \code{\link[spatstat.geom]{pp3}} object.
 #' @param nEvals The number of random relabelings and  that should be performed.
-#' @param rmax See \code{\link[spatstat]{G3est}}. Maximum radius to be
-#'   calculated for \code{\link[spatstat]{G3est}}.
-#' @param nrval See \code{\link[spatstat]{G3est}}. Number of radii that
-#'   \code{\link[spatstat]{G3est}} should be calculated at.
+#' @param rmax See \code{\link[spatstat.core]{G3est}}. Maximum radius to be
+#'   calculated for \code{\link[spatstat.core]{G3est}}.
+#' @param nrval See \code{\link[spatstat.core]{G3est}}. Number of radii that
+#'   \code{\link[spatstat.core]{G3est}} should be calculated at.
 #' @param correction Either "rs", "km", or "Hanisch" edge correction.
 #' @param anom Whether or not to retun the anomaly results. \code{TRUE} or
 #'   \code{FALSE}. See section below for more info.
@@ -381,12 +381,12 @@ anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 #'
 #' @section Anomaly G3est:
 #' When \code{anom = TRUE}, the function returns the anomaly
-#' \code{\link[spatstat]{G3est}}.This means that it returns the
-#' \code{\link[spatstat]{G3est}} results with the 50th percentile subtracted
+#' \code{\link[spatstat.core]{G3est}}.This means that it returns the
+#' \code{\link[spatstat.core]{G3est}} results with the 50th percentile subtracted
 #' out. This centers envelopes around zero.
 #'
 #' \code{toSub} is an argumet to be paired with \code{anom = TRUE}. If NULL, use
-#' the 50th percentile of the calculated set of \code{\link[spatstat]{G3est}}
+#' the 50th percentile of the calculated set of \code{\link[spatstat.core]{G3est}}
 #' envelopes to subtract off. Otherwise, use the second, [[2]], entry in the
 #' list returned from this same function. This is how to compare envelope
 #' calculations from different point patterns. You must subtract the same values
@@ -395,7 +395,7 @@ anomK3est <- function(pattern,toSub,rmax,nrval,correction = "trans"){
 #'
 #' @return
 #' \subsection{For \code{anom = FALSE}}{Returns a matrix containing the data
-#' from the all of the \code{\link[spatstat]{G3est}} runs on different
+#' from the all of the \code{\link[spatstat.core]{G3est}} runs on different
 #' re-labelings. Can plot data using \code{\link{envPlot}}.}
 #' \subsection{For \code{anom = TRUE}}{A list of: [[1]] Matrix of data for all
 #' relabelings. Can be plotted using \code{\link{envPlot}}. [[2]] Vector
@@ -439,7 +439,7 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
   # apply G3est function to each of the pp3 patterns in parallel
   if(correction=="rs") {
     result <- parallel::parLapply(cl,percents,function(x){
-      spatstat::G3est(percentSelect(x,pattern),
+      spatstat.core::G3est(percentSelect(x,pattern),
                       rmax = rmax, nrval = nrval,correction = "rs")
     })
   }else if(correction=="km") {
@@ -448,7 +448,7 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
     })
   }else if(correction=="Hanisch") {
     result <- parallel::parLapply(cl,percents,function(x){
-      spatstat::G3est(percentSelect(x,pattern),
+      spatstat.core::G3est(percentSelect(x,pattern),
                       rmax = rmax, nrval = nrval, correction = "Hanisch")
     })
   }else {
@@ -512,20 +512,20 @@ pG3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 }
 
 #### anomG3est ####
-#' Perform anomaly G3est on a \code{\link[spatstat]{pp3}} object.
+#' Perform anomaly G3est on a \code{\link[spatstat.geom]{pp3}} object.
 #'
-#' See \code{\link[spatstat]{G3est}}. Performs the anomaly G3est on a set of
+#' See \code{\link[spatstat.core]{G3est}}. Performs the anomaly G3est on a set of
 #' point cloud data. This means subtracting the 50th percentile from the
 #' results. This centers the curve around zero. Used for comparing data to
 #' envelopes from \code{\link{pG3est}} where \code{anom = TRUE}. Will subtract
 #' the same values used in the pG3est test that is being compared to.
 #'
-#' @param pattern The \code{\link[spatstat]{pp3}} object to analyze.
+#' @param pattern The \code{\link[spatstat.geom]{pp3}} object to analyze.
 #' @param toSub Returned from \code{\link{pK3est}} with \code{anom = TRUE}.
 #'   Second item in the returned list. The data to subtract from the results.
-#' @param rmax Max r value. See \code{\link[spatstat]{G3est}}. Should be the
+#' @param rmax Max r value. See \code{\link[spatstat.core]{G3est}}. Should be the
 #'   same as the envelopes that you are comparing to.
-#' @param nrval Number of r values. See \code{\link[spatstat]{G3est}}. Should be
+#' @param nrval Number of r values. See \code{\link[spatstat.core]{G3est}}. Should be
 #'   the same as the envelopes that you are comparing to.
 #' @param correction See \code{\link{pG3est}}. "rs", "km", "Hanisch", or "all".
 #'
@@ -590,19 +590,19 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #' Perform F3est on random relabelings in parallel
 #'
 #' \code{pF3est} first randomly relabels a specified percentage of points from
-#' the original \code{\link[spatstat]{pp3}} object. It then performs a 3D F
-#' function test (\code{\link[spatstat]{F3est}}) on these selected points. It
+#' the original \code{\link[spatstat.geom]{pp3}} object. It then performs a 3D F
+#' function test (\code{\link[spatstat.core]{F3est}}) on these selected points. It
 #' repeats this as many times as specified. These tests are run in parallel to
 #' increase computation speed.
 #'
 #' @param perc The fraction of points to select randomly each time out of the
-#'   original \code{\link[spatstat]{pp3}} object. Number between 0 and 1.
-#' @param pattern The original \code{\link[spatstat]{pp3}} object.
+#'   original \code{\link[spatstat.geom]{pp3}} object. Number between 0 and 1.
+#' @param pattern The original \code{\link[spatstat.geom]{pp3}} object.
 #' @param nEvals The number of random relabelings and  that should be performed.
-#' @param rmax See \code{\link[spatstat]{F3est}}. Maximum radius to be
-#'   calculated for \code{\link[spatstat]{F3est}}.
-#' @param nrval See \code{\link[spatstat]{F3est}}. Number of radii that
-#'   \code{\link[spatstat]{F3est}} should be calculated at.
+#' @param rmax See \code{\link[spatstat.core]{F3est}}. Maximum radius to be
+#'   calculated for \code{\link[spatstat.core]{F3est}}.
+#' @param nrval See \code{\link[spatstat.core]{F3est}}. Number of radii that
+#'   \code{\link[spatstat.core]{F3est}} should be calculated at.
 #' @param correction Either "rs", "km", or "cs" edge correction.
 #' @param anom Whether or not to retun the anomaly results. \code{TRUE} or
 #'   \code{FALSE}. See section below for more info.
@@ -619,13 +619,13 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #'   \subsection{Chiu-Stoyan (aka Hanisch) - "cs"}{}
 #'
 #' @section Anomaly F3est: When \code{anom = TRUE}, the function returns the
-#'   anomaly \code{\link[spatstat]{F3est}}.This means that it returns the
-#'   \code{\link[spatstat]{F3est}} results with the 50th percentile subtracted
+#'   anomaly \code{\link[spatstat.core]{F3est}}.This means that it returns the
+#'   \code{\link[spatstat.core]{F3est}} results with the 50th percentile subtracted
 #'   out. This centers envelopes around zero.
 #'
 #'   \code{toSub} is an argumet to be paired with \code{anom = TRUE}. If NULL,
 #'   use the 50th percentile of the calculated set of
-#'   \code{\link[spatstat]{F3est}} envelopes to subtract off. Otherwise, use the
+#'   \code{\link[spatstat.core]{F3est}} envelopes to subtract off. Otherwise, use the
 #'   second, [[2]], entry in the list returned from this same function. This is
 #'   how to compare envelope calculations from different point patterns. You
 #'   must subtract the same values from both data sets. toSub allows you to
@@ -633,7 +633,7 @@ anomG3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #'   comparison.
 #'
 #' @return \subsection{For \code{anom = FALSE}}{Returns a matrix containing the
-#' data from the all of the \code{\link[spatstat]{F3est}} runs on different
+#' data from the all of the \code{\link[spatstat.core]{F3est}} runs on different
 #' re-labelings. Can plot data using \code{\link{envPlot}}.} \subsection{For
 #' \code{anom = TRUE}}{A list of: [[1]] Matrix of data for all relabelings. Can
 #' be plotted using \code{\link{envPlot}}. [[2]] Vector containing the values
@@ -744,20 +744,20 @@ pF3est <- function(perc, pattern, nEvals, rmax=NULL, nrval=128,
 }
 
 #### anomF3est ####
-#' Perfrom anomaly F3est on a \code{\link[spatstat]{pp3}} object.
+#' Perfrom anomaly F3est on a \code{\link[spatstat.geom]{pp3}} object.
 #'
-#' See \code{\link[spatstat]{F3est}}. Performs the anomaly F3est on a set of
+#' See \code{\link[spatstat.core]{F3est}}. Performs the anomaly F3est on a set of
 #' point cloud data. This means subtracting the 50th percentile from the
 #' results. This centers the curve around zero. Used for comparing data to
 #' envelopes from \code{\link{pF3est}} where \code{anom = TRUE}. Will subtract
 #' the same values used in the pF3est test that is being compared to.
 #'
-#' @param pattern The \code{\link[spatstat]{pp3}} object to analyze.
+#' @param pattern The \code{\link[spatstat.geom]{pp3}} object to analyze.
 #' @param toSub Returned from \code{\link{pK3est}} with \code{anom = TRUE}.
 #'   Second item in the returned list. The data to subtract from the results.
-#' @param rmax Max r value. See \code{\link[spatstat]{F3est}}. Should be the
+#' @param rmax Max r value. See \code{\link[spatstat.core]{F3est}}. Should be the
 #'   same as the envelopes that you are comparing to.
-#' @param nrval Number of r values. See \code{\link[spatstat]{F3est}}. Should be
+#' @param nrval Number of r values. See \code{\link[spatstat.core]{F3est}}. Should be
 #'   the same as the envelopes that you are comparing to.
 #' @param correction See \code{\link{pF3est}}. "rs", "km", "cs", or "all".
 #'
@@ -823,12 +823,12 @@ anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #' Helper function for \code{\link{pK3est}}. This function is a hand written
 #' extension of the border correction for 3D point patterns.
 #'
-#' @param X The point pattern for analysis. \code{\link[spatstat]{pp3}} object.
-#' @param rmax See \code{\link[spatstat]{K3est}}. Maximum radius to be
-#'   calculated for \code{\link[spatstat]{K3est}}.
-#' @param nrval See \code{\link[spatstat]{K3est}}. Number of radii that
-#'   \code{\link[spatstat]{K3est}} should be calculated at.
-#' @return Border corrected \code{\link[spatstat]{K3est}} data for object X.
+#' @param X The point pattern for analysis. \code{\link[spatstat.geom]{pp3}} object.
+#' @param rmax See \code{\link[spatstat.core]{K3est}}. Maximum radius to be
+#'   calculated for \code{\link[spatstat.core]{K3est}}.
+#' @param nrval See \code{\link[spatstat.core]{K3est}}. Number of radii that
+#'   \code{\link[spatstat.core]{K3est}} should be calculated at.
+#' @return Border corrected \code{\link[spatstat.core]{K3est}} data for object X.
 
 bK3est <- function(X, rmax=NULL, nrval=128){
 
@@ -913,10 +913,10 @@ bK3est <- function(X, rmax=NULL, nrval=128){
 #'   accepted.**
 #'
 #' @return A function value table (object of class "fv") which can be plotted
-#'   directly. See \code{\link[spatstat]{envelope}} for further details.
+#'   directly. See \code{\link[spatstat.core]{envelope}} for further details.
 #'
-#' @seealso \link[spatstat]{envelope}, \link[spatstat]{K3est},
-#'   \link[spatstat]{G3est}, \link[spatstat]{F3est}, \link[spatstat]{pcf3est}
+#' @seealso \link[spatstat.core]{envelope}, \link[spatstat.core]{K3est},
+#'   \link[spatstat.core]{G3est}, \link[spatstat.core]{F3est}, \link[spatstat.core]{pcf3est}
 #' @export
 pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
                       simulate=NULL) {
@@ -925,11 +925,11 @@ pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
   n.cut <- cut(seq_len(nsim), length(cl), labels = FALSE)
   pSim <- split(simulate, n.cut) # this doesn't handle the NULL simulate case
   env <- parallel::parLapply(cl, pSim, function(s) {
-    spatstat::envelope(X, fun=fun, nsim=length(s), nrank=1, ...=...,
+    spatstat.core::envelope(X, fun=fun, nsim=length(s), nrank=1, ...=...,
                        simulate=s, savefuns=savefuns, verbose=FALSE)
   })
-  po <- do.call(spatstat::pool, c(env, savefuns=savefuns))
-  dat <- spatstat::envelope(po, nrank=nrank, savefuns=savefuns)
+  po <- do.call(spatstat.core::pool, c(env, savefuns=savefuns))
+  dat <- spatstat.core::envelope(po, nrank=nrank, savefuns=savefuns)
   return(dat)
 }
 
@@ -949,7 +949,7 @@ pEnvelope <- function(cl, X, fun=K3est, nsim=99, nrank=1, ...,
 #'
 #' @return A list of marked point patterns, each of the same class of `X`.
 #'
-#' @seealso \code{\link[spatstat]{rlabel}}
+#' @seealso \code{\link[spatstat.random]{rlabel}}
 #'
 #' @export
 pRlabel <- function(cl, X, labels=marks(X), permute=TRUE, nsim=99) {
