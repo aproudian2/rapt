@@ -38,3 +38,4 @@ RdMacros: Rdpack
 RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+Encoding: UTF-8

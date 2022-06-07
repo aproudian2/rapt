@@ -77,7 +77,7 @@ pF3est(
 
 anomF3est(pattern, toSub, rmax, nrval, correction = "rs")
 
-intensity.pp3(X, weights = NULL)
+\method{intensity}{pp3}(X, weights = NULL)
 }
 \description{
 The functions listed below are deprecated and will be defunct in
