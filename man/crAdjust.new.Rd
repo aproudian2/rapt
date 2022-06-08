@@ -15,9 +15,9 @@ crAdjust.new(cluster.ind, cluster.info, diff, X, Y)
 \item{diff}{The difference between the number of values needed and the number
 in cluster.ind.}
 
-\item{X}{The overlaying point pattern. A \code{\link[spatstat]{pp3}} object.}
+\item{X}{The overlaying point pattern. A \code{\link[spatstat.geom]{pp3}} object.}
 
-\item{Y}{The underlaying point pattern. A \code{\link[spatstat]{pp3}} object.}
+\item{Y}{The underlaying point pattern. A \code{\link[spatstat.geom]{pp3}} object.}
 }
 \value{
 A list of [\link{1}] The updated cluster.ind vector and [\link{2}] the updated

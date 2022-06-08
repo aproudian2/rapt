@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_NNDE.R
 \name{nndensity.pp3}
 \alias{nndensity.pp3}
-\title{Extension of \code{\link[spatstat]{nndensity}} to handle pp3 objects.}
+\title{Extension of \code{\link[spatstat.core]{nndensity}} to handle pp3 objects.}
 \usage{
 \method{nndensity}{pp3}(X, k, nx, ny, nz, dz, at.points = FALSE, par = TRUE, cores = 7)
 }

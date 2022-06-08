@@ -21,10 +21,10 @@ clustersim(
 }
 \arguments{
 \item{under}{The underlying RCP point pattern (UPP). A
-\code{\link[spatstat]{pp3}} object containing points at the centers of RCP
+\code{\link[spatstat.geom]{pp3}} object containing points at the centers of RCP
 spheres.}
 
-\item{over}{The overlying RCP pattern. A \code{\link[spatstat]{pp3}} object
+\item{over}{The overlying RCP pattern. A \code{\link[spatstat.geom]{pp3}} object
 containing points at the centers of RCP spheres. Scaled equal to the
 underlying point pattern.}
 
@@ -58,9 +58,9 @@ in the pattern will be within this tolerance of the value specified by the
 \value{
 List of:
 \itemize{
-\item \code{clusters} - A \code{\link[spatstat]{pp3}} object containing the final
+\item \code{clusters} - A \code{\link[spatstat.geom]{pp3}} object containing the final
 locations of only type-A points within \code{all}.
-\item \code{all} - A \code{\link[spatstat]{pp3}} object containing the full marked
+\item \code{all} - A \code{\link[spatstat.geom]{pp3}} object containing the full marked
 underlying point pattern with points marked as either type A (cluster type
 point in a cluster), B (cluster type point not in a cluster) or C
 (non-cluster type point).
@@ -68,7 +68,7 @@ point in a cluster), B (cluster type point not in a cluster) or C
 \code{all}.
 \item \code{perc} - A single value containing the true fraction of type-A points in
 \code{all}.
-\item \code{centers} - A \code{\link[spatstat]{pp3}} object containing the cluster
+\item \code{centers} - A \code{\link[spatstat.geom]{pp3}} object containing the cluster
 center locations within \code{all}.
 }
 }

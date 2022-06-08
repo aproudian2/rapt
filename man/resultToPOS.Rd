@@ -18,7 +18,7 @@ of the point in the stame structure of a POS as created by
 }
 \description{
 \code{resultToDet} converts a TAPSim result \code{data.frame} (as returned by
-\code{\link{readResult}}) into a \code{\link[spatstat]{pp3}} using
+\code{\link{readResult}}) into a \code{\link[spatstat.geom]{pp3}} using
 \code{\link[=readPOS]{readPOS()}}.
 }
 \seealso{

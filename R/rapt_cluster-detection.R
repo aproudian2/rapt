@@ -1,12 +1,12 @@
 #### msa ####
 #' Identify Clusters in a Marked Point Pattern Using MSA
 #'
-#' `msa` segments a marked \code{\link[spatstat]{pp3}} into clusters and
+#' `msa` segments a marked \code{\link[spatstat.geom]{pp3}} into clusters and
 #' background matrix using the maximum separation algorithm (MSA). The marks can
 #' have more than two types, but MSA requires that each type is categorized as
 #' either a cluster or non-cluster species.
 #'
-#' @param X A marked \code{\link[spatstat]{pp3}} object on which MSA will be
+#' @param X A marked \code{\link[spatstat.geom]{pp3}} object on which MSA will be
 #'   performed.
 #' @param dmax The maximum distance two points can be separated by and still be
 #'   considered part of the same cluster.
@@ -202,11 +202,14 @@ gema <- function(X, ...) UseMethod("gema")
 ### gema.pp3 ###
 #' Identify Clusters in a Point Pattern Using GEMA
 #'
-#' @param X The point pattern (object of class \code{\link[spatstat]{ppp}} or
-#'   \code{\link[spatstat]{pp3}}) in which to identify clusters.
+#' @param X The point pattern (object of class \code{\link[spatstat.geom]{ppp}} or
+#'   \code{\link[spatstat.geom]{pp3}}) in which to identify clusters.
 #' @param cluster The marks of `X` that are cluster-type points. If
 #'   `cluster = NULL` (the default) or `X` is unmarked, all points are assumed
 #'   to be cluster-type points.
+#' @param kde.n Number of sampling grid lines for the 3D kernel density estimate
+#' @param max.clusters The maximum number of clusters to define the cluster
+#'   search initialization. See Details.
 #' @param threshold The probability threshold at which to assign a point to a
 #'   cluster or to the background. Defaults to 0.5, which is usually Bayes
 #'   optimal.
@@ -224,7 +227,9 @@ gema <- function(X, ...) UseMethod("gema")
 #' "Detecting Clusters in Atom Probe Data with Gaussian Mixture Models",
 #' *Microscopy and Microanalysis*, **23** (2), 269-278 (2017):
 #' <https://doi.org/10.1017/S1431927617000320>
-gema.pp3 <- function(X, cluster = NULL, threshold = 0.5) {
+gema.pp3 <- function(X, cluster = NULL,
+                     kde.n = 20, max.clusters = 30,
+                     threshold = 0.5) {
   stopifnot(inherits(X, c("ppp","pp3")))
   stopifnot(threshold >= 0 & threshold <= 1)
   if (!is.null(cluster) & is.marked(X)) {
@@ -233,6 +238,54 @@ gema.pp3 <- function(X, cluster = NULL, threshold = 0.5) {
     Y <- unmark(X)
   }
 
+  kd0 <- misc3d::kde3d(Y$data$x, Y$data$y, Y$data$z, n = kde.n)
+  sn <- runifpoint3(npoints(Y), domain = domain(Y))
+  ks <- misc3d::kde3d(sn$data$x, sn$data$y, sn$data$z, n = kde.n)
+  ks$d <- kd0$d - ks$d
+
+  pts <- clustInit3(ks)
+  pt3 <- pp3(pts$x, pts$y, pts$z, domain(Y))
+  sinit <- crosspairs(pt3, Y, rmax = 4, what = 'indices')
+  sinit <- unique(unlist(sinit))
+  ninit <- setdiff(1:npoints(Y), sinit)
+  init <- list(subset = sinit, noise = ninit)
+  gmlist <- vector('list', max.clusters)
+
+  # cat('1, ')
+  gmlist[[1]] <- Mclust(as.data.frame(Y$data),
+                        G = 1, modelNames = 'VII', initialization = init,
+                        verbose = FALSE)
+  for (j in 2:max.clusters) {
+    # cat(paste0(j, ', '))
+    # Assumes continuous position and uniform background
+    sn <- runifpoint3(npoints(Y) * tail(gmlist$parameters$pro, n = 1),
+                      domain = domain(Y))
+    sg <- lapply(seq_len(j-1), function (k) {
+      MASS::mvrnorm(ceiling(npoints(Y)*gmlist[[j-1]]$parameters$pro[k]),
+                    gmlist[[j-1]]$parameters$mean[,k],
+                    gmlist[[j-1]]$parameters$variance$sigma[,,k])
+    })
+    sg <- do.call(rbind, sg)
+    sg <- pp3(sg[,1], sg[,2], sg[,3], domain(Y))
+    sg <- sg[inside.boxx(sg, w = domain(sg))]
+    scl <- superimpose(sn,sg)
+    ks <- misc3d::kde3d(scl$data$x, scl$data$y, scl$data$z, n = kde.n)
+    ks$d <- kd0$d - ks$d
+    ks$d[ks$d < 0] <- 0
+    pts <- clustInit3(ks, pts)
+    pt3 <- pp3(pts$x, pts$y, pts$z, domain(Y))
+    sinit <- crosspairs(pt3, Y, rmax = 4, what = 'indices')
+    sinit <- unique(unlist(sinit))
+    ninit <- setdiff(1:npoints(Y), sinit)
+    init <- list(subset = sinit, noise = ninit)
+    gmlist[[j]] <- Mclust(as.data.frame(Y$data),
+                          G = j, modelNames = 'VII', initialization = init,
+                          verbose = FALSE)
+  }
+  cat('Done.', fill = TRUE)
+
+  attr(gmlist,'seed.pts') <- pts
+  return(gmlist)
 }
 
 ### gema.ppp ###
@@ -250,3 +303,22 @@ gema.ppp <- gema.pp3
 #'
 #' @family cluster identification functions
 gema.gema <- function(X, threshold = 0.5) {}
+
+clustInit3 <- function(kd, pts = NULL) {
+  ind <- which(kd$d == max(kd$d), arr.ind = TRUE)
+  p <- data.frame(x = kd$x[ind[1]], y = kd$y[ind[2]], z = kd$z[ind[2]])
+  if (is.null(pts)) {
+    dat <- p
+  } else
+    dat <- rbind(pts,p)
+  return(dat)
+}
+clustInit2 <- function(kd, pts = NULL) {
+  ind <- which(kd$z == max(kd$z), arr.ind = TRUE)
+  p <- data.frame(x = kd$x[ind[1]], y = kd$y[ind[2]])
+  if (is.null(pts)) {
+    dat <- p
+  } else
+    dat <- rbind(pts,p)
+  return(dat)
+}

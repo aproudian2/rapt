@@ -7,7 +7,7 @@
 scaleRCP(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL)
 }
 \arguments{
-\item{pp3file}{A \code{\link[spatstat]{pp3}} object containing the RCP
+\item{pp3file}{A \code{\link[spatstat.pp3]{pp3}} object containing the RCP
 generated 3D point positions.}
 
 \item{newRadius}{The radius that you would like to scale to. Default is 0.5
@@ -16,11 +16,11 @@ units}
 \item{oldRadius}{The radius of the original RCP generation, taken from the
 "system" file output from the generation. Required input.}
 
-\item{win}{A \code{\link[spatstat]{box3}} object indicating the size of the
+\item{win}{A \code{\link[spatstat.geom]{box3}} object indicating the size of the
 original rcp generation. Can leave blank if these are integer value.}
 }
 \value{
-Will return a \code{\link[spatstat]{pp3}} object with the scaled
+Will return a \code{\link[spatstat.pp3]{pp3}} object with the scaled
 point positions.
 }
 \description{

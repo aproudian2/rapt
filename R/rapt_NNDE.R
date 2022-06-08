@@ -3,7 +3,7 @@
 #
 
 #### nndensity.pp3 ####
-#' Extension of \code{\link[spatstat]{nndensity}} to handle pp3 objects.
+#' Extension of \code{\link[spatstat.core]{nndensity}} to handle pp3 objects.
 #'
 #' Calculates the 3D nearest-neighbor intensity estimate of a point process at
 #' either a grid of points or at the point locations in the data set. Utilizes
@@ -102,8 +102,6 @@ nndensity.pp3 <- function(X, k, nx, ny, nz, dz,
 #'   computations. This parameter is the number of points per split set.
 #' @param cores Number of cores to use for parallelization. Set to one for
 #'   serial calculation.
-#' @param os Either 'windows', 'mac', or 'linux'. Changes the parallelization
-#'   method used.
 #' @return List containing: [[1]] A data frame of the intensity estimates for
 #'   each nearest neighbor value. [[2]] The coordinates of the estimates. [[3]]
 #'   The coordinates of the original points from the data set. [[4]] A vector
@@ -111,7 +109,7 @@ nndensity.pp3 <- function(X, k, nx, ny, nz, dz,
 #' @export
 nncrossden.pp3 <- function(X, Y, k, nx, ny, nz,
                            at.points = FALSE, nsplit = 1000,
-                           cores = 8, os = "linux") {
+                           cores = 8) {
   # yes this is complicated as hell... but it works I promise -GV
 
   t1 <- Sys.time()
@@ -174,11 +172,11 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz,
   if(length(k) > 1) {
     lambda.est <- matrix(NA, nrow = grid.n, ncol = length(k))
 
-    if(os == "windows"){
+    if(.Platform$OS.type == "windows"){
       cl <- makePSOCKcluster(cores)
       clusterExport(cl, "nncross")
       clusterExport(cl, c("X", "k"), envir = environment())
-    }else {
+    } else {
       cl <- makeForkCluster(cores)
     }
 
@@ -217,11 +215,11 @@ nncrossden.pp3 <- function(X, Y, k, nx, ny, nz,
   }else {
     lambda.est <- matrix(NA, nrow = grid.n, ncol = 1)
 
-    if(os == "windows"){
+    if(.Platform$OS.type == "windows"){
       cl <- makePSOCKcluster(cores)
       clusterExport(cl, "nncross")
       clusterExport(cl, c("X", "k"), envir = environment())
-    }else{
+    } else {
       cl <- makeForkCluster(cores)
     }
 
@@ -287,30 +285,39 @@ local.den.onevol <- function(x, y, z, r, dz){
   }
 
   # If not, calculate the volume inside (SEE MATHEMATICA NOTEBOOK FOR DERIVATIONS)
-  Rcalc <- function(z,r){return(sqrt(r^2 - abs(z)^2))} # Plane intersection circle radius at z value from center of sphere of radius r
-  Cseg <- function(x,R){return(R^2 * acos(x/R) - x * sqrt(R^2 - x^2))} # Area of circular segment a distance x from center of circle with radius R
-  Iseg <- function(x,y,R){return(0.5 * (sqrt((R - x)*(R + x)) - y) * (sqrt((R - y)*(R + y)) - x) -
-                                   0.5 * sqrt(R^2 - sqrt((R - x) * (R + x)) * y - sqrt((R - y) * (R + y)) * x) * sqrt(R^2 + sqrt((R - x) * (R + x)) * y + sqrt((R - y) * (R + y)) * x) +
-                                   R^2 * acos(sqrt(R^2 + sqrt(R^2 - x^2) * y + sqrt(R^2 - y^2) * x)/(R*sqrt(2))))} # Area of intersection of two circular segments
-  Carea <- function(x,y,z,zmax,R){ # The outside area of a circle of radius R at some x, y in the xy plane a distance z from the center of the sphere
-    if(z >= zmax){
+  Rcalc <- function(z,r) {
+    return(sqrt(r^2 - abs(z)^2))
+  } # Plane intersection circle radius at z value from center of sphere of radius r
+  Cseg <- function(x,R) {
+    return(R^2 * acos(x/R) - x * sqrt(R^2 - x^2))
+  } # Area of circular segment a distance x from center of circle with radius R
+  Iseg <- function(x,y,R){
+    return(0.5 * (sqrt((R - x)*(R + x)) - y) * (sqrt((R - y)*(R + y)) - x) -
+             0.5 * sqrt(R^2 - sqrt((R - x) * (R + x)) * y - sqrt((R - y) * (R + y)) * x) * sqrt(R^2 + sqrt((R - x) * (R + x)) * y + sqrt((R - y) * (R + y)) * x) +
+             R^2 * acos(sqrt(R^2 + sqrt(R^2 - x^2) * y + sqrt(R^2 - y^2) * x)/(R*sqrt(2))))
+    } # Area of intersection of two circular segments
+  Carea <- function(x,y,z,zmax,R) { # The outside area of a circle of radius R at some x, y in the xy plane a distance z from the center of the sphere
+    if(z >= zmax) {
       return(pi * R^2)
-    }else if (sqrt(x^2 + y^2) < R){
+    } else if (sqrt(x^2 + y^2) < R) {
       return(Cseg(x,R) + Cseg(y,R) - Iseg(x, y, R))
-    }else if(x < R & y < R){
+    } else if(x < R & y < R) {
       return(Cseg(x,R) + Cseg(y,R))
-    }else if(x < R & y >= R){
+    } else if(x < R & y >= R) {
       return(Cseg(x,R))
-    }else if(x >= R & y < R){
+    } else if(x >= R & y < R) {
       return(Cseg(y,R))
-    }else{
+    } else {
       return(0)
-    }}
+    }
+  }
 
   # numeric integration
   zseq <- seq(-r,r,by = dz)
 
-  return((4/3)*pi*r^3 - sum(sapply(zseq, function(q){Carea(x,y,q,z,Rcalc(q,r))*dz})))
+  return((4/3)*pi*r^3 - sum(sapply(zseq, function(q){
+    Carea(x,y,q,z,Rcalc(q,r))*dz
+  })))
 }
 
 #### local.den.engine ####
@@ -320,8 +327,8 @@ local.den.onevol <- function(x, y, z, r, dz){
 #'
 #' @param bdist Result from \code{\link{bdist.points3.multi}} giving shortest
 #'   distance to boundary in the x, y, and z directions.
-#' @param nnk Result from \code{\link[spatstat]{nndist}} or
-#'   \code{\link[spatstat]{nncross}} containing nearest neighbor distances.
+#' @param nnk Result from \code{\link[spatstat.geom]{nndist}} or
+#'   \code{\link[spatstat.geom]{nncross}} containing nearest neighbor distances.
 #' @param k Vector of nn#s to calculate estimate for.
 #' @param dz The spacing for numeric integration over the z direction to
 #'   determine edge corrections.
@@ -333,7 +340,7 @@ local.den.onevol <- function(x, y, z, r, dz){
 #'   nearest neighbors).
 #' @seealso \code{\link{nndensity.pp3}}
 
-local.den.engine <- function(bdist, nnk, k, dz, par = TRUE, cores = 7){
+local.den.engine <- function(bdist, nnk, k, dz, par = TRUE, cores = 7) {
   x <- bdist$x
   y <- bdist$y
   z <- bdist$z
@@ -342,29 +349,38 @@ local.den.engine <- function(bdist, nnk, k, dz, par = TRUE, cores = 7){
   ind.x <- 1:length(x)
   ind.k <- 1:length(k)
 
-  if(par == TRUE){
+  if(par == TRUE) {
+    if(.Platform$OS.type == "windows") {
     cl <- makePSOCKcluster(cores)
     clusterEvalQ(cl, library(rapt))
-    clusterExport(cl,c("x","y","z","dz","k","r","ind.x","ind.k"), envir = environment())
+    clusterExport(cl,c("x","y","z","dz","k","r","ind.x","ind.k"),
+                  envir = environment())
+    }else {
+      cl <- makeForkCluster(cores)
+    }
 
     lambda.est <- parallel::parLapply(cl, ind.k, function(i.k){
-      vols <- sapply(ind.x, function(i.x,rn){local.den.onevol(x[i.x],y[i.x],z[i.x],rn[i.x],dz)}, r[[i.k]])
+      vols <- sapply(ind.x, function(i.x,rn) {
+        local.den.onevol(x[i.x],y[i.x],z[i.x],rn[i.x],dz)}, r[[i.k]])
       l.est <- k[i.k]/vols
       return(l.est)
     })
 
     stopCluster(cl)
 
-  }else{
+  } else {
     lambda.est <- lapply(ind.k, function(i.k){
-      vols <- sapply(ind.x, function(i.x,rn){local.den.onevol(x[i.x],y[i.x],z[i.x],rn[i.x],dz)}, r[[i.k]])
+      vols <- sapply(ind.x, function(i.x,rn) {
+        local.den.onevol(x[i.x],y[i.x],z[i.x],rn[i.x],dz)}, r[[i.k]])
       l.est <- k[i.k]/vols
       return(l.est)
     })
   }
 
   res <- as.data.frame(lambda.est)
-  names <- sapply(k,function(x){return(paste("nn",toString(x),sep = ""))})
+  names <- sapply(k,function(x){
+    return(paste("nn",toString(x),sep = ""))
+  })
   colnames(res) <- names
 
   return(res)

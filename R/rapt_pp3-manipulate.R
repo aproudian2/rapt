@@ -3,17 +3,17 @@
 #
 
 #### subSquare ####
-#' Select a subsection from the center of a \code{\link[spatstat]{pp3}} data
+#' Select a subsection from the center of a \code{\link[spatstat.geom]{pp3}} data
 #' file.
 #'
-#' Given an original \code{\link[spatstat]{pp3}} object, \code{subSquare} will
+#' Given an original \code{\link[spatstat.geom]{pp3}} object, \code{subSquare} will
 #' select a rectangular prism centered at the center of the original point
-#' pattern, and return a \code{\link[spatstat]{pp3}} object of the subsection.
+#' pattern, and return a \code{\link[spatstat.geom]{pp3}} object of the subsection.
 #'
-#' @param orig The original \code{\link[spatstat]{pp3}} object
+#' @param orig The original \code{\link[spatstat.geom]{pp3}} object
 #' @param win Numerical vector containing the dimensions for the box that you
 #'   would like to select: c(xdim, ydim, zdim) (e.g. c(10,10,10)).
-#' @return Returns a \code{\link[spatstat]{pp3}} object of the selected box,
+#' @return Returns a \code{\link[spatstat.geom]{pp3}} object of the selected box,
 #'   shifted so that the origin is still at (0,0,0).
 #' @export
 
@@ -62,19 +62,19 @@ subSquare <- function(orig, win) {
 }
 
 #### percentSelect ####
-#' Randomly select a percent of the points in a \code{\link[spatstat]{pp3}}
+#' Randomly select a percent of the points in a \code{\link[spatstat.geom]{pp3}}
 #' object.
 #'
 #' Function randomly selects a certain percent of points within an original
-#' \code{\link[spatstat]{pp3}} object. This function was created to be used in
+#' \code{\link[spatstat.geom]{pp3}} object. This function was created to be used in
 #' random relabeling of point patterns.
 #'
 #' @param perc The fraction of points from the original pattern that are to be
 #'   selected. A value between 0 and 1.
-#' @param pattern The original \code{\link[spatstat]{pp3}} object to be selected
+#' @param pattern The original \code{\link[spatstat.geom]{pp3}} object to be selected
 #'   from.
 #' @param s Seed for the random selection
-#' @return A \code{\link[spatstat]{pp3}} object containing only the selected
+#' @return A \code{\link[spatstat.geom]{pp3}} object containing only the selected
 #'   points.
 #' @export
 percentSelect <- function(perc, pattern) {

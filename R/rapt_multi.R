@@ -26,7 +26,12 @@ indexMultiples <- function(ato, cl.n = 3) {
     c(which(diff(ato$pIndex) == 0), which(diff(ato$pIndex) == 0) + 1L)
   ))
   mu.rle <- rle(ato[mu.ind,]$pIndex)
-  mu.cl <- parallel::makeCluster(cl.n, type = 'FORK')
+  if(.Platform$OS.type == "windows") {
+    mu.cl <- parallel::makePSOCKcluster(cl.n)
+    parallel::clusterExport(mu.cl, c("mu.rle","mu.ind"))
+  } else {
+    mu.cl <- parallel::makeForkCluster(cl.n)
+  }
   mu.ls <- parallel::parLapply(mu.cl, 1:max(mu.rle$lengths), function(x) {
     ind <- which(mu.rle$lengths == x)
     cum <- cumsum(mu.rle$lengths)
@@ -114,10 +119,10 @@ saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
     mtext('Mass-to-Charge Ratio (Da)', side = 1, line = 1.7)
     axis(2, tck = -0.015, labels = FALSE)
     axis(2, tick = F, line = -0.5, las = 1)
-    mtext('Mass-to-Charge Ratio (Da)', side = 2, line = 2)
+    mtext('Mass-to-Charge Ratio (Da)', side = 2, line = 2, las = 0)
     # Mass spectrum for second hit
     par(new = T, plt = c(0.11, 0.85, 0.85, 0.95))
-    plot(ms@intensity~ms@mass, type = 'l',
+    plot(ms@intensity ~ ms@mass, type = 'l',
          xaxs = 'i', yaxs = 'i', bty = 'n', xaxt = 'n', yaxt = 'n',
          xlab = '', ylab = '')
     # Mass spectrum for first hit
@@ -139,10 +144,113 @@ saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
 #' @references Saxey, D. W. (2011). Correlated ion analysis and the
 #' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
 #' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
-#' @seealso \code{\link{saxeyPlot}}
-dissocTrack <- function(v, m, mp){
+#' @seealso \code{\link{saxeyPlot}}, \code{\link{dissocDensity}}
+#'
+dissocTrack <- function(v, m, mp) {
   m*(1-v*(1-m/mp))^-1
 }
+
+#### dissocTime ####
+#' Estimate the dissociation time
+#'
+#' \code{dissocTime}
+#'
+#' @references Saxey, D. W. (2011). Correlated ion analysis and the
+#' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
+#' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
+#' @seealso \code{\link{saxeyPlot}}, \code{\link{dissocDensity}}
+#'
+dissocTime <- function(mp, x0, phi, v0,
+                       amu = 1.66053904e-27, el = 1.602176634e-19) {
+  Mp <- mp * amu / el
+  sqrt(2 * Mp * x0^2 * phi / v0)
+}
+
+#### dissocHist ####
+#' Project hits along a dissociation track
+#'
+#' @param sax The output of \code{\link{saxeyPlot}}
+#' @param m1 Mass to charge ratio of the first daughter ion
+#' @param m2 Mass to charge ratio of the second daughter ion
+#' @param mp Mass to charge ratio of the parent ion
+#' @param dv Voltage parameter step
+#' @param v Voltage parameter series
+#' @param drop Should repeated bins be dropped? Defaults to FALSE.
+#' @param nbhd The neighborhood of bins to be included. One of: "point",
+#'   "rook", or "queen".
+#' @param method A function or character string to be matched by
+#'   \code{\link{match.fun}} that returns a single value. The density
+#'   calculation method used for the neighborhood of each point.
+#' @param renorm Should the returned densities be renormalized to sum to 1?
+#'   FALSE uses the densities in \code{sax}. Defaults to TRUE. See
+#'   \code{\link[ash]{ash2}}.
+#'
+#' @references Saxey, D. W. (2011). Correlated ion analysis and the
+#' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
+#' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
+#' @seealso \code{\link{saxeyPlot}}, \code{\link{dissocTrack}},
+#'   \code{\link[ash]{ash2}}
+#'
+dissocDensity <- function(sax, m1, m2, mp,
+                          dv = NULL, v = NULL, drop = FALSE,
+                          nbhd = "point", method = "max", renorm = TRUE) {
+  # Need method for discretizing v parameter to get dv
+  if (is.null(dv)) {
+    stop("dv calculation not implemented")
+  }
+  if (is.null(v)) {
+    v <- seq(0,1,dv)
+  }
+
+  # Sample points along the dissociation curve
+  x <- dissocTrack(v, m1, mp)
+  y <- dissocTrack(v, m2, mp)
+  zx <- spatstat.utils::fastFindInterval(x, sax$x)
+  zy <- spatstat.utils::fastFindInterval(y, sax$y)
+  zc <- zx + zy * 1i
+  w <- !duplicated(zc) # used only if drop = TRUE
+
+  # Select values in neighborhood
+  if (nbhd == "point") {
+    nb <- 0
+  } else if (nbhd == "rook") {
+    nb <- c(0, 1, -1, 1i, -1i)
+  } else if (nbhd == "queen"){
+    nb <- c(0, 1, -1, 1i, -1i, 1+1i, 1-1i, -1+1i, -1-1i)
+  } else {
+    stop(paste("Unknown neighborhood.", sQuote("nbhd"), "should be one of:",
+               sQuote("point"), sQuote("rook"), sQuote("queen")))
+  }
+  reg <- outer(zc, nb, `+`)
+  den <- apply(reg, 1, function(r) {
+    nx <- Re(r)
+    ny <- Im(r)
+    d <- sax$z[cbind(nx,ny)]
+    f <- match.fun(method) # Summarize values
+    f(d)
+  })
+
+  # Drop points
+  if (drop) {
+    v <- v[w]
+    den <- den[w]
+    # Need to adjust dv so renorm still works...
+  }
+
+  # Renormalize densities
+  if (renorm) {
+    den <- den / sum(den * dv)
+  }
+
+  dat <- data.frame(v = v, den = den)
+  attr(dat,'mp') <- mp
+  attr(dat,'m1') <- m1
+  attr(dat,'m2') <- m2
+  attr(dat,'nbhd') <- nbhd
+
+  return(dat)
+}
+
 #### houghClean ####
 # Stub for Hough Transform cleaning of multiple hit noise
 # houghClean <- function(sax) {

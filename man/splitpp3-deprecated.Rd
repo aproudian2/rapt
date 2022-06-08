@@ -3,21 +3,21 @@
 \name{splitpp3-deprecated}
 \alias{splitpp3-deprecated}
 \title{Helper for \code{\link{makecluster}} that splits a
-\code{\link[spatstat]{pp3}} into two.}
+\code{\link[spatstat.geom]{pp3}} into two.}
 \arguments{
-\item{overPattern}{The \code{\link[spatstat]{pp3}} object to be split.}
+\item{overPattern}{The \code{\link[spatstat.geom]{pp3}} object to be split.}
 
 \item{num}{The number of points from \code{overPattern} to be put into the
-first \code{\link[spatstat]{pp3}} object.}
+first \code{\link[spatstat.geom]{pp3}} object.}
 }
 \value{
-List containing the two \code{\link[spatstat]{pp3}} patterns. If
+List containing the two \code{\link[spatstat.geom]{pp3}} patterns. If
 these two patterns were combined, they would create the original
 \code{overPattern} object.
 }
 \description{
-Splits a \code{\link[spatstat]{pp3}} function into two smaller subset
-\code{\link[spatstat]{pp3}} objects, given an input for how many points to
+Splits a \code{\link[spatstat.geom]{pp3}} function into two smaller subset
+\code{\link[spatstat.geom]{pp3}} objects, given an input for how many points to
 put in the first object.
 }
 \seealso{

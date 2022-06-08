@@ -14,9 +14,9 @@
 #' centroids within the underlying point pattern.
 #'
 #' @param under The underlying RCP point pattern (UPP). A
-#'   \code{\link[spatstat]{pp3}} object containing points at the centers of RCP
+#'   \code{\link[spatstat.geom]{pp3}} object containing points at the centers of RCP
 #'   spheres.
-#' @param over The overlying RCP pattern. A \code{\link[spatstat]{pp3}} object
+#' @param over The overlying RCP pattern. A \code{\link[spatstat.geom]{pp3}} object
 #'   containing points at the centers of RCP spheres. Scaled equal to the
 #'   underlying point pattern.
 #' @param rcp_rad The radius of the spheres within the underlying and overlying
@@ -38,9 +38,9 @@
 #'   `TRUE` or `FALSE` (the default).
 #'
 #' @return List of:
-#' * `clusters` - A \code{\link[spatstat]{pp3}} object containing the final
+#' * `clusters` - A \code{\link[spatstat.geom]{pp3}} object containing the final
 #'   locations of only type-A points within `all`.
-#' * `all` - A \code{\link[spatstat]{pp3}} object containing the full marked
+#' * `all` - A \code{\link[spatstat.geom]{pp3}} object containing the full marked
 #'   underlying point pattern with points marked as either type A (cluster type
 #'   point in a cluster), B (cluster type point not in a cluster) or C
 #'   (non-cluster type point).
@@ -48,7 +48,7 @@
 #'   `all`.
 #' * `perc` - A single value containing the true fraction of type-A points in
 #'   `all`.
-#' * `centers` - A \code{\link[spatstat]{pp3}} object containing the cluster
+#' * `centers` - A \code{\link[spatstat.geom]{pp3}} object containing the cluster
 #'   center locations within `all`.
 #'
 #' @family simulation functions
@@ -68,7 +68,7 @@ clustersim <- function(under, over, rcp_rad,
                        toplot = FALSE) {
   set.seed(s)
   # Total volume
-  sidelength <- diff(spatstat::domain(under)$xrange)
+  sidelength <- diff(spatstat.geom::domain(under)$xrange)
   vt <- sidelength^3
 
   # Calculate volume needed in clusters
@@ -85,47 +85,47 @@ clustersim <- function(under, over, rcp_rad,
   alpha <- 1
   rcp.conc <- vc/(4/3 * pi * cr*(cr^2 + 3*sigma^2) * vt * alpha)
   # Scale over RCP pattern to match this concentration
-  over.vol <- spatstat::volume(spatstat::domain(over)) # Original volume
-  over.vol.new <- spatstat::npoints(over) / rcp.conc # New volume
+  over.vol <- spatstat.geom::volume(spatstat.geom::domain(over)) # Original volume
+  over.vol.new <- spatstat.geom::npoints(over) / rcp.conc # New volume
   over.sf <- over.vol.new^(1/3) / over.vol^(1/3) # Scale factor for new volume
   over.scaled <- pp3_scale(over, over.sf)
 
   # Generate and add position blur
   over.sub <- over_cut(over.scaled, rep(sidelength, 3), cr)
-  nnd <- spatstat::nndist(over.sub)
+  nnd <- spatstat.geom::nndist(over.sub)
   avg.sep <- mean(nnd)
   pb.sig <- avg.sep*pb
 
-  pb.shifts <- rgblur(n = spatstat::npoints(over.scaled),
+  pb.shifts <- rgblur(n = spatstat.geom::npoints(over.scaled),
                       method = "r", coords = "sph",
                       mean = 0, sd = pb.sig)
-  over.coo <- spatstat::coords(over.scaled)
+  over.coo <- spatstat.geom::coords(over.scaled)
   over.coo.pb <- over.coo + pb.shifts
-  over.scaled.pb <- spatstat::pp3(x = over.coo.pb$x,
+  over.scaled.pb <- spatstat.geom::pp3(x = over.coo.pb$x,
                         y = over.coo.pb$y,
                         z = over.coo.pb$z,
-                        spatstat::domain(over.scaled))
+                        spatstat.geom::domain(over.scaled))
 
   # Re-size and shift the over point pattern so that it lines up with
   # the under point pattern with buffers
   over.scaledcut <- over_cut(over.scaled.pb, rep(sidelength, 3), 2.5*cr)
-  over.scaledcut.coo <- spatstat::coords(over.scaledcut)
+  over.scaledcut.coo <- spatstat.geom::coords(over.scaledcut)
 
   # Generate normal distributed radii for cluster centers
-  cr.rand <- rnorm(spatstat::npoints(over.scaledcut), mean = cr, sd = sigma)
+  cr.rand <- rnorm(spatstat.geom::npoints(over.scaledcut), mean = cr, sd = sigma)
   cr.rand[cr.rand < 0] <- 0
-  spatstat::marks(over.scaledcut) <- cr.rand
+  spatstat.geom::marks(over.scaledcut) <- cr.rand
 
   # Check volume in clusters - optimize to target volume
   sf.optim <- optim(par = 1, fn = check_vol, gr = NULL,
-                    over.scaledcut.coo, vc, spatstat::domain(under), cr.rand,
+                    over.scaledcut.coo, vc, spatstat.geom::domain(under), cr.rand,
                     method = "L-BFGS-B", lower = 0.5, upper = 3)
   over.scaled2 <- pp3_scale(over.scaledcut, sf.optim$par)
 
   # shift points to remove overlaps
   over.nolap <- overlap_fix(over.scaled2, cr.rand)
   if(is.numeric(over.nolap)){return(-1)} # change to a tryCatch
-  over.nolap.coo <- spatstat::coords(over.nolap)
+  over.nolap.coo <- spatstat.geom::coords(over.nolap)
 
   # Re-check once for volume correctness
   sf.optim2 <- optim(par = 1, fn = check_vol, gr = NULL,
@@ -135,7 +135,7 @@ clustersim <- function(under, over, rcp_rad,
   over.final <- over_cut(over.scaled3, rep(sidelength, 3), cr.rand)
 
   # Select points that fall within the correct radius of each cluster center
-  cr.rand.final <- spatstat::marks(over.final)
+  cr.rand.final <- spatstat.geom::marks(over.final)
   cluster.inds.all <- list()
 
   if(!(is.numeric(max(cr.rand.final)) && length(max(cr.rand.final)) == 1L &&
@@ -144,7 +144,7 @@ clustersim <- function(under, over, rcp_rad,
     return(-1) # change to a tryCatch
   }
 
-  nnR <- spatstat::crosspairs.pp3(over.final, under, rmax = max(cr.rand.final),
+  nnR <- spatstat.geom::crosspairs.pp3(over.final, under, rmax = max(cr.rand.final),
                         what = 'ijd', neat = TRUE, distinct = TRUE,
                         twice = FALSE)
   if(is.empty(nnR$i)) {
@@ -178,9 +178,9 @@ clustersim <- function(under, over, rcp_rad,
   c.marks[bgnd.inds] <- 'B'
   c.marks[-(c(cluster.inds, bgnd.inds))] <- 'C'
 
-  spatstat::marks(under) <- c.marks
-  just.cluster.points <- under[spatstat::marks(under) == 'A' |
-                               spatstat::marks(under) == 'B']
+  spatstat.geom::marks(under) <- c.marks
+  just.cluster.points <- under[spatstat.geom::marks(under) == 'A' |
+                               spatstat.geom::marks(under) == 'B']
 
   if(toplot == TRUE){
     plot3d.pp3(just.cluster.points)
@@ -215,10 +215,10 @@ clustersim <- function(under, over, rcp_rad,
 #' types, but I haven't gotten around to it yet. Some time soon perhaps. Let me,
 #' Galen Vincent, know if you need some upgrades sooner. Thanks!
 #'
-#' @param under The underlaying RCP pattern. A \code{\link[spatstat]{pp3}}
+#' @param under The underlaying RCP pattern. A \code{\link[spatstat.geom]{pp3}}
 #'   object containing the correctly scaled RCP pattern point locations. Should
 #'   have used scaleRCP prior to putting the object into this argument.
-#' @param over The overlaying RCP pattern. A \code{\link[spatstat]{pp3}} object
+#' @param over The overlaying RCP pattern. A \code{\link[spatstat.geom]{pp3}} object
 #'   containing the RCP pattern point locations. Scaled equal to the underlaying
 #'   pattern.
 #' @param radius1 The small radius of the underlaying RCP pattern. Can be found
@@ -311,30 +311,30 @@ clustersim <- function(under, over, rcp_rad,
 #'
 #' @return Returns are different based on \code{type}.
 #'   \subsection{\code{type} = "ppc" or "dist"}{List of: [[1]]
-#'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
-#'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   \code{\link[spatstat.geom]{pp3}} object containing the cluster marked point
+#'   locations. [[2]] \code{\link[spatstat.geom]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
 #'   points per cluster 1 [2] number of points with points per cluster 1 [3]
 #'   points per cluster 2 [4] number of points with points per cluster 2. }
 #'   \subsection{\code{type} = "cr", speed = "slow"}{List of: [[1]]
-#'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
-#'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   \code{\link[spatstat.geom]{pp3}} object containing the cluster marked point
+#'   locations. [[2]] \code{\link[spatstat.geom]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] Numeric vector containing: [1]
 #'   number of clusters [2] number of points in those clusters.}
 #'   \subsection{\code{type} = "cr", speed = "fast"}{List of: [[1]]
-#'   \code{\link[spatstat]{pp3}} object containing the cluster marked point
-#'   locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   \code{\link[spatstat.geom]{pp3}} object containing the cluster marked point
+#'   locations. [[2]] \code{\link[spatstat.geom]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] factor containing the number of
 #'   points in each cluster.}
 #'   \subsection{\code{type} = "cr", speed = "superfast", rb = FALSE}{List of:
-#'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
-#'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   [[1]] \code{\link[spatstat.geom]{pp3}} object containing the cluster marked
+#'   point locations. [[2]] \code{\link[spatstat.geom]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] number of points put in or
 #'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
 #'   center to center) from each cluster}
 #'   \subsection{\code{type} = "cr", speed = "superfast", rb = TRUE}{List of:
-#'   [[1]] \code{\link[spatstat]{pp3}} object containing the cluster marked
-#'   point locations. [[2]] \code{\link[spatstat]{pp3}} object containing the
+#'   [[1]] \code{\link[spatstat.geom]{pp3}} object containing the cluster marked
+#'   point locations. [[2]] \code{\link[spatstat.geom]{pp3}} object containing the
 #'   overlaying RCP pattern after scaling. [[3]] number of points put in or
 #'   taken away at random. [[4]] Vector of nearest neighbor distance (cluster
 #'   center to center) from each cluster. [[5]] A vector contining the radius of
@@ -372,7 +372,7 @@ makecluster <- function(under, over, radius1, radius2,
     over.r <- radius2
     over.rf <- under.r*(ppc/rcp)^(1/3)
     over.scaled <- scaleRCP(over, newRadius = over.rf, oldRadius = over.r,
-                            win = spatstat::domain(over))
+                            win = spatstat.geom::domain(over))
     over.scaledf <- subSample(under, over.scaled)
 
     ppc <- floor(npoints(under)*rcp/npoints(over.scaledf))
@@ -381,16 +381,16 @@ makecluster <- function(under, over, radius1, radius2,
       stop("Points per cluster is too small.")
     }
 
-    diff <- spatstat::npoints(under)*rcp - ppc*spatstat::npoints(over.scaledf)
-    sp.AB <- rep("B", spatstat::npoints(over.scaledf))
+    diff <- spatstat.geom::npoints(under)*rcp - ppc*spatstat.geom::npoints(over.scaledf)
+    sp.AB <- rep("B", spatstat.geom::npoints(over.scaledf))
     sp.AB[1:diff] <- "A"
 
     if(diff > 0) {
-      over.split <- spatstat::split.ppx(over.scaledf, sp.AB)
+      over.split <- spatstat.geom::split.ppx(over.scaledf, sp.AB)
 
-      cluster.inddf1 <- spatstat::nncross(over.split$A, under,
+      cluster.inddf1 <- spatstat.geom::nncross(over.split$A, under,
                                           what = "which", k = 1:ppc)
-      cluster.inddf2 <- spatstat::nncross(over.split$B, under,
+      cluster.inddf2 <- spatstat.geom::nncross(over.split$B, under,
                                           what = "which", k = 1:(ppc+1))
       cluster.ind <- NULL
 
@@ -796,19 +796,19 @@ makecluster <- function(under, over, radius1, radius2,
     }
 
     diff <- npoints(under)*rcp-ppc*npoints(over.scaledf)
-    sp.AB <- rep("B", spatstat::npoints(over.scaledf))
+    sp.AB <- rep("B", spatstat.geom::npoints(over.scaledf))
     sp.AB[1:diff] <- "A"
 
     if(diff > 0){
-      over.split <- spatstat::split.ppx(over.scaledf, sp.AB)
+      over.split <- spatstat.geom::split.ppx(over.scaledf, sp.AB)
 
-      cluster.inddf1 <- spatstat::nncross(over.split$A, under,
+      cluster.inddf1 <- spatstat.geom::nncross(over.split$A, under,
                                           what = "which", k = 1:ppc)
-      cluster.inddf2 <- spatstat::nncross(over.split$B, under,
+      cluster.inddf2 <- spatstat.geom::nncross(over.split$B, under,
                                           what = "which", k = 1:(ppc+1))
       cluster.ind <- vector("numeric",
-                            ppc * spatstat::npoints(over.split$A) +
-                              (ppc+1) * spatstat::npoints(over.split$B))
+                            ppc * spatstat.geom::npoints(over.split$A) +
+                              (ppc+1) * spatstat.geom::npoints(over.split$B))
       cnt <- 1
       for(i in 1:npoints(over.split$A)){
         if(ppc==1){
@@ -824,8 +824,8 @@ makecluster <- function(under, over, radius1, radius2,
         cnt <- cnt + ppc + 1
       }
     }else{
-      cluster.ind1 <- spatstat::nncross(over.scaledf,under,what="which",k=1:ppc)
-      cluster.ind <- vector("numeric",ppc*spatstat::npoints(over.scaledf))
+      cluster.ind1 <- spatstat.geom::nncross(over.scaledf,under,what="which",k=1:ppc)
+      cluster.ind <- vector("numeric",ppc*spatstat.geom::npoints(over.scaledf))
       cnt <- 1
       for(i in 1:npoints(over.scaledf)){
         cluster.ind[cnt:(cnt+ppc-1)] <- as.numeric(cluster.ind1[i,])
@@ -896,7 +896,7 @@ makecluster <- function(under, over, radius1, radius2,
 #' @param R Cluster radius.
 #' @param sigma1 Inter cluster density. Value between 0 and 1.
 #' @param sigma2 Background density. Value between 0 and 1.
-#' @param win A \code{\link[spatstat]{box3}} object containing the window of the
+#' @param win A \code{\link[spatstat.geom]{box3}} object containing the window of the
 #'   cluster set you want to make.
 #' @param background Either \code{'poisson'} or \code{'rcp'}. Whether to have
 #'   Poission distributed points or RCP points for the points in the clusters
@@ -905,7 +905,7 @@ makecluster <- function(under, over, radius1, radius2,
 #'   to [1] the FinalConfig file of the RCP pattern desired, [2] the system file
 #'   of the RCP pattern desired
 #'
-#' @return A list of [[1]] A \code{\link[spatstat]{pp3}} object containing the
+#' @return A list of [[1]] A \code{\link[spatstat.geom]{pp3}} object containing the
 #'   cluster points, [[2]] The overall intensity of the point pattern; Total
 #'   number of points/total volume.
 #' @export
@@ -957,7 +957,7 @@ hcpcluster <- function(csep_r, R, sigma1, sigma2, win, background, filepath){
 #' @param toplot \code{TRUE} or \code{FALSE}. Plot results or not.
 #' @param win The simulation window.
 #'
-#' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
+#' @return A list of: [[1]] a \code{\link[spatstat.geom]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
 #'
@@ -1059,7 +1059,7 @@ morph_lamellar <- function(lambda,
 #' @param toplot \code{TRUE} or \code{FALSE}; Plot results or not.
 #' @param win The simulation window.
 #'
-#' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
+#' @return A list of: [[1]] a \code{\link[spatstat.geom]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
 #'
@@ -1222,7 +1222,7 @@ morph_rods <- function(lambda,
 #' @param toplot \code{TRUE} or \code{FALSE}; Plot results or not.
 #' @param win The simulation window.
 #'
-#' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
+#' @return A list of: [[1]] a \code{\link[spatstat.geom]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
 #' @export
@@ -1285,7 +1285,7 @@ morph_gyroid <- function(lambda,
 #' @param toplot \code{TRUE} or \code{FALSE}; Plot results or not.
 #' @param win The simulation window.
 #'
-#' @return A list of: [[1]] a \code{\link[spatstat]{pp3}} object contining the
+#' @return A list of: [[1]] a \code{\link[spatstat.geom]{pp3}} object contining the
 #'   guest points. [[2]] A \code{pp3} object containing the entire background
 #'   underlying point pattern.
 #' @export
@@ -1368,10 +1368,10 @@ morph_gb <- function(lambda,
 #' points desired in the pattern.
 #'
 #' @param npoint Approximate number of points to have in the pattern.
-#' @param win A \code{\link[spatstat]{box3}} object containing the window for
+#' @param win A \code{\link[spatstat.geom]{box3}} object containing the window for
 #'   the final pattern.
 #'
-#' @return A \code{\link[spatstat]{pp3}} object with the lattice points.
+#' @return A \code{\link[spatstat.geom]{pp3}} object with the lattice points.
 #'
 #' @name bcc.gen-deprecated
 #' @seealso \code{\link{rapt-deprecated}}
@@ -1415,7 +1415,7 @@ bcc.gen <- function(npoint, win){
 #' specified radius within a window of specified size.
 #'
 #' @param r The radius of the spheres for the HCP structure.
-#' @param win A \code{\link[spatstat]{box3}} object defining the window for the
+#' @param win A \code{\link[spatstat.geom]{box3}} object defining the window for the
 #'   generation.
 #'
 #' @return A data.frame object containing xyz coordinates of the HCP lattice
@@ -1459,15 +1459,15 @@ hcp.gen <- function(r, win){
 #### subSample ####
 #' Cut pp3 object to size
 #'
-#' Takes one \code{\link[spatstat]{pp3}} object, and cuts its volume down to the
-#' size of another \code{\link[spatstat]{pp3}} object. Only keeps the points of
+#' Takes one \code{\link[spatstat.geom]{pp3}} object, and cuts its volume down to the
+#' size of another \code{\link[spatstat.geom]{pp3}} object. Only keeps the points of
 #' the first object that lay within the volume of the second object.
 #'
-#' @param underPattern The second \code{\link[spatstat]{pp3}} object. The volume
+#' @param underPattern The second \code{\link[spatstat.geom]{pp3}} object. The volume
 #'   that you want to cut down to.
-#' @param overPattern The first \code{\link[spatstat]{pp3}} object. The object
+#' @param overPattern The first \code{\link[spatstat.geom]{pp3}} object. The object
 #'   that you wish to cut down to the volume of \code{underPattern}.
-#' @return A \code{\link[spatstat]{pp3}} object containing \code{overPattern}
+#' @return A \code{\link[spatstat.geom]{pp3}} object containing \code{overPattern}
 #'   cut down to the volume of \code{underPattern}.
 subSample <- function(underPattern, overPattern){
 
@@ -1488,16 +1488,16 @@ subSample <- function(underPattern, overPattern){
 
 #### splitpp3 ####
 #' Helper for \code{\link{makecluster}} that splits a
-#' \code{\link[spatstat]{pp3}} into two.
+#' \code{\link[spatstat.geom]{pp3}} into two.
 #'
-#' Splits a \code{\link[spatstat]{pp3}} function into two smaller subset
-#' \code{\link[spatstat]{pp3}} objects, given an input for how many points to
+#' Splits a \code{\link[spatstat.geom]{pp3}} function into two smaller subset
+#' \code{\link[spatstat.geom]{pp3}} objects, given an input for how many points to
 #' put in the first object.
 #'
-#' @param overPattern The \code{\link[spatstat]{pp3}} object to be split.
+#' @param overPattern The \code{\link[spatstat.geom]{pp3}} object to be split.
 #' @param num The number of points from \code{overPattern} to be put into the
-#'   first \code{\link[spatstat]{pp3}} object.
-#' @return List containing the two \code{\link[spatstat]{pp3}} patterns. If
+#'   first \code{\link[spatstat.geom]{pp3}} object.
+#' @return List containing the two \code{\link[spatstat.geom]{pp3}} patterns. If
 #'   these two patterns were combined, they would create the original
 #'   \code{overPattern} object.
 #'
@@ -1507,7 +1507,7 @@ subSample <- function(underPattern, overPattern){
 NULL
 #' @rdname rapt-deprecated
 #' @section \code{splitpp3}:
-#'   For \code{splitpp3}, use \code{\link[spatstat]{split.ppx}}
+#'   For \code{splitpp3}, use \code{\link[spatstat.geom]{split.ppx}}
 splitpp3 <- function(overPattern, num){
   pat.xyz <- coords(overPattern)
 
@@ -1531,8 +1531,8 @@ splitpp3 <- function(overPattern, num){
 #' @param mat Matrix filled with points and associated cluster index values.
 #' @param diff The difference between the number of values needed and the number
 #'   in mat
-#' @param X The overlaying point pattern. A \code{\link[spatstat]{pp3}} object.
-#' @param Y The underlaying point pattern. A \code{\link[spatstat]{pp3}} object.
+#' @param X The overlaying point pattern. A \code{\link[spatstat.geom]{pp3}} object.
+#' @param Y The underlaying point pattern. A \code{\link[spatstat.geom]{pp3}} object.
 #'
 #' @return Updated mat matrix containing the correct number of cluster points.
 
@@ -1623,8 +1623,8 @@ crAdjust <- function(mat, diff, X, Y) {
 #' @param cluster.info Factor containing the number of points in each cluster.
 #' @param diff The difference between the number of values needed and the number
 #'   in cluster.ind.
-#' @param X The overlaying point pattern. A \code{\link[spatstat]{pp3}} object.
-#' @param Y The underlaying point pattern. A \code{\link[spatstat]{pp3}} object.
+#' @param X The overlaying point pattern. A \code{\link[spatstat.geom]{pp3}} object.
+#' @param Y The underlaying point pattern. A \code{\link[spatstat.geom]{pp3}} object.
 #'
 #' @return A list of [[1]] The updated cluster.ind vector and [[2]] the updated
 #'   cluster.info factor.
@@ -1918,8 +1918,8 @@ overlap_fix <- function(X, cr.rand) {
     minsep <- cr.rand[ind] + cr.rand[nnw[ind]]
     direction <- (coords(X)[nnw[ind],]-coords(X)[ind,])/nnd[ind]
     coords(X)[ind,] <- coords(X)[ind,]+(nnd[ind]-(minsep+0.00001))*direction
-    nnd <- spatstat::nndist(X)
-    nnw <- spatstat::nnwhich.pp3(X)
+    nnd <- spatstat.geom::nndist(X)
+    nnw <- spatstat.geom::nnwhich.pp3(X)
     check <- which(nnd < (cr.rand + cr.rand[nnw]))
     t2 <- Sys.time()
     if((as.numeric(t2) - as.numeric(t1)) > 15) {

@@ -9,7 +9,7 @@ hcp.gen(r, win)
 \arguments{
 \item{r}{The radius of the spheres for the HCP structure.}
 
-\item{win}{A \code{\link[spatstat]{box3}} object defining the window for the
+\item{win}{A \code{\link[spatstat.geom]{box3}} object defining the window for the
 generation.}
 }
 \value{

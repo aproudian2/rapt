@@ -2,9 +2,9 @@
 % Please edit documentation in R/rapt_extend.R
 \name{intensity.pp3-deprecated}
 \alias{intensity.pp3-deprecated}
-\title{Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.}
+\title{Extends \code{\link[spatstat.geom]{intensity}} to \code{\link[spatstat.geom]{pp3}}.}
 \description{
-Extends \code{\link[spatstat]{intensity}} to \code{\link[spatstat]{pp3}}.
+Extends \code{\link[spatstat.geom]{intensity}} to \code{\link[spatstat.geom]{pp3}}.
 }
 \seealso{
 \code{\link{rapt-deprecated}}

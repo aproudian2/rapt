@@ -141,18 +141,18 @@ readRRNG <- function(filepath) {
 ### createSpat ###
 #' Create a pp3 from a POS or ATO
 #'
-#' \code{createSpat} creates a \code{\link[spatstat]{pp3}} from a POS or ATO
+#' \code{createSpat} creates a \code{\link[spatstat.geom]{pp3}} from a POS or ATO
 #' data frame.
 #'
 #' @param pos A POS or ATO data frame.
 #' @param win The domain of the data.
-#' @return A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
+#' @return A \code{\link[spatstat.geom]{pp3}} with the x,y,z positions of the hits in
 #'   the supplied POS or ATO.
 #'
 #' @family APT data transformation functions
 #'
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}},
-#'   \code{\link[spatstat]{pp3}}
+#'   \code{\link[spatstat.geom]{pp3}}
 #'
 #' @export
 createSpat <- function(pos, win = NULL, marks = NULL) {
@@ -169,25 +169,26 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
 ### createDet ###
 #' Create a "ppp" from an ATO.
 #'
-#' `createDet` generates a \code{\link[spatstat]{ppp}} of detector hits from an
+#' `createDet` generates a \code{\link[spatstat.geom]{ppp}} of detector hits from an
 #' ATO.
 #'
 #' @param ato An ATO data frame.
-#' @param window An object of class \code{\link[spatstat]{owin}}. If `NULL` (the
+#' @param window An object of class \code{\link[spatstat.geom]{owin}}. If `NULL` (the
 #' default), a window will be calculated from the data using
-#'   \code{\link[spatstat]{ripras}}.
-#' @return A \code{\link[spatstat]{ppp}} with the positions of the detector hits
+#'   \code{\link[spatstat.geom]{ripras}}.
+#' @return A \code{\link[spatstat.geom]{ppp}} with the positions of the detector hits
 #'   from the ATO.
 #'
 #' @family APT data transformation functions
 #'
-#' @seealso \code{\link{readATO}}, \code{\link[spatstat]{ppp}},
-#'   \code{\link[spatstat]{ripras}}
+#' @seealso \code{\link{readATO}}, \code{\link[spatstat.geom]{ppp}},
+#'   \code{\link[spatstat.geom]{ripras}}
 #'
 #' @export
 createDet <- function(ato, win = NULL, marks = NULL) {
   if(is.null(win)) {
     win <- spatstat.geom::ripras(ato$dx, ato$dy)
+    unitname(win) <- "cm"
   }
   det.dat <- spatstat.geom::ppp(ato$dx, ato$dy, window = win, marks = marks)
   attr(det.dat, "metaData") <- attr(ato, "metaData")

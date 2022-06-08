@@ -2,23 +2,23 @@
 % Please edit documentation in R/rapt_pp3-manipulate.R
 \name{subSquare}
 \alias{subSquare}
-\title{Select a subsection from the center of a \code{\link[spatstat]{pp3}} data
+\title{Select a subsection from the center of a \code{\link[spatstat.geom]{pp3}} data
 file.}
 \usage{
 subSquare(orig, win)
 }
 \arguments{
-\item{orig}{The original \code{\link[spatstat]{pp3}} object}
+\item{orig}{The original \code{\link[spatstat.geom]{pp3}} object}
 
 \item{win}{Numerical vector containing the dimensions for the box that you
 would like to select: c(xdim, ydim, zdim) (e.g. c(10,10,10)).}
 }
 \value{
-Returns a \code{\link[spatstat]{pp3}} object of the selected box,
+Returns a \code{\link[spatstat.geom]{pp3}} object of the selected box,
 shifted so that the origin is still at (0,0,0).
 }
 \description{
-Given an original \code{\link[spatstat]{pp3}} object, \code{subSquare} will
+Given an original \code{\link[spatstat.geom]{pp3}} object, \code{subSquare} will
 select a rectangular prism centered at the center of the original point
-pattern, and return a \code{\link[spatstat]{pp3}} object of the subsection.
+pattern, and return a \code{\link[spatstat.geom]{pp3}} object of the subsection.
 }

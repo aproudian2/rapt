@@ -46,7 +46,7 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
 #'
 #' @seealso \code{\link{drawRNG}}
 #' @export
-drawRange <- function(ms, start, end, col = "red") {
+drawRange <- function(ms, start, end, col = "red", miny = 0) {
   if(isMassSpectrum(ms)) {
     ms <- as.data.frame(ms)
   }
@@ -55,7 +55,7 @@ drawRange <- function(ms, start, end, col = "red") {
                    dQuote("intensity."))
     stop(error)
   }
-  polyCurve(ms$mass, ms$intensity, start, end, col = col)
+  polyCurve(ms$mass, ms$intensity, start, end, col = col, miny = miny)
   invisible()
 }
 
@@ -74,7 +74,7 @@ drawRange <- function(ms, start, end, col = "red") {
 #'
 #' @seealso \code{\link{drawRange}}
 #' @export
-drawRNG <- function(ms, rng) {
+drawRNG <- function(ms, rng, miny = 0) {
   if(isMassSpectrum(ms)) {
     ms <- as.data.frame(ms)
   }
@@ -83,7 +83,8 @@ drawRNG <- function(ms, rng) {
                    dQuote("intensity."))
     stop(error)
   }
-  polyCurve(ms$mass, ms$intensity, rng$start, rng$end, col = rng$color)
+  polyCurve(ms$mass, ms$intensity, rng$start, rng$end,
+            col = rng$color, miny = miny)
   invisible()
 }
 

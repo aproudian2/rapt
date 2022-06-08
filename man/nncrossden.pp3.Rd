@@ -14,8 +14,7 @@ nncrossden.pp3(
   nz,
   at.points = FALSE,
   nsplit = 1000,
-  cores = 8,
-  os = "linux"
+  cores = 8
 )
 }
 \arguments{
@@ -39,9 +38,6 @@ computations. This parameter is the number of points per split set.}
 
 \item{cores}{Number of cores to use for parallelization. Set to one for
 serial calculation.}
-
-\item{os}{Either 'windows', 'mac', or 'linux'. Changes the parallelization
-method used.}
 }
 \value{
 List containing: [\link{1}] A data frame of the intensity estimates for

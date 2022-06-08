@@ -1,13 +1,13 @@
 Package: rapt
 Type: Package
 Title: Atom Probe Tomography Analysis
-Version: 0.2.2
-Date: 2020-09-24
+Version: 0.3.0
+Date: 2021-04-13
 Authors@R: c(
     person("Andrew P.", "Proudian",
            email = "aproudia@mines.edu", role = c("aut", "cre")),
     person("Galen", "Vincent",
-           email = "galenvincent@mines.edu", role = "aut"))
+           email = "galen@stat.cmu.edu", role = "aut"))
 Description: Tools for analyzing atom probe tomography (APT) data in R. It
     provides methods for both spatial and mass spectral analysis, along with
     simulation tools.
@@ -15,9 +15,9 @@ License: CC-BY-SA-4.0
 LazyData: TRUE
 SystemRequirements: C++11
 Depends:
-  R (>= 3.6),
+  R (>= 4.0),
   MALDIquant (>= 1.19),
-  spatstat (>= 1.64)
+  spatstat (>= 2.1)
 Imports:
   enviPat (>= 2.4),
   pracma (>= 2.2),
@@ -26,7 +26,8 @@ Imports:
   ash (>= 1.0),
   Rcpp (>= 1.0),
   Rcpp11 (>= 3.1),
-  glue (>= 1.4)
+  glue (>= 1.4),
+  misc3d (>= 0.9)
 LinkingTo:
   Rcpp
 Suggests:
@@ -34,6 +35,7 @@ Suggests:
     knitr (>= 1.29),
     rmarkdown (>= 2.3)
 RdMacros: Rdpack
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
+Encoding: UTF-8

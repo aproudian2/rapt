@@ -25,7 +25,7 @@ identifies which column of \code{X} contains the point patterns. The right
 side identifies the grouping factor}
 
 \item{summaryfunction}{Summary function applicable to pp3. Defaults to
-\code{link[spatstat]{K3est}}}
+\code{link[spatstat.core]{K3est}}}
 
 \item{...}{Additional arguments passed to \code{summaryfunction}}
 
@@ -66,12 +66,13 @@ of spatial point patterns.
 \emph{Journal of the American Statistical Association} \strong{107} (498), 754-764.
 }
 \seealso{
-\code{\link[spatstat]{studpermu.test}},
-\code{link[spatstat]{plot.studpermutest}}
+\code{\link[spatstat.core]{studpermu.test}},
+\code{link[spatstat.core]{plot.studpermutest}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},
 \code{\link{G3multi}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

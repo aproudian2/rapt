@@ -5,32 +5,32 @@
 #### rpoint3 ####
 #' Generate N Random Points
 #'
-#' \code{rpoint3} extends \code{\link[spatstat]{rpoint}} to
-#' \code{\link[spatstat]{pp3}}.
+#' \code{rpoint3} extends \code{\link[spatstat.geom]{rpoint}} to
+#' \code{\link[spatstat.geom]{pp3}}.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{rpoint}}
+#' @seealso \code{\link[spatstat.geom]{rpoint}}
 #'
 #' @export
 rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
           giveup = 1000, verbose = FALSE, nsim = 1, drop = TRUE)
 {
   if (missing(f) || (is.numeric(f) && length(f) == 1))
-    return(runifpoint3(n, domain = win, nsim = nsim, drop = drop))
+    return(spatstat.random::runifpoint3(n, domain = win, nsim = nsim, drop = drop))
   if (!is.function(f) && !is.im(f))
     stop(paste(sQuote("f"), "must be a function"))
-  verifyclass(win, "box3")
+  spatstat.geom::verifyclass(win, "box3")
   if (n == 0) {
     emp <- pp3(numeric(0), numeric(0), numeric(0), window = win)
     if (nsim == 1 && drop)
       return(emp)
     result <- rep(list(emp), nsim)
     names(result) <- paste("Simulation", 1:nsim)
-    return(as.anylist(result))
+    return(spatstat.geom::as.anylist(result))
   }
   result <- vector(mode = "list", length = nsim)
   for (isim in 1:nsim) {
-    X <- pp3(numeric(0), numeric(0), numeric(0), window = win)
+    X <- spatstat.geom::pp3(numeric(0), numeric(0), numeric(0), window = win)
     pbar <- 1
     nremaining <- n
     totngen <- 0
@@ -39,20 +39,21 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
       ntries <- ntries + 1
       ngen <- nremaining/pbar + 10
       totngen <- totngen + ngen
-      prop <- runifpoint3(ngen, domain = win)
+      prop <- spatstat.random::runifpoint3(ngen, domain = win)
       if (npoints(prop) > 0) {
         fvalues <- f(prop$data$x, prop$data$y, prop$data$z, ...)
         paccept <- fvalues/fmax
-        u <- runif(npoints(prop))
+        u <- runif(spatstat.geom::npoints(prop))
         Y <- prop[u < paccept]
-        if (npoints(Y) > 0) {
-          X <- superimpose(X, Y, W = win)
-          nX <- npoints(X)
+        if (spatstat.geom::npoints(Y) > 0) {
+          X <- spatstat.geom::superimpose(X, Y, W = win)
+          nX <- spatstat.geom::npoints(X)
           pbar <- nX/totngen
           nremaining <- n - nX
           if (nremaining <= 0) {
             if (verbose)
-              splat("acceptance rate = ", round(100 * pbar, 2), "%")
+              spatstat.utils::splat("acceptance rate = ",
+                                    round(100 * pbar, 2), "%")
             result[[isim]] <- if (nX == n)
               X
             else X[1:n]
@@ -62,23 +63,23 @@ rpoint3 <- function (n, f, fmax = 1,  win = box3(), ...,
       }
       if (ntries > giveup)
         stop(paste("Gave up after", giveup * n, "trials with",
-                   npoints(X), "points accepted"))
+                   spatstat.geom::npoints(X), "points accepted"))
     }
   }
   if (nsim == 1 && drop)
     return(result[[1]])
   names(result) <- paste("Simulation", 1:nsim)
-  return(as.anylist(result))
+  return(spatstat.geom::as.anylist(result))
 }
 
 #### rPoissonCluster3 ####
 #' Simulate 3D Poisson Cluster Process
 #'
-#' \code{rPoissonCluster3} extends \code{\link[spatstat]{rPoissonCluster}} to
-#' \code{\link[spatstat]{pp3}}.
+#' \code{rPoissonCluster3} extends \code{\link[spatstat.random]{rPoissonCluster}} to
+#' \code{\link[spatstat.geom]{pp3}}.
 #'
 #' @family spatstat extensions
-#' @seealso \code{\link[spatstat]{rpoint}}
+#' @seealso \code{\link[spatstat.random]{rpoint}}
 #'
 #'
 #' @export
@@ -90,12 +91,12 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
     f <- rcluster
     rcluster <- function(..., rmax) f(...)
   }
-  verifyclass(win, "box3")
-  dilated <- box3(win$xrange + c(-expand, expand),
-                  win$yrange + c(-expand, expand),
-                  win$yrange + c(-expand, expand))
-  parentlist <- rpoispp3(kappa, domain = dilated,
-                        nsim = nsim)
+  spatstat.geom::verifyclass(win, "box3")
+  dilated <- spatstat.geom::box3(win$xrange + c(-expand, expand),
+                            win$yrange + c(-expand, expand),
+                            win$yrange + c(-expand, expand))
+  parentlist <- spatstat.random::rpoispp3(kappa, domain = dilated,
+                                   nsim = nsim)
   if (nsim == 1)
     parentlist <- list(parentlist)
   resultlist <- vector(mode = "list", length = nsim)
@@ -103,7 +104,7 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
     parents <- parentlist[[isim]]
     result <- NULL
     res.full <- NULL
-    np <- npoints(parents)
+    np <- spatstat.geom::npoints(parents)
     if (np > 0) {
       xparent <- parents$data$x
       yparent <- parents$data$y
@@ -157,7 +158,7 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
 #' specified type. Currently, only simple cubic (`"sc"`), body-centered cubic
 #' (`"bcc"`), and face-centered cubic (`"fcc"`) are implemented.
 #'
-#' @param domain A \code{\link[spatstat]{box3}}. The domain in which to
+#' @param domain A \code{\link[spatstat.geom]{box3}}. The domain in which to
 #' generate the lattice
 #' @param a Numeric. The lattice parameter of the lattice. For cubic lattices
 #'   (*i.e.* `"sc"`, `"bcc"`, `"fcc"`), this is the length of the side of the
@@ -165,7 +166,7 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
 #'   Details.
 #' @param lattice character. The lattice to generate (one of `"sc"`, `"bcc"`,
 #'   `"fcc"`, or `"hcp"`).
-#' @return A \code{\link[spatstat]{pp3}} with points at the lattice positions
+#' @return A \code{\link[spatstat.geom]{pp3}} with points at the lattice positions
 #'
 #' @details For a hexagonal close packed (hcp) lattice, there are two dimensions
 #'   that are defined: the side of the hexagon, *a*, and the height of the
@@ -173,7 +174,7 @@ rPoissonCluster3 <- function(kappa, expand, rcluster, win = box3(), ...,
 #'   dimensions is exactly \eqn{c/a = \sqrt{8/3}}.
 #'
 #' @family simulation functions
-#' @seealso \code{\link{hcp.gen}}, \code{\link[spatstat]{pp3}}
+#' @seealso \code{\link{hcp.gen}}, \code{\link[spatstat.geom]{pp3}}
 #'
 #' @export
 lattice <- function(domain = box3(), a = 1, lattice = "sc") {

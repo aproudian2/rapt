@@ -5,10 +5,11 @@
 ### read.rcp ###
 #' Read an RCP Simulation
 #'
-#' Reads in a RCP Generator output file as a \code{\link[spatstat]{pp3}} object.
+#' Reads in a RCP Generator output file as a \code{\link[spatstat.pp3]{pp3}} object.
 #'
 #' @param fpath_config The file path to the RCP FinalConfig file.
-#' @param fpath_sys The file path to the associated RCP system file.
+#' @param fpath_sys The file path to the associated RCP system file. Must only
+#'   be specified if `scaleUp == TRUE`.
 #' @param scaleUP Boolean. If `TRUE`, scales RCP so particles have new
 #'   radius. If `FALSE` (the default), RCP stays as generated.
 #' @param newRadius Numeric. If `scaleUP = TRUE`, this is the new radius
@@ -22,7 +23,7 @@
 #' downloaded at
 #' \url{http://www.physics.emory.edu/faculty/weeks/ken/RCPAlgorithm.html}.
 #'
-#' @return A \code{\link[spatstat]{pp3}} object of the RCP pattern.
+#' @return A \code{\link[spatstat.pp3]{pp3}} object of the RCP pattern.
 #'
 #' @family simulation functions
 #'
@@ -35,14 +36,16 @@
 #' Generator Algorithm}
 #'
 #' @export
-read.rcp <- function(fpath_config, fpath_sys,
+read.rcp <- function(fpath_config, fpath_sys = NULL,
                      scaleUp = FALSE, newRadius = 0.5) {
+  if (is.null(fpath_sys & scaleUp)) {
+    stop("fpath_sys must be specified for scaling")
+  }
   rcp <- read.table(fpath_config,
                     sep = " ", col.names = c("x", "y", "z", "type"))
   pp <- createSpat(rcp[,c("x","y","z")])
   if (scaleUp == TRUE) {
-    a <- read.table(fpath_sys) # Change this to scan(); make sys optional
-    r <- as.numeric(levels(a$V1)[2])
+    r <- scan(fpath_sys, skip = 7, n = 1)
     pp <- scaleRCP(pp, newRadius = newRadius, oldRadius = r)
   }
   return(pp)
@@ -59,15 +62,15 @@ read.rcp <- function(fpath_config, fpath_sys,
 #' point cloud as if the original generation hapened with spheres of the
 #' specified radius.
 #'
-#' @param pp3file A \code{\link[spatstat]{pp3}} object containing the RCP
+#' @param pp3file A \code{\link[spatstat.pp3]{pp3}} object containing the RCP
 #'   generated 3D point positions.
 #' @param newRadius The radius that you would like to scale to. Default is 0.5
 #'   units
 #' @param oldRadius The radius of the original RCP generation, taken from the
 #'   "system" file output from the generation. Required input.
-#' @param win A \code{\link[spatstat]{box3}} object indicating the size of the
+#' @param win A \code{\link[spatstat.geom]{box3}} object indicating the size of the
 #'   original rcp generation. Can leave blank if these are integer value.
-#' @return Will return a \code{\link[spatstat]{pp3}} object with the scaled
+#' @return Will return a \code{\link[spatstat.pp3]{pp3}} object with the scaled
 #'   point positions.
 #'
 #' @family simulation functions
@@ -107,14 +110,14 @@ scaleRCP <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
 #' domain size that you want to return, even if it is not an integer multiple of
 #' the original dimensions.
 #'
-#' @param pp3file A \code{\link[spatstat]{pp3}} object containing the RCP
+#' @param pp3file A \code{\link[spatstat.pp3]{pp3}} object containing the RCP
 #'   generated 3D point positions.
-#' @param win A \code{\link[spatstat]{box3}} object indicating the size of the
+#' @param win A \code{\link[spatstat.geom]{box3}} object indicating the size of the
 #'   original rcp generation. Can leave blank.
 #' @param boxSize A numeric vector of the dimensions of the final
-#'   \code{\link[spatstat]{pp3}} object: c(xmax,ymax,zmax). Assumes that
+#'   \code{\link[spatstat.pp3]{pp3}} object: c(xmax,ymax,zmax). Assumes that
 #'   (xmin,ymin,zmin) = (0,0,0).
-#' @return A \code{\link[spatstat]{pp3}} object.
+#' @return A \code{\link[spatstat.pp3]{pp3}} object.
 #'
 #' @family simulation functions
 #'

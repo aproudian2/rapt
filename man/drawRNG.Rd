@@ -4,7 +4,7 @@
 \alias{drawRNG}
 \title{Color ranges from an RNG on a MassSpectrum}
 \usage{
-drawRNG(ms, rng)
+drawRNG(ms, rng, miny = 0)
 }
 \arguments{
 \item{ms}{The \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} or

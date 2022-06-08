@@ -2,7 +2,7 @@
 % Please edit documentation in R/rapt_pp3-manipulate.R
 \name{percentSelect}
 \alias{percentSelect}
-\title{Randomly select a percent of the points in a \code{\link[spatstat]{pp3}}
+\title{Randomly select a percent of the points in a \code{\link[spatstat.geom]{pp3}}
 object.}
 \usage{
 percentSelect(perc, pattern)
@@ -11,17 +11,17 @@ percentSelect(perc, pattern)
 \item{perc}{The fraction of points from the original pattern that are to be
 selected. A value between 0 and 1.}
 
-\item{pattern}{The original \code{\link[spatstat]{pp3}} object to be selected
+\item{pattern}{The original \code{\link[spatstat.geom]{pp3}} object to be selected
 from.}
 
 \item{s}{Seed for the random selection}
 }
 \value{
-A \code{\link[spatstat]{pp3}} object containing only the selected
+A \code{\link[spatstat.geom]{pp3}} object containing only the selected
 points.
 }
 \description{
 Function randomly selects a certain percent of points within an original
-\code{\link[spatstat]{pp3}} object. This function was created to be used in
+\code{\link[spatstat.geom]{pp3}} object. This function was created to be used in
 random relabeling of point patterns.
 }

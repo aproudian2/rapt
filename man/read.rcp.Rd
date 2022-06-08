@@ -4,12 +4,13 @@
 \alias{read.rcp}
 \title{Read an RCP Simulation}
 \usage{
-read.rcp(fpath_config, fpath_sys, scaleUp = FALSE, newRadius = 0.5)
+read.rcp(fpath_config, fpath_sys = NULL, scaleUp = FALSE, newRadius = 0.5)
 }
 \arguments{
 \item{fpath_config}{The file path to the RCP FinalConfig file.}
 
-\item{fpath_sys}{The file path to the associated RCP system file.}
+\item{fpath_sys}{The file path to the associated RCP system file. Must only
+be specified if \code{scaleUp == TRUE}.}
 
 \item{newRadius}{Numeric. If \code{scaleUP = TRUE}, this is the new radius
 that the RCP particles will be scaled to. Default is 0.5.}
@@ -18,10 +19,10 @@ that the RCP particles will be scaled to. Default is 0.5.}
 radius. If \code{FALSE} (the default), RCP stays as generated.}
 }
 \value{
-A \code{\link[spatstat]{pp3}} object of the RCP pattern.
+A \code{\link[spatstat.pp3]{pp3}} object of the RCP pattern.
 }
 \description{
-Reads in a RCP Generator output file as a \code{\link[spatstat]{pp3}} object.
+Reads in a RCP Generator output file as a \code{\link[spatstat.pp3]{pp3}} object.
 }
 \details{
 The RCP generation is described in Desmond & Weeks,

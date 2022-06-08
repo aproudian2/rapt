@@ -26,6 +26,8 @@ as.data.frame.MassSpectrum <- function(M) {
 #'
 #' @export
 rangeCount <- function(pos, start, end) {
+  stopifnot(length(start) == 1)
+  stopifnot(length(stop) == 1)
   n <- sum(pos$mass > start & pos$mass < end)
   return(n)
 }
@@ -49,6 +51,8 @@ rangeCount <- function(pos, start, end) {
 #'
 #' @export
 rangePOS <- function(pos, start, end) {
+  stopifnot(length(start) == 1)
+  stopifnot(length(stop) == 1)
   pos[pos$mass > start & pos$mass < end,]
 }
 
@@ -116,7 +120,7 @@ rngPOS <- function(pos, rng) {
 ### rangeMassSpectrum ###
 # Range peaks at a specified level
 rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
-  spatstat::verifyclass(ms, "MassSpectrum")
+  spatstat.geom::verifyclass(ms, "MassSpectrum")
   m <- ms@mass
   m.in <- m >= start & m <= end
   m.clip <- m[m.in]

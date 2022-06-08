@@ -4,17 +4,18 @@
 \alias{rjitter.ppp}
 \title{Random Perturbation of a Point Pattern}
 \usage{
-\method{rjitter}{ppp}(X, radius, retry = TRUE, giveup = 10000, ..., nsim = 1, drop = TRUE)
+rjitter.ppp(X, ...)
 }
 \description{
 Random Perturbation of a Point Pattern
 }
 \seealso{
-\code{\link[spatstat]{rjitter}}, \code{\link{rjitter.pp3}}
+\code{\link[spatstat.geom]{rjitter}}, \code{\link{rjitter.pp3}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},
 \code{\link{G3multi}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},
