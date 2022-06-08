@@ -829,6 +829,7 @@ anomF3est <- function(pattern,toSub,rmax,nrval,correction = "rs"){
 #' @param nrval See \code{\link[spatstat.core]{K3est}}. Number of radii that
 #'   \code{\link[spatstat.core]{K3est}} should be calculated at.
 #' @return Border corrected \code{\link[spatstat.core]{K3est}} data for object X.
+#' @export
 
 bK3est <- function(X, rmax=NULL, nrval=128){
 

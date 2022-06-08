@@ -1398,6 +1398,7 @@ multicall <- function(foo, x, H, ...){
 #' @references Schladitz, K. & Baddeley, A.
 #' "A third order point process characteristic",
 #' *Scandinavian Journal of Statistics*, **27**, 657-671 (2000).
+#' @export
 Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
                        correction = "border",
                        ratio = FALSE, verbose = TRUE) {
@@ -1610,6 +1611,7 @@ bdist.points.pp3 <- function (X) {
 #' @return A `data.frame` containing the shortest distance to the closest three
 #'   boundaries for each point in the pattern `X`.
 #' @seealso \code{\link{bdist.points.pp3}}
+#' @export
 bdist.points3.multi <- function (X){
 
   spatstat.geom::verifyclass(X, "pp3")

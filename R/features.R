@@ -17,6 +17,7 @@
 #' the max difference between the functions (\emph{max_diff}), the r value at that difference (\emph{max_diff_r}),
 #' the minimum difference (\emph{min_diff}), and the r value when the difference is 0 (\emph{zero_diff_r})
 #'
+#' @export
 g3features <- function(rvals, gvals_new, gvals_old){
   diff <- gvals_new - gvals_old
   max_diff <- max(diff)
@@ -44,8 +45,7 @@ g3features <- function(rvals, gvals_new, gvals_old){
 #' @return features to be used for machine learning prediction of clustering behavior.  The features are
 #' the minimum difference between the functions (\emph{min_diff}), and the value of F (fvals_new) at
 #' the minimum difference (\emph{min_diff_F})
-#
-#'
+#' @export
 f3features = function(rvals, fvals_new, fvals_old) {
   diff = fvals_new -fvals_old
 
@@ -75,7 +75,7 @@ f3features = function(rvals, fvals_new, fvals_old) {
 #' the radius at which gvals_new = 0.95 \emph{ninty_fifth_percentile},
 #' and the full width at half max of the peak formed by the difference in the functions \emph{FWHM}
 #'
-#'
+#' @export
 g3Xfeatures<- function(rvals, gvals_new, gvals_old) {
   diff = gvals_new - gvals_old
   min_diff = min(diff)
@@ -109,7 +109,6 @@ g3Xfeatures<- function(rvals, gvals_new, gvals_old) {
 #'   NaNs.
 #' @seealso \code{\link{anomK3est}}
 #' @export
-
 k3features <- function(rvals_new, tvals_new, toplot, ...) {
   if(any(is.infinite(tvals_new))){
     return(list(NA, NA, NA, NA, NA))
@@ -183,7 +182,7 @@ k3features <- function(rvals_new, tvals_new, toplot, ...) {
 #' absmax and absmin
 #' @description absolute maximum and minimum
 #' @param x value to return absolute maximum or minimum of
-#'
+#' @export
 absmax = function(x){
   x[which.max(abs(x))]
 }
@@ -191,6 +190,7 @@ absmax = function(x){
 #' absmax and absmin
 #' @description absolute maximum and minimum
 #' @param x value to return absolute maximum or minimum of
+#' @export
 #'
 absmin = function(x){
   x[which.min(abs(x))]
@@ -207,6 +207,7 @@ absmin = function(x){
 #'
 #' @return A vector with the same length as x containing estimated derivative at
 #'   each x value.
+#' @export
 
 finite_deriv <- function(x,y) {
   if(length(x) != length(y)) {
@@ -233,6 +234,7 @@ finite_deriv <- function(x,y) {
 #' finds maximums and minimums in data based on these interpolating functions.
 #' See
 #' \url{https://stats.stackexchange.com/questions/36309/how-do-i-find-peaks-in-a-dataset}
+#' @export
 
 argmax <- function(x, y, w = 1, ...) {
   n <- length(y)
