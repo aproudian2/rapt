@@ -835,7 +835,7 @@ bK3est <- function(X, rmax=NULL, nrval=128){
 
   verifyclass(X,"pp3")
 
-  bi <- bdist.points3(X)
+  bi <- bdist.points(X)
   n <- npoints(X)
   lambda <- n/volume(domain(X))
 

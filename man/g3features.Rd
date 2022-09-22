@@ -16,7 +16,8 @@ g3features(rvals, gvals_new, gvals_old)
 \value{
 features to be used for machine learning prediction of clustering behavior.  The features are
 the max difference between the functions (\emph{max_diff}), the r value at that difference (\emph{max_diff_r}),
-the minimum difference (\emph{min_diff}), and the r value when the difference is 0 (\emph{zero_diff_r})
+the minimum difference (\emph{min_diff}), and the r value when the difference is 0 (\emph{zero_diff_r}).  Note that
+(\emph{zero_diff_r}) must occur between the maximum and minimum difference
 }
 \description{
 Features calculated from G function (G3est).

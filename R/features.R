@@ -15,7 +15,8 @@
 #'
 #' @return features to be used for machine learning prediction of clustering behavior.  The features are
 #' the max difference between the functions (\emph{max_diff}), the r value at that difference (\emph{max_diff_r}),
-#' the minimum difference (\emph{min_diff}), and the r value when the difference is 0 (\emph{zero_diff_r})
+#' the minimum difference (\emph{min_diff}), and the r value when the difference is 0 (\emph{zero_diff_r}).  Note that
+#' (\emph{zero_diff_r}) must occur between the maximum and minimum difference
 #'
 #' @export
 g3features <- function(rvals, gvals_new, gvals_old){
@@ -23,7 +24,15 @@ g3features <- function(rvals, gvals_new, gvals_old){
   max_diff <- max(diff)
   max_diff_r <- rvals[which.max(diff)]
   min_diff <- min(diff)
-  zero_diff = absmin(diff[(length(diff)/10):(length(diff)-length(diff)/10)])
+  min_diff_r <- rvals[which.min(diff)]
+
+  if (min_diff_r < max_diff_r) {
+    zero_diff <- absmin(diff[(which.min(diff)):(which.max(diff))])
+  }
+
+  if (min_diff_r > max_diff_r) {
+    zero_diff <- absmin(diff[(which.max(diff)):(which.min(diff))])
+  }
   zero_diff_r <- rvals[which(diff == zero_diff)]
   out <- c(first(max_diff),first(max_diff_r), first(min_diff), first(zero_diff_r))
   return(out)
