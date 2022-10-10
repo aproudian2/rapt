@@ -88,6 +88,9 @@ f3features = function(rvals, fvals_new, fvals_old) {
 g3Xfeatures<- function(rvals, gvals_new, gvals_old) {
   diff = gvals_new - gvals_old
   min_diff = min(diff)
+  max_diff = max(diff)
+  abs_max_ind = which.max(abs(diff))
+  abs_max = diff[abs_max_ind]
   which.min(abs(0.95-gvals_new))
   ninty_fifth_percentile <- rvals[which.min(abs(0.95-gvals_new))]
   ind = which(diff ==absmax(diff))
@@ -96,7 +99,7 @@ g3Xfeatures<- function(rvals, gvals_new, gvals_old) {
   second =ind +which(diff[ind:length(diff)]-absmax(diff)/2  ==
                        absmin(diff[ind:length(diff)] - absmax(diff)/2))
   FWHM = rvals[second] - rvals[first]
-  out = c(first(min_diff), first(ninty_fifth_percentile), first(FWHM))
+  out = c(first(min_diff), first(ninty_fifth_percentile), first(FWHM), first(abs_max), first(max_diff))
   return(out)
 }
 
