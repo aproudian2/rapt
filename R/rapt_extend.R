@@ -51,18 +51,21 @@ marktable.ppp <- spatstat.core::marktable
 #' @family spatstat extensions
 #'
 #' @export
-marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
+marktable.pp3 <- function(X, R, N, exclude = TRUE, collapse = FALSE) {
   spatstat.geom::verifyclass(X, "pp3")
-  if (!spatstat.geom::is.marked(X, dfok = FALSE))
+  if (!spatstat.geom::is.marked(X, dfok = FALSE)) {
     stop("point pattern has no marks")
+  }
   gotR <- !missing(R) && !is.null(R)
   gotN <- !missing(N) && !is.null(N)
-  if (gotN == gotR)
+  if (gotN == gotR) {
     stop("Exactly one of the arguments N and R should be given")
+  }
   stopifnot(is.logical(exclude) && length(exclude) == 1)
   m <- spatstat.geom::marks(X)
-  if (!is.factor(m))
+  if (!is.factor(m)) {
     stop("marks must be a factor")
+  }
   if (gotR) {
     stopifnot(is.numeric(R) && length(R) == 1 && R > 0)
     p <- spatstat.geom::closepairs(X, R, what = "indices")
@@ -73,15 +76,16 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
       pi <- c(pi, 1:n)
       pj <- c(pj, 1:n)
     }
-  }
-  else {
+  } else {
     stopifnot(is.numeric(N) && length(N) == 1)
     ii <- seq_len(spatstat.geom::npoints(X))
     nn <- spatstat.geom::nnwhich(X, k = 1:N)
-    if (N == 1)
+    if (N == 1) {
       nn <- matrix(nn, ncol = 1)
-    if (!exclude)
+    }
+    if (!exclude) {
       nn <- cbind(ii, nn)
+    }
     pi <- as.vector(row(nn))
     pj <- as.vector(nn)
   }
@@ -89,8 +93,7 @@ marktable.pp3 <- function (X, R, N, exclude = TRUE, collapse = FALSE) {
     i <- factor(pi, levels = seq_len(spatstat.geom::npoints(X)))
     mj <- m[pj]
     mat <- table(point = i, mark = mj)
-  }
-  else {
+  } else {
     mi <- m[pi]
     mj <- m[pj]
     mat <- table(point = mi, neighbour = mj)
@@ -132,18 +135,20 @@ rjitter.ppp <- spatstat.geom::rjitter
 rjitter.pp3 <- function(X, domain = box3()) {
   spatstat.geom::verifyclass(X, "pp3")
   nX <- spatstat.geom::npoints(X)
-  if (nX == 0)
+  if (nX == 0) {
     return(X)
+  }
   W <- X$domain
   D <- spatstat.random::runifpoint3(nX, domain = domain)
   xnew <- X$data$x + D$data$x
   ynew <- X$data$y + D$data$y
   znew <- X$data$z + D$data$z
   new <- pp3(xnew, ynew, znew, W)
-  ok <- subset(new, subset =
-                 (x > W$xrange[1] & x < W$xrange[2]) &
-                 (y > W$yrange[1] & y < W$yrange[2]) &
-                 (z > W$zrange[1] & z < W$zrange[2])
+  ok <- subset(new,
+    subset =
+      (x > W$xrange[1] & x < W$xrange[2]) &
+        (y > W$yrange[1] & y < W$yrange[2]) &
+        (z > W$zrange[1] & z < W$zrange[2])
   )
   return(ok)
 }
@@ -161,8 +166,8 @@ superimpose.pp3 <- function(..., W = NULL, check = FALSE) {
   input.list <- list(...)
   df.list <- lapply(input.list, as.data.frame)
   df.comb <- do.call(rbind, df.list)
-  out.pp3 <-  createSpat(df.comb, win = W)
-  if(!is.null(df.comb$marks)) {
+  out.pp3 <- createSpat(df.comb, win = W)
+  if (!is.null(df.comb$marks)) {
     spatstat.geom::marks(out.pp3) <- df.comb$marks
   }
   return(out.pp3)
@@ -183,33 +188,39 @@ superimpose.pp3 <- function(..., W = NULL, check = FALSE) {
 #' @seealso \code{\link[spatstat.geom]{shift}}
 #'
 #' @export
-shift.pp3 <- function (X, vec = c(0, 0, 0), ..., origin = NULL)
-{
+shift.pp3 <- function(X, vec = c(0, 0, 0), ..., origin = NULL) {
   spatstat.geom::verifyclass(X, "pp3")
   if (!is.null(origin)) {
-    if (!missing(vec))
+    if (!missing(vec)) {
       warning("argument vec ignored; overruled by argument origin")
+    }
     if (is.numeric(origin) & length(origin) == 3) {
       locn <- origin
     } else if (is.character(origin)) {
-      origin <- spatstat.geom::pickoption("origin", origin,
-                           c(midpoint = "midpoint", bottomleft = "bottomleft"))
+      origin <- spatstat.geom::pickoption(
+        "origin", origin,
+        c(midpoint = "midpoint", bottomleft = "bottomleft")
+      )
       W <- X$domain
-      locn <- switch(origin, midpoint = {
-        c(mean(W$domain$xrange), mean(W$domain$yrange), mean(W$domain$zrange))
-      }, bottomleft = {
-        c(W$domain$xrange[1], W$domain$yrange[1], W$domain$zrange[1])
-      })
+      locn <- switch(origin,
+        midpoint = {
+          c(mean(W$domain$xrange), mean(W$domain$yrange), mean(W$domain$zrange))
+        },
+        bottomleft = {
+          c(W$domain$xrange[1], W$domain$yrange[1], W$domain$zrange[1])
+        }
+      )
     } else {
       stop("origin must be a character string or a numeric vector")
     }
     vec <- -locn
   }
   Y <- spatstat.geom::pp3(X$data$x + vec[1], X$data$y + vec[2], X$data$z + vec[3],
-           xrange = X$domain$xrange + vec[1],
-           yrange = X$domain$yrange + vec[2],
-           zrange = X$domain$zrange + vec[3],
-           marks = marks(X))
+    xrange = X$domain$xrange + vec[1],
+    yrange = X$domain$yrange + vec[2],
+    zrange = X$domain$zrange + vec[3],
+    marks = marks(X)
+  )
   attr(Y, "lastshift") <- vec
   return(Y)
 }
@@ -254,21 +265,22 @@ sample.pp3 <- function(X, size) {
 #### findClusters.pp3 ####
 #' Find Clusters by NN Adjacency Marks
 findClusters.pp3 <- function(X, mark, k = 1) {
-  if(!(mark %in% marks(X)))
-    stop('The specified mark does not exist in the pattern')
-  else if(length(mark) != 1)
-    stop('Only one mark may be tested')
+  if (!(mark %in% marks(X))) {
+    stop("The specified mark does not exist in the pattern")
+  } else if (length(mark) != 1) {
+    stop("Only one mark may be tested")
+  }
   spl <- split(X)[[mark]]
   # required because pp3 functions don't work on marked pp3 by default
-  class(spl) <- c('pp3', 'ppx')
+  class(spl) <- c("pp3", "ppx")
   ind <- rownames.pp3(spl)
   fCl <- lapply(ind, function(x) {
     clus <- x
     rem <- rownames.pp3(X)
     nn <- 0
-    while(length(nn) > 0) {
+    while (length(nn) > 0) {
       rem <- setdiff(rem, nn)
-      nn <- nncross(spl[clus], X[rem], k = 1:k, what = 'which')
+      nn <- nncross(spl[clus], X[rem], k = 1:k, what = "which")
       nn <- unlist(nn)
       nn <- rownames.pp3(X[rem])[nn]
       nn <- nn[marks(X[nn]) == mark]
@@ -298,13 +310,15 @@ intensity.pp3 <- function(X, weights = NULL) {
   if (is.null(weights)) {
     if (spatstat.geom::is.multitype(X)) {
       mks <- spatstat.geom::marks(X)
-      answer <- as.vector(table(mks))/a
+      answer <- as.vector(table(mks)) / a
       names(answer) <- levels(mks)
+    } else {
+      answer <- n / a
     }
-    else answer <- n/a
     return(answer)
-  } else
-    warning('Weights is not yet implemented for pp3')
+  } else {
+    warning("Weights is not yet implemented for pp3")
+  }
 }
 
 #### rownames.pp3 ####
@@ -326,7 +340,7 @@ rownames.pp3 <- function(pat) {
 #' @param pat An object of class "pp3". The point pattern to assign rownames.
 #' @param lab character. The new rownames.
 #' @seealso \code{\link[base:row+colnames]{rownames}}
-"rownames.pp3<-" <- function(pat,lab) {
+"rownames.pp3<-" <- function(pat, lab) {
   rownames(as.data.frame(pat)) <- lab
   return(pat)
 }
@@ -380,42 +394,44 @@ quadrats.pp3 <- function(X, nx = 5, ny = nx, nz = ny, box.dims = NULL) {
   zlim <- w$zrange
 
   # create box3objects for each quadrat
-  if(is.null(box.dims)){
-    xbreaks <- seq(xlim[1],xlim[2],length.out = (nx+1))
-    ybreaks <- seq(ylim[1],ylim[2],length.out = (ny+1))
-    zbreaks <- seq(zlim[1],zlim[2],length.out = (nz+1))
+  if (is.null(box.dims)) {
+    xbreaks <- seq(xlim[1], xlim[2], length.out = (nx + 1))
+    ybreaks <- seq(ylim[1], ylim[2], length.out = (ny + 1))
+    zbreaks <- seq(zlim[1], zlim[2], length.out = (nz + 1))
 
-    ntot <- nx*ny*nz
+    ntot <- nx * ny * nz
   } else {
-    xbreaks <- seq(xlim[1],xlim[2],by = box.dims[1])
-    ybreaks <- seq(ylim[1],ylim[2],by = box.dims[2])
-    zbreaks <- seq(zlim[1],zlim[2],by = box.dims[3])
+    xbreaks <- seq(xlim[1], xlim[2], by = box.dims[1])
+    ybreaks <- seq(ylim[1], ylim[2], by = box.dims[2])
+    zbreaks <- seq(zlim[1], zlim[2], by = box.dims[3])
   }
 
 
   gridvals <- list()
   cnt <- 1
 
-  for(i in 1:(length(xbreaks)-1)){
-    for(j in 1:(length(ybreaks)-1)){
-      for(k in 1:(length(zbreaks)-1)){
-        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)],
-                                yrange = ybreaks[j:(j+1)],
-                                zrange = zbreaks[k:(k+1)])
+  for (i in 1:(length(xbreaks) - 1)) {
+    for (j in 1:(length(ybreaks) - 1)) {
+      for (k in 1:(length(zbreaks) - 1)) {
+        gridvals[[cnt]] <- box3(
+          xrange = xbreaks[i:(i + 1)],
+          yrange = ybreaks[j:(j + 1)],
+          zrange = zbreaks[k:(k + 1)]
+        )
         cnt <- cnt + 1
       }
     }
   }
 
-  #browser()
+  # browser()
   coo <- coords(X)
-  if(!is.null(marks(X))){
+  if (!is.null(marks(X))) {
     marks <- marks(X)
   }
 
-  boxes <- lapply(gridvals, function(x){
-    res.coo <- coo[inside.boxx(X, w = x),]
-    if(!is.null(marks(X))) {
+  boxes <- lapply(gridvals, function(x) {
+    res.coo <- coo[inside.boxx(X, w = x), ]
+    if (!is.null(marks(X))) {
       res.marks <- marks[inside.boxx(X, w = x)]
       return(pp3(res.coo$x, res.coo$y, res.coo$z, x, marks = res.marks))
     } else {
@@ -441,7 +457,7 @@ quadrats.pp3 <- function(X, nx = 5, ny = nx, nz = ny, box.dims = NULL) {
 #' @seealso \code{\link[spatstat.geom]{quadratcount}}
 #'
 #' @export
-quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
+quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5) {
   spatstat.geom::verifyclass(X, "pp3")
   w <- domain(X)
 
@@ -450,29 +466,35 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
   ylim <- w$yrange
   zlim <- w$zrange
 
-  xbreaks <- seq(xlim[1], xlim[2],length.out = (nx+1))
-  ybreaks <- seq(ylim[1], ylim[2],length.out = (ny+1))
-  zbreaks <- seq(zlim[1], zlim[2],length.out = (nz+1))
+  xbreaks <- seq(xlim[1], xlim[2], length.out = (nx + 1))
+  ybreaks <- seq(ylim[1], ylim[2], length.out = (ny + 1))
+  zbreaks <- seq(zlim[1], zlim[2], length.out = (nz + 1))
 
-  ntot <- nx*ny*nz
+  ntot <- nx * ny * nz
   gridvals <- list()
   cnt <- 1
 
-  for(i in 1:nx){
-    for(j in 1:ny){
-      for(k in 1:nz){
-        gridvals[[cnt]] <- box3(xrange = xbreaks[i:(i+1)],
-                                yrange = ybreaks[j:(j+1)],
-                                zrange = zbreaks[k:(k+1)])
+  for (i in 1:nx) {
+    for (j in 1:ny) {
+      for (k in 1:nz) {
+        gridvals[[cnt]] <- box3(
+          xrange = xbreaks[i:(i + 1)],
+          yrange = ybreaks[j:(j + 1)],
+          zrange = zbreaks[k:(k + 1)]
+        )
         cnt <- cnt + 1
       }
     }
   }
 
-  inside.tf <- lapply(gridvals, function(x){inside.boxx(X, w = x)})
-  counts <- lapply(inside.tf, function(x){sum(x)})
+  inside.tf <- lapply(gridvals, function(x) {
+    inside.boxx(X, w = x)
+  })
+  counts <- lapply(inside.tf, function(x) {
+    sum(x)
+  })
   counts <- unlist(counts)
-  return(data.frame(quad.no = seq(1,ntot), count = counts))
+  return(data.frame(quad.no = seq(1, ntot), count = counts))
 }
 
 #### quantess.pp3 ####
@@ -488,7 +510,7 @@ quadratcount.pp3 <- function(X, nx = 5, ny = 5, nz = 5){
 #'   containing equal amounts of stuff.
 #' @param n Number of bands. A positive integer.
 #'
-quantess.pp3 <- function(M, Z, n, ..., type=2, origin=c(0,0), eps=NULL) {}
+quantess.pp3 <- function(M, Z, n, ..., type = 2, origin = c(0, 0), eps = NULL) {}
 
 #### G3multi ####
 #' Marked Nearest Neighbour Distance Function
@@ -533,29 +555,38 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
   npts <- spatstat.geom::npoints(X)
   volW <- spatstat.geom::volume(W)
   if (is.null(rmax)) {
-    rmax <- spatstat.geom::diameter(W)/2
+    rmax <- spatstat.geom::diameter(W) / 2
   }
   I <- spatstat.geom::ppsubset(X, I)
   J <- spatstat.geom::ppsubset(X, J)
-  if (is.null(I) || is.null(J))
+  if (is.null(I) || is.null(J)) {
     stop("I and J must be valid subset indices")
+  }
   nI <- sum(I)
   nJ <- sum(J)
-  if (nI == 0)
+  if (nI == 0) {
     stop("No points satisfy condition I")
-  if (nJ == 0)
+  }
+  if (nJ == 0) {
     stop("No points satisfy condition J")
-  if (is.null(disjoint))
+  }
+  if (is.null(disjoint)) {
     disjoint <- !any(I & J)
-  if (is.null(correction))
+  }
+  if (is.null(correction)) {
     correction <- c("rs", "km", "han")
+  }
   correction <- pickoption("correction", correction,
-                           c(none = "none",
-                             border = "rs", rs = "rs",
-                             KM = "km", km = "km", Kaplan = "km",
-                             han = "han", Hanisch = "han", hanisch = "han",
-                             best = "km"), multi = TRUE)
-  lamJ <- nJ/volW
+    c(
+      none = "none",
+      border = "rs", rs = "rs",
+      KM = "km", km = "km", Kaplan = "km",
+      han = "han", Hanisch = "han", hanisch = "han",
+      best = "km"
+    ),
+    multi = TRUE
+  )
+  lamJ <- nJ / volW
 
   XI <- X[I]
   XJ <- X[J]
@@ -571,52 +602,62 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
   d <- (nnd <= bdry)
   r <- seq(0, rmax, length.out = nrval)
   breaks <- c(r[1L] - r[2L], r)
-  df <- data.frame(r = r, theo = 1 - exp(-lamJ * (4/3) * pi * r^3))
+  df <- data.frame(r = r, theo = 1 - exp(-lamJ * (4 / 3) * pi * r^3))
   fname <- c("G", "list(I,J)")
   Z <- fv(df, "r", quote(G[I, J](r)), "theo", . ~ r, c(0, rmax),
-          c("r", spatstat.core::makefvlabel(NULL, NULL, fname, "pois")),
-          c("distance argument r", "theoretical Poisson %s"),
-          fname = fname, yexp = quote(G[list(I,J)](r)))
+    c("r", spatstat.core::makefvlabel(NULL, NULL, fname, "pois")),
+    c("distance argument r", "theoretical Poisson %s"),
+    fname = fname, yexp = quote(G[list(I, J)](r))
+  )
   if ("none" %in% correction) {
-    if (npts == 0)
+    if (npts == 0) {
       edf <- zeroes
-    else {
+    } else {
       hh <- hist(nnd[nnd <= rmax], breaks = breaks, plot = FALSE)$counts
-      edf <- cumsum(hh)/length(nnd)
+      edf <- cumsum(hh) / length(nnd)
     }
-    Z <- bind.fv(Z, data.frame(raw = edf),
-                 spatstat.core::makefvlabel(NULL,"hat", fname, "raw"),
-                 "uncorrected estimate of %s",  "raw")
+    Z <- bind.fv(
+      Z, data.frame(raw = edf),
+      spatstat.core::makefvlabel(NULL, "hat", fname, "raw"),
+      "uncorrected estimate of %s", "raw"
+    )
   }
   if ("han" %in% correction) {
-    if (npts == 0)
+    if (npts == 0) {
       G <- zeroes
-    else {
+    } else {
       x <- nnd[d]
       a <- spatstat.geom::eroded.volumes(W, r)
       h <- hist(x[x <= rmax], breaks = breaks, plot = FALSE)$counts
-      G <- cumsum(h/a)
-      G <- G/max(G[is.finite(G)])
+      G <- cumsum(h / a)
+      G <- G / max(G[is.finite(G)])
     }
-    Z <- bind.fv(Z, data.frame(han = G),
-                 spatstat.core::makefvlabel(NULL,"hat", fname, "han"),
-                 "Hanisch estimate of %s", "han")
+    Z <- bind.fv(
+      Z, data.frame(han = G),
+      spatstat.core::makefvlabel(NULL, "hat", fname, "han"),
+      "Hanisch estimate of %s", "han"
+    )
     attr(Z, "alim") <- range(r[G <= 0.9])
   }
   if (any(correction %in% c("rs", "km"))) {
-    if (npts == 0)
+    if (npts == 0) {
       result <- data.frame(rs = zeroes, km = zeroes, hazard = zeroes)
-    else {
+    } else {
       o <- pmin.int(nnd, bdry)
       result <- spatstat.core::km.rs(o, bdry, d, breaks)
       result <- as.data.frame(result[c("rs", "km", "hazard")])
     }
-    Z <- bind.fv(Z, result, c(
-      spatstat.core::makefvlabel(NULL, "hat", fname, "bord"),
-      spatstat.core::makefvlabel(NULL, "hat", fname, "km"), "hazard(r)"),
-      c("border corrected estimate of %s", "Kaplan-Meier estimate of %s",
-        "Kaplan-Meier estimate of hazard function lambda(r)"),
-      "km")
+    Z <- bind.fv(
+      Z, result, c(
+        spatstat.core::makefvlabel(NULL, "hat", fname, "bord"),
+        spatstat.core::makefvlabel(NULL, "hat", fname, "km"), "hazard(r)"
+      ),
+      c(
+        "border corrected estimate of %s", "Kaplan-Meier estimate of %s",
+        "Kaplan-Meier estimate of hazard function lambda(r)"
+      ),
+      "km"
+    )
     attr(Z, "alim") <- range(r[result$km <= 0.9])
   }
   nama <- names(Z)
@@ -726,34 +767,46 @@ G3multi <- function(X, I, J, rmax = NULL, nrval = 128, disjoint = NULL,
 G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
                     correction = c("rs", "km", "han")) {
   spatstat.geom::verifyclass(X, "pp3")
-  if (!spatstat.geom::is.marked(X, dfok = FALSE))
+  if (!spatstat.geom::is.marked(X, dfok = FALSE)) {
     stop(paste("point pattern has no", sQuote("marks")))
+  }
   stopifnot(spatstat.geom::is.multitype(X))
   marx <- spatstat.geom::marks(X, dfok = FALSE)
-  if (missing(i))
+  if (missing(i)) {
     i <- levels(marx)[1]
-  if (missing(j))
+  }
+  if (missing(j)) {
     j <- levels(marx)[2]
+  }
   I <- (marx == i)
-  if (sum(I) == 0)
+  if (sum(I) == 0) {
     stop("No points are of type i")
+  }
   if (i == j) {
-    result <- spatstat.core::G3est(X[I], rmax = rmax, nrval = nrval,
-                              correction = correction)
+    result <- spatstat.core::G3est(X[I],
+      rmax = rmax, nrval = nrval,
+      correction = correction
+    )
   } else {
     J <- (marx == j)
-    if (sum(J) == 0)
+    if (sum(J) == 0) {
       stop("No points are of type j")
-    result <- G3multi(X, I, J, rmax = rmax, nrval = nrval, disjoint = FALSE,
-                     correction = correction)
+    }
+    result <- G3multi(X, I, J,
+      rmax = rmax, nrval = nrval, disjoint = FALSE,
+      correction = correction
+    )
   }
   iname <- spatstat.utils::make.parseable(paste(i))
   jname <- spatstat.utils::make.parseable(paste(j))
   result <- spatstat.core::rebadge.fv(result,
-                       substitute(G[i, j](r), list(i = iname, j = jname)),
-                       c("G", paste0("list(", iname, ",", jname,")")),
-                       new.yexp = substitute(G[list(i, j)](r),
-                                             list(i = iname, j = jname)))
+    substitute(G[i, j](r), list(i = iname, j = jname)),
+    c("G", paste0("list(", iname, ",", jname, ")")),
+    new.yexp = substitute(
+      G[list(i, j)](r),
+      list(i = iname, j = jname)
+    )
+  )
   return(result)
 }
 
@@ -778,98 +831,108 @@ G3cross <- function(X, i, j, rmax = NULL, nrval = 128,
 #' @family spatstat extensions
 #' @seealso \code{\link[spatstat.core]{Kscaled}}
 #'
-K3scaled <- function (X, lambda = NULL, ...,
-                      rmax = NULL, nrval = 128,
-                      correction = "none",#c("isotropic", "translate"),
-                      renormalise = FALSE,
-                      normpower = 1)#, sigma = NULL, varcov = NULL)
+K3scaled <- function(X, lambda = NULL, ...,
+                     rmax = NULL, nrval = 128,
+                     correction = "none", # c("isotropic", "translate"),
+                     renormalise = FALSE,
+                     normpower = 1) # , sigma = NULL, varcov = NULL)
 {
   spatstat.geom::verifyclass(X, "pp3")
   B <- X$domain
   npts <- spatstat.geom::npoints(X)
   volW <- spatstat.geom::volume(B)
-  halfdiameter <- spatstat.geom::diameter(B)/2
+  halfdiameter <- spatstat.geom::diameter(B) / 2
   correction.given <- !missing(correction) && !is.null(correction)
   correction <- spatstat.geom::pickoption("correction", correction,
-                                     c(none = "none",
-                                       border = "border",
-                                       isotropic = "isotropic",
-                                       Ripley = "isotropic",
-                                       trans = "translate",
-                                       translate = "translate",
-                                       translation = "translate",
-                                       best = "best"),
-                                     multi = TRUE)
+    c(
+      none = "none",
+      border = "border",
+      isotropic = "isotropic",
+      Ripley = "isotropic",
+      trans = "translate",
+      translate = "translate",
+      translation = "translate",
+      best = "best"
+    ),
+    multi = TRUE
+  )
   if (missing(lambda)) {
     lambda <- rep(spatstat.geom::intensity.ppx(X), npts)
-  }
-  else {
+  } else {
     if (is.im(lambda)) {
       # lambda <- safelookup(lambda, X)
       stop("No im3 implemented for lambda; supply a function")
-    }
-    else if (is.function(lambda)) {
+    } else if (is.function(lambda)) {
       lambda <- lambda(X$data$x, X$data$y, X$data$z)
-    }
-    else if (is.ppm(lambda)) {
+    } else if (is.ppm(lambda)) {
       # lambda <- safelookup(predict(lambda, type = "trend"),
       #                      X)
       stop("No p3m implemented for lambda; supply a function")
-    }
-    else if (!is.numeric(lambda) || !is.null(dim(lambda)))
+    } else if (!is.numeric(lambda) || !is.null(dim(lambda))) {
       # stop(paste(sQuote("lambda"),
       #            "should be a vector, a pixel image, a function or a ppm"))
-      stop(paste(sQuote("lambda"),
-                 "should be a function"))
+      stop(paste(
+        sQuote("lambda"),
+        "should be a function"
+      ))
+    }
     check.nvector(lambda, npts)
   }
   # need to confirm that this renormalization is correct in 3D...
   if (renormalise) {
     spatstat.utils::check.1.real(normpower)
     stopifnot(normpower %in% 1:2)
-    renorm.factor <- (volW/sum(1/lambda))^(normpower/2)
-    lambda <- lambda/renorm.factor
+    renorm.factor <- (volW / sum(1 / lambda))^(normpower / 2)
+    lambda <- lambda / renorm.factor
   }
-  cra <- (range(lambda))^(1/3)
+  cra <- (range(lambda))^(1 / 3)
   minrescale <- cra[1]
   maxrescale <- cra[2]
-  absrmaxdefault <- halfdiameter/maxrescale
+  absrmaxdefault <- halfdiameter / maxrescale
   if (is.null(rmax)) {
     absrmax <- absrmaxdefault
   } else {
-    absrmax <- rmax/maxrescale
+    absrmax <- rmax / maxrescale
   }
   absr <- seq(0, to = absrmax, length.out = nrval)
   r <- absr * maxrescale
   breaks <- breakpts.from.r(r)$val
   alim <- c(0, min(rmax, maxrescale * absrmaxdefault))
   rthresh <- minrescale * halfdiameter
-  maxabsdist <- min(rmax/minrescale, halfdiameter)
-  K <- data.frame(r = r, theo = (4/3) * pi * r^3)
+  maxabsdist <- min(rmax / minrescale, halfdiameter)
+  K <- data.frame(r = r, theo = (4 / 3) * pi * r^3)
   desc <- c("distance argument r", "theoretical Poisson %s")
   fname <- c("K", "list(3,scaled)")
-  yexp <- quote(K[list(3,scaled)](r))
-  K <- fv(K, "r", quote(K[3,scaled](r)), "theo" , alim = alim,
-          labl = c("r", "{%s[%s]^{pois}}(r)"),
-          desc = desc, fname = fname, yexp = yexp)
+  yexp <- quote(K[list(3, scaled)](r))
+  K <- fv(K, "r", quote(K[3, scaled](r)), "theo",
+    alim = alim,
+    labl = c("r", "{%s[%s]^{pois}}(r)"),
+    desc = desc, fname = fname, yexp = yexp
+  )
   needXI <- any(correction %in% c("translate", "isotropic"))
-  close <- closepairs(X, maxabsdist, what = if (needXI)
+  close <- closepairs(X, maxabsdist, what = if (needXI) {
     "all"
-    else "ijd")
+  } else {
+    "ijd"
+  })
   I <- close$i
   J <- close$j
-  cbrtLambda <- (lambda)^(1/3)
-  lamIJ <- (cbrtLambda[I] + cbrtLambda[J])/2
+  cbrtLambda <- (lambda)^(1 / 3)
+  lamIJ <- (cbrtLambda[I] + cbrtLambda[J]) / 2
   absDIJ <- close$d
   DIJ <- absDIJ * lamIJ
-  XI <- if (needXI)
+  XI <- if (needXI) {
     pp3(close$xi, close$yi, close$zi, B)
-  else NULL
+  } else {
+    NULL
+  }
   if (any(correction == "none")) {
     wh <- whist(DIJ, breaks)
-    Kun <- cumsum(wh)/npts
-    K <- bind.fv(K, data.frame(un = Kun), "{hat(%s)[%s]^{un}}(r)",
-                 "uncorrected estimate of %s", "un")
+    Kun <- cumsum(wh) / npts
+    K <- bind.fv(
+      K, data.frame(un = Kun), "{hat(%s)[%s]^{un}}(r)",
+      "uncorrected estimate of %s", "un"
+    )
   }
   ### ***** corrections not implemented *****
   # if (any(correction == "border")) {
@@ -908,30 +971,35 @@ K3scaled <- function (X, lambda = NULL, ...,
 #### K3multi ####
 # barely works... Needs corrections and inferface streamlining
 K3multi <- function(X, I, J, r, breaks,
-              correction = c("none", "isotropic", "translation"),
-              ..., ratio = FALSE) {
+                    correction = c("none", "isotropic", "translation"),
+                    ..., ratio = FALSE) {
   spatstat.geom::verifyclass(X, "pp3")
   npts <- npoints(X)
   W <- X$domain
   volW <- volume(W)
   I <- ppsubset(X, I)
   J <- ppsubset(X, J)
-  if (is.null(I) || is.null(J))
+  if (is.null(I) || is.null(J)) {
     stop("I and J must be valid subset indices")
-  if (!any(I))
+  }
+  if (!any(I)) {
     stop("no points belong to subset I")
-  if (!any(J))
+  }
+  if (!any(J)) {
     stop("no points belong to subset J")
+  }
   nI <- sum(I)
   nJ <- sum(J)
-  lambdaI <- nI/volW
-  lambdaJ <- nJ/volW
+  lambdaI <- nI / volW
+  lambdaJ <- nJ / volW
   rmax <- max(r)
   alim <- c(0, rmax)
-  K <- data.frame(r = r, theo = (4/3) * pi * r^3)
+  K <- data.frame(r = r, theo = (4 / 3) * pi * r^3)
   desc <- c("distance argument r", "theoretical Poisson %s")
   K <- fv(K, "r", quote(K[IJ](r)), "theo", , alim, c("r", "{%s[%s]^{pois}}(r)"),
-          desc, fname = c("K", "list(I,J)"), yexp = quote(K[list(I,J)](r)))
+    desc,
+    fname = c("K", "list(I,J)"), yexp = quote(K[list(I, J)](r))
+  )
   if (ratio) {
     denom <- lambdaI * lambdaJ * volW
     numK <- eval.fv(denom * K)
@@ -963,15 +1031,21 @@ K3multi <- function(X, I, J, r, breaks,
     wh <- whist(dcloseIJ, breaks)
     numKun <- cumsum(wh)
     denKun <- lambdaI * lambdaJ * volW
-    Kun <- numKun/denKun
-    K <- bind.fv(K, data.frame(un = Kun), "{hat(%s)[%s]^{un}}(r)",
-                 "uncorrected estimate of %s", "un")
+    Kun <- numKun / denKun
+    K <- bind.fv(
+      K, data.frame(un = Kun), "{hat(%s)[%s]^{un}}(r)",
+      "uncorrected estimate of %s", "un"
+    )
     if (ratio) {
-      numK <- bind.fv(numK, data.frame(un = numKun), "{hat(%s)[%s]^{un}}(r)",
-                      "numerator of uncorrected estimate of %s", "un")
-      denK <- bind.fv(denK, data.frame(un = denKun), "{hat(%s)[%s]^{un}}(r)",
-                      "denominator of uncorrected estimate of %s",
-                      "un")
+      numK <- bind.fv(
+        numK, data.frame(un = numKun), "{hat(%s)[%s]^{un}}(r)",
+        "numerator of uncorrected estimate of %s", "un"
+      )
+      denK <- bind.fv(
+        denK, data.frame(un = denKun), "{hat(%s)[%s]^{un}}(r)",
+        "denominator of uncorrected estimate of %s",
+        "un"
+      )
     }
   }
   formula(K) <- . ~ r
@@ -1075,56 +1149,82 @@ studpermu.test.ppp <- spatstat.core::studpermu.test
 #'
 #' @export
 # Add ability to supply a summary function directly...
-studpermu.test.pp3 <- function (X, formula,
-                                summaryfunction = K3est, ...,
-                                nperm = 999, use.Tbar = FALSE, rinterval = NULL,
-                                minpoints = 20, rmax = NULL, nrval = 128) {
-  if (!is.hyperframe(X))
-    stop(paste("X needs to be a hyperframe",
-               "if arguments for summary function are to be retrieved"),
-         call. = FALSE)
+studpermu.test.pp3 <- function(X, formula,
+                               summaryfunction = K3est, ...,
+                               nperm = 999, use.Tbar = FALSE, rinterval = NULL,
+                               minpoints = 20, rmax = NULL, nrval = 128) {
+  if (!is.hyperframe(X)) {
+    stop(
+      paste(
+        "X needs to be a hyperframe",
+        "if arguments for summary function are to be retrieved"
+      ),
+      call. = FALSE
+    )
+  }
   stopifnot(is.function(summaryfunction))
   if (is.hyperframe(X)) {
-    if (dim(X)[2] < 2)
-      stop(paste("Hyperframe X needs to contain at least 2 columns,",
-                 "one for patterns, one indicating groups"), call. = FALSE)
+    if (dim(X)[2] < 2) {
+      stop(paste(
+        "Hyperframe X needs to contain at least 2 columns,",
+        "one for patterns, one indicating groups"
+      ), call. = FALSE)
+    }
     data <- X
     Xclass <- unclass(X)$vclass
-    factorcandidate <- Xclass %in% c("integer", "numeric",
-                                     "character", "factor")
+    factorcandidate <- Xclass %in% c(
+      "integer", "numeric",
+      "character", "factor"
+    )
     ppcandidate <- Xclass == "pp3"
     Xnames <- names(X)
     names(factorcandidate) <- names(ppcandidate) <- names(Xclass) <- Xnames
-    if (all(!factorcandidate) || all(!ppcandidate))
-      stop(paste("Hyperframe X needs to contain at least a column",
-                 "with point patterns, and one indicating groups"),
-           call. = FALSE)
+    if (all(!factorcandidate) || all(!ppcandidate)) {
+      stop(
+        paste(
+          "Hyperframe X needs to contain at least a column",
+          "with point patterns, and one indicating groups"
+        ),
+        call. = FALSE
+      )
+    }
     if (!missing(formula)) {
-      if (!inherits(formula, "formula"))
+      if (!inherits(formula, "formula")) {
         stop(paste("Argument", dQuote("formula"), "should be a formula"))
-      if (length(formula) < 3)
+      }
+      if (length(formula) < 3) {
         stop(paste("Argument", sQuote("formula"), "must have a left hand side"))
+      }
       rhs <- spatstat.utils::rhs.of.formula(formula)
       ppname <- formula[[2]]
-      if (!is.name(ppname))
+      if (!is.name(ppname)) {
         stop("Left hand side of formula should be a single name")
+      }
       ppname <- paste(ppname)
-      if (!ppcandidate[ppname])
-        stop(paste("Left hand side of formula",
-                   "should be the name of a column of point patterns"),
-             call. = FALSE)
+      if (!ppcandidate[ppname]) {
+        stop(
+          paste(
+            "Left hand side of formula",
+            "should be the name of a column of point patterns"
+          ),
+          call. = FALSE
+        )
+      }
       groupvars <- all.vars(as.expression(rhs))
-      if (!all(groupvars %in% Xnames) || any(!factorcandidate[groupvars]))
-        stop(paste("Not all variables on right hand side of formula",
-                   "can be interpreted as factors"), call. = FALSE)
+      if (!all(groupvars %in% Xnames) || any(!factorcandidate[groupvars])) {
+        stop(paste(
+          "Not all variables on right hand side of formula",
+          "can be interpreted as factors"
+        ), call. = FALSE)
+      }
       group <- interaction(lapply(
-        as.data.frame(data[,groupvars, drop = FALSE]), factor))
+        as.data.frame(data[, groupvars, drop = FALSE]), factor
+      ))
       newnames <- Xnames
       newnames[Xnames == ppname] <- "pp"
       names(data) <- newnames
       data$group <- group
-    }
-    else {
+    } else {
       thepp <- which.max(ppcandidate)
       thegroup <- which.max(factorcandidate)
       formula <- as.formula(paste(Xnames[thepp], "~", Xnames[thegroup]))
@@ -1134,15 +1234,17 @@ studpermu.test.pp3 <- function (X, formula,
       names(data) <- newnames
       data$group <- as.factor(data$group)
     }
-  }
-  else {
-    if (!is.list(X))
+  } else {
+    if (!is.list(X)) {
       stop("X should be a hyperframe or a list of lists of point patterns")
-    if (!is.list(X[[1]]) || !is.pp3(X[[1]][[1]]))
+    }
+    if (!is.list(X[[1]]) || !is.pp3(X[[1]][[1]])) {
       stop("X is a list, but not a list of lists of point patterns")
+    }
     nams <- names(X)
-    if (is.null(nams))
+    if (is.null(nams)) {
       nams <- paste("group", seq_along(X))
+    }
     pp <- list()
     group <- NULL
     for (i in seq_along(X)) {
@@ -1156,57 +1258,76 @@ studpermu.test.pp3 <- function (X, formula,
   framename <- deparse(substitute(X))
   fooname <- deparse(substitute(summaryfunction))
   OK <- sapply(data$pp, npoints) >= minpoints
-  if ((nbad <- sum(!OK)) > 0)
-    warning(paste(nbad, "patterns have been discarded",
-                  "because they contained fewer than",
-                  minpoints, "points"), call. = FALSE)
+  if ((nbad <- sum(!OK)) > 0) {
+    warning(paste(
+      nbad, "patterns have been discarded",
+      "because they contained fewer than",
+      minpoints, "points"
+    ), call. = FALSE)
+  }
   data <- data[OK, , drop = FALSE]
   pp <- data$pp
   groupi <- as.integer(data$group)
   ngroups <- max(groupi)
-  if (ngroups < 2)
-    stop(paste("Sorry, after discarding patterns with fewer than",
-               minpoints, "points,", if (ngroups < 1)
-                 "nothing"
-               else "only one group", "is left over.",
-                "\n- nothing to compare, take a break!"),
-         call. = FALSE)
+  if (ngroups < 2) {
+    stop(
+      paste(
+        "Sorry, after discarding patterns with fewer than",
+        minpoints, "points,", if (ngroups < 1) {
+          "nothing"
+        } else {
+          "only one group"
+        }, "is left over.",
+        "\n- nothing to compare, take a break!"
+      ),
+      call. = FALSE
+    )
+  }
   lev <- 1:ngroups
   m <- as.vector(table(groupi))
-  if (any(m < 3))
-    stop(paste("Data groups need to contain at least two patterns;",
-               "\nafter discarding those with fewer than", minpoints,
-               "points, the remaining group sizes are",
-               spatstat.utils::commasep(m)),
-         call. = FALSE)
-  npossible <- factorial(sum(m))/prod(factorial(m))/prod(factorial(table(m)))
-  if (is.nan(npossible))
+  if (any(m < 3)) {
+    stop(
+      paste(
+        "Data groups need to contain at least two patterns;",
+        "\nafter discarding those with fewer than", minpoints,
+        "points, the remaining group sizes are",
+        spatstat.utils::commasep(m)
+      ),
+      call. = FALSE
+    )
+  }
+  npossible <- factorial(sum(m)) / prod(factorial(m)) / prod(factorial(table(m)))
+  if (is.nan(npossible)) {
     npossible <- Inf
-  if (npossible < max(100, nperm))
+  }
+  if (npossible < max(100, nperm)) {
     warning("Don't expect exact results - group sizes are too small")
+  }
   if (is.null(rmax)) {
     rmax <- sapply(pp, function(P) {
-      spatstat.geom::diameter(P$domain)/2
+      spatstat.geom::diameter(P$domain) / 2
     })
     rmax <- min(rmax)
   }
-  if (is.null(rinterval))
+  if (is.null(rinterval)) {
     rinterval <- c(0, rmax)
+  }
   ranger <- diff(range(rinterval))
   rr <- seq(0, rmax, length.out = nrval)
   taker <- rr >= rinterval[1] & rr <= rinterval[2]
   needcorx <- "correction" %in% names(formals(summaryfunction))
   gavecorx <- "correction" %in% names(list(...))
-  corx <- if (needcorx && !gavecorx)
+  corx <- if (needcorx && !gavecorx) {
     "translation"
-  else NULL
+  } else {
+    NULL
+  }
   fvlist <-
     if (is.null(corx)) {
       with(data, summaryfunction(pp, rmax = rmax, ...))
+    } else {
+      with(data, summaryfunction(pp, rmax = rmax, ..., correction = corx))
     }
-  else {
-    with(data, summaryfunction(pp, rmax = rmax, ..., correction = corx))
-  }
   # can skip most of the previous if summary functions are supplied...
   # need to extract rmax, nrval from functions
   fvtemplate <- fvlist[[1]]
@@ -1214,42 +1335,60 @@ studpermu.test.pp3 <- function (X, formula,
   argu <- attr(fvtemplate, "argu")
   foar <- sapply(lapply(fvlist, "[[", valu), "[", taker)
   combs <- combn(lev, 2)
-  predigested <- list(lev = lev, foar = foar, m = m, combs = combs,
-                      rrr = rr[taker], ranger = ranger)
+  predigested <- list(
+    lev = lev, foar = foar, m = m, combs = combs,
+    rrr = rr[taker], ranger = ranger
+  )
   if (use.Tbar) {
     Tobs <- T.barstat(groupi, predigested)
     Tsim <- replicate(nperm, T.barstat(sample(groupi), predigested))
-  }
-  else {
+  } else {
     Tobs <- T.stat(groupi, predigested)
     Tsim <- replicate(nperm, T.stat(sample(groupi), predigested))
   }
-  names(Tobs) <- if (use.Tbar)
+  names(Tobs) <- if (use.Tbar) {
     "Tbar"
-  else "T"
-  pval <- (1 + sum(Tobs < Tsim))/(1 + nperm)
-  method <- c("Studentized permutation test for grouped point patterns",
-              ifelse(is.hyperframe(X),
-                     spatstat.utils::pasteFormula(formula), NULL),
-              spatstat.utils::choptext(ngroups, "groups:",
-                                       paste(levels(data$group),
-                collapse = ", ")),
-              spatstat.utils::choptext("summary function:",
-                  paste0(fooname, ","), "evaluated on r in",
-                  spatstat.utils::prange(rinterval)),
-              spatstat.utils::choptext("test statistic:",
-                                       ifelse(use.Tbar, "Tbar,", "T,"),
-                       nperm, "random permutations"))
-  fooshort <- switch(fooname, pcf = "pair correlation ",
-                     Kinhom = "inhomogeneous K-",
-                     Linhom = "inhomogeneous L-",
-                     Kscaled = "locally scaled K-",
-                     Lscaled = "locally scaled L-",
-                     paste(substr(fooname,1, 1), "-", sep = ""))
+  } else {
+    "T"
+  }
+  pval <- (1 + sum(Tobs < Tsim)) / (1 + nperm)
+  method <- c(
+    "Studentized permutation test for grouped point patterns",
+    ifelse(is.hyperframe(X),
+      spatstat.utils::pasteFormula(formula), NULL
+    ),
+    spatstat.utils::choptext(
+      ngroups, "groups:",
+      paste(levels(data$group),
+        collapse = ", "
+      )
+    ),
+    spatstat.utils::choptext(
+      "summary function:",
+      paste0(fooname, ","), "evaluated on r in",
+      spatstat.utils::prange(rinterval)
+    ),
+    spatstat.utils::choptext(
+      "test statistic:",
+      ifelse(use.Tbar, "Tbar,", "T,"),
+      nperm, "random permutations"
+    )
+  )
+  fooshort <- switch(fooname,
+    pcf = "pair correlation ",
+    Kinhom = "inhomogeneous K-",
+    Linhom = "inhomogeneous L-",
+    Kscaled = "locally scaled K-",
+    Lscaled = "locally scaled L-",
+    paste(substr(fooname, 1, 1), "-", sep = "")
+  )
   alternative <- c(paste("not the same ", fooshort, "function",
-                         sep = ""))
-  testerg <- list(statistic = Tobs, p.value = pval, alternative = alternative,
-                  method = method, data.name = framename)
+    sep = ""
+  ))
+  testerg <- list(
+    statistic = Tobs, p.value = pval, alternative = alternative,
+    method = method, data.name = framename
+  )
   class(testerg) <- c("studpermutest", "htest")
   fvs <- lapply(fvlist, "[.fv", j = c(argu, valu))
   fvs <- lapply(fvs, "attr<-", which = "alim", value = rinterval)
@@ -1259,8 +1398,10 @@ studpermu.test.pp3 <- function (X, formula,
   attr(fvtheo, "alim") <- rinterval
   testerg$curvtheo <- fvtheo[, c(argu, "theo")]
   grmn <- lapply(lev, splitmean, ind = groupi, f = foar)
-  testerg$groupmeans <- lapply(grmn, makefv, xvals = rr[taker],
-                               template = fvtheo)
+  testerg$groupmeans <- lapply(grmn, makefv,
+    xvals = rr[taker],
+    template = fvtheo
+  )
   return(testerg)
 }
 
@@ -1268,39 +1409,40 @@ studpermu.test.pp3 <- function (X, formula,
 # https://rdrr.io/github/spatstat/spatstat.core/src/R/studpermutest.R
 
 splitmean <- function(l, ind, f) {
-  apply(f[ , ind == l], 1, mean)
+  apply(f[, ind == l], 1, mean)
 }
 splitvarn <- function(l, ind, f, m) {
-  apply(f[ , ind == l], 1, var) / m[l]
+  apply(f[, ind == l], 1, var) / m[l]
 }
 studentstat <- function(i, grmean, grvar) {
-  (grmean[, i[1]] - grmean[, i[2]])^2 / (grvar[i[1],] + grvar[i[2], ])
+  (grmean[, i[1]] - grmean[, i[2]])^2 / (grvar[i[1], ] + grvar[i[2], ])
 }
 
-T.stat <- function (ind = groupi, predigested) {
+T.stat <- function(ind = groupi, predigested) {
   # predigested should be a list with entries lev, foar, m, combs, rrr
   with(predigested, {
-    grmean <- sapply(lev, splitmean, ind=ind, f=foar)
-    grvar <- t(sapply(lev, splitvarn, ind=ind, f=foar, m=m))
-    y <- apply(combs, 2, studentstat, grmean=grmean, grvar=grvar)
+    grmean <- sapply(lev, splitmean, ind = ind, f = foar)
+    grvar <- t(sapply(lev, splitvarn, ind = ind, f = foar, m = m))
+    y <- apply(combs, 2, studentstat, grmean = grmean, grvar = grvar)
     sum(apply(y, 2, trapint, x = rrr))
   })
 }
 
 intstudent <- function(i, rrr, grmean, meangrvar) {
   trapint(rrr, (grmean[, i[1]] - grmean[, i[2]])^2 /
-            (meangrvar[i[1]] + meangrvar[i[2]]))
+    (meangrvar[i[1]] + meangrvar[i[2]]))
 }
 
-T.barstat <- function (ind = groupi, predigested) {
+T.barstat <- function(ind = groupi, predigested) {
   # predigested should be a list
   # with entries lev, foar, m, combs, rrr, ranger
   with(predigested, {
-    grmean <- sapply(lev, splitmean, ind=ind, f=foar)
-    grvar <- t(sapply(lev, splitvarn, ind=ind, f=foar, m=m))
-    meangrvar <- apply(grvar, 1, trapint, x = rrr)/ranger
+    grmean <- sapply(lev, splitmean, ind = ind, f = foar)
+    grvar <- t(sapply(lev, splitvarn, ind = ind, f = foar, m = m))
+    meangrvar <- apply(grvar, 1, trapint, x = rrr) / ranger
     sum(apply(combs, 2, intstudent,
-              rrr=rrr, grmean=grmean, meangrvar=meangrvar))
+      rrr = rrr, grmean = grmean, meangrvar = meangrvar
+    ))
     # trapint(rr[taker], grvar[i[1],] + grvar[i[2], ]))))
   })
 }
@@ -1309,52 +1451,65 @@ makefv <- function(yvals, xvals, template) {
   fdf <- data.frame(r = xvals, y = yvals)
   argu <- fvnames(template, ".x")
   valu <- fvnames(template, ".y")
-  names(fdf) <- c(argu,valu)
-  fv(fdf, argu = argu, ylab = attr(template, "ylab"), valu = valu,
-     fmla = attr(template,"fmla"), alim = attr(template, "alim"))
+  names(fdf) <- c(argu, valu)
+  fv(fdf,
+    argu = argu, ylab = attr(template, "ylab"), valu = valu,
+    fmla = attr(template, "fmla"), alim = attr(template, "alim")
+  )
 }
 
 # Trapezoidal rule approximation to integral
 trapint <- function(x, y) {
   nonan <- !is.na(y)
   nn <- sum(nonan)
-  if(nn < 2L) return(0)
+  if (nn < 2L) {
+    return(0)
+  }
   Y <- y[nonan]
   X <- x[nonan]
-  0.5 * sum( (Y[-1] + Y[-nn]) * diff(X))
+  0.5 * sum((Y[-1] + Y[-nn]) * diff(X))
 }
 
 # call foo(x, further arguments) repeatedly
 # further arguments are taken from hyperframe H and ...
-multicall <- function(foo, x, H, ...){
+multicall <- function(foo, x, H, ...) {
   stopifnot(is.hyperframe(H))
   if (is.hyperframe(x)) {
     x <- as.list(x)[[1]]
-  } else if(!is.list(x))
-    stop("in multicall: x should be a hyperframe or list", call.=FALSE)
+  } else if (!is.list(x)) {
+    stop("in multicall: x should be a hyperframe or list", call. = FALSE)
+  }
 
   # check if same length
   nrows <- dim(H)[1]
-  if (length(x) != nrows)
-    stop(paste("in multicall: x and H need to have",
-               "the same number of rows or list elements"),
-         call.=FALSE)
+  if (length(x) != nrows) {
+    stop(
+      paste(
+        "in multicall: x and H need to have",
+        "the same number of rows or list elements"
+      ),
+      call. = FALSE
+    )
+  }
   dotargs <- list(...)
   hnames <- names(H)
-  argnames <- names(formals(foo))# always assume first argument is given
+  argnames <- names(formals(foo)) # always assume first argument is given
 
   ppname <- argnames[1]
   argnames <- argnames[-1]
   dotmatch <- pmatch(names(dotargs), argnames)
   dotmatched <- dotmatch[!is.na(dotmatch)]
   dotuseargs <- dotargs[!is.na(dotmatch)]
-  restargs <- if(length(dotmatched) >0) argnames[-dotmatched] else argnames
+  restargs <- if (length(dotmatched) > 0) argnames[-dotmatched] else argnames
   hmatch <- pmatch(hnames, restargs)
   huse <- !is.na(hmatch)
-  lapply(seq_len(nrows), function (i)
-    do.call(foo, c(list(x[[i]]),
-                   as.list(H[i, huse, drop=TRUE, strip=FALSE]),
-                   dotargs)))
+  lapply(seq_len(nrows), function(i) {
+    do.call(foo, c(
+      list(x[[i]]),
+      as.list(H[i, huse, drop = TRUE, strip = FALSE]),
+      dotargs
+    ))
+  })
 }
 
 #### Tstat.pp3 ####
@@ -1399,35 +1554,42 @@ multicall <- function(foo, x, H, ...){
 #' "A third order point process characteristic",
 #' *Scandinavian Journal of Statistics*, **27**, 657-671 (2000).
 #' @export
-Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
-                       correction = "border",
-                       ratio = FALSE, verbose = TRUE) {
+Tstat.pp3 <- function(X, rmax = NULL, nrval = 128,
+                      correction = "border",
+                      ratio = FALSE, verbose = TRUE) {
   spatstat.geom::verifyclass(X, "pp3")
   npts <- spatstat.geom::npoints(X)
   W <- spatstat.geom::domain(X)
   areaW <- spatstat.geom::volume(W)
-  lambda <- npts/areaW
-  lambda2 <- (npts * (npts - 1))/(areaW^2)
-  lambda3 <- (npts * (npts - 1) * (npts - 2))/(areaW^3)
-  if (is.null(rmax))
-    rmax <- spatstat.geom::diameter(W)/2
+  lambda <- npts / areaW
+  lambda2 <- (npts * (npts - 1)) / (areaW^2)
+  lambda3 <- (npts * (npts - 1) * (npts - 2)) / (areaW^3)
+  if (is.null(rmax)) {
+    rmax <- spatstat.geom::diameter(W) / 2
+  }
   r <- seq(0, rmax, length.out = nrval)
   breaks <- spatstat.geom::breakpts.from.r(r)
   correction.given <- !missing(correction) && !is.null(correction)
-  if (!correction.given)
-    correction <- c("border", "bord.modif") #, "translate") not implemented yet
+  if (!correction.given) {
+    correction <- c("border", "bord.modif")
+  } # , "translate") not implemented yet
   correction <- spatstat.geom::pickoption(
     "correction", correction,
-    c(none = "none",
+    c(
+      none = "none",
       border = "border", bord.modif = "bord.modif", trans = "translate",
-      translate = "translate", translation = "translate", best = "best"),
-    multi = TRUE)
+      translate = "translate", translation = "translate", best = "best"
+    ),
+    multi = TRUE
+  )
   alim <- c(0, rmax)
-  TT <- data.frame(r = r, theo = 5/12 * pi^2 * r^6)
+  TT <- data.frame(r = r, theo = 5 / 12 * pi^2 * r^6)
   desc <- c("distance argument r", "theoretical Poisson %s")
   TT <- spatstat.core::fv(TT, "r",
-                     quote(T(r)), "theo", , alim, c("r", "%s[pois](r)"),
-                     desc, fname = "T") # blank is in ppp version...
+    quote(T(r)), "theo", , alim, c("r", "%s[pois](r)"),
+    desc,
+    fname = "T"
+  ) # blank is in ppp version...
   if (ratio) {
     denom <- lambda2 * areaW
     numT <- spatstat.core::eval.fv(denom * TT)
@@ -1436,22 +1598,29 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
     attr(numT, "desc")[2] <- "numerator for theoretical Poisson %s"
     attr(denT, "desc")[2] <- "denominator for theoretical Poisson %s"
   }
-  close <- spatstat.geom::closepairs(X, rmax, what = "ijd", twice = FALSE,
-                                neat = FALSE)
+  close <- spatstat.geom::closepairs(X, rmax,
+    what = "ijd", twice = FALSE,
+    neat = FALSE
+  )
   I <- close$i
   J <- close$j
   DIJ <- close$d
   nI <- length(I)
   continue <- TRUE
   if (verbose) {
-    nTmax <- nI * (nI - 1)/2
+    nTmax <- nI * (nI - 1) / 2
     esttime <- exp(1.25 * log(nTmax) - 21.5)
-    message(paste("Searching", nTmax, "potential triangles;",
-                  "estimated time", spatstat.geom::codetime(esttime)))
-    if(esttime > 60)
+    message(paste(
+      "Searching", nTmax, "potential triangles;",
+      "estimated time", spatstat.geom::codetime(esttime)
+    ))
+    if (esttime > 60) {
       continue <- askYesNo("Estimated time greater than one minute. Continue?")
+    }
   }
-  if (!continue) return(NULL)
+  if (!continue) {
+    return(NULL)
+  }
   tri <- spatstat.geom::trianglediameters(I, J, DIJ, nvert = npts)
   stopifnot(identical(colnames(tri), c("i", "j", "k", "diam")))
   II <- with(tri, c(i, j, k))
@@ -1460,15 +1629,21 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
     wh <- whist(DD, breaks$val)
     numTun <- cumsum(wh)
     denTun <- lambda3 * areaW
-    Tun <- numTun/denTun
-    TT <- spatstat.core::bind.fv(TT, data.frame(un = Tun), "hat(%s)[un](r)",
-                            "uncorrected estimate of %s", "un")
+    Tun <- numTun / denTun
+    TT <- spatstat.core::bind.fv(
+      TT, data.frame(un = Tun), "hat(%s)[un](r)",
+      "uncorrected estimate of %s", "un"
+    )
     if (ratio) {
-      numT <- spatstat.core::bind.fv(numT, data.frame(un = numTun), "hat(%s)[un](r)",
-                                "numerator of uncorrected estimate of %s", "un")
-      denT <- spatstat.core::bind.fv(denT, data.frame(un = denTun), "hat(%s)[un](r)",
-                                "denominator of uncorrected estimate of %s",
-                                "un")
+      numT <- spatstat.core::bind.fv(
+        numT, data.frame(un = numTun), "hat(%s)[un](r)",
+        "numerator of uncorrected estimate of %s", "un"
+      )
+      denT <- spatstat.core::bind.fv(
+        denT, data.frame(un = denTun), "hat(%s)[un](r)",
+        "denominator of uncorrected estimate of %s",
+        "un"
+      )
     }
   }
   if (any(correction == "border" | correction == "bord.modif")) {
@@ -1479,37 +1654,49 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
       denom.area <- eroded.volumes(W, r)
       numTbm <- RS$numerator
       denTbm <- lambda3 * denom.area
-      Tbm <- numTbm/denTbm
-      TT <- spatstat.core::bind.fv(TT, data.frame(bord.modif = Tbm),
-                              "hat(%s)[bordm](r)",
-                              "modified border-corrected estimate of %s",
-                              "bord.modif")
+      Tbm <- numTbm / denTbm
+      TT <- spatstat.core::bind.fv(
+        TT, data.frame(bord.modif = Tbm),
+        "hat(%s)[bordm](r)",
+        "modified border-corrected estimate of %s",
+        "bord.modif"
+      )
       if (ratio) {
-        numT <- spatstat.core::bind.fv(numT, data.frame(bord.modif = numTbm),
-                        "hat(%s)[bordm](r)",
-                        "numerator of modified border-corrected estimate of %s",
-                        "bord.modif")
-        denT <- spatstat.core::bind.fv(denT, data.frame(bord.modif = denTbm),
-                                  "hat(%s)[bordm](r)",
-                      "denominator of modified border-corrected estimate of %s",
-                      "bord.modif")
+        numT <- spatstat.core::bind.fv(
+          numT, data.frame(bord.modif = numTbm),
+          "hat(%s)[bordm](r)",
+          "numerator of modified border-corrected estimate of %s",
+          "bord.modif"
+        )
+        denT <- spatstat.core::bind.fv(
+          denT, data.frame(bord.modif = denTbm),
+          "hat(%s)[bordm](r)",
+          "denominator of modified border-corrected estimate of %s",
+          "bord.modif"
+        )
       }
     }
     if (any(correction == "border")) {
       numTb <- RS$numerator
       denTb <- lambda2 * RS$denom.count
-      Tb <- numTb/denTb
-      TT <- spatstat.core::bind.fv(TT, data.frame(border = Tb), "hat(%s)[bord](r)",
-                    "border-corrected estimate of %s", "border")
+      Tb <- numTb / denTb
+      TT <- spatstat.core::bind.fv(
+        TT, data.frame(border = Tb), "hat(%s)[bord](r)",
+        "border-corrected estimate of %s", "border"
+      )
       if (ratio) {
-        numT <- spatstat.core::bind.fv(numT, data.frame(border = numTb),
-                                  "hat(%s)[bord](r)",
-                                "numerator of border-corrected estimate of %s",
-                                "border")
-        denT <- spatstat.core::bind.fv(denT, data.frame(border = denTb),
-                                  "hat(%s)[bord](r)",
-                              "denominator of border-corrected estimate of %s",
-                              "border")
+        numT <- spatstat.core::bind.fv(
+          numT, data.frame(border = numTb),
+          "hat(%s)[bord](r)",
+          "numerator of border-corrected estimate of %s",
+          "border"
+        )
+        denT <- spatstat.core::bind.fv(
+          denT, data.frame(border = denTb),
+          "hat(%s)[bord](r)",
+          "denominator of border-corrected estimate of %s",
+          "border"
+        )
       }
     }
   }
@@ -1519,20 +1706,26 @@ Tstat.pp3 <- function (X, rmax = NULL, nrval = 128,
     wh <- whist(tri$diam, breaks$val, edgewt)
     numTtrans <- 3 * cumsum(wh)
     denTtrans <- lambda3 * areaW
-    Ttrans <- numTtrans/denTtrans
-    h <- spatstat.geom::diameter(W)/2
+    Ttrans <- numTtrans / denTtrans
+    h <- spatstat.geom::diameter(W) / 2
     Ttrans[r >= h] <- NA
-    TT <- spatstat.core::bind.fv(TT, data.frame(trans = Ttrans), "hat(%s)[trans](r)",
-                  "translation-corrected estimate of %s", "trans")
+    TT <- spatstat.core::bind.fv(
+      TT, data.frame(trans = Ttrans), "hat(%s)[trans](r)",
+      "translation-corrected estimate of %s", "trans"
+    )
     if (ratio) {
-      numT <- spatstat.core::bind.fv(numT, data.frame(trans = numTtrans),
-                                "hat(%s)[trans](r)",
-                            "numerator of translation-corrected estimate of %s",
-                            "trans")
-      denT <- spatstat.core::bind.fv(denT, data.frame(trans = denTtrans),
-                                "hat(%s)[trans](r)",
-                          "denominator of translation-corrected estimate of %s",
-                          "trans")
+      numT <- spatstat.core::bind.fv(
+        numT, data.frame(trans = numTtrans),
+        "hat(%s)[trans](r)",
+        "numerator of translation-corrected estimate of %s",
+        "trans"
+      )
+      denT <- spatstat.core::bind.fv(
+        denT, data.frame(trans = denTtrans),
+        "hat(%s)[trans](r)",
+        "denominator of translation-corrected estimate of %s",
+        "trans"
+      )
     }
   }
   formula(TT) <- . ~ r
@@ -1578,8 +1771,7 @@ bdist.points.ppp <- spatstat.geom::bdist.points
 #' @seealso \code{\link[spatstat]{bdist.points}}
 #'
 #' @export
-bdist.points.pp3 <- function (X) {
-
+bdist.points.pp3 <- function(X) {
   spatstat.geom::verifyclass(X, "pp3")
 
   x <- X$data$x
@@ -1593,9 +1785,11 @@ bdist.points.pp3 <- function (X) {
   ymax <- max(d$yrange)
   zmin <- min(d$zrange)
   zmax <- max(d$zrange)
-  result <- pmin.int(x - xmin, xmax - x,
-                     y - ymin, ymax - y,
-                     z - zmin, zmax - z)
+  result <- pmin.int(
+    x - xmin, xmax - x,
+    y - ymin, ymax - y,
+    z - zmin, zmax - z
+  )
 
   return(result)
 }
@@ -1612,8 +1806,7 @@ bdist.points.pp3 <- function (X) {
 #'   boundaries for each point in the pattern `X`.
 #' @seealso \code{\link{bdist.points.pp3}}
 #' @export
-bdist.points3.multi <- function (X){
-
+bdist.points3.multi <- function(X) {
   spatstat.geom::verifyclass(X, "pp3")
 
   x <- X$data$x
@@ -1628,9 +1821,11 @@ bdist.points3.multi <- function (X){
   zmin <- min(d$zrange)
   zmax <- max(d$zrange)
 
-  result <- data.frame(x = pmin.int(x - xmin, xmax - x),
-                       y = pmin.int(y - ymin, ymax - y),
-                       z = pmin.int(z - zmin, zmax - z))
+  result <- data.frame(
+    x = pmin.int(x - xmin, xmax - x),
+    y = pmin.int(y - ymin, ymax - y),
+    z = pmin.int(z - zmin, zmax - z)
+  )
 
   return(result)
 }

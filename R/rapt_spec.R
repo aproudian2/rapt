@@ -53,7 +53,7 @@ rangeCount <- function(pos, start, end) {
 rangePOS <- function(pos, start, end) {
   stopifnot(length(start) == 1)
   stopifnot(length(stop) == 1)
-  pos[pos$mass > start & pos$mass < end,]
+  pos[pos$mass > start & pos$mass < end, ]
 }
 
 ### rngCount ###
@@ -77,14 +77,14 @@ rangePOS <- function(pos, start, end) {
 #'
 #' @export
 rngCount <- function(pos, rng, simplify = FALSE) {
-  cts <- apply(rng, 1, function (x) {
+  cts <- apply(rng, 1, function(x) {
     rangeCount(pos, as.numeric(x["start"]), as.numeric(x["end"]))
   })
   tot <- sum(cts)
-  dat <- data.frame(name = rng$name, counts = cts, fraction = cts/tot)
-  if(simplify) {
-    dat <- aggregate(dat[,-1], by = list(name = dat$name), FUN = sum)
-    dat <- dat[order(dat$counts, decreasing = TRUE),]
+  dat <- data.frame(name = rng$name, counts = cts, fraction = cts / tot)
+  if (simplify) {
+    dat <- aggregate(dat[, -1], by = list(name = dat$name), FUN = sum)
+    dat <- dat[order(dat$counts, decreasing = TRUE), ]
   }
   return(dat)
 }
@@ -108,9 +108,10 @@ rngCount <- function(pos, rng, simplify = FALSE) {
 #'
 #' @export
 rngPOS <- function(pos, rng) {
-  hits <- apply(rng, 1, function (x) {
+  hits <- apply(rng, 1, function(x) {
     rows <- rangePOS(pos, as.numeric(x["start"]), as.numeric(x["end"]))
     rows$mark <- x["name"]
+    rows$volume <- x["volume"]
     return(rows)
   })
   dat <- do.call(rbind, hits)
@@ -127,8 +128,10 @@ rangeMassSpectrum <- function(ms, start, end, threshold = 0.2) {
   int <- ms@intensity[m.in]
   int.max <- max(int)
   wh.all <- int >= threshold * int.max
-  wh <- with(rle(wh.all), # this method is not right: range must include max!
-             rep(lengths == max(lengths[values]) & values, lengths))
+  wh <- with(
+    rle(wh.all), # this method is not right: range must include max!
+    rep(lengths == max(lengths[values]) & values, lengths)
+  )
   range(m.clip[wh])
 }
 
@@ -201,15 +204,19 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = "gaussian",
     stopifnot(length(charge) == length(ions))
   }
   stopifnot(tau > 0)
-  ion.form <- ionFormula(ions, charge = charge, threshold = threshold,
-                         peak = peak)
+  ion.form <- ionFormula(ions,
+    charge = charge, threshold = threshold,
+    peak = peak
+  )
   names(sd) <- "s0"
   names(rel) <- paste0("a", seq_along(ions))
   names(mass.shift) <- "m0"
   names(noise) <- "n0"
   names(tau) <- "t0"
-  ion.start <- c(as.list(sd), as.list(rel),
-                 as.list(mass.shift), as.list(noise))
+  ion.start <- c(
+    as.list(sd), as.list(rel),
+    as.list(mass.shift), as.list(noise)
+  )
   if (peak == "emg") {
     ion.start <- c(ion.start, as.list(tau))
   }
@@ -257,32 +264,36 @@ fitIonInit <- function(ions, sd = 0.5, rel = NULL, peak = "gaussian",
 ionFormula <- function(ions, charge = 1, threshold = 10, peak = "gaussian") {
   data("isotopes", package = "enviPat", envir = environment())
   iso <- enviPat::isopattern(isotopes, ions,
-                             charge = charge, threshold = threshold,
-                             verbose = FALSE)
-  ion.init <- mapply(function(X,s) {
+    charge = charge, threshold = threshold,
+    verbose = FALSE
+  )
+  ion.init <- mapply(function(X, s) {
     data.frame(
-      lambda = c((X[,2]/100)),
-      mu = c(X[,1])
+      lambda = c((X[, 2] / 100)),
+      mu = c(X[, 1])
     )
   }, iso, SIMPLIFY = FALSE)
   n.ions <- seq_along(ions)
-  if (is.null(peak) | peak == 'gaussian') {
+  if (is.null(peak) | peak == "gaussian") {
     fs <- mapply(function(n, I) {
       paste(paste0("a", n, " * ", I$lambda,
-                   " * exp(-(mass - ", I$mu, " - m0)**2 /",
-                   " (2 * s0**2))",
-                   collapse = " + "))
+        " * exp(-(mass - ", I$mu, " - m0)**2 /",
+        " (2 * s0**2))",
+        collapse = " + "
+      ))
     }, n.ions, ion.init, SIMPLIFY = FALSE)
-  } else if (peak == 'emg') {
+  } else if (peak == "emg") {
     fs <- mapply(function(n, I) {
-      paste(paste0("rapt:::emg(mass, a", n, "*", I$lambda,", ",
-                   I$mu, "-m0, s0, t0)", collapse = " + "))
+      paste(paste0("rapt:::emg(mass, a", n, "*", I$lambda, ", ",
+        I$mu, "-m0, s0, t0)",
+        collapse = " + "
+      ))
     }, n.ions, ion.init, SIMPLIFY = FALSE)
   } else {
     stop('Peak shape must be one of "gaussian" or "emg."')
   }
   f.noise <- "n0"
-  fs <- paste(paste(fs, collapse = ' + '), f.noise, sep = " + ")
+  fs <- paste(paste(fs, collapse = " + "), f.noise, sep = " + ")
   f.full <- paste("intensity ~", fs)
   attr(f.full, "isotopes") <- iso
   return(f.full)
@@ -294,8 +305,8 @@ erfc <- function(x) 2 * pnorm(x * sqrt(2), lower = FALSE)
 
 ### emg ###
 # Exponentially modified gaussian function
-emg <- function(x,h,m,s,t) {
-  (h*s/t)*sqrt(pi/2)*exp(1/2*(s/t)^2-(x-m)/t)*erfc(sqrt(1/2)*(s/t-(x-m)/s))
+emg <- function(x, h, m, s, t) {
+  (h * s / t) * sqrt(pi / 2) * exp(1 / 2 * (s / t)^2 - (x - m) / t) * erfc(sqrt(1 / 2) * (s / t - (x - m) / s))
 }
 
 #### fitGMM ####

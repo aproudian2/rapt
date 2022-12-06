@@ -42,8 +42,9 @@ read.rcp <- function(fpath_config, fpath_sys = NULL,
     stop("fpath_sys must be specified for scaling")
   }
   rcp <- read.table(fpath_config,
-                    sep = " ", col.names = c("x", "y", "z", "type"))
-  pp <- createSpat(rcp[,c("x","y","z")])
+    sep = " ", col.names = c("x", "y", "z", "type")
+  )
+  pp <- createSpat(rcp[, c("x", "y", "z")])
   if (scaleUp == TRUE) {
     r <- scan(fpath_sys, skip = 7, n = 1)
     pp <- scaleRCP(pp, newRadius = newRadius, oldRadius = r)
@@ -77,25 +78,28 @@ read.rcp <- function(fpath_config, fpath_sys = NULL,
 #'
 #' @export
 scaleRCP <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
-
-  if(is.null(oldRadius)) {
+  if (is.null(oldRadius)) {
     print("Old radius is required.")
     return(NULL)
   }
 
-  s <- (newRadius/oldRadius)
+  s <- (newRadius / oldRadius)
 
-  if(is.null(win)) {
+  if (is.null(win)) {
     pp3.domain <- domain(pp3file)
-    pp3.box <- box3(xrange = s*round(pp3.domain$xrange),
-                    yrange = s*round(pp3.domain$yrange),
-                    zrange = s*round(pp3.domain$zrange))
+    pp3.box <- box3(
+      xrange = s * round(pp3.domain$xrange),
+      yrange = s * round(pp3.domain$yrange),
+      zrange = s * round(pp3.domain$zrange)
+    )
   } else {
-    pp3.box <- box3(xrange = s*win$xrange,
-                    yrange = s*win$yrange,
-                    zrange = s*win$zrange)
+    pp3.box <- box3(
+      xrange = s * win$xrange,
+      yrange = s * win$yrange,
+      zrange = s * win$zrange
+    )
   }
-  rcp_xyz <- coords(pp3file)*s
+  rcp_xyz <- coords(pp3file) * s
   toReturn <- createSpat(rcp_xyz, win = pp3.box)
 
   return(toReturn)
@@ -123,43 +127,49 @@ scaleRCP <- function(pp3file, newRadius = 0.5, oldRadius = NULL, win = NULL) {
 #'
 #' @export
 stitch.size <- function(pp3file, win = NULL, boxSize) {
-  if(is.null(win)) {
+  if (is.null(win)) {
     pp3.domain <- domain(pp3file)
-    pp3.domain <- box3(xrange = pp3.domain$xrange,
-                       yrange = pp3.domain$yrange,
-                       zrange = pp3.domain$zrange)
+    pp3.domain <- box3(
+      xrange = pp3.domain$xrange,
+      yrange = pp3.domain$yrange,
+      zrange = pp3.domain$zrange
+    )
   } else {
     pp3.domain <- win
   }
 
-  reps <- ceiling(c(boxSize[1]/pp3.domain$xrange[2],
-                    boxSize[2]/pp3.domain$yrange[2],
-                    boxSize[3]/pp3.domain$zrange[2]))
-  pp3.box <- box3(xrange = reps[1]*pp3.domain$xrange,
-                  yrange = reps[2]*pp3.domain$yrange,
-                  zrange = reps[3]*pp3.domain$zrange)
+  reps <- ceiling(c(
+    boxSize[1] / pp3.domain$xrange[2],
+    boxSize[2] / pp3.domain$yrange[2],
+    boxSize[3] / pp3.domain$zrange[2]
+  ))
+  pp3.box <- box3(
+    xrange = reps[1] * pp3.domain$xrange,
+    yrange = reps[2] * pp3.domain$yrange,
+    zrange = reps[3] * pp3.domain$zrange
+  )
 
   ogCoords <- as.matrix(coords(pp3file))
   n <- nrow(ogCoords)
-  newpp3 <- matrix(NaN, n*reps[1]*reps[2]*reps[3], 3)
+  newpp3 <- matrix(NaN, n * reps[1] * reps[2] * reps[3], 3)
   ind <- 0
 
-  for(i in 0:(reps[1]-1)) {
-    for(j in 0:(reps[2]-1)) {
-      for(k in 0:(reps[3]-1)) {
-        newpp3[(ind + 1):(ind + n), 1] <- ogCoords[,1] +
-          i*(pp3.domain$xrange[2] - pp3.domain$xrange[1])
-        newpp3[(ind + 1):(ind + n), 2] <- ogCoords[,2] +
-          j*(pp3.domain$yrange[2] - pp3.domain$yrange[1])
-        newpp3[(ind + 1):(ind + n), 3] <- ogCoords[,3] +
-          k*(pp3.domain$zrange[2] - pp3.domain$zrange[1])
+  for (i in 0:(reps[1] - 1)) {
+    for (j in 0:(reps[2] - 1)) {
+      for (k in 0:(reps[3] - 1)) {
+        newpp3[(ind + 1):(ind + n), 1] <- ogCoords[, 1] +
+          i * (pp3.domain$xrange[2] - pp3.domain$xrange[1])
+        newpp3[(ind + 1):(ind + n), 2] <- ogCoords[, 2] +
+          j * (pp3.domain$yrange[2] - pp3.domain$yrange[1])
+        newpp3[(ind + 1):(ind + n), 3] <- ogCoords[, 3] +
+          k * (pp3.domain$zrange[2] - pp3.domain$zrange[1])
         ind <- ind + n
       }
     }
   }
 
   newpp3 <- as.data.frame(newpp3)
-  colnames(newpp3) <- c("x","y","z")
+  colnames(newpp3) <- c("x", "y", "z")
 
   toReturn <- createSpat(newpp3, win = pp3.box)
 

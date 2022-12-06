@@ -4,7 +4,7 @@
 \alias{g3Xfeatures}
 \title{GX features}
 \usage{
-g3Xfeatures(rvals, gvals_new, gvals_old)
+g3Xfeatures(rvals, gvals_new, gvals_old, type = "GH")
 }
 \arguments{
 \item{rvals}{vector of radius values}
@@ -12,6 +12,8 @@ g3Xfeatures(rvals, gvals_new, gvals_old)
 \item{gvals_new}{vector of new G3cross values from which to subtract expected values}
 
 \item{gvals_old}{vector of expected G3cross values}
+
+\item{type}{a character used for naming the output.  "GH" for guest to host, "HG" for host to guest}
 }
 \value{
 features to be used for machine learning prediction of clustering behavior.  The features are

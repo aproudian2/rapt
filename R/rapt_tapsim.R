@@ -22,29 +22,33 @@
 #' @seealso \url{https://d-nb.info/1138282715/34}
 #'
 #' @export
-readResult <- function(fp, type = 'ASCII') {
-    txt <- readLines(fp, n = 100)  # Not ideal to hard code the max...
-    skip <- grep(type, txt)
-    dat <- read.delim(fp, header = FALSE, skip = skip)
-    n <- ncol(dat)
-    if(n == 26) {
-        names(dat) <- c("index","id","number","voltage",
-                        "startX","startY","startZ",
-                        "stopX","stopY","stopZ","tof","probability",
-                        "potentialBefore",
-                        "fieldBeforeX","fieldBeforeY","fieldBeforeZ",
-                        "potentialAfter",
-                        "fieldAfterX","fieldAfterY","fieldAfterZ",
-                        "normalX","normalY","normalZ","apexX","apexY","apexZ")
-    } else if(n == 18) {
-        names(dat) <- c("index","id","number","voltage",
-                        "startX","startY","startZ",
-                        "stopX","stopY","stopZ","tof","probability",
-                        "normalX","normalY","normalZ","apexX","apexY","apexZ")
-    } else {
-        warning("Unknown file structure. Returning unnamed columns.")
-    }
-    return(dat)
+readResult <- function(fp, type = "ASCII") {
+  txt <- readLines(fp, n = 100) # Not ideal to hard code the max...
+  skip <- grep(type, txt)
+  dat <- read.delim(fp, header = FALSE, skip = skip)
+  n <- ncol(dat)
+  if (n == 26) {
+    names(dat) <- c(
+      "index", "id", "number", "voltage",
+      "startX", "startY", "startZ",
+      "stopX", "stopY", "stopZ", "tof", "probability",
+      "potentialBefore",
+      "fieldBeforeX", "fieldBeforeY", "fieldBeforeZ",
+      "potentialAfter",
+      "fieldAfterX", "fieldAfterY", "fieldAfterZ",
+      "normalX", "normalY", "normalZ", "apexX", "apexY", "apexZ"
+    )
+  } else if (n == 18) {
+    names(dat) <- c(
+      "index", "id", "number", "voltage",
+      "startX", "startY", "startZ",
+      "stopX", "stopY", "stopZ", "tof", "probability",
+      "normalX", "normalY", "normalZ", "apexX", "apexY", "apexZ"
+    )
+  } else {
+    warning("Unknown file structure. Returning unnamed columns.")
+  }
+  return(dat)
 }
 
 #### Condition Data ####
@@ -67,15 +71,17 @@ readResult <- function(fp, type = 'ASCII') {
 #'
 #' @export
 resultToPOS <- function(res, clip.radius = NULL) {
-    pos <- data.frame(x = res$startX*1e9,
-                      y = res$startY*1e9,
-                      z = res$startZ*1e9,
-                      mass = res$id)
-    if (!is.null(clip.radius)) {
-        r <- sqrt(res$stopX^2 + res$stopY^2)
-        pos <- pos[r <= clip.radius,]
-    }
-    return(pos)
+  pos <- data.frame(
+    x = res$startX * 1e9,
+    y = res$startY * 1e9,
+    z = res$startZ * 1e9,
+    mass = res$id
+  )
+  if (!is.null(clip.radius)) {
+    r <- sqrt(res$stopX^2 + res$stopY^2)
+    pos <- pos[r <= clip.radius, ]
+  }
+  return(pos)
 }
 
 ### resultToDet ###
@@ -96,13 +102,13 @@ resultToPOS <- function(res, clip.radius = NULL) {
 #'
 #' @export
 resultToDet <- function(res, clip.radius = NULL) {
-    det.df <- data.frame(dx = res$stopX, dy = res$stopY, mass = res$id)
-    det <- createDet(det.df)
-    spatstat.geom::marks(det) = det.df$mass
-    if (!is.null(clip.radius)) {
-        spatstat.geom::Window(det) <- spatstat.geom::disc(radius = clip.radius)
-    }
-    return(det)
+  det.df <- data.frame(dx = res$stopX, dy = res$stopY, mass = res$id)
+  det <- createDet(det.df)
+  spatstat.geom::marks(det) <- det.df$mass
+  if (!is.null(clip.radius)) {
+    spatstat.geom::Window(det) <- spatstat.geom::disc(radius = clip.radius)
+  }
+  return(det)
 }
 
 #### Write Data ####
@@ -126,10 +132,13 @@ resultToDet <- function(res, clip.radius = NULL) {
 #'
 #' @export
 writeNode <- function(node, fp) {
-    cat('ASCII', nrow(node), 0, 0, fill = TRUE,
-        file = fp)
-    write.table(format(node, digits = 6), file = fp,
-                quote = FALSE, sep = '\t', eol = '\n', append = TRUE,
-                row.names = FALSE, col.names = FALSE)
+  cat("ASCII", nrow(node), 0, 0,
+    fill = TRUE,
+    file = fp
+  )
+  write.table(format(node, digits = 6),
+    file = fp,
+    quote = FALSE, sep = "\t", eol = "\n", append = TRUE,
+    row.names = FALSE, col.names = FALSE
+  )
 }
-

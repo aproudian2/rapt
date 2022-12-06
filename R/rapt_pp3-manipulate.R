@@ -18,19 +18,20 @@
 #' @export
 
 subSquare <- function(orig, win) {
-
   orig.marks <- marks(orig)
 
   orig.domain <- domain(orig)
-  orig.center <- c(mean(orig.domain$xrange),
-                   mean(orig.domain$yrange),
-                   mean(orig.domain$zrange))
-  xs <-orig.center[1] - (win[1]/2)
-  ys <-orig.center[2] - (win[2]/2)
-  zs <-orig.center[3] - (win[3]/2)
-  xb <-orig.center[1] + (win[1]/2)
-  yb <-orig.center[2] + (win[2]/2)
-  zb <-orig.center[3] + (win[3]/2)
+  orig.center <- c(
+    mean(orig.domain$xrange),
+    mean(orig.domain$yrange),
+    mean(orig.domain$zrange)
+  )
+  xs <- orig.center[1] - (win[1] / 2)
+  ys <- orig.center[2] - (win[2] / 2)
+  zs <- orig.center[3] - (win[3] / 2)
+  xb <- orig.center[1] + (win[1] / 2)
+  yb <- orig.center[2] + (win[2] / 2)
+  zb <- orig.center[3] + (win[3] / 2)
 
   xr <- c(xs, xb)
   yr <- c(ys, yb)
@@ -43,9 +44,9 @@ subSquare <- function(orig, win) {
 
   sub <- orig[tflist]
 
-  xrn <- c(0, xb-xs)
-  yrn <- c(0, yb-ys)
-  zrn <- c(0, zb-zs)
+  xrn <- c(0, xb - xs)
+  yrn <- c(0, yb - ys)
+  zrn <- c(0, zb - zs)
   sub.box.new <- box3(xrange = xrn, yrange = yrn, zrange = zrn)
 
   coo <- coords(sub)
@@ -54,7 +55,7 @@ subSquare <- function(orig, win) {
   coo$y <- coo$y - ys
   coo$z <- coo$z - zs
 
-  sub.new <- createSpat(coo,win=sub.box.new)
+  sub.new <- createSpat(coo, win = sub.box.new)
 
   marks(sub.new) <- new.marks
 
@@ -78,10 +79,12 @@ subSquare <- function(orig, win) {
 #'   points.
 #' @export
 percentSelect <- function(perc, pattern) {
-
   reLabel <- rlabel(pattern,
-                    labels = c(rep("A", round(npoints(pattern) * perc)),
-                               rep("B", npoints(pattern) - round(npoints(pattern) * perc))))
+    labels = c(
+      rep("A", round(npoints(pattern) * perc)),
+      rep("B", npoints(pattern) - round(npoints(pattern) * perc))
+    )
+  )
   inds <- which(marks(reLabel) == "A")
 
   newPattern <- reLabel[inds]
