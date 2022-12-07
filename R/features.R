@@ -34,8 +34,10 @@ g3features <- function(rvals, gvals_new, gvals_old) {
     zero_diff <- absmin(diff[(which.max(diff)):(which.min(diff))])
   }
   zero_diff_r <- rvals[which(diff == zero_diff)]
-  out <- c("G_max_diff" = first(max_diff), "G_max_diff_r" = first(max_diff_r),
-           "G_min_diff" = first(min_diff), "G_zero_diff_r" = first(zero_diff_r))
+  out <- c(
+    "G_max_diff" = first(max_diff), "G_max_diff_r" = first(max_diff_r),
+    "G_min_diff" = first(min_diff), "G_zero_diff_r" = first(zero_diff_r)
+  )
   return(out)
 }
 
@@ -207,7 +209,7 @@ k3features <- function(rvals_new, tvals_new, toplot, ...) {
     peak.info$x[1], # Rm
     peak.info$derivsm$x[1], # Rdm
     rvals_new[Rddm_ind[1]], # Rddm
-    -peak.info$derivsm$y.hat[peak.info$derivsm$i[1]]# Tdm
+    -peak.info$derivsm$y.hat[peak.info$derivsm$i[1]] # Tdm
   ))
   out <- unlist(out)
   names(out) <- c("Tm", "Rm", "Rdm", "Rddm", "Tdm")

@@ -4,7 +4,7 @@
 \alias{rjitter.pp3}
 \title{Random Perturbation of a Point Pattern}
 \usage{
-\method{rjitter}{pp3}(X, domain = box3())
+\method{rjitter}{pp3}(X, radius, retry = TRUE, giveup = 10000, ..., nsim = 1, drop = TRUE)
 }
 \description{
 Applies independent random displacements to each point in a point pattern.
