@@ -10,12 +10,14 @@ output:
 This is a companion to the main paper which will help the user make user of our model. The full model used in the paper is done on a high performance computing system, so here we will be showing a scaled down version. 
 
 # Setup
-We utilize a variety of $R$ packages, mostly $spatstat$ and our own $rapt$. The original package is available on Andrew's github, https://github.com/aproudian2/rapt, but since I (Roland) am currently the most active rapt developer, mine may be more up to date.  Therefore, the most recent version of $rapt$ is my development branch, available my github https://github.com/rolandrolandroland/rapt.  Intallation from github requires the $devtools$ package and instructions are given below
+We utilize a variety of $R$ packages, mostly $spatstat$ and our own $rapt$. The original package is available on Andrew's github, https://github.com/aproudian2/rapt, but since I (Roland) am currently the most active rapt developer, mine may be more up to date.  Therefore, the most recent version of $rapt$ is my master branch, available my github https://github.com/rolandrolandroland/rapt.  Intallation from github requires the $devtools$ package and instructions are given below
 
+Contact: Roland Bennett (graduate student): rolandbennett@mines.edu, Jeramy Zimmerman (Professor): jdzimmer@mines.edu
+
+If you would like to use the data that we have already generated (training size =  1458, testing sizes = 365), then include the `load("walkthrough_data.RData")` command below and keep the `evaluate` variable set to `FALSE`.  If you would like to run it yourself, comment out the `load` and set `evaluate` to `TRUE`
 ```{r setup, echo=FALSE}
 
-# load("/Users/rolandbennett/Documents/grad_school/research/rapt_02/cluster_paper_files/vignette.RData")
-# load("/Users/rolandbennett/Documents/grad_school/research/rapt_02/cluster_paper_files/vignette_03.RData")
+load("walkthrough_data.RData")
 ```
 
 Load the required packages
@@ -25,6 +27,7 @@ Load the required packages
 #install_github("rolandrolandroland/rapt", ref = "master")
 ## if rapt is already installed, skip the above two lines
 
+evaluate <- FALSE
 library(rapt)
 library(doParallel)
 library(spatstat.utils)
@@ -36,7 +39,7 @@ library(brnn)
 
 # Simulation Parameters
 Next, we will define the parameters for our simulated point patterns.  The point pattern will be 60 units$^3$ with an average intensity of 1.005 pts/unit$^3$.  
-```{r Simulation Parameters}
+```{r Simulation Parameters, eval=evaluate}
 # simulation parameters
 maxGr <- 4 # max radius at which to calculate G and F
 maxKr <- 30 # max radius at which to calculate K
@@ -61,7 +64,7 @@ host_formula <- "C"
 # Random Relabelings
 In order to calculate our features, we must first get the expected values of each summary function.  The expected value is correlated to the overall intensity of the point pattern and concentration of the dopant, but not the distribution of the dopant. To get this expected value, we perform 10,000 random relabelings.  For more details on this, see the Methods section of the main body of the paper. 
 Note: for this example, we are using only 100 relabelings in order to reduce the compuational expense.
-```{r relabeling, results= "hide"}
+```{r relabeling, results= "hide", eval= evaluate}
 
 # Create random poisson pattern to get expected values for summary functions
 box_size <- box3(xrange = size, yrange = size, zrange = size)
@@ -81,7 +84,7 @@ all_funcs <- c("K", "G", "F", "GXGH")
 ncores <- detectCores()
 start <- as.numeric(Sys.time())
 cl <- makePSOCKcluster(ncores)
-n_relabs <- 100
+n_relabs <- 1000
 invisible(clusterEvalQ(cl, c(library(rapt), library(spatstat))))
 clusterExport(cl, c( "pp3", "host_formula", 
                      "dopant_formula", "all_funcs",
@@ -143,7 +146,7 @@ plot(rrl_box$rrl_GXGH$r, rrl_box$rrl_GXGH$mmean,
 # Training Data
 To train our model, we will use a ratio of 4:1 training:testing data.  The full model us trained using 100,000 data sets and tested on 25,000 data sets, but as described in the paper, only little accuracy is lost with only 5,000 training data sets. 
 First, we will name the features and output.  For full discussion of the features, see the supplemental information.
-```{r }
+```{r name_feats, eval = evaluate}
 # Name features
 G_feats <- c("G_max_diff", "G_max_diff_r", "G_min_diff", "G_zero_diff_r")
 F_feats <- c("F_min_diff", "F_min_diff_F")
@@ -159,13 +162,13 @@ param_names <- c("cr", "rhoc", "rhob", "rb", "pb")
 The \italic{create_training_data()} function is used to generate our training and testing data.  It takes a point pattern (pp3 object), assigns labels so that it exhibits clustering based upon the input parameters $\rho_c$ (intra cluster density), $\rho_b$ (background density), $\mu_r$ (mean cluster radius), $\delta r$ (radius dispersity), and $pb$ (position blur).  Summary function are calculated on this newly labeled pattern and then compared to the expected values (from the relabeling done previously) to extract our features_  
 
 Now we will actually perform the training.  First, we will generate input parameters using a random uniform distribution across our chosen intervals.  
-```{r training}
+```{r training, eval = evaluate}
 
 set.seed(100)
 
 
 # create parameters that will be used in cluster objects
-nrand <- 100 # number of different combinations of parameters
+nrand <- 2000 # number of different combinations of parameters
 # set nrand = 100,000 for results used in paper
 nclust <- 1 # number of clusters per combination
 cr <- runif(nrand, min = 2, max = 6.5) # mu_R values
@@ -210,9 +213,15 @@ train_data_list <- parLapply(cl, 1:nrow(params), function(i) {
                    total_time_start = as.numeric(Sys.time()))
 })
 
-
+# get rid of entries with missing values 
+train_data_list <- lapply(train_data_list, function(set) {
+  if (length(set) == 27) {
+    set
+  }
+})
 # transform from list to matrix
 train_data <- matrix(unlist(train_data_list), byrow = TRUE, ncol = length(train_data_list[[1]]))
+
 # give column names
 # give column names
 col_names <- c(param_names, "jitter", feats, "G_time", "F_time",
@@ -228,7 +237,7 @@ print(dim(train_data))
 ```
 
 If you want to predict weighted radius, then calculate it for each cluster
-```{r }
+```{r add_rw, eval = evaluate}
 # add rw
 sigma <- train_data[, "cr"] * train_data[, "rb"]
 train_data$rw <- (train_data[, "cr"]^4 + 6 * train_data[, "cr"]^2 * sigma^2 + 3 * sigma^4) /
@@ -245,7 +254,7 @@ dim(test_data)
 ```
 
 Now we will actually apply our freshly calculated features to a Bayesian regularized neural network!  Below we define the function to do so.  It takes a metric of interest, training and testing data, and a vector with the names of features to be used as input. The output is a list with few different interesting entries. The first is simply the predictions.  Then we have a few different ways of quantifying error: the root mean squared error (RMSE), root mean squared percent error (RMSPE) and mean absolute error (MAE), and mean percent error (MPE).  Sixth and finally is the time that it took to run the model. 
-```{r }
+```{r train_func, eval = evaluate}
 trainer <- function(to_predict, train_data, test_data, features) {
   cycle_start <- as.numeric(Sys.time())
   pp_train <- preProcess(train_data[, features],
@@ -274,7 +283,7 @@ trainer <- function(to_predict, train_data, test_data, features) {
 
 # Predictions
 Now to apply the $trainer()$ function above.  We generate the predictions for our metrics in parallel using $parLapply$ in order to save time.  
-```{r predictions}
+```{r predictions, eval = evaluate}
 time.check.4 <- as.numeric(Sys.time()) ## just before performing the training
 output
 ncores <- detectCores()
@@ -293,6 +302,7 @@ stopCluster(cl)
 
 Now that we have our predictions, lets look at how accurate they are! First, simply the error metrics we have stored in the results
 ```{r errors}
+library(kableExtra)
 results <- sapply(preds, function(x) {
   c(RMSE = x$RMSE, RMSPE = x$RMSPE, MAE = x$MAE, MPE = x$MPE)
 })
