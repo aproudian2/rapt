@@ -7,14 +7,14 @@
 anomlocalK3est(X, toSub, rmax, nrval)
 }
 \arguments{
-\item{X}{The \code{\link[spatstat]{pp3}} object to be tested.}
+\item{X}{The \code{\link[spatstat.geom]{pp3}} object to be tested.}
 
 \item{toSub}{The vector of values to subtract from the square root of the
 results of the K function applied to X.}
 
-\item{rmax}{See \code{\link[spatstat]{K3est}}.}
+\item{rmax}{See \code{\link[spatstat.core]{K3est}}.}
 
-\item{nrval}{See \code{\link[spatstat]{K3est}}.}
+\item{nrval}{See \code{\link[spatstat.core]{K3est}}.}
 }
 \value{
 Date frame with columns of the anomaly K test for each point in the

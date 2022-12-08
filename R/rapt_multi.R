@@ -25,8 +25,13 @@ indexMultiples <- function(ato, cl.n = 3) {
   mu.ind <- sort(unique(
     c(which(diff(ato$pIndex) == 0), which(diff(ato$pIndex) == 0) + 1L)
   ))
-  mu.rle <- rle(ato[mu.ind,]$pIndex)
-  mu.cl <- parallel::makeCluster(cl.n, type = 'FORK')
+  mu.rle <- rle(ato[mu.ind, ]$pIndex)
+  if (.Platform$OS.type == "windows") {
+    mu.cl <- parallel::makePSOCKcluster(cl.n)
+    parallel::clusterExport(mu.cl, c("mu.rle", "mu.ind"))
+  } else {
+    mu.cl <- parallel::makeForkCluster(cl.n)
+  }
   mu.ls <- parallel::parLapply(mu.cl, 1:max(mu.rle$lengths), function(x) {
     ind <- which(mu.rle$lengths == x)
     cum <- cumsum(mu.rle$lengths)
@@ -36,7 +41,7 @@ indexMultiples <- function(ato, cl.n = 3) {
     return(mu)
   })
   parallel::stopCluster(mu.cl)
-  mu.ls[[1]] <- setdiff(1:dim(ato)[1],mu.ind)
+  mu.ls[[1]] <- setdiff(1:dim(ato)[1], mu.ind)
   return(mu.ls)
 }
 #### multiples ####
@@ -56,11 +61,12 @@ multiples <- function(mind) {
   multi <- vector()
   full <- lapply(1:length(mind), function(n) {
     sapply(mind[[n]], function(i) {
-      i:(i+n-1)
+      i:(i + n - 1)
     })
   })
   multi[unlist(full)] <- rep(1:length(full),
-                                    times = unlist(lapply(full, length)))
+    times = unlist(lapply(full, length))
+  )
   return(multi)
 }
 
@@ -90,41 +96,50 @@ multiples <- function(mind) {
 #' @export
 saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
   rng <- end - begin
-  if(rng <= 0)
-    stop('Mass spec range must be positive')
-  nbin <- round(rng/res)
+  if (rng <= 0) {
+    stop("Mass spec range must be positive")
+  }
+  nbin <- round(rng / res)
   bin <- ash::bin2(
-    cbind(ato[c(ind, ind+1),'mass'],
-          ato[c(ind+1, ind),'mass']),
-    matrix(c(begin,begin,end,end),2,2), c(nbin,nbin))
-  ash <- ash::ash2(bin, c(1,1))
-  if(plot.it) {
-    ms <- createSpec(ato[ato$mass >= begin & ato$mass <= end,], res = res)
+    cbind(
+      ato[c(ind, ind + 1), "mass"],
+      ato[c(ind + 1, ind), "mass"]
+    ),
+    matrix(c(begin, begin, end, end), 2, 2), c(nbin, nbin)
+  )
+  ash <- ash::ash2(bin, c(1, 1))
+  if (plot.it) {
+    ms <- createSpec(ato[ato$mass >= begin & ato$mass <= end, ], res = res)
     sax.old <- par(no.readonly = T)
-    plot(0:1, 0:1, type='n', xlab = '', ylab = '', axes = FALSE)
+    plot(0:1, 0:1, type = "n", xlab = "", ylab = "", axes = FALSE)
     par(new = T, plt = c(0.11, 0.85, 0.12, 0.85))
     image(ash$x, ash$y, log(ash$z),
-          breaks = seq(floor(min(log(ash$z[ash$z > 0]))),
-                       floor(max(log(ash$z))),
-                       length.out = 256), col = hcl.colors(255),
-          xlab = '', ylab = '', xaxt = 'n', yaxt = 'n'
+      breaks = seq(floor(min(log(ash$z[ash$z > 0]))),
+        floor(max(log(ash$z))),
+        length.out = 256
+      ), col = hcl.colors(255),
+      xlab = "", ylab = "", xaxt = "n", yaxt = "n"
     )
     axis(1, tck = -0.015, labels = FALSE)
     axis(1, tick = FALSE, line = -0.5)
-    mtext('Mass-to-Charge Ratio (Da)', side = 1, line = 1.7)
+    mtext("Mass-to-Charge Ratio (Da)", side = 1, line = 1.7)
     axis(2, tck = -0.015, labels = FALSE)
     axis(2, tick = F, line = -0.5, las = 1)
-    mtext('Mass-to-Charge Ratio (Da)', side = 2, line = 2)
+    mtext("Mass-to-Charge Ratio (Da)", side = 2, line = 2, las = 0)
     # Mass spectrum for second hit
     par(new = T, plt = c(0.11, 0.85, 0.85, 0.95))
-    plot(ms@intensity~ms@mass, type = 'l',
-         xaxs = 'i', yaxs = 'i', bty = 'n', xaxt = 'n', yaxt = 'n',
-         xlab = '', ylab = '')
+    plot(ms@intensity ~ ms@mass,
+      type = "l",
+      xaxs = "i", yaxs = "i", bty = "n", xaxt = "n", yaxt = "n",
+      xlab = "", ylab = ""
+    )
     # Mass spectrum for first hit
     par(new = T, plt = c(0.85, 0.95, 0.12, 0.85))
-    plot(ms@mass~ms@intensity, type = 'l',
-         xaxs = 'i', yaxs = 'i', bty = 'n', xaxt = 'n', yaxt = 'n',
-         xlab = '', ylab = '')
+    plot(ms@mass ~ ms@intensity,
+      type = "l",
+      xaxs = "i", yaxs = "i", bty = "n", xaxt = "n", yaxt = "n",
+      xlab = "", ylab = ""
+    )
     par(sax.old)
     par(new = F)
   }
@@ -139,10 +154,382 @@ saxeyPlot <- function(ind, ato, begin, end, res = 0.25, plot.it = T) {
 #' @references Saxey, D. W. (2011). Correlated ion analysis and the
 #' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
 #' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
-#' @seealso \code{\link{saxeyPlot}}
-dissocTrack <- function(v, m, mp){
-  m*(1-v*(1-m/mp))^-1
+#' @seealso \code{\link{saxeyPlot}}, \code{\link{dissocDensity}}
+#'
+dissocTrack <- function(v, m, mp) {
+  m * (1 - v * (1 - m / mp))^-1
 }
+
+#### dissocTime ####
+#' Estimate the dissociation time
+#'
+#' \code{dissocTime}
+#'
+#' @references Saxey, D. W. (2011). Correlated ion analysis and the
+#' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
+#' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
+#' @seealso \code{\link{saxeyPlot}}, \code{\link{dissocDensity}}
+#'
+dissocTime <- function(mp, x0, phi, v0,
+                       amu = 1.66053904e-27, el = 1.602176634e-19) {
+  Mp <- mp * amu / el
+  sqrt(2 * Mp * x0^2 * phi / v0)
+}
+
+#### dissocHist ####
+#' Project hits along a dissociation track
+#'
+#' @param sax The output of \code{\link{saxeyPlot}}
+#' @param m1 Mass to charge ratio of the first daughter ion
+#' @param m2 Mass to charge ratio of the second daughter ion
+#' @param mp Mass to charge ratio of the parent ion
+#' @param dv Voltage parameter step
+#' @param v Voltage parameter series
+#' @param drop Should repeated bins be dropped? Defaults to FALSE.
+#' @param nbhd The neighborhood of bins to be included. One of: "point",
+#'   "rook", or "queen".
+#' @param method A function or character string to be matched by
+#'   \code{\link{match.fun}} that returns a single value. The density
+#'   calculation method used for the neighborhood of each point.
+#' @param renorm Should the returned densities be renormalized to sum to 1?
+#'   FALSE uses the densities in \code{sax}. Defaults to TRUE. See
+#'   \code{\link[ash]{ash2}}.
+#'
+#' @references Saxey, D. W. (2011). Correlated ion analysis and the
+#' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
+#' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
+#' @seealso \code{\link{saxeyPlot}}, \code{\link{dissocTrack}},
+#'   \code{\link[ash]{ash2}}
+#'
+dissocDensity <- function(sax, m1, m2, mp,
+                          dv = NULL, v = NULL, drop = FALSE,
+                          nbhd = "point", method = "max", renorm = TRUE) {
+  # Need method for discretizing v parameter to get dv
+  if (is.null(dv)) {
+    stop("dv calculation not implemented")
+  }
+  if (is.null(v)) {
+    v <- seq(0, 1, dv)
+  }
+
+  # Sample points along the dissociation curve
+  x <- dissocTrack(v, m1, mp)
+  y <- dissocTrack(v, m2, mp)
+  zx <- spatstat.utils::fastFindInterval(x, sax$x)
+  zy <- spatstat.utils::fastFindInterval(y, sax$y)
+  zc <- zx + zy * 1i
+  w <- !duplicated(zc) # used only if drop = TRUE
+
+  # Select values in neighborhood
+  if (nbhd == "point") {
+    nb <- 0
+  } else if (nbhd == "rook") {
+    nb <- c(0, 1, -1, 1i, -1i)
+  } else if (nbhd == "queen") {
+    nb <- c(0, 1, -1, 1i, -1i, 1 + 1i, 1 - 1i, -1 + 1i, -1 - 1i)
+  } else {
+    stop(paste(
+      "Unknown neighborhood.", sQuote("nbhd"), "should be one of:",
+      sQuote("point"), sQuote("rook"), sQuote("queen")
+    ))
+  }
+  reg <- outer(zc, nb, `+`)
+  den <- apply(reg, 1, function(r) {
+    nx <- Re(r)
+    ny <- Im(r)
+    d <- sax$z[cbind(nx, ny)]
+    f <- match.fun(method) # Summarize values
+    f(d)
+  })
+
+  # Drop points
+  if (drop) {
+    v <- v[w]
+    den <- den[w]
+    # Need to adjust dv so renorm still works...
+  }
+
+  # Renormalize densities
+  if (renorm) {
+    den <- den / sum(den * dv)
+  }
+
+  dat <- data.frame(v = v, den = den)
+  attr(dat, "mp") <- mp
+  attr(dat, "m1") <- m1
+  attr(dat, "m2") <- m2
+  attr(dat, "nbhd") <- nbhd
+
+  return(dat)
+}
+
+
+#### saxeyCor
+#' Create a Corrected 2D correlation histogram
+#'
+#' @description \code{saxeyCor} creates a 2D correlation histogram, similar to that of \code{saxeyPlot}
+#' However, \code{saxeyCor} differs in that it offers various normalization options.  This is the
+#' "correlation table" referred to in section 2.1 of Saxey, D. W. (2011).
+#'
+#' @param ind A vector of first hit indices for double hits.  The list
+#'   generated by \code{\link{indexMultiples}} has this vector as its second entry.
+#' @param ato An ATO data frame.  This data frame is generated by \code{\link{readATO}}.
+#' @param begin  A numeric.  The starting mass value of the correlation histogram
+#' @param end A numeric.  The ending mass value of the correlation histogram
+#' @param res.  A numeric.  The bin width of the correlation histogram
+#' @param plot.it A logical scalar.  Should the result be plotted?
+#' @param expected either \code{"DOUBLE"}, \code{"TOTAL"}, or \code{FALSE}.  Determines which method of normalization to use. If \code{"DOUBLE"} then
+#' e_ij and N are calculated using double hits.  If \code{"TOTAL"} then e_ij and N are calculated using all hits.  If \code{FALSE},
+#' no normalization is done and simply pair hits, p_ij, are returned
+#' @param log a logical.  Should the log of the results be plotted?
+#' @param remove_diagonal a logical.  Should the diagonal  (y = x) be removed?  This effectively removes
+#'  values of p_ii/d_ii
+#' @param remove_double a logical.  Should the "double diagonal" lines (y = 2x and y = 1/2x) be removed?
+#' @param remove_diagona_width an integer.  If \code{remove_diagonal} is true, this will
+#'  remove \code{remove_diagonal_width} additional pixels from each side of the diagonal line,
+#'  to account for lower resolution in the mass spectrum
+#' @param remove_double_width an integer.  If \code{remove_double_width} is true, this will
+#'  remove \code{remove_double_width} additional pixels from each side of the double (y = 2x, y = 1/2x) lines
+#' @param expected_remove_threshold A numeric.  Will remove all pixels whose expectation values e_ij are less than
+#'  this threshold
+#' @param ... extra input to be added to \code{\link{image.plot}} function
+#' @details This is used to reproduce plots made in of Saxey, D. W. (2011). If \code{expected = FALSE},
+#' then the uncorrected correlation histograms shown in Figure 3 of Saxey, D. W. (2011), are produced.
+#' If \code{expected = "DOUBLE"}, then the calculations will follow equations 2.1-2.3 and d_ij will be plotted.
+#' #' If \code{expected = "TOTAL"}, then the calculations will follow equations 2.1-2.3, except
+#' expectation values e_ij are calculated using all hits, not just double hits
+
+#' @seealso \code{\link{indexMultiples}}, \code{\link[ash]{ash2}}
+#' @references Saxey, D. W. (2011). Correlated ion analysis and the
+#' interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
+#' \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
+#' @export
+saxeyCor <- function(ind, ato, begin, end,
+                     res = 0.5, plot.it = TRUE,
+                     expected = "DOUBLE", log = FALSE,
+                     remove_diagonal = FALSE,
+                     remove_double = FALSE,
+                     remove_diagonal_width = 0,
+                     remove_double_width = 0,
+                     expected_remove_threshold = NA,
+                     ...) {
+  rng <- end - begin
+  if (rng <= 0) {
+    stop("Mass spec range must be positive")
+  }
+  nbin <- round(rng / res)
+  bin <- ash::bin2(
+    cbind(
+      ato[c(ind, ind + 1), "mass"],
+      ato[c(ind + 1, ind), "mass"]
+    ),
+    matrix(c(begin, begin, end, end), 2, 2), c(nbin, nbin)
+  )
+  p_ij <- bin$nc # actual number of hits
+  d_ij <- p_ij # this is not actually true, but if there is no correction, then this is what we want to plot
+
+  # if normalizing by total hits in that mass
+  if (expected == "TOTAL") {
+    # create binned histogram
+    # All hits within range binned to histogram
+    bin_total <- ash::bin1(ato[, "mass"], c(begin, end), nbin)
+
+    # bin_total$nc <- (bin_total$nc) %*% t(bin_total$nc)
+    # bin_total$ab <- bin$ab
+    # bin_total$nskip
+    # ash_single <- ash::ash1(bin_total)
+    N <- sum(colSums(bin$nc))
+    N_total <- sum(bin_total$nc)
+    #  P_k = bin_total$nc/N not required
+    # P_k and ash_single are basically the same- just ash_single had a polynomial kernel
+    # applied
+
+    e_ij <- (bin_total$nc) %*% t(bin_total$nc) / N_total / N_total * N
+
+    d_ij <- (p_ij - e_ij) / sqrt(e_ij)
+  }
+
+  # if normalizing with respect to total number of double hits
+  else if (expected == "DOUBLE") {
+    bin_total <- colSums(bin$nc)
+    ## I suspect that the difference between colSums(bin$nc) and bin_total$nc is that bin_total will include a hit whose partner is not within the range so long
+    # as the hit itself is within the range
+    # colSums(bin$nc)
+
+    # number of pairs
+    N <- sum(bin_total)
+    # P_k = colSums(bin$nc) / N # not required
+
+    e_ij <- ((bin_total) %*% t(bin_total)) / N
+    d_ij <- (p_ij - e_ij) / sqrt(e_ij)
+  }
+
+  ## remove the values off diagonal and off doubles
+  i <- 1:(end / res / 2)
+  double_ind <- cbind(c(i, i * 2), c(i * 2, i))
+  double_ind_wide <- double_ind
+  if (remove_double_width > 0) {
+    width <- (-1 * remove_double_width):(1 * remove_double_width)
+    # remove zero
+    width <- width[-ceiling(length(width) / 2)]
+
+    # get indices of all points within width of double ind
+    for (i in width) {
+      double_ind_wide <- rbind(double_ind_wide, double_ind + i)
+    }
+  }
+
+  # remove negative indices and indices greater than dimensions of p_ij
+  max_ind <- ncol(p_ij)
+  double_ind <- double_ind_wide[1, ]
+  for (i in 2:nrow(double_ind_wide)) {
+    if (double_ind_wide[i, 1] > 0 &&
+      double_ind_wide[i, 2] > 0 &&
+      double_ind_wide[i, 1] <= max_ind &&
+      double_ind_wide[i, 2] <= max_ind) {
+      double_ind <- rbind(double_ind, double_ind_wide[i, ])
+    }
+  }
+
+  # now for diagonals
+  ## remove the values off diagonal and off diags
+  i <- 1:(end / res)
+  diagonal_ind <- cbind(i, i)
+  diagonal_ind_wide <- diagonal_ind
+  if (remove_diagonal_width > 0) {
+    width <- (-1 * remove_diagonal_width):(1 * remove_diagonal_width)
+    # remove zero
+    width <- width[-ceiling(length(width) / 2)]
+
+    # get indices of all points within width of diagonal ind
+    for (i in width) {
+      diagonal_ind_wide <- rbind(diagonal_ind_wide, cbind(diagonal_ind[, 1], diagonal_ind[, 2] + i))
+    }
+  }
+
+  # remove negative indices and indices greater than dimensions of p_ij
+  max_ind <- ncol(p_ij)
+  diagonal_ind <- diagonal_ind_wide[1, ]
+  for (i in 2:nrow(diagonal_ind_wide)) {
+    if (diagonal_ind_wide[i, 1] > 0 &&
+      diagonal_ind_wide[i, 2] > 0 &&
+      diagonal_ind_wide[i, 1] <= max_ind &&
+      diagonal_ind_wide[i, 2] <= max_ind) {
+      diagonal_ind <- rbind(diagonal_ind, diagonal_ind_wide[i, ])
+    }
+  }
+
+
+  # iteravely adjust p_ii until they all equal e_ii
+  # repeatfor indices i = 2*i to account for double ionization
+  if (remove_diagonal && remove_double) {
+    while (sum(abs(p_ij[diagonal_ind] - e_ij[diagonal_ind])) > 0.1 | sum(abs(p_ij[double_ind] - e_ij[double_ind])) > 0.1) {
+      # set equal
+      p_ij[diagonal_ind] <- e_ij[diagonal_ind]
+      p_ij[double_ind] <- e_ij[double_ind]
+      # recalculate expectation values
+      N <- sum(colSums(p_ij))
+      # print(N)
+      e_ij <- (colSums(p_ij) %*% t(colSums(p_ij))) / N
+      # print(sum(abs(p_ij[diagonal_ind] - e_ij[diagonal_ind])))
+    }
+    # reset deviation value
+    d_ij <- (p_ij - e_ij) / sqrt(e_ij)
+  }
+
+  # if only diagonals
+  else if (remove_diagonal) {
+    while (sum(abs(p_ij[diagonal_ind] - e_ij[diagonal_ind])) > 0.1) {
+      # set equal
+      p_ij[diagonal_ind] <- e_ij[diagonal_ind]
+      # recalculate expectation values
+      N <- sum(colSums(p_ij))
+      # print(N)
+      e_ij <- (colSums(p_ij) %*% t(colSums(p_ij))) / N
+      # print(sum(abs(p_ij[diagonal_ind] - e_ij[diagonal_ind])))
+    }
+    # reset deviation value
+    d_ij <- (p_ij - e_ij) / sqrt(e_ij)
+  }
+
+  # repeat remove_diagonals, but for indices i = 2*i to account for double ionization
+  else if (remove_double) {
+    while (sum(abs(p_ij[double_ind] - e_ij[double_ind])) > 0.1) {
+      # set equal
+      p_ij[double_ind] <- e_ij[double_ind]
+      # recalculate expectation values
+      N <- sum(colSums(p_ij))
+      # print(N)
+      e_ij <- (colSums(p_ij) %*% t(colSums(p_ij))) / N
+      # print(sum(abs(p_ij[double_ind] - e_ij[double_ind])))
+    }
+    d_ij <- (p_ij - e_ij) / sqrt(e_ij)
+  }
+
+  # remove all points that don't have expected value equal to some threshold
+  if (!is.na(expected_remove_threshold)) {
+    sub_threshold <- which(e_ij <= expected_remove_threshold)
+    d_ij[sub_threshold] <- NA
+  }
+
+
+
+
+
+  if (plot.it) {
+    ms <- createSpec(ato[ato$mass >= begin & ato$mass <= end, ], res = res)
+    sax.old <- par(no.readonly = T)
+    plot(0:1, 0:1, type = "n", xlab = "", ylab = "", axes = FALSE)
+    par(new = T, plt = c(0.11, 0.85, 0.12, 0.85))
+
+
+    ## If you want to do a log plot
+    if (log) {
+      # have to get rid of all "-Inf" values
+      # replace them with NA
+      negs <- which(d_ij < 0)
+      log_d_ij <- log((d_ij))
+      # log_d_ij[log_d_ij == -Inf] = NA
+      # log_d_ij[negs] = -1* log_d_ij[negs]
+      image.plot(seq(begin, end, by = res), seq(begin, end, by = res),
+        log_d_ij,
+        col = hcl.colors(255),
+        xlab = "", ylab = "", xaxt = "n", yaxt = "n", ...
+      )
+    } else {
+      image.plot(seq(begin, end, by = res), seq(begin, end, by = res),
+        d_ij,
+        col = hcl.colors(255),
+        xlab = "", ylab = "", xaxt = "n", yaxt = "n", ...
+      )
+    }
+
+
+
+
+
+    axis(1, tck = -0.015, labels = FALSE)
+    axis(1, tick = FALSE, line = -0.5)
+    mtext("Mass-to-Charge Ratio (Da)", side = 1, line = 1.7)
+    axis(2, tck = -0.015, labels = FALSE)
+    axis(2, tick = F, line = -0.5, las = 1)
+    mtext("Mass-to-Charge Ratio (Da)", side = 2, line = 2)
+    # Mass spectrum for second hit
+    par(new = T, plt = c(0.11, 0.85, 0.85, 0.95))
+    plot(ms@intensity ~ ms@mass,
+      type = "l",
+      xaxs = "i", yaxs = "i", bty = "n", xaxt = "n", yaxt = "n",
+      xlab = "", ylab = ""
+    )
+    # only inlude mass spec on top axis since right axis would overlap with legend
+  }
+
+  return(d_ij)
+}
+
+
+
+
 #### houghClean ####
 # Stub for Hough Transform cleaning of multiple hit noise
 # houghClean <- function(sax) {

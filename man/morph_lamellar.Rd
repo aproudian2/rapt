@@ -32,7 +32,7 @@ Doesn't need to be normalized. Positive values only}
 \item{win}{The simulation window.}
 }
 \value{
-A list of: [\link{1}] a \code{\link[spatstat]{pp3}} object contining the
+A list of: [\link{1}] a \code{\link[spatstat.geom]{pp3}} object contining the
 guest points. [\link{2}] A \code{pp3} object containing the entire background
 underlying point pattern.
 }

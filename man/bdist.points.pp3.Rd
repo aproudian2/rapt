@@ -7,7 +7,7 @@
 \method{bdist.points}{pp3}(X)
 }
 \arguments{
-\item{X}{The point pattern for analysis. A \code{\link[spatstat]{pp3}}
+\item{X}{The point pattern for analysis. A \code{\link[spatstat.geom]{pp3}}
 object.}
 }
 \value{

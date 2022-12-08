@@ -19,11 +19,12 @@
 #'
 #' @export
 readPOS <- function(filepath) {
-  pos.len <- file.info(filepath)['size'] / 4
+  pos.len <- file.info(filepath)["size"] / 4
   pos.len <- as.numeric(pos.len)
   pos.raw <- readBin(
-    filepath, what = 'numeric',
-    size = 4, endian = 'big', n = pos.len
+    filepath,
+    what = "numeric",
+    size = 4, endian = "big", n = pos.len
   )
   pos.mat <- matrix(pos.raw, ncol = 4, byrow = T)
   pos.dat <- as.data.frame(pos.mat)
@@ -50,18 +51,21 @@ readPOS <- function(filepath) {
 #'
 #' @export
 readATO <- function(filepath) {
-  ato.len <- file.info(filepath)['size'] / 4
+  ato.len <- file.info(filepath)["size"] / 4
   ato.len <- as.numeric(ato.len)
-  ato.file <- file(filepath, open = 'rb')
+  ato.file <- file(filepath, open = "rb")
   seek(ato.file, where = 8)
   ato.raw <- readBin(
-    ato.file, what = 'numeric',
-    size = 4, endian = 'little', n = ato.len
+    ato.file,
+    what = "numeric",
+    size = 4, endian = "little", n = ato.len
   )
   ato.mat <- matrix(ato.raw, ncol = 14, byrow = T)
   ato.dat <- as.data.frame(ato.mat)
-  names(ato.dat) <- c("x", "y", "z", "mass", "clusID", "pIndex", "Vdc",
-                      "TOF", "dx", "dy", "Vp", "shank", "FouR", "FouI")
+  names(ato.dat) <- c(
+    "x", "y", "z", "mass", "clusID", "pIndex", "Vdc",
+    "TOF", "dx", "dy", "Vp", "shank", "FouR", "FouI"
+  )
   ato.name <- sub("\\.ato$", "", basename(filepath), ignore.case = TRUE)
   attr(ato.dat, "metaData") <- list(
     name = ato.name
@@ -89,43 +93,53 @@ readATO <- function(filepath) {
 #' @export
 readRRNG <- function(filepath) {
   text <- readLines(filepath, warn = FALSE)
-  n <- grep('Number=', text, value = TRUE)
-  n <- strsplit(n, '=')
-  n <- sapply(n, function(m){as.numeric(m[2])})
-  elem <- strsplit(text[1:n[1]+2], '=')
-  elem <- sapply(elem, function(m){m[2]})
-  r.pos <- grep('[Ranges]', text, fixed = TRUE)
-  entries <- sub('^Range[[:digit:]]+=', '', text[-(1:(r.pos+1))])
-  entries <- strsplit(entries, ' ')
+  n <- grep("Number=", text, value = TRUE)
+  n <- strsplit(n, "=")
+  n <- sapply(n, function(m) {
+    as.numeric(m[2])
+  })
+  elem <- strsplit(text[1:n[1] + 2], "=")
+  elem <- sapply(elem, function(m) {
+    m[2]
+  })
+  r.pos <- grep("[Ranges]", text, fixed = TRUE)
+  entries <- sub("^Range[[:digit:]]+=", "", text[-(1:(r.pos + 1))])
+  entries <- strsplit(entries, " ")
   dat <- lapply(entries, function(X) {
     mass.start <- as.numeric(X[1])
     mass.end <- as.numeric(X[2])
-    mass.volume <- as.numeric(sub('Vol:', '', X[3]) )
+    mass.volume <- as.numeric(sub("Vol:", "", X[3]))
     mass.name <- sapply(elem, function(el) {
-      m <- paste0(el,':')
+      m <- paste0(el, ":")
       w <- grepl(m, X)
       if (any(w)) {
-        n <- sub(':', '', X[w])
+        n <- sub(":", "", X[w])
       } else {
         n <- NA
       }
       return(n)
     })
     mass.name <- na.omit(mass.name)
-    mass.name <- paste0(mass.name, collapse = '')
-    data('isotopes', package = 'enviPat', envir = environment())
-    form.warn <- enviPat::check_chemform(isotopes, mass.name)[,1]
+    mass.name <- paste0(mass.name, collapse = "")
+    data("isotopes", package = "enviPat", envir = environment())
+    form.warn <- enviPat::check_chemform(isotopes, mass.name)[, 1]
     mass.formula <- mapply(function(name, warn) {
-      if(warn){NA} else{name}
+      if (warn) {
+        NA
+      } else {
+        name
+      }
     }, mass.name, form.warn)
-    mass.color <- sub('Color:', '#', tail(X, n = 1))
-    data.frame(start = mass.start,
-               end = mass.end,
-               volume = mass.volume,
-               name = mass.name,
-               formula = mass.formula,
-               color = mass.color,
-               stringsAsFactors = FALSE)
+    mass.color <- sub("Color:", "#", tail(X, n = 1))
+    data.frame(
+      start = mass.start,
+      end = mass.end,
+      volume = mass.volume,
+      name = mass.name,
+      formula = mass.formula,
+      color = mass.color,
+      stringsAsFactors = FALSE
+    )
   })
   dat <- do.call(rbind, dat)
   rownames(dat) <- NULL
@@ -141,27 +155,27 @@ readRRNG <- function(filepath) {
 ### createSpat ###
 #' Create a pp3 from a POS or ATO
 #'
-#' \code{createSpat} creates a \code{\link[spatstat]{pp3}} from a POS or ATO
+#' \code{createSpat} creates a \code{\link[spatstat.geom]{pp3}} from a POS or ATO
 #' data frame.
 #'
 #' @param pos A POS or ATO data frame.
 #' @param win The domain of the data.
-#' @return A \code{\link[spatstat]{pp3}} with the x,y,z positions of the hits in
+#' @return A \code{\link[spatstat.geom]{pp3}} with the x,y,z positions of the hits in
 #'   the supplied POS or ATO.
 #'
 #' @family APT data transformation functions
 #'
 #' @seealso \code{\link{readPOS}}, \code{\link{readATO}},
-#'   \code{\link[spatstat]{pp3}}
+#'   \code{\link[spatstat.geom]{pp3}}
 #'
 #' @export
 createSpat <- function(pos, win = NULL, marks = NULL) {
   pp3.box <- win
-  if(is.null(win)) {
+  if (is.null(win)) {
     pp3.box <- sapply(pos[1:3], range)
   }
-  pp3.dat <- spatstat::pp3(pos$x, pos$y, pos$z, pp3.box, marks = marks)
-  pp3.dat <- pp3.dat[spatstat::inside.boxx(pp3.dat, w = pp3.box)]
+  pp3.dat <- spatstat.geom::pp3(pos$x, pos$y, pos$z, pp3.box, marks = marks)
+  pp3.dat <- pp3.dat[spatstat.geom::inside.boxx(pp3.dat, w = pp3.box)]
   attr(pp3.dat, "metaData") <- attr(pos, "metaData")
   return(pp3.dat)
 }
@@ -169,27 +183,28 @@ createSpat <- function(pos, win = NULL, marks = NULL) {
 ### createDet ###
 #' Create a "ppp" from an ATO.
 #'
-#' `createDet` generates a \code{\link[spatstat]{ppp}} of detector hits from an
+#' `createDet` generates a \code{\link[spatstat.geom]{ppp}} of detector hits from an
 #' ATO.
 #'
 #' @param ato An ATO data frame.
-#' @param window An object of class \code{\link[spatstat]{owin}}. If `NULL` (the
+#' @param window An object of class \code{\link[spatstat.geom]{owin}}. If `NULL` (the
 #' default), a window will be calculated from the data using
-#'   \code{\link[spatstat]{ripras}}.
-#' @return A \code{\link[spatstat]{ppp}} with the positions of the detector hits
+#'   \code{\link[spatstat.geom]{ripras}}.
+#' @return A \code{\link[spatstat.geom]{ppp}} with the positions of the detector hits
 #'   from the ATO.
 #'
 #' @family APT data transformation functions
 #'
-#' @seealso \code{\link{readATO}}, \code{\link[spatstat]{ppp}},
-#'   \code{\link[spatstat]{ripras}}
+#' @seealso \code{\link{readATO}}, \code{\link[spatstat.geom]{ppp}},
+#'   \code{\link[spatstat.geom]{ripras}}
 #'
 #' @export
 createDet <- function(ato, win = NULL, marks = NULL) {
-  if(is.null(win)) {
-    win <- spatstat::ripras(ato$dx, ato$dy)
+  if (is.null(win)) {
+    win <- spatstat.geom::ripras(ato$dx, ato$dy)
+    unitname(win) <- "cm"
   }
-  det.dat <- spatstat::ppp(ato$dx, ato$dy, window = win, marks = marks)
+  det.dat <- spatstat.geom::ppp(ato$dx, ato$dy, window = win, marks = marks)
   attr(det.dat, "metaData") <- attr(ato, "metaData")
   return(det.dat)
 }
@@ -227,7 +242,7 @@ createDet <- function(ato, win = NULL, marks = NULL) {
 #' @export
 createSpec <- function(pos, res = 0.05, clip = NULL) {
   m <- pos$mass
-  if(is.numeric(clip) & length(clip) == 2) {
+  if (is.numeric(clip) & length(clip) == 2) {
     m <- m[m >= clip[1] & m <= clip[2]]
   }
   ms.max <- ceiling(max(m) / res) * res
@@ -261,5 +276,5 @@ createSpec <- function(pos, res = 0.05, clip = NULL) {
 writePOS <- function(pos, filepath) {
   p.mat <- as.matrix(pos)
   p.vec <- as.numeric(t(p.mat))
-  writeBin(p.vec, filepath, size = 4, endian = 'big')
+  writeBin(p.vec, filepath, size = 4, endian = "big")
 }

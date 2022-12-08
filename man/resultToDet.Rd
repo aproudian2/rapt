@@ -13,12 +13,12 @@ resultToDet(res, clip.radius = NULL)
 If \code{NULL} (the default), no clipping is applied.}
 }
 \value{
-A \code{\link[spatstat]{ppp}} containing the detector positions
+A \code{\link[spatstat.geom]{ppp}} containing the detector positions
 marked by their id.
 }
 \description{
 \code{resultToDet} converts a TAPSim result \code{data.frame} (as returned by
-\code{\link{readResult}}) into a \code{\link[spatstat]{ppp}} using
+\code{\link{readResult}}) into a \code{\link[spatstat.geom]{ppp}} using
 \code{\link[=createDet]{createDet()}}.
 }
 \seealso{

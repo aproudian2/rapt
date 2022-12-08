@@ -26,5 +26,5 @@ Randomly allocates marks to a point pattern, or permutes the existing marks,
 or resamples from the existing marks.
 }
 \seealso{
-\code{\link[spatstat]{rlabel}}
+\code{\link[spatstat.random]{rlabel}}
 }

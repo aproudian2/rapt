@@ -15,5 +15,5 @@ interpretation of atom probe mass spectra. Ultramicroscopy, 111(6), 473-479.
 \url{https://doi.org/10.1016/j.ultramic.2010.11.021}.
 }
 \seealso{
-\code{\link{saxeyPlot}}
+\code{\link{saxeyPlot}}, \code{\link{dissocDensity}}
 }

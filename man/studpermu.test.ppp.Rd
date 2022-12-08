@@ -22,5 +22,5 @@
 Studentised Permutation Test
 }
 \seealso{
-\code{\link[spatstat]{studpermu.test}}
+\code{\link[spatstat.core]{studpermu.test}}
 }

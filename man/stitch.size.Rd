@@ -7,18 +7,18 @@
 stitch.size(pp3file, win = NULL, boxSize)
 }
 \arguments{
-\item{pp3file}{A \code{\link[spatstat]{pp3}} object containing the RCP
+\item{pp3file}{A \code{\link[spatstat.pp3]{pp3}} object containing the RCP
 generated 3D point positions.}
 
-\item{win}{A \code{\link[spatstat]{box3}} object indicating the size of the
+\item{win}{A \code{\link[spatstat.geom]{box3}} object indicating the size of the
 original rcp generation. Can leave blank.}
 
 \item{boxSize}{A numeric vector of the dimensions of the final
-\code{\link[spatstat]{pp3}} object: c(xmax,ymax,zmax). Assumes that
+\code{\link[spatstat.pp3]{pp3}} object: c(xmax,ymax,zmax). Assumes that
 (xmin,ymin,zmin) = (0,0,0).}
 }
 \value{
-A \code{\link[spatstat]{pp3}} object.
+A \code{\link[spatstat.pp3]{pp3}} object.
 }
 \description{
 Similar to \code{\link{stitch}}. Instead of only inputting the number of

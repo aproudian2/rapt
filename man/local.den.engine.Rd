@@ -10,8 +10,8 @@ local.den.engine(bdist, nnk, k, dz, par = TRUE, cores = 7)
 \item{bdist}{Result from \code{\link{bdist.points3.multi}} giving shortest
 distance to boundary in the x, y, and z directions.}
 
-\item{nnk}{Result from \code{\link[spatstat]{nndist}} or
-\code{\link[spatstat]{nncross}} containing nearest neighbor distances.}
+\item{nnk}{Result from \code{\link[spatstat.geom]{nndist}} or
+\code{\link[spatstat.geom]{nncross}} containing nearest neighbor distances.}
 
 \item{k}{Vector of nn#s to calculate estimate for.}
 

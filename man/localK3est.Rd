@@ -2,16 +2,16 @@
 % Please edit documentation in R/rapt_localK3.R
 \name{localK3est}
 \alias{localK3est}
-\title{Extends \code{\link[spatstat]{localK}} to 3D.}
+\title{Extends \code{\link[spatstat.core]{localK}} to 3D.}
 \usage{
 localK3est(X, rmax = NULL, nrval = 128, correction = "translation")
 }
 \arguments{
-\item{X}{A \code{\link[spatstat]{pp3}} object to test.}
+\item{X}{A \code{\link[spatstat.geom]{pp3}} object to test.}
 
-\item{rmax}{See \code{\link[spatstat]{K3est}}.}
+\item{rmax}{See \code{\link[spatstat.core]{K3est}}.}
 
-\item{nrval}{See \code{\link[spatstat]{K3est}}.}
+\item{nrval}{See \code{\link[spatstat.core]{K3est}}.}
 
 \item{correction}{Currently only "translation" implemented.}
 }
@@ -20,6 +20,6 @@ Data frame with columns for the local K function around each point in
 the pattern.
 }
 \description{
-Outputs local K function information for a \code{\link[spatstat]{pp3}}
+Outputs local K function information for a \code{\link[spatstat.geom]{pp3}}
 pattern. Currently only implemented for the translation edge correction.
 }

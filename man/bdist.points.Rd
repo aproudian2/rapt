@@ -8,14 +8,15 @@ bdist.points(X, ...)
 }
 \description{
 This is an S3 generic that extends the use of
-\code{\link[spatstat]{bdist.points}} beyond "ppp" objects.
+\code{\link[spatstat.geom]{bdist.points}} beyond "ppp" objects.
 }
 \seealso{
-\code{\link[spatstat]{bdist.points}}, \code{\link{bdist.points.pp3}}
+\code{\link[spatstat.geom]{bdist.points}}, \code{\link{bdist.points.pp3}}
 
 Other spatstat extensions: 
 \code{\link{G3cross}()},
 \code{\link{G3multi}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{marktable.pp3}()},
 \code{\link{marktable}()},

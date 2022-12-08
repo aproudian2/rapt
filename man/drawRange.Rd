@@ -4,7 +4,7 @@
 \alias{drawRange}
 \title{Color ranges on a MassSpectrum}
 \usage{
-drawRange(ms, start, end, col = "red")
+drawRange(ms, start, end, col = "red", miny = 0)
 }
 \arguments{
 \item{ms}{The \code{\link[MALDIquant:MassSpectrum-class]{MassSpectrum}} or

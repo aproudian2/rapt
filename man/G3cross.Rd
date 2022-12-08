@@ -42,7 +42,7 @@ a point of type i to the nearest point of type j.
 \details{
 The function \code{G3cross} and its companions \code{G3dot} (unimplemented)
 and \code{\link{G3multi}} are generalisations of the function
-\code{\link[spatstat]{G3est}} to multitype point patterns.
+\code{\link[spatstat.core]{G3est}} to multitype point patterns.
 
 A multitype point pattern is a spatial pattern of points classified into a
 finite number of possible "colors" or "types." In the \strong{spatstat}
@@ -81,7 +81,7 @@ realisation of a stationary (spatially homogeneous) random spatial point
 process in the plane, observed through a bounded window. The window (which is
 specified in \code{X} as \code{Domain(X)}) may have arbitrary shape. Biases
 due to edge effects are treated in the same manner as in
-\code{\link[spatstat]{G3est}}.
+\code{\link[spatstat.core]{G3est}}.
 
 The argument \code{rmax} is the maximum value of the distance \emph{r} at
 which \eqn{G[3ij](r)} should be evaluated. It is also used to determine (in
@@ -103,11 +103,12 @@ uncorrected empirical \eqn{G[3ij](r)} as if it were an unbiased estimator of
 \eqn{G[3ij](r)}.
 }
 \seealso{
-\code{\link{G3multi}}, \code{\link[spatstat]{G3est}},
-\code{\link[spatstat]{marks}}
+\code{\link{G3multi}}, \code{\link[spatstat.core]{G3est}},
+\code{\link[spatstat.geom]{marks}}
 
 Other spatstat extensions: 
 \code{\link{G3multi}()},
+\code{\link{K3scaled}()},
 \code{\link{Tstat.pp3}()},
 \code{\link{bdist.points}()},
 \code{\link{marktable.pp3}()},

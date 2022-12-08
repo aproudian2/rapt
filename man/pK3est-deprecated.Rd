@@ -5,17 +5,17 @@
 \title{Perform K3est on random relabelings in parallel}
 \arguments{
 \item{perc}{The fraction of points to select randomly each time out of the
-original \code{\link[spatstat]{pp3}} object. Number between 0 and 1.}
+original \code{\link[spatstat.geom]{pp3}} object. Number between 0 and 1.}
 
-\item{pattern}{The original \code{\link[spatstat]{pp3}} object.}
+\item{pattern}{The original \code{\link[spatstat.geom]{pp3}} object.}
 
 \item{nEvals}{The number of random relabelings and  that should be performed.}
 
-\item{rmax}{See \code{\link[spatstat]{K3est}}. Maximum radius to be
-calculated for \code{\link[spatstat]{K3est}}.}
+\item{rmax}{See \code{\link[spatstat.core]{K3est}}. Maximum radius to be
+calculated for \code{\link[spatstat.core]{K3est}}.}
 
-\item{nrval}{See \code{\link[spatstat]{K3est}}. Number of radii that
-\code{\link[spatstat]{K3est}} should be calculated at.}
+\item{nrval}{See \code{\link[spatstat.core]{K3est}}. Number of radii that
+\code{\link[spatstat.core]{K3est}} should be calculated at.}
 
 \item{correction}{Either "iso", "trans", or "bord" edge correction.}
 
@@ -34,7 +34,7 @@ available on the machine.}
 }
 \value{
 \subsection{For \code{anom = FALSE}}{Returns a matrix containing the
-data from the all of the \code{\link[spatstat]{K3est}} runs on different
+data from the all of the \code{\link[spatstat.core]{K3est}} runs on different
 re-labelings. Can plot data using \code{\link{envPlot}}.} \subsection{For
 \code{anom = TRUE}}{A list of: [\link{1}] Matrix of data for all relabelings. Can
 be plotted using \code{\link{envPlot}}. [\link{2}] Vector containing the values
@@ -44,13 +44,13 @@ calculation. [\link{4}] nrval used in the calculation.}
 }
 \description{
 \code{pK3est} first randomly relabels a specified percentage of points from
-the original \code{\link[spatstat]{pp3}} object. It then performs a 3D K
-function test (\code{\link[spatstat]{K3est}}) on these selected points. It
+the original \code{\link[spatstat.geom]{pp3}} object. It then performs a 3D K
+function test (\code{\link[spatstat.core]{K3est}}) on these selected points. It
 repeats this as many times as specified. These tests are run in parallel to
 increase computation speed.
 }
 \section{Edge Corrections}{
- See \code{\link[spatstat]{Kest}} or book availible
+ See \code{\link[spatstat.core]{Kest}} or book availible
 at \url{http://spatstat.org/book.html} for more info on these edge
 corrections.
 
@@ -60,21 +60,21 @@ statistics.} \subsection{Translation - "trans"}{Translation edge
 correction. Assumes translation of point pattern does not change
 statistics.} \subsection{Border - "bord"}{Border edge correction. Makes no
 assumptions about data. Uses only data provided in the original point
-pattern. Only evaluates \code{\link[spatstat]{K3est}} when the radius of
+pattern. Only evaluates \code{\link[spatstat.core]{K3est}} when the radius of
 the search stays within the domain of the point pattern itself.}
 }
 
 \section{Anomaly K3est}{
  When \code{anom = TRUE}, the function returns the
 anomaly K3est.This means that it returns the square root of the
-\code{\link[spatstat]{K3est}} results, with the 50th percentile subtracted
+\code{\link[spatstat.core]{K3est}} results, with the 50th percentile subtracted
 out. This centers envelopes around zero, and the square root standardized
 variance across all r values. See book at
 \url{http://spatstat.org/book.html} for a good statistical reference.
 
 \code{toSub} is an argument to be paired with \code{anom = TRUE}. If NULL,
 use the 50th percentile of the calculated set of
-\code{\link[spatstat]{K3est}} envelopes to subtract off. Otherwise, use the
+\code{\link[spatstat.core]{K3est}} envelopes to subtract off. Otherwise, use the
 second, [\link{2}], entry in the list returned from this same function. This is
 how to compare envelope calculations from different point patterns. You
 must subtract the same values from both data sets. toSub allows you to

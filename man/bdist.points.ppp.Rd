@@ -10,5 +10,5 @@
 Distance to Boundary of Window
 }
 \seealso{
-\code{\link[spatstat]{bdist.points}}
+\code{\link[spatstat.geom]{bdist.points}}
 }

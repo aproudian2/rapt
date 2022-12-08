@@ -12,22 +12,29 @@
 polyCurve <- function(x, y, from, to, n = 50, miny,
                       col = "red", border = NA) {
   drawPoly <- function(fun, from, to, n = 50, miny, col, border) {
-    Sq <- seq(from = from, to = to, length = n);
-    polygon(x = c(Sq[1], Sq, Sq[n]),
-            y = c(miny, fun(Sq), miny),
-            col = col, border = border)
+    Sq <- seq(from = from, to = to, length = n)
+    polygon(
+      x = c(Sq[1], Sq, Sq[n]),
+      y = c(miny, fun(Sq), miny),
+      col = col, border = border
+    )
   }
   lf <- length(from)
   stopifnot(identical(lf, length(to)))
-  if(length(col) != lf)
+  if (length(col) != lf) {
     col <- rep(col, length.out = lf)
-  if(length(border) != lf)
+  }
+  if (length(border) != lf) {
     border <- rep(border, length.out = lf)
-  if(missing(miny))
+  }
+  if (missing(miny)) {
     miny <- min(y)
+  }
   interp <- approxfun(x = x, y = y)
-  mapply(drawPoly, from = from, to = to, col = col, border = border,
-         MoreArgs = list(fun = interp, n = n, miny = miny))
+  mapply(drawPoly,
+    from = from, to = to, col = col, border = border,
+    MoreArgs = list(fun = interp, n = n, miny = miny)
+  )
   invisible()
 }
 
@@ -46,16 +53,18 @@ polyCurve <- function(x, y, from, to, n = 50, miny,
 #'
 #' @seealso \code{\link{drawRNG}}
 #' @export
-drawRange <- function(ms, start, end, col = "red") {
-  if(isMassSpectrum(ms)) {
+drawRange <- function(ms, start, end, col = "red", miny = 0) {
+  if (isMassSpectrum(ms)) {
     ms <- as.data.frame(ms)
   }
-  if(!all(c("mass", "intensity") %in% names(ms))) {
-    error <- paste(dQuote("ms"), "must have fields", dQuote("mass"), "and",
-                   dQuote("intensity."))
+  if (!all(c("mass", "intensity") %in% names(ms))) {
+    error <- paste(
+      dQuote("ms"), "must have fields", dQuote("mass"), "and",
+      dQuote("intensity.")
+    )
     stop(error)
   }
-  polyCurve(ms$mass, ms$intensity, start, end, col = col)
+  polyCurve(ms$mass, ms$intensity, start, end, col = col, miny = miny)
   invisible()
 }
 
@@ -74,16 +83,20 @@ drawRange <- function(ms, start, end, col = "red") {
 #'
 #' @seealso \code{\link{drawRange}}
 #' @export
-drawRNG <- function(ms, rng) {
-  if(isMassSpectrum(ms)) {
+drawRNG <- function(ms, rng, miny = 0) {
+  if (isMassSpectrum(ms)) {
     ms <- as.data.frame(ms)
   }
-  if(!all(c("mass", "intensity") %in% names(ms))) {
-    error <- paste(dQuote("ms"), "must have fields", dQuote("mass"), "and",
-                   dQuote("intensity."))
+  if (!all(c("mass", "intensity") %in% names(ms))) {
+    error <- paste(
+      dQuote("ms"), "must have fields", dQuote("mass"), "and",
+      dQuote("intensity.")
+    )
     stop(error)
   }
-  polyCurve(ms$mass, ms$intensity, rng$start, rng$end, col = rng$color)
+  polyCurve(ms$mass, ms$intensity, rng$start, rng$end,
+    col = rng$color, miny = miny
+  )
   invisible()
 }
 
@@ -102,24 +115,28 @@ drawRNG <- function(ms, rng) {
 # Lift the assumption of a log10 transformed spectrum.
 prettyPlot <- function(ms, rng = NA, xlim = NULL, ylim = NULL, lwd = 1,
                        main = NULL, hold.par = F, ...) {
-  if(log10(max(ms@intensity)) > 1) {
+  if (log10(max(ms@intensity)) > 1) {
     stop("prettyPlot should only be used with log10 transformed spectra.")
   }
-  if(is.null(main)) {
-    main <- attr(ms, 'metaData')$name
+  if (is.null(main)) {
+    main <- attr(ms, "metaData")$name
   }
   ms.old <- par(no.readonly = T)
-  par(mgp = c(2.2, 0.5, 0), cex = 1.5, las =  1, mar = c(3.5, 3.5, 1.5, 1));
-  plot(ms, yaxt = "n", tck = -0.02, xlim = xlim, ylim = ylim, lwd = lwd,
-       xlab = "Mass-to-Charge-State Ratio (Da)", ylab = "Counts (arb.)",
-       main = main)
+  par(mgp = c(2.2, 0.5, 0), cex = 1.5, las = 1, mar = c(3.5, 3.5, 1.5, 1))
+  plot(ms,
+    yaxt = "n", tck = -0.02, xlim = xlim, ylim = ylim, lwd = lwd,
+    xlab = "Mass-to-Charge-State Ratio (Da)", ylab = "Counts (arb.)",
+    main = main
+  )
   ms.lims <- par("usr")
-  ms.exp <- sapply(1:ms.lims[4], function(x){
+  ms.exp <- sapply(1:ms.lims[4], function(x) {
     paste0(c("10^", x), collapse = "")
   })
   axis(side = 2, at = 1:ms.lims[4], labels = NA, tck = -0.02)
-  axis(side = 2, at = 1:ms.lims[4], labels = parse(text = ms.exp),
-       las = 1, lwd = 0)
+  axis(
+    side = 2, at = 1:ms.lims[4], labels = parse(text = ms.exp),
+    las = 1, lwd = 0
+  )
   ms.tck <- lapply(1:2, axTicks)
   ms.diff <- ms.tck[[1]][2] - ms.tck[[1]][1]
   ms.tck[[1]] <- seq(
@@ -127,12 +144,13 @@ prettyPlot <- function(ms, rng = NA, xlim = NULL, ylim = NULL, lwd = 1,
     max(ms.tck[[1]] + ms.diff),
     ms.diff / 5
   )
-  ms.tck[[2]] <- log10(rep(1:9, ms.lims[4]+1) * rep(10^(0:ms.lims[4]),
-                                                    each = 9))
-  invisible(lapply(1:2, function(x){
+  ms.tck[[2]] <- log10(rep(1:9, ms.lims[4] + 1) * rep(10^(0:ms.lims[4]),
+    each = 9
+  ))
+  invisible(lapply(1:2, function(x) {
     axis(x, at = ms.tck[[x]], labels = NA, tck = -0.01)
   }))
-  if (class(rng) == 'data.frame') {
+  if (class(rng) == "data.frame") {
     drawRNG(ms, rng)
     lines(ms)
   }
@@ -166,18 +184,19 @@ isoLabel <- function(ms, pat, rng = NULL, col = NULL, halfWindowSize = 0.5) {
   }
   lab <- names(pat)
   main <- sapply(pat, function(X) {
-    m <- X[,1]
-    m[X[,2] == 100]
+    m <- X[, 1]
+    m[X[, 2] == 100]
   })
   height <- sapply(main, function(m) {
     wh <- which(ms@mass > (m - halfWindowSize) & ms@mass < (m + halfWindowSize))
     max(ms@intensity[wh])
   })
   invisible(lapply(seq_along(pat), function(n) {
-    lines(pat[[n]][,1], log10(10^height[n] * pat[[n]][,2] / 100),
-          type = 'h', col = col[n])
+    lines(pat[[n]][, 1], log10(10^height[n] * pat[[n]][, 2] / 100),
+      type = "h", col = col[n]
+    )
   }))
-  invisible(mapply(function(x,y,label,col) {
+  invisible(mapply(function(x, y, label, col) {
     text(x = x, y = y, labels = label, pos = 3, col = col, cex = 0.5)
   }, main, height, lab, col))
 }
@@ -188,25 +207,30 @@ isoLabel <- function(ms, pat, rng = NULL, col = NULL, halfWindowSize = 0.5) {
 #' `detectorGIF` generates a GIF that shows the positions of detector hits.
 #'
 detectorGIF <- function(ato, len = 100000, range = NULL,
-                        size = 7, name = 'detector', path = './', save.pdf = F,
+                        size = 7, name = "detector", path = "./", save.pdf = F,
                         delay = 10, ...) {
   gif.wd <- getwd()
   setwd(path)
-  gif.pdf <- paste0(name, '.pdf')
-  gif.gif <- paste0(name, '.gif')
-  pdf(file = gif.pdf, width = size, height = size, bg = 'white')
-  gif.n <- floor(dim(ato)[1]/len)
-  for(i in 0:gif.n) {
-    with(ato[i*len+seq_len(len),],
-         plot(dy, dx, asp = 1, ... = ...))
+  gif.pdf <- paste0(name, ".pdf")
+  gif.gif <- paste0(name, ".gif")
+  pdf(file = gif.pdf, width = size, height = size, bg = "white")
+  gif.n <- floor(dim(ato)[1] / len)
+  for (i in 0:gif.n) {
+    with(
+      ato[i * len + seq_len(len), ],
+      plot(dy, dx, asp = 1, ... = ...)
+    )
   }
   dev.off()
   # convert pngs to one gif using ImageMagick
-  gif.sys <- paste('convert - delay', delay, '-background white',
-                   '-alpha background -density 100 +antialias',
-                   gif.pdf, gif.gif)
+  gif.sys <- paste(
+    "convert - delay", delay, "-background white",
+    "-alpha background -density 100 +antialias",
+    gif.pdf, gif.gif
+  )
   system(gif.sys)
-  if(!save.pdf)
+  if (!save.pdf) {
     file.remove(list.files(pattern = gif.pdf))
+  }
   setwd(gif.wd)
 }

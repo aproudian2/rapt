@@ -9,21 +9,21 @@ createDet(ato, win = NULL, marks = NULL)
 \arguments{
 \item{ato}{An ATO data frame.}
 
-\item{window}{An object of class \code{\link[spatstat]{owin}}. If \code{NULL} (the
+\item{window}{An object of class \code{\link[spatstat.geom]{owin}}. If \code{NULL} (the
 default), a window will be calculated from the data using
-\code{\link[spatstat]{ripras}}.}
+\code{\link[spatstat.geom]{ripras}}.}
 }
 \value{
-A \code{\link[spatstat]{ppp}} with the positions of the detector hits
+A \code{\link[spatstat.geom]{ppp}} with the positions of the detector hits
 from the ATO.
 }
 \description{
-\code{createDet} generates a \code{\link[spatstat]{ppp}} of detector hits from an
+\code{createDet} generates a \code{\link[spatstat.geom]{ppp}} of detector hits from an
 ATO.
 }
 \seealso{
-\code{\link{readATO}}, \code{\link[spatstat]{ppp}},
-\code{\link[spatstat]{ripras}}
+\code{\link{readATO}}, \code{\link[spatstat.geom]{ppp}},
+\code{\link[spatstat.geom]{ripras}}
 
 Other APT data transformation functions: 
 \code{\link{createSpat}()},
